@@ -13,18 +13,7 @@
         "deprecated": false,
         "description": "",
         "tags": [],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "",
-            "required": false,
-            "example": "Bearer {{userSecret}}",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -80,8 +69,7 @@
             },
             "headers": {}
           }
-        },
-        "security": []
+        }
       }
     },
     "/tools/tasks/{id}": {
@@ -96,16 +84,6 @@
             "in": "path",
             "description": "",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "",
-            "required": false,
-            "example": "Bearea {{userSecret}}",
             "schema": {
               "type": "string"
             }
@@ -134,8 +112,7 @@
             },
             "headers": {}
           }
-        },
-        "security": []
+        }
       }
     }
   },
@@ -143,8 +120,23 @@
   "components": {
     "schemas": {},
     "responses": {},
-    "securitySchemes": {}
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "Use Authorization: Bearer <APIKEY>"
+      }
+    }
   },
-  "servers": [],
-  "security": []
+  "servers": [
+    {
+      "url": "https://app.deckflow.com/v1"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
 }

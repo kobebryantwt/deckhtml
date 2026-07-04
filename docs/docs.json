@@ -133,7 +133,11 @@
             "groups": [
               {
                 "group": "Default Module",
-                "openapi": "reference/默认模块.openapi.json"
+                "pages": [
+                  "reference/overview",
+                  "reference/create-html2pptx-task",
+                  "reference/get-task-details"
+                ]
               }
             ]
           },
