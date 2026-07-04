@@ -53,6 +53,21 @@
             ]
           },
           {
+            "tab": "API Reference",
+            "groups": [
+              {
+                "group": "Formats",
+                "pages": [
+                  "reference/input-html",
+                  "reference/output-pptx",
+                  "reference/output-pdf",
+                  "reference/output-png",
+                  "reference/report-schema"
+                ]
+              }
+            ]
+          },
+          {
             "tab": "MCP",
             "groups": [
               {
@@ -106,21 +121,6 @@
                 ]
               }
             ]
-          },
-          {
-            "tab": "Reference",
-            "groups": [
-              {
-                "group": "Formats",
-                "pages": [
-                  "reference/input-html",
-                  "reference/output-pptx",
-                  "reference/output-pdf",
-                  "reference/output-png",
-                  "reference/report-schema"
-                ]
-              }
-            ]
           }
         ]
       },
@@ -147,6 +147,12 @@
             ]
           },
           {
+            "tab": "API Reference",
+            "pages": [
+              "zh/reference/index"
+            ]
+          },
+          {
             "tab": "MCP",
             "pages": [
               "zh/mcp/index"
@@ -168,12 +174,6 @@
             "tab": "SDK",
             "pages": [
               "zh/sdk/index"
-            ]
-          },
-          {
-            "tab": "参考",
-            "pages": [
-              "zh/reference/index"
             ]
           }
         ]
