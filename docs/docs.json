@@ -1,6 +1,15 @@
 {
   "name": "DeckHTML",
   "theme": "mint",
+  "logo": {
+    "light": "/deckhtml-for-developers-dark.png",
+    "dark": "/deckhtml-for-developers-light.png",
+    "href": "/"
+  },
+  "favicon": {
+    "light": "/deckhtml-for-developers-dark.png",
+    "dark": "/deckhtml-for-developers-light.png"
+  },
   "colors": {
     "primary": "#0f766e",
     "light": "#34d399",
@@ -12,12 +21,6 @@
         "language": "en",
         "default": true,
         "navbar": {
-          "links": [
-            {
-              "label": "GitHub",
-              "href": "https://github.com/kobebryantwt/deckhtml"
-            }
-          ],
           "primary": {
             "type": "button",
             "label": "Quickstart",
@@ -26,10 +29,10 @@
         },
         "tabs": [
           {
-            "tab": "Documentation",
+            "tab": "Developer Guide",
             "groups": [
               {
-                "group": "Get Started",
+                "group": "Getting Started",
                 "pages": [
                   "index",
                   "quickstart",
@@ -45,6 +48,33 @@
                   "configuration",
                   "faq",
                   "errors"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "MCP",
+            "groups": [
+              {
+                "group": "MCP",
+                "pages": [
+                  "mcp/index",
+                  "mcp/tools",
+                  "mcp/codex",
+                  "mcp/cursor",
+                  "mcp/claude-code"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Skills",
+            "groups": [
+              {
+                "group": "Skills",
+                "pages": [
+                  "skill/index",
+                  "skill/deckhtml"
                 ]
               }
             ]
@@ -78,21 +108,6 @@
             ]
           },
           {
-            "tab": "MCP",
-            "groups": [
-              {
-                "group": "MCP",
-                "pages": [
-                  "mcp/index",
-                  "mcp/tools",
-                  "mcp/codex",
-                  "mcp/cursor",
-                  "mcp/claude-code"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "Reference",
             "groups": [
               {
@@ -104,48 +119,14 @@
                   "reference/output-png",
                   "reference/report-schema"
                 ]
-              },
-              {
-                "group": "Extensions",
-                "pages": [
-                  "skill/index",
-                  "skill/deckhtml"
-                ]
               }
             ]
           }
-        ],
-        "footer": {
-          "links": [
-            {
-              "header": "Resources",
-              "items": [
-                {
-                  "label": "Quickstart",
-                  "href": "/quickstart"
-                },
-                {
-                  "label": "CLI",
-                  "href": "/cli/index"
-                },
-                {
-                  "label": "MCP",
-                  "href": "/mcp/index"
-                }
-              ]
-            }
-          ]
-        }
+        ]
       },
       {
         "language": "zh",
         "navbar": {
-          "links": [
-            {
-              "label": "GitHub",
-              "href": "https://github.com/kobebryantwt/deckhtml"
-            }
-          ],
           "primary": {
             "type": "button",
             "label": "快速开始",
@@ -154,7 +135,7 @@
         },
         "tabs": [
           {
-            "tab": "文档",
+            "tab": "开发指南",
             "groups": [
               {
                 "group": "开始使用",
@@ -163,6 +144,18 @@
                   "zh/quickstart"
                 ]
               }
+            ]
+          },
+          {
+            "tab": "MCP",
+            "pages": [
+              "zh/mcp/index"
+            ]
+          },
+          {
+            "tab": "扩展",
+            "pages": [
+              "zh/skill/index"
             ]
           },
           {
@@ -178,41 +171,12 @@
             ]
           },
           {
-            "tab": "MCP",
-            "pages": [
-              "zh/mcp/index"
-            ]
-          },
-          {
             "tab": "参考",
             "pages": [
               "zh/reference/index"
             ]
-          },
-          {
-            "tab": "扩展",
-            "pages": [
-              "zh/skill/index"
-            ]
           }
-        ],
-        "footer": {
-          "links": [
-            {
-              "header": "资源",
-              "items": [
-                {
-                  "label": "快速开始",
-                  "href": "/zh/quickstart"
-                },
-                {
-                  "label": "英文文档首页",
-                  "href": "/"
-                }
-              ]
-            }
-          ]
-        }
+        ]
       }
     ]
   }
