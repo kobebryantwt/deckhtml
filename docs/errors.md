@@ -1,0 +1,27 @@
+# Errors
+
+This page provides a first-pass error model for documentation consumers.
+
+## Common failure categories
+
+- Input resolution errors: missing file, unreadable path, invalid URL, or empty stdin.
+- Conversion execution errors: runtime failures during local or cloud processing.
+- Authentication errors: missing or invalid credentials for cloud mode.
+- Output write errors: target path is invalid, unwritable, or inconsistent with the selected format.
+
+## Troubleshooting approach
+
+1. Re-run with the smallest possible input.
+2. Confirm whether the issue reproduces in local mode, cloud mode, or both.
+3. Use `--json` to capture structured output in scripts.
+4. Generate a report when a failed run needs deeper inspection.
+
+## Recommended escalation data
+
+When filing an issue or asking for support, include:
+
+- Input source type: file, stdin, or URL
+- Output format
+- Execution mode
+- Exact command
+- Whether the error reproduces consistently

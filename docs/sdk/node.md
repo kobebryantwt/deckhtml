@@ -1,0 +1,22 @@
+# Node SDK
+
+Use the Node SDK when your conversion workflow lives in JavaScript or TypeScript services.
+
+## Typical use cases
+
+- Backend jobs that turn HTML into slide artifacts
+- CI tasks that need a programmatic wrapper
+- Internal tools built on Node.js
+
+## Expected shape
+
+A typical Node integration should:
+
+1. Import a client or conversion helper from the DeckHTML package
+2. Provide input HTML or a path/URL reference
+3. Pass output and mode options
+4. Inspect a structured result object
+
+## Documentation note
+
+This page is intentionally lightweight until the repository fills in the concrete exported API surface. Once the SDK implementation is finalized, add install commands, code snippets, and response type examples here.

@@ -1,0 +1,34 @@
+# Configuration
+
+DeckHTML configuration is intentionally lightweight in the first documentation release.
+
+## Credentials
+
+Cloud-mode credentials can be supplied in two ways:
+
+- Stored locally through `deckhtml config set api-key <key>`
+- Provided at runtime with `DECKHTML_API_KEY`
+
+Environment variables are preferred in CI and other non-interactive environments.
+
+## Output behavior
+
+Common output-related settings are passed as command flags:
+
+- `-o` or `--output` for the target artifact path
+- `--format` for `pptx`, `pdf`, or `png`
+- `--json` for machine-readable output
+- `--report` to emit a conversion report
+
+## Mode selection
+
+Set execution mode explicitly when you want deterministic behavior:
+
+```bash
+deckhtml index.html --mode local
+deckhtml index.html --mode cloud
+```
+
+## Documentation note
+
+As the codebase fills in more schema-backed config support, this page should become the canonical reference for defaults, precedence, and example configuration files.

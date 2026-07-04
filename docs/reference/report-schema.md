@@ -1,0 +1,16 @@
+# Report Schema Reference
+
+DeckHTML can emit a report alongside the generated artifact so automation and support workflows have more context than a single exit code.
+
+## What a report should capture
+
+- Input sources
+- Selected output format
+- Execution mode
+- Success or failure status
+- Output paths or generated artifacts
+- Error details when conversion fails
+
+## Current documentation status
+
+The report schema files in this repository are present as placeholders today. This page establishes the public purpose of the report and gives Mintlify readers a stable destination until the exact schema is documented.

@@ -1,0 +1,14 @@
+# Skill Overview
+
+The skill documentation area is for agent-facing guidance that helps tools or assistants use DeckHTML effectively.
+
+## What belongs here
+
+- When an agent should choose DeckHTML
+- Recommended prompts or task framing
+- Expected outputs and troubleshooting steps
+
+## Related sections
+
+- [DeckHTML Skill](./deckhtml.md)
+- [MCP Overview](../mcp/index.md)

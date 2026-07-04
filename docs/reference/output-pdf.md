@@ -1,0 +1,14 @@
+# PDF Output Reference
+
+Use `pdf` when you want a fixed-layout document for review, sharing, or archiving.
+
+## Example
+
+```bash
+deckhtml index.html --format pdf -o deck.pdf
+```
+
+## Notes
+
+- PDF is useful when recipients do not need editable slides.
+- It is often paired with report generation for QA workflows.

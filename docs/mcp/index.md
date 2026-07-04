@@ -1,0 +1,29 @@
+# MCP Overview
+
+DeckHTML can be exposed as MCP tools so agent environments can request conversions or related document operations without shelling out manually.
+
+## What belongs here
+
+The MCP section is for:
+
+- Tool discovery
+- Environment-specific setup notes
+- Agent-oriented workflows
+- Tool input and output expectations
+
+## Audience
+
+Read this section if you are integrating DeckHTML into:
+
+- Codex
+- Cursor
+- Claude Code
+- Other MCP-compatible environments
+
+## Start with
+
+1. [MCP Tools](./tools.md)
+2. Your target client page:
+   - [Codex](./codex.md)
+   - [Cursor](./cursor.md)
+   - [Claude Code](./claude-code.md)

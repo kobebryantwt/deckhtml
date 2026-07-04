@@ -1,0 +1,25 @@
+# SDK Overview
+
+The SDK section is for teams integrating DeckHTML into services, internal tools, and automation code.
+
+## When to use the SDK
+
+Choose an SDK when:
+
+- Conversion is part of backend logic
+- You need to wrap DeckHTML behind your own API
+- You want code-level composition instead of shell scripts
+
+## SDKs in this repository
+
+- [Node SDK](./node.md)
+- [Python SDK](./python.md)
+
+## Design intent
+
+The SDK documentation should mirror the same mental model as the CLI:
+
+- specify input
+- choose output format
+- select mode
+- receive structured results

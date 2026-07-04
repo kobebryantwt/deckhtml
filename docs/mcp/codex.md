@@ -1,0 +1,17 @@
+# DeckHTML in Codex
+
+Use the DeckHTML MCP surface in Codex when you want an agent workflow to trigger HTML-to-deck conversion as part of a larger task.
+
+## Good fits
+
+- Generate artifacts after editing HTML slide content
+- Validate a conversion workflow inside an agent session
+- Return structured output that can be consumed by follow-up automation
+
+## Recommended documentation flow
+
+If you publish this repository through Mintlify, point Codex users to:
+
+1. [MCP Overview](./index.md)
+2. [MCP Tools](./tools.md)
+3. [Quickstart](../quickstart.md)

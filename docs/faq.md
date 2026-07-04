@@ -1,0 +1,23 @@
+# FAQ
+
+## What inputs does DeckHTML support?
+
+The documentation currently covers local HTML files, stdin, and hosted URLs.
+
+## What outputs can I generate?
+
+DeckHTML focuses on `pptx`, `pdf`, and `png`.
+
+## When do I need authentication?
+
+Authentication is required for cloud execution and cloud-only enhancement flags.
+
+## Can I automate DeckHTML in CI?
+
+Yes. Prefer structured CLI output with `--json`, provide credentials through environment variables, and generate reports when you need additional debugging context.
+
+## Should I use CLI, SDK, or MCP?
+
+- Use CLI for direct terminal workflows.
+- Use SDK when integrating into application code.
+- Use MCP when exposing DeckHTML to agents or editor tooling.

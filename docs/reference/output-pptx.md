@@ -1,0 +1,14 @@
+# PPTX Output Reference
+
+`pptx` is the default DeckHTML output format.
+
+## Use it when
+
+- You need an editable PowerPoint artifact
+- A downstream team will refine slides manually
+- You want a deck file instead of a fixed-layout export
+
+## Operational notes
+
+- The output path can be inferred from the input basename or set explicitly with `-o`.
+- JSON output is helpful when the deck path needs to be captured by automation.

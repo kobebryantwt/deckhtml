@@ -1,0 +1,14 @@
+# DeckHTML in Cursor
+
+Cursor users typically benefit from DeckHTML through repeatable tool execution and structured outputs that stay close to the editing workflow.
+
+## Suggested setup guidance
+
+- Explain how to install or register the DeckHTML MCP server
+- Document the most important conversion tool first
+- Link back to CLI examples for equivalent manual execution
+
+## Useful cross-links
+
+- [MCP Tools](./tools.md)
+- [CLI Examples](../cli/examples.md)

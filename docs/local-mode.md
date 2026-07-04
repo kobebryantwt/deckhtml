@@ -1,0 +1,30 @@
+# Local Mode
+
+Local mode runs conversion on the invoking machine.
+
+## When to use it
+
+Choose local mode when:
+
+- You want a simple local developer workflow.
+- Your inputs are already on disk.
+- You do not need cloud-only enhancement flags.
+- You prefer local file access and local artifact generation.
+
+## Typical flow
+
+```bash
+deckhtml index.html -o deck.pptx --mode local
+```
+
+In many cases, local mode is the default or the most predictable starting point.
+
+## Best practices
+
+- Keep input assets available locally.
+- Use JSON output for scripts and CI jobs.
+- Generate a report when you need post-run inspection.
+
+```bash
+deckhtml index.html -o deck.pptx --mode local --report --json
+```

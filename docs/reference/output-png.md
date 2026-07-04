@@ -1,0 +1,14 @@
+# PNG Output Reference
+
+Use `png` when you need slide frames as images.
+
+## Example
+
+```bash
+deckhtml index.html --format png -o ./frames
+```
+
+## Notes
+
+- PNG output is useful for previews, thumbnails, or visual diff workflows.
+- Make sure your chosen output path aligns with how image sequences are stored in your environment.
