@@ -4,9 +4,81 @@
   "logo": {
     "light": "/deckhtml-for-developers-light.png",
     "dark": "/deckhtml-for-developers-dark.png",
-    "href": "/"
+    "href": "/docs/quick-start"
   },
   "favicon": "/favicon.ico",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/docs/quick-start",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/docs/quick-start",
+      "permanent": true
+    },
+    {
+      "source": "/concepts",
+      "destination": "/docs/concepts",
+      "permanent": true
+    },
+    {
+      "source": "/architecture",
+      "destination": "/docs/architecture",
+      "permanent": true
+    },
+    {
+      "source": "/local-mode",
+      "destination": "/docs/local-mode",
+      "permanent": true
+    },
+    {
+      "source": "/cloud-mode",
+      "destination": "/docs/cloud-mode",
+      "permanent": true
+    },
+    {
+      "source": "/configuration",
+      "destination": "/docs/configuration",
+      "permanent": true
+    },
+    {
+      "source": "/faq",
+      "destination": "/docs/faq",
+      "permanent": true
+    },
+    {
+      "source": "/errors",
+      "destination": "/docs/errors",
+      "permanent": true
+    },
+    {
+      "source": "/cli/index",
+      "destination": "/cli/overview",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/index",
+      "destination": "/sdk/overview",
+      "permanent": true
+    },
+    {
+      "source": "/mcp/index",
+      "destination": "/mcp/overview",
+      "permanent": true
+    },
+    {
+      "source": "/skill/index",
+      "destination": "/skills/overview",
+      "permanent": true
+    },
+    {
+      "source": "/skill/deckhtml",
+      "destination": "/skills/deckhtml",
+      "permanent": true
+    }
+  ],
   "colors": {
     "primary": "#0f766e",
     "light": "#34d399",
@@ -21,7 +93,7 @@
           "primary": {
             "type": "button",
             "label": "Quickstart",
-            "href": "/quickstart"
+            "href": "/docs/quick-start"
           }
         },
         "tabs": [
@@ -31,20 +103,20 @@
               {
                 "group": "Getting Started",
                 "pages": [
-                  "index",
-                  "quickstart",
-                  "concepts",
-                  "architecture"
+                  "docs/quick-start",
+                  "docs/overview",
+                  "docs/concepts",
+                  "docs/architecture"
                 ]
               },
               {
                 "group": "Operations",
                 "pages": [
-                  "local-mode",
-                  "cloud-mode",
-                  "configuration",
-                  "faq",
-                  "errors"
+                  "docs/local-mode",
+                  "docs/cloud-mode",
+                  "docs/configuration",
+                  "docs/faq",
+                  "docs/errors"
                 ]
               }
             ]
@@ -70,7 +142,7 @@
               {
                 "group": "MCP",
                 "pages": [
-                  "mcp/index",
+                  "mcp/overview",
                   "mcp/tools",
                   "mcp/codex",
                   "mcp/cursor",
@@ -85,8 +157,8 @@
               {
                 "group": "Skills",
                 "pages": [
-                  "skill/index",
-                  "skill/deckhtml"
+                  "skills/overview",
+                  "skills/deckhtml"
                 ]
               }
             ]
@@ -97,7 +169,7 @@
               {
                 "group": "CLI",
                 "pages": [
-                  "cli/index",
+                  "cli/overview",
                   "cli/commands",
                   "cli/features",
                   "cli/examples",
@@ -112,7 +184,7 @@
               {
                 "group": "SDK",
                 "pages": [
-                  "sdk/index",
+                  "sdk/overview",
                   "sdk/node",
                   "sdk/python"
                 ]
@@ -127,7 +199,7 @@
           "primary": {
             "type": "button",
             "label": "快速开始",
-            "href": "/zh/quickstart"
+            "href": "/zh/docs/quick-start"
           }
         },
         "tabs": [
@@ -137,8 +209,8 @@
               {
                 "group": "开始使用",
                 "pages": [
-                  "zh/index",
-                  "zh/quickstart"
+                  "zh/docs/quick-start",
+                  "zh/docs/overview"
                 ]
               }
             ]
@@ -146,31 +218,31 @@
           {
             "tab": "API Reference",
             "pages": [
-              "zh/reference/index"
+              "zh/reference/overview"
             ]
           },
           {
             "tab": "MCP",
             "pages": [
-              "zh/mcp/index"
+              "zh/mcp/overview"
             ]
           },
           {
             "tab": "扩展",
             "pages": [
-              "zh/skill/index"
+              "zh/skills/overview"
             ]
           },
           {
             "tab": "CLI",
             "pages": [
-              "zh/cli/index"
+              "zh/cli/overview"
             ]
           },
           {
             "tab": "SDK",
             "pages": [
-              "zh/sdk/index"
+              "zh/sdk/overview"
             ]
           }
         ]
