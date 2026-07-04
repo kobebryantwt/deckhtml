@@ -1,0 +1,20 @@
+# DeckHTML 中文文档
+
+这里是 DeckHTML 中文帮助中心入口。
+
+当前阶段我们先把中文站点结构和语言切换能力搭好，具体页面内容会在英文文档稳定后逐步翻译补齐。
+
+## 当前可用内容
+
+- [快速开始](/zh/quickstart)
+- [CLI 目录占位页](/zh/cli/index)
+- [SDK 目录占位页](/zh/sdk/index)
+- [MCP 目录占位页](/zh/mcp/index)
+- [参考资料占位页](/zh/reference/index)
+
+## 临时说明
+
+如果你现在需要完整内容，请先参考英文版入口：
+
+- [English Home](/)
+- [English Quickstart](/quickstart)

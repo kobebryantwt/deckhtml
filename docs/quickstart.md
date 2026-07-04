@@ -1,6 +1,6 @@
 # Quickstart
 
-This quickstart is the shortest path from an HTML file to a generated deck artifact.
+This is the shortest path from an HTML file to a generated deck artifact.
 
 ## 1. Prepare an HTML slide
 
@@ -37,6 +37,8 @@ npm install -g @deckflow/deckhtml
 deckhtml index.html -o deck.pptx
 ```
 
+If you want to generate a different output format, pass `--format` explicitly.
+
 ## 3. Check the result
 
 Successful conversion writes the target artifact and prints either the output path or structured JSON, depending on your output mode.
@@ -51,11 +53,11 @@ deckhtml index.html -o deck.pptx --json
 
 ## 4. Pick an execution mode
 
-- Use [Local Mode](./local-mode.md) when conversion should run on the same machine.
-- Use [Cloud Mode](./cloud-mode.md) when you need remote execution or cloud-only enhancement features.
+- Use [Local Mode](/local-mode) when conversion should run on the same machine.
+- Use [Cloud Mode](/cloud-mode) when you need remote execution or cloud-only enhancement features.
 
 ## 5. Go deeper
 
-- Learn the core [Concepts](./concepts.md)
-- Review [Configuration](./configuration.md)
-- Explore richer [CLI examples](./cli/examples.md)
+- Learn the core [Concepts](/concepts)
+- Review [Configuration](/configuration)
+- Explore richer [CLI examples](/cli/examples)

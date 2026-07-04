@@ -1,0 +1,7 @@
+# 扩展
+
+这里预留给中文扩展与技能说明。
+
+后续会补齐 DeckHTML Skill 与相关扩展说明。当前请先参考英文版：
+
+- [Skill Overview](/skill/index)

@@ -3,75 +3,217 @@
   "theme": "mint",
   "colors": {
     "primary": "#0f766e",
-    "light": "#14b8a6",
+    "light": "#34d399",
     "dark": "#14b8a6"
   },
   "navigation": {
-    "groups": [
+    "languages": [
       {
-        "group": "Get Started",
-        "pages": [
-          "index",
-          "quickstart",
-          "concepts",
-          "architecture",
-          "local-mode",
-          "cloud-mode",
-          "configuration",
-          "faq",
-          "errors"
-        ]
+        "language": "en",
+        "default": true,
+        "navbar": {
+          "links": [
+            {
+              "label": "GitHub",
+              "href": "https://github.com/kobebryantwt/deckhtml"
+            }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "Quickstart",
+            "href": "/quickstart"
+          }
+        },
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "index",
+                  "quickstart",
+                  "concepts",
+                  "architecture"
+                ]
+              },
+              {
+                "group": "Operations",
+                "pages": [
+                  "local-mode",
+                  "cloud-mode",
+                  "configuration",
+                  "faq",
+                  "errors"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "CLI",
+            "groups": [
+              {
+                "group": "CLI",
+                "pages": [
+                  "cli/index",
+                  "cli/commands",
+                  "cli/features",
+                  "cli/examples",
+                  "cli/output-modes"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "SDK",
+            "groups": [
+              {
+                "group": "SDK",
+                "pages": [
+                  "sdk/index",
+                  "sdk/node",
+                  "sdk/python"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "MCP",
+            "groups": [
+              {
+                "group": "MCP",
+                "pages": [
+                  "mcp/index",
+                  "mcp/tools",
+                  "mcp/codex",
+                  "mcp/cursor",
+                  "mcp/claude-code"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Reference",
+            "groups": [
+              {
+                "group": "Formats",
+                "pages": [
+                  "reference/input-html",
+                  "reference/output-pptx",
+                  "reference/output-pdf",
+                  "reference/output-png",
+                  "reference/report-schema"
+                ]
+              },
+              {
+                "group": "Extensions",
+                "pages": [
+                  "skill/index",
+                  "skill/deckhtml"
+                ]
+              }
+            ]
+          }
+        ],
+        "footer": {
+          "links": [
+            {
+              "header": "Resources",
+              "items": [
+                {
+                  "label": "Quickstart",
+                  "href": "/quickstart"
+                },
+                {
+                  "label": "CLI",
+                  "href": "/cli/index"
+                },
+                {
+                  "label": "MCP",
+                  "href": "/mcp/index"
+                }
+              ]
+            }
+          ]
+        }
       },
       {
-        "group": "CLI",
-        "pages": [
-          "cli/index",
-          "cli/commands",
-          "cli/features",
-          "cli/examples",
-          "cli/output-modes"
-        ]
-      },
-      {
-        "group": "SDK",
-        "pages": [
-          "sdk/index",
-          "sdk/node",
-          "sdk/python"
-        ]
-      },
-      {
-        "group": "MCP",
-        "pages": [
-          "mcp/index",
-          "mcp/tools",
-          "mcp/codex",
-          "mcp/cursor",
-          "mcp/claude-code"
-        ]
-      },
-      {
-        "group": "Reference",
-        "pages": [
-          "reference/input-html",
-          "reference/output-pptx",
-          "reference/output-pdf",
-          "reference/output-png",
-          "reference/report-schema"
-        ]
-      },
-      {
-        "group": "Skill",
-        "pages": [
-          "skill/index",
-          "skill/deckhtml"
-        ]
+        "language": "zh",
+        "navbar": {
+          "links": [
+            {
+              "label": "GitHub",
+              "href": "https://github.com/kobebryantwt/deckhtml"
+            }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "快速开始",
+            "href": "/zh/quickstart"
+          }
+        },
+        "tabs": [
+          {
+            "tab": "文档",
+            "groups": [
+              {
+                "group": "开始使用",
+                "pages": [
+                  "zh/index",
+                  "zh/quickstart"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "CLI",
+            "pages": [
+              "zh/cli/index"
+            ]
+          },
+          {
+            "tab": "SDK",
+            "pages": [
+              "zh/sdk/index"
+            ]
+          },
+          {
+            "tab": "MCP",
+            "pages": [
+              "zh/mcp/index"
+            ]
+          },
+          {
+            "tab": "参考",
+            "pages": [
+              "zh/reference/index"
+            ]
+          },
+          {
+            "tab": "扩展",
+            "pages": [
+              "zh/skill/index"
+            ]
+          }
+        ],
+        "footer": {
+          "links": [
+            {
+              "header": "资源",
+              "items": [
+                {
+                  "label": "快速开始",
+                  "href": "/zh/quickstart"
+                },
+                {
+                  "label": "英文文档首页",
+                  "href": "/"
+                }
+              ]
+            }
+          ]
+        }
       }
     ]
-  },
-  "footer": {
-    "socials": {
-      "github": "https://github.com/kobebryantwt/deckhtml"
-    }
   }
 }

@@ -1,36 +1,38 @@
-# DeckHTML Documentation
+# Build Presentation Workflows With DeckHTML
 
-Convert HTML into presentation-ready artifacts with one documentation hub for CLI, SDK, and MCP workflows.
+DeckHTML turns HTML into presentation-ready outputs for developer workflows. Use it from the CLI, wire it into your SDK-based pipelines, or expose it to agent environments through MCP.
 
-## What DeckHTML does
+## Choose your path
 
-DeckHTML turns HTML inputs into deck outputs for developer workflows. The current documentation set is organized around three primary use cases:
+If you want to get from HTML to output as fast as possible, start here:
 
-- Use the CLI to convert local files, stdin, or hosted URLs into `pptx`, `pdf`, or `png`.
-- Use the SDKs to integrate conversion into application code or backend jobs.
-- Use the MCP surface to expose DeckHTML tools inside agent environments such as Codex, Cursor, or Claude Code.
+1. [Quickstart](/quickstart)
+2. [Concepts](/concepts)
+3. [CLI Overview](/cli/index)
 
-## Start here
+If you are integrating DeckHTML into tools or products, jump to:
 
-If you are evaluating DeckHTML for the first time, read these pages in order:
+- [SDK Overview](/sdk/index)
+- [MCP Overview](/mcp/index)
+- [Configuration](/configuration)
 
-1. [Quickstart](./quickstart.md)
-2. [Concepts](./concepts.md)
-3. [CLI Overview](./cli/index.md)
+## What you can generate
 
-If you already know you need programmatic access, jump to:
-
-- [SDK Overview](./sdk/index.md)
-- [MCP Overview](./mcp/index.md)
+- `pptx` decks for presentation workflows
+- `pdf` output for review and sharing
+- `png` frames for thumbnails, previews, and downstream automation
 
 ## Documentation map
 
-- Get Started: platform concepts, modes, configuration, FAQ, and error handling.
-- CLI: installation, conversion commands, examples, and output behavior.
-- SDK: integration entry points for Node and Python.
-- MCP: agent-oriented usage and tool references.
-- Reference: input and output contracts, plus report expectations.
+- Documentation: onboarding, concepts, architecture, operating modes, configuration, FAQ, and troubleshooting
+- CLI: commands, features, examples, and output modes
+- SDK: programmatic integration for Node and Python
+- MCP: agent-oriented setup for Codex, Cursor, and Claude Code
+- Reference: input and output contracts plus report schema details
 
-## Current status
+## Language support
 
-This repository currently ships a first-pass Mintlify structure for the developer help center. The CLI section is the most complete area today; other sections establish the information architecture and working guidance so the site can be connected to Mintlify immediately and expanded incrementally.
+This site now includes English and Chinese entry points. The Chinese section is intentionally scaffolded first so we can stabilize the information architecture before translating each page.
+
+- [English](/)
+- [中文](/zh)

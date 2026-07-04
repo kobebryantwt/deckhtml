@@ -1,0 +1,7 @@
+# MCP
+
+这里预留给中文 MCP 文档。
+
+后续会补齐 Codex、Cursor、Claude Code 以及工具说明。当前请先参考英文版：
+
+- [MCP Overview](/mcp/index)
