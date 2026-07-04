@@ -1,0 +1,150 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "默认模块",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/tools/tasks": {
+      "post": {
+        "summary": "创建html2pptx任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer {{userSecret}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "format": "binary",
+                    "type": "string",
+                    "description": "要翻译的文件",
+                    "example": "file:///Users/redstone/Downloads/example-math/preview-6.html"
+                  },
+                  "params": {
+                    "description": "参数的JSON 序列",
+                    "example": "{}",
+                    "type": "string"
+                  },
+                  "spaceId": {
+                    "description": "空间ID",
+                    "example": "{{userId}}",
+                    "type": "string"
+                  },
+                  "type": {
+                    "description": "任务类型",
+                    "example": "convertor.html2pptx",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "files",
+                  "type"
+                ]
+              },
+              "example": {
+                "language": "Chinese",
+                "pageCountType": "STANDARD",
+                "context": {},
+                "topic": "如何阅读一本书"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/tools/tasks/{id}": {
+      "get": {
+        "summary": "获取工具任务详情",
+        "deprecated": false,
+        "description": "查询任务信息",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearea {{userSecret}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "response-event-stream",
+            "in": "header",
+            "description": "是否返回sse",
+            "required": false,
+            "example": "yes",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "webhooks": {},
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}

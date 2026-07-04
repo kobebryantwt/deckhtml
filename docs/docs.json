@@ -1,5 +1,6 @@
 {
   "name": "DeckHTML",
+  "description": "DeckHTML developer documentation for HTML-to-PPTX workflows, API integration, MCP tooling, SDK usage, and automation guides.",
   "theme": "mint",
   "logo": {
     "light": "/deckhtml-for-developers-light.png",
@@ -7,6 +8,12 @@
     "href": "/docs/quick-start"
   },
   "favicon": "/favicon.ico",
+  "api": {
+    "openapi": "reference/默认模块.openapi.json",
+    "playground": {
+      "display": "interactive"
+    }
+  },
   "redirects": [
     {
       "source": "/",
@@ -125,14 +132,8 @@
             "tab": "API Reference",
             "groups": [
               {
-                "group": "Formats",
-                "pages": [
-                  "reference/input-html",
-                  "reference/output-pptx",
-                  "reference/output-pdf",
-                  "reference/output-png",
-                  "reference/report-schema"
-                ]
+                "group": "Default Module",
+                "openapi": "reference/默认模块.openapi.json"
               }
             ]
           },
