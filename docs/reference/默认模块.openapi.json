@@ -2,19 +2,28 @@
   "openapi": "3.1.0",
   "info": {
     "title": "默认模块",
-    "description": "",
+    "description": "DeckHTML default module API for creating conversion tasks and retrieving task execution details.",
     "version": "1.0.0"
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "Tasks",
+      "description": "Submit DeckHTML jobs and inspect their execution state."
+    }
+  ],
   "paths": {
     "/tools/tasks": {
       "post": {
-        "summary": "创建html2pptx任务",
+        "summary": "Create html2pptx task",
         "deprecated": false,
-        "description": "",
-        "tags": [],
+        "description": "Create a conversion task by uploading the source HTML file together with task metadata and optional execution parameters.",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "createHtml2PptxTask",
         "parameters": [],
         "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -48,41 +57,63 @@
                 ]
               },
               "example": {
-                "language": "Chinese",
-                "pageCountType": "STANDARD",
-                "context": {},
-                "topic": "如何阅读一本书"
+                "files": "file:///Users/redstone/Downloads/example-math/preview-6.html",
+                "params": "{}",
+                "spaceId": "workspace_123",
+                "type": "convertor.html2pptx"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "",
+            "description": "Task accepted successfully.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {}
+                  "additionalProperties": true,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Task identifier returned by the service."
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Initial task status after creation."
+                    }
+                  }
                 }
               }
             },
             "headers": {}
+          },
+          "400": {
+            "description": "The request payload is invalid or missing required fields."
+          },
+          "401": {
+            "description": "The bearer token is missing or invalid."
+          },
+          "500": {
+            "description": "The server could not create the task."
           }
         }
       }
     },
     "/tools/tasks/{id}": {
       "get": {
-        "summary": "获取工具任务详情",
+        "summary": "Get task details",
         "deprecated": false,
-        "description": "查询任务信息",
-        "tags": [],
+        "description": "Retrieve the latest execution state for a previously created DeckHTML task.",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "getTaskDetails",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "",
+            "description": "Identifier of the task returned when the job was created.",
             "required": true,
             "schema": {
               "type": "string"
@@ -91,7 +122,7 @@
           {
             "name": "response-event-stream",
             "in": "header",
-            "description": "是否返回sse",
+            "description": "Set to `yes` when you want the endpoint to return an SSE-compatible response stream.",
             "required": false,
             "example": "yes",
             "schema": {
@@ -101,16 +132,40 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Task details returned successfully.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {}
+                  "additionalProperties": true,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Task identifier."
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Current task status."
+                    },
+                    "result": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Task result payload when processing is complete."
+                    }
+                  }
                 }
               }
             },
             "headers": {}
+          },
+          "401": {
+            "description": "The bearer token is missing or invalid."
+          },
+          "404": {
+            "description": "No task exists for the provided identifier."
+          },
+          "500": {
+            "description": "The server could not return the task details."
           }
         }
       }
@@ -131,7 +186,8 @@
   },
   "servers": [
     {
-      "url": "https://app.deckflow.com/v1"
+      "url": "https://app.deckflow.com/v1",
+      "description": "DeckHTML production API"
     }
   ],
   "security": [

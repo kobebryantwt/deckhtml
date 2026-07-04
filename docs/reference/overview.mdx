@@ -9,6 +9,20 @@ This section documents the Default Module API exposed by DeckHTML.
   The API reference pages below are generated from your OpenAPI definition, so request parameters, response schemas, code examples, and the interactive playground stay aligned with the spec.
 </Note>
 
+## Authentication
+
+All endpoints in this module use:
+
+```text
+Authorization: Bearer <APIKEY>
+```
+
+The interactive playground uses the production base URL:
+
+```text
+https://app.deckflow.com/v1
+```
+
 ## Endpoints in this module
 
 <CardGroup cols={2}>
@@ -19,3 +33,7 @@ This section documents the Default Module API exposed by DeckHTML.
     Fetch the current task status, details, and optional event-stream behavior.
   </Card>
 </CardGroup>
+
+<Tip>
+  A practical workflow is: create the task first, store the returned task identifier, then call the task details endpoint until the job reaches a terminal state.
+</Tip>
