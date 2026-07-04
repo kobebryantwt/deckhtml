@@ -6,67 +6,69 @@
     "light": "#14b8a6",
     "dark": "#14b8a6"
   },
-  "navigation": [
-    {
-      "group": "Get Started",
-      "pages": [
-        "index",
-        "quickstart",
-        "concepts",
-        "architecture",
-        "local-mode",
-        "cloud-mode",
-        "configuration",
-        "faq",
-        "errors"
-      ]
-    },
-    {
-      "group": "CLI",
-      "pages": [
-        "cli/index",
-        "cli/commands",
-        "cli/features",
-        "cli/examples",
-        "cli/output-modes"
-      ]
-    },
-    {
-      "group": "SDK",
-      "pages": [
-        "sdk/index",
-        "sdk/node",
-        "sdk/python"
-      ]
-    },
-    {
-      "group": "MCP",
-      "pages": [
-        "mcp/index",
-        "mcp/tools",
-        "mcp/codex",
-        "mcp/cursor",
-        "mcp/claude-code"
-      ]
-    },
-    {
-      "group": "Reference",
-      "pages": [
-        "reference/input-html",
-        "reference/output-pptx",
-        "reference/output-pdf",
-        "reference/output-png",
-        "reference/report-schema"
-      ]
-    },
-    {
-      "group": "Skill",
-      "pages": [
-        "skill/index",
-        "skill/deckhtml"
-      ]
-    }
-  ],
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "index",
+          "quickstart",
+          "concepts",
+          "architecture",
+          "local-mode",
+          "cloud-mode",
+          "configuration",
+          "faq",
+          "errors"
+        ]
+      },
+      {
+        "group": "CLI",
+        "pages": [
+          "cli/index",
+          "cli/commands",
+          "cli/features",
+          "cli/examples",
+          "cli/output-modes"
+        ]
+      },
+      {
+        "group": "SDK",
+        "pages": [
+          "sdk/index",
+          "sdk/node",
+          "sdk/python"
+        ]
+      },
+      {
+        "group": "MCP",
+        "pages": [
+          "mcp/index",
+          "mcp/tools",
+          "mcp/codex",
+          "mcp/cursor",
+          "mcp/claude-code"
+        ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "reference/input-html",
+          "reference/output-pptx",
+          "reference/output-pdf",
+          "reference/output-png",
+          "reference/report-schema"
+        ]
+      },
+      {
+        "group": "Skill",
+        "pages": [
+          "skill/index",
+          "skill/deckhtml"
+        ]
+      }
+    ]
+  },
   "footer": {
     "socials": {
       "github": "https://github.com/kobebryantwt/deckhtml"
