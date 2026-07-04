@@ -2,7 +2,12 @@
 title: Overview
 sidebarTitle: Overview
 ---
+
 The SDK section is for teams integrating DeckHTML into services, internal tools, and automation code.
+
+<Note>
+  Choose an SDK when conversion is part of application logic and you want a more stable integration boundary than shelling out from scripts.
+</Note>
 
 ## When to use the SDK
 
@@ -11,6 +16,17 @@ Choose an SDK when:
 - Conversion is part of backend logic
 - You need to wrap DeckHTML behind your own API
 - You want code-level composition instead of shell scripts
+
+## Integration surfaces
+
+<CardGroup cols={2}>
+  <Card title="Node SDK" href="/sdk/node">
+    Best for JavaScript and TypeScript services, internal platforms, and web backends.
+  </Card>
+  <Card title="Python SDK" href="/sdk/python">
+    Best for Python services, automation stacks, and data-oriented workflows.
+  </Card>
+</CardGroup>
 
 ## SDKs in this repository
 
@@ -25,3 +41,17 @@ The SDK documentation should mirror the same mental model as the CLI:
 - choose output format
 - select mode
 - receive structured results
+
+## Suggested adoption path
+
+<Steps>
+  <Step title="Prototype with the CLI first">
+    Validate the HTML input and output you want before moving into application code.
+  </Step>
+  <Step title="Pick the SDK that matches your runtime">
+    Move to [Node SDK](/sdk/node) or [Python SDK](/sdk/python) depending on your service environment.
+  </Step>
+  <Step title="Mirror the same conversion contract">
+    Keep the same mental model as the CLI: input, format, execution mode, and structured result.
+  </Step>
+</Steps>

@@ -2,7 +2,26 @@
 title: Overview
 sidebarTitle: Overview
 ---
+
 DeckHTML can be exposed as MCP tools so agent environments can request conversions or related document operations without shelling out manually.
+
+<Note>
+  Use the MCP surface when conversion should be part of a larger agent workflow, not just a standalone command-line task.
+</Note>
+
+## Why use MCP
+
+<CardGroup cols={3}>
+  <Card title="Tool-first workflows">
+    Let agents call DeckHTML as a tool instead of generating shell commands manually.
+  </Card>
+  <Card title="Structured execution">
+    Keep conversion inputs, outputs, and follow-up actions inside one agent session.
+  </Card>
+  <Card title="Client-specific setup">
+    Tailor the same DeckHTML capability for Codex, Cursor, Claude Code, and other MCP hosts.
+  </Card>
+</CardGroup>
 
 ## What belongs here
 
@@ -22,10 +41,16 @@ Read this section if you are integrating DeckHTML into:
 - Claude Code
 - Other MCP-compatible environments
 
-## Start with
+## Recommended path
 
-1. [MCP Tools](/mcp/tools)
-2. Your target client page:
-   - [Codex](/mcp/codex)
-   - [Cursor](/mcp/cursor)
-   - [Claude Code](/mcp/claude-code)
+<Steps>
+  <Step title="Understand the DeckHTML tool surface">
+    Start with [MCP Tools](/mcp/tools) to understand what the agent can call and what each tool expects.
+  </Step>
+  <Step title="Choose your MCP host">
+    Continue with the setup guide for [Codex](/mcp/codex), [Cursor](/mcp/cursor), or [Claude Code](/mcp/claude-code).
+  </Step>
+  <Step title="Validate the end-to-end flow">
+    After setup, run a small conversion task and confirm the output can be consumed by the rest of your agent workflow.
+  </Step>
+</Steps>

@@ -2,9 +2,28 @@
 title: Overview
 sidebarTitle: Overview
 ---
+
 > Convert HTML files, stdin, or URLs into PPTX, PDF, or PNG artifacts from your terminal.
 
 The DeckHTML CLI gives developers and agents command-line access to HTML-to-deck conversion. It accepts local files, multiple ordered HTML files, stdin, and hosted URLs. It runs synchronously by default, can choose between local and cloud execution, and supports machine-readable JSON output for scripts and CI.
+
+<Note>
+  Use the CLI when you want the fastest path from an HTML input to a generated artifact. It is the best starting point for local testing, shell automation, and CI pipelines.
+</Note>
+
+## What the CLI is good at
+
+<CardGroup cols={3}>
+  <Card title="Fast local runs">
+    Validate slide HTML and output behavior directly from your terminal.
+  </Card>
+  <Card title="Scriptable output">
+    Emit machine-readable JSON for automation, CI checks, and downstream tooling.
+  </Card>
+  <Card title="Flexible inputs">
+    Work with local files, stdin, multiple ordered files, or hosted URLs.
+  </Card>
+</CardGroup>
 
 ## Quick Start
 
@@ -13,6 +32,10 @@ Run DeckHTML without installing:
 ```bash
 npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
 ```
+
+<Tip>
+  If you are evaluating DeckHTML for the first time, use a single local HTML file first. Once that succeeds, expand to multiple inputs, JSON output, or cloud mode.
+</Tip>
 
 ## 1. Install
 
@@ -153,3 +176,17 @@ Verify your credentials:
 ```bash
 deckhtml auth status
 ```
+
+## Read next
+
+<CardGroup cols={3}>
+  <Card title="Commands" href="/cli/commands">
+    Review the command surface, flags, and subcommands in one place.
+  </Card>
+  <Card title="Examples" href="/cli/examples">
+    Browse common workflows for files, stdin, hosted URLs, and reports.
+  </Card>
+  <Card title="Output Modes" href="/cli/output-modes">
+    Decide when to use human-readable output or machine-readable JSON.
+  </Card>
+</CardGroup>
