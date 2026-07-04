@@ -2,14 +2,11 @@
   "name": "DeckHTML",
   "theme": "mint",
   "logo": {
-    "light": "/deckhtml-for-developers-dark.png",
-    "dark": "/deckhtml-for-developers-light.png",
+    "light": "/deckhtml-for-developers-light.png",
+    "dark": "/deckhtml-for-developers-dark.png",
     "href": "/"
   },
-  "favicon": {
-    "light": "/deckhtml-for-developers-dark.png",
-    "dark": "/deckhtml-for-developers-light.png"
-  },
+  "favicon": "/favicon.ico",
   "colors": {
     "primary": "#0f766e",
     "light": "#34d399",
