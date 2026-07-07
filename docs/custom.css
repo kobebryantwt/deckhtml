@@ -190,36 +190,22 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   display: none !important;
 }
 
-/* Keep the sidebar header compact when Mintlify exposes language/menu triggers. */
-#sidebar-content > .flex:first-child {
+/* Keep the desktop sidebar header stable across locales. Mintlify localizes
+   the theme-toggle aria label, so target the header structure instead. */
+#sidebar-content > .flex:first-child:has(.nav-logo) {
   gap: 0.5rem;
 }
 
-#sidebar-content > .flex:first-child > a:first-child,
-#sidebar a:has(.nav-logo),
-nav[aria-label="Pages"] a:has(.nav-logo) {
+#sidebar-content > .flex:first-child:has(.nav-logo) > a:has(.nav-logo) {
   order: 1 !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
 }
 
-#sidebar-content > .flex:first-child button[aria-label*="Toggle dark mode" i],
-#sidebar-content > .flex:first-child [data-component-name="theme-toggle"],
-#sidebar button[aria-label*="Toggle dark mode" i],
-nav[aria-label="Pages"] button[aria-label*="Toggle dark mode" i] {
-  order: 3 !important;
+#sidebar-content > .flex:first-child:has(.nav-logo) > button {
+  order: 2 !important;
+  flex-shrink: 0 !important;
   margin-left: auto !important;
-}
-
-#sidebar-content > .flex:first-child > a:first-child {
-  margin-right: auto;
-}
-
-@media (min-width: 1024px) {
-  #sidebar-content > .flex:first-child button[aria-label*="Toggle dark mode" i],
-  #sidebar-content > .flex:first-child [data-component-name="theme-toggle"],
-  #sidebar button[aria-label*="Toggle dark mode" i],
-  nav[aria-label="Pages"] button[aria-label*="Toggle dark mode" i] {
-    order: 3 !important;
-  }
 }
 
 @media (max-width: 1023px) {
