@@ -1,13 +1,38 @@
 {
+  "$schema": "https://mintlify.com/docs.json",
   "name": "DeckHTML",
   "description": "DeckHTML developer documentation for HTML-to-PPTX workflows, API integration, MCP tooling, SDK usage, and automation guides.",
-  "theme": "mint",
+  "theme": "maple",
   "logo": {
     "light": "/deckhtml-for-developers-light.png",
     "dark": "/deckhtml-for-developers-dark.png",
     "href": "/docs/quick-start"
   },
   "favicon": "/favicon.ico",
+  "background": {
+    "color": {
+      "light": "#f7f8f6",
+      "dark": "#090b0b"
+    }
+  },
+  "fonts": {
+    "family": "Plus Jakarta Sans",
+    "heading": {
+      "family": "Plus Jakarta Sans"
+    }
+  },
+  "appearance": {
+    "default": "light"
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "claude",
+      "cursor",
+      "vscode",
+      "mcp"
+    ]
+  },
   "api": {
     "openapi": "reference/默认模块.openapi.json",
     "playground": {
