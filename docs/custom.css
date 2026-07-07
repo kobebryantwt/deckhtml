@@ -180,8 +180,6 @@ button[aria-label*="logout" i],
 [data-testid*="logout" i],
 [data-component-name*="logout" i],
 logout-link,
-#localization-select-trigger,
-#localization-select-content,
 #sidebar-content > :last-child a:nth-of-type(2),
 #sidebar-content > :last-child a[href*="login" i],
 #sidebar-content > :last-child a[href*="logout" i],
@@ -205,41 +203,6 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
 #sidebar-content > .flex:first-child > a:first-child {
   margin-right: auto;
   order: 1;
-}
-
-#deck-language-switch {
-  display: inline-grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  align-items: center;
-  width: 4.85rem;
-  height: 1.75rem;
-  padding: 2px;
-  border: 1px solid var(--deck-border);
-  border-radius: 999px;
-  background: var(--deck-surface);
-  box-shadow: 0 1px 0 rgba(12, 31, 28, 0.03);
-  order: 2;
-}
-
-#deck-language-switch a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.35rem;
-  border-radius: 999px;
-  color: var(--deck-text-muted);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  text-decoration: none;
-}
-
-#deck-language-switch a[data-active="true"] {
-  color: var(--deck-text);
-  background: var(--deck-surface-muted);
-  box-shadow: inset 0 0 0 1px var(--deck-border);
 }
 
 @media (min-width: 1024px) {
