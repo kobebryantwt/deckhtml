@@ -178,7 +178,10 @@ a[href*="logout" i],
 button[aria-label*="log out" i],
 button[aria-label*="logout" i],
 [data-testid*="logout" i],
-[data-component-name*="logout" i] {
+[data-component-name*="logout" i],
+#sidebar-content > :last-child a:nth-of-type(2),
+#sidebar-content > :last-child a[href*="login" i],
+#sidebar-content > :last-child a[href*="logout" i] {
   display: none !important;
 }
 
@@ -207,6 +210,36 @@ button[aria-label*="logout" i],
 #sidebar-content > .flex:first-child > a:first-child {
   margin-right: auto;
   order: 1;
+}
+
+/* Maple currently renders the language dropdown in the lower-left sidebar
+   utility block. Visually pin it beside the theme toggle in the header row. */
+@media (min-width: 1024px) {
+  #sidebar-content > :last-child :is(
+    button[aria-haspopup="menu"],
+    button[aria-expanded],
+    [role="button"]
+  ):has(:is(svg, span)) {
+    position: fixed !important;
+    top: 1.55rem !important;
+    left: 12.7rem !important;
+    z-index: 60 !important;
+    width: 4.8rem !important;
+    height: 1.75rem !important;
+    padding: 0 0.35rem !important;
+    border: 1px solid var(--deck-border) !important;
+    border-radius: 999px !important;
+    background: var(--deck-surface) !important;
+    box-shadow: 0 1px 0 rgba(12, 31, 28, 0.03);
+  }
+
+  #sidebar-content > :last-child :is(
+    button[aria-haspopup="menu"],
+    button[aria-expanded],
+    [role="button"]
+  ):has(:is(svg, span)):hover {
+    border-color: var(--deck-border-strong) !important;
+  }
 }
 
 @media (max-width: 1023px) {
