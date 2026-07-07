@@ -189,21 +189,9 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   display: none !important;
 }
 
-/* Keep the language picker in the sidebar header area, immediately before the
-   theme switcher, when Mintlify exposes it as a language/menu trigger. */
+/* Keep the sidebar header compact when Mintlify exposes language/menu triggers. */
 #sidebar-content > .flex:first-child {
   gap: 0.5rem;
-}
-
-#sidebar-content > .flex:first-child :is(
-  button[aria-label*="language" i],
-  button[aria-label*="locale" i],
-  button[aria-label*="English" i],
-  button[aria-label*="中文" i],
-  a[href^="/zh"],
-  a[href^="/docs"]
-) {
-  order: 2;
 }
 
 #sidebar-content > .flex:first-child button[aria-label*="Toggle dark mode" i],
@@ -217,8 +205,13 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
 }
 
 /* Maple currently renders the language dropdown in the lower-left sidebar
-   utility block. Visually pin it beside the theme toggle in the header row. */
+   utility block. Move it below the logo row and above search/navigation so it
+   has enough room to render the full language name and dropdown menu. */
 @media (min-width: 1024px) {
+  #sidebar-content > .flex:first-child + .flex {
+    margin-top: 4.15rem !important;
+  }
+
   #sidebar-content > :last-child :is(
     button[aria-haspopup="menu"],
     button[aria-expanded],
@@ -229,56 +222,18 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child,
   nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child {
     position: fixed !important;
-    top: 1.55rem !important;
-    left: 11.35rem !important;
+    top: 4.15rem !important;
+    left: 1.75rem !important;
     z-index: 60 !important;
-    width: 3.65rem !important;
+    width: 8.25rem !important;
     height: 1.75rem !important;
-    padding: 0 0.45rem !important;
+    padding: 0 0.75rem !important;
     border: 1px solid var(--deck-border) !important;
     border-radius: 999px !important;
     background: var(--deck-surface) !important;
     box-shadow: 0 1px 0 rgba(12, 31, 28, 0.03);
-  }
-
-  #sidebar-content > :last-child :is(
-    button[aria-haspopup="menu"],
-    button[aria-expanded],
-    [role="button"]
-  ):has(:is(svg, span)) :is(span, div),
-  #sidebar > [class*="border-t"]:last-child > :last-child :is(span, div),
-  #sidebar > [class*="border-t"]:last-child > div > :last-child :is(span, div),
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child :is(span, div),
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child :is(span, div) {
-    font-size: 0 !important;
-  }
-
-  #sidebar-content > :last-child :is(
-    button[aria-haspopup="menu"],
-    button[aria-expanded],
-    [role="button"]
-  ):has(:is(svg, span))::before,
-  #sidebar > [class*="border-t"]:last-child > :last-child::before,
-  #sidebar > [class*="border-t"]:last-child > div > :last-child::before,
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child::before,
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child::before {
-    content: "EN";
     color: var(--deck-text);
-    font-size: 0.76rem;
-    font-weight: 650;
-    letter-spacing: 0.04em;
-  }
-
-  html:lang(zh) #sidebar-content > :last-child :is(
-    button[aria-haspopup="menu"],
-    button[aria-expanded],
-    [role="button"]
-  ):has(:is(svg, span))::before,
-  html:lang(zh) #sidebar > [class*="border-t"]:last-child > :last-child::before,
-  html:lang(zh) #sidebar > [class*="border-t"]:last-child > div > :last-child::before,
-  html:lang(zh) nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child::before,
-  html:lang(zh) nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child::before {
-    content: "ZH";
+    font-size: 0.86rem !important;
   }
 
   #sidebar-content > :last-child :is(
@@ -297,10 +252,7 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   #sidebar-content > .flex:first-child [data-component-name="theme-toggle"],
   #sidebar button[aria-label*="Toggle dark mode" i],
   nav[aria-label="Pages"] button[aria-label*="Toggle dark mode" i] {
-    position: fixed !important;
-    top: 1.55rem !important;
-    left: 15.25rem !important;
-    z-index: 61 !important;
+    position: static !important;
   }
 }
 
