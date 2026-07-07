@@ -179,6 +179,9 @@ button[aria-label*="log out" i],
 button[aria-label*="logout" i],
 [data-testid*="logout" i],
 [data-component-name*="logout" i],
+logout-link,
+#localization-select-trigger,
+#localization-select-content,
 #sidebar-content > :last-child a:nth-of-type(2),
 #sidebar-content > :last-child a[href*="login" i],
 #sidebar-content > :last-child a[href*="logout" i],
@@ -204,55 +207,47 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   order: 1;
 }
 
-/* Maple currently renders the language dropdown in the lower-left sidebar
-   utility block. Move it below the logo row and above search/navigation so it
-   has enough room to render the full language name and dropdown menu. */
+#deck-language-switch {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  align-items: center;
+  width: 4.85rem;
+  height: 1.75rem;
+  padding: 2px;
+  border: 1px solid var(--deck-border);
+  border-radius: 999px;
+  background: var(--deck-surface);
+  box-shadow: 0 1px 0 rgba(12, 31, 28, 0.03);
+  order: 2;
+}
+
+#deck-language-switch a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.35rem;
+  border-radius: 999px;
+  color: var(--deck-text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-decoration: none;
+}
+
+#deck-language-switch a[data-active="true"] {
+  color: var(--deck-text);
+  background: var(--deck-surface-muted);
+  box-shadow: inset 0 0 0 1px var(--deck-border);
+}
+
 @media (min-width: 1024px) {
-  #sidebar-content > .flex:first-child + .flex {
-    margin-top: 4.15rem !important;
-  }
-
-  #sidebar-content > :last-child :is(
-    button[aria-haspopup="menu"],
-    button[aria-expanded],
-    [role="button"]
-  ):has(:is(svg, span)),
-  #sidebar > [class*="border-t"]:last-child > :last-child,
-  #sidebar > [class*="border-t"]:last-child > div > :last-child,
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child,
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child {
-    position: fixed !important;
-    top: 4.15rem !important;
-    left: 1.75rem !important;
-    z-index: 60 !important;
-    width: 8.25rem !important;
-    height: 1.75rem !important;
-    padding: 0 0.75rem !important;
-    border: 1px solid var(--deck-border) !important;
-    border-radius: 999px !important;
-    background: var(--deck-surface) !important;
-    box-shadow: 0 1px 0 rgba(12, 31, 28, 0.03);
-    color: var(--deck-text);
-    font-size: 0.86rem !important;
-  }
-
-  #sidebar-content > :last-child :is(
-    button[aria-haspopup="menu"],
-    button[aria-expanded],
-    [role="button"]
-  ):has(:is(svg, span)):hover,
-  #sidebar > [class*="border-t"]:last-child > :last-child:hover,
-  #sidebar > [class*="border-t"]:last-child > div > :last-child:hover,
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child:hover,
-  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child:hover {
-    border-color: var(--deck-border-strong) !important;
-  }
-
   #sidebar-content > .flex:first-child button[aria-label*="Toggle dark mode" i],
   #sidebar-content > .flex:first-child [data-component-name="theme-toggle"],
   #sidebar button[aria-label*="Toggle dark mode" i],
   nav[aria-label="Pages"] button[aria-label*="Toggle dark mode" i] {
-    position: static !important;
+    order: 3;
   }
 }
 
