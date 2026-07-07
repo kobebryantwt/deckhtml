@@ -124,8 +124,8 @@
         "navbar": {
           "primary": {
             "type": "button",
-            "label": "Quickstart",
-            "href": "/docs/quick-start"
+            "label": "Get Started",
+            "href": "https://app.deckflow.com/?initent=sign-up"
           }
         },
         "tabs": [
@@ -228,8 +228,8 @@
         "navbar": {
           "primary": {
             "type": "button",
-            "label": "快速开始",
-            "href": "/zh/docs/quick-start"
+            "label": "Get Started",
+            "href": "https://app.deckflow.com/?initent=sign-up"
           }
         },
         "tabs": [
