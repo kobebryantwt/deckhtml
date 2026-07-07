@@ -181,7 +181,11 @@ button[aria-label*="logout" i],
 [data-component-name*="logout" i],
 #sidebar-content > :last-child a:nth-of-type(2),
 #sidebar-content > :last-child a[href*="login" i],
-#sidebar-content > :last-child a[href*="logout" i] {
+#sidebar-content > :last-child a[href*="logout" i],
+#sidebar > [class*="border-t"]:last-child > :nth-child(2),
+#sidebar > [class*="border-t"]:last-child > div > :nth-child(2),
+nav[aria-label="Pages"] > [class*="border-t"]:last-child > :nth-child(2),
+nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   display: none !important;
 }
 
@@ -219,7 +223,11 @@ button[aria-label*="logout" i],
     button[aria-haspopup="menu"],
     button[aria-expanded],
     [role="button"]
-  ):has(:is(svg, span)) {
+  ):has(:is(svg, span)),
+  #sidebar > [class*="border-t"]:last-child > :last-child,
+  #sidebar > [class*="border-t"]:last-child > div > :last-child,
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child,
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child {
     position: fixed !important;
     top: 1.55rem !important;
     left: 12.7rem !important;
@@ -237,7 +245,11 @@ button[aria-label*="logout" i],
     button[aria-haspopup="menu"],
     button[aria-expanded],
     [role="button"]
-  ):has(:is(svg, span)):hover {
+  ):has(:is(svg, span)):hover,
+  #sidebar > [class*="border-t"]:last-child > :last-child:hover,
+  #sidebar > [class*="border-t"]:last-child > div > :last-child:hover,
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child:hover,
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child:hover {
     border-color: var(--deck-border-strong) !important;
   }
 }
