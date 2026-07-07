@@ -230,15 +230,55 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child {
     position: fixed !important;
     top: 1.55rem !important;
-    left: 11.15rem !important;
+    left: 11.35rem !important;
     z-index: 60 !important;
-    width: 5.65rem !important;
+    width: 3.65rem !important;
     height: 1.75rem !important;
-    padding: 0 0.35rem !important;
+    padding: 0 0.45rem !important;
     border: 1px solid var(--deck-border) !important;
     border-radius: 999px !important;
     background: var(--deck-surface) !important;
     box-shadow: 0 1px 0 rgba(12, 31, 28, 0.03);
+  }
+
+  #sidebar-content > :last-child :is(
+    button[aria-haspopup="menu"],
+    button[aria-expanded],
+    [role="button"]
+  ):has(:is(svg, span)) :is(span, div),
+  #sidebar > [class*="border-t"]:last-child > :last-child :is(span, div),
+  #sidebar > [class*="border-t"]:last-child > div > :last-child :is(span, div),
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child :is(span, div),
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child :is(span, div) {
+    font-size: 0 !important;
+  }
+
+  #sidebar-content > :last-child :is(
+    button[aria-haspopup="menu"],
+    button[aria-expanded],
+    [role="button"]
+  ):has(:is(svg, span))::before,
+  #sidebar > [class*="border-t"]:last-child > :last-child::before,
+  #sidebar > [class*="border-t"]:last-child > div > :last-child::before,
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child::before,
+  nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child::before {
+    content: "EN";
+    color: var(--deck-text);
+    font-size: 0.76rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+  }
+
+  html:lang(zh) #sidebar-content > :last-child :is(
+    button[aria-haspopup="menu"],
+    button[aria-expanded],
+    [role="button"]
+  ):has(:is(svg, span))::before,
+  html:lang(zh) #sidebar > [class*="border-t"]:last-child > :last-child::before,
+  html:lang(zh) #sidebar > [class*="border-t"]:last-child > div > :last-child::before,
+  html:lang(zh) nav[aria-label="Pages"] > [class*="border-t"]:last-child > :last-child::before,
+  html:lang(zh) nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :last-child::before {
+    content: "ZH";
   }
 
   #sidebar-content > :last-child :is(
@@ -259,7 +299,7 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
   nav[aria-label="Pages"] button[aria-label*="Toggle dark mode" i] {
     position: fixed !important;
     top: 1.55rem !important;
-    left: 17rem !important;
+    left: 15.25rem !important;
     z-index: 61 !important;
   }
 }
