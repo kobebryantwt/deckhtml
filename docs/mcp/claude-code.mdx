@@ -1,19 +1,70 @@
 ---
-title: DeckHTML in Claude Code
-sidebarTitle: DeckHTML in Claude Code
-description: "Connect DeckHTML MCP tools to Claude Code for agent-driven document conversion workflows."
+title: Deckflow MCP in Claude Code
+sidebarTitle: Claude Code
+description: "Add Deckflow MCP to Claude Code with hosted HTTP OAuth or local stdio for presentation and document automation workflows."
 ---
 
-Claude Code users generally need the same conceptual model as Codex and Cursor users: a documented set of tools, predictable output, and a clear way to troubleshoot failures.
+Claude Code can use Deckflow MCP as either a hosted HTTP server or a local stdio server. Hosted HTTP is the easiest path when you want browser-based OAuth. Local stdio is useful when the agent must pass local absolute file paths.
 
-## What to document first
+<Note>
+  Prefer hosted HTTP for normal use. Use local stdio when your workflow depends on local files that are not available as URLs or uploaded `fileId` references.
+</Note>
 
-- How the DeckHTML MCP server is exposed
-- Which tool performs conversion
-- What output is returned on success
-- What data to capture on failure
+## Hosted HTTP setup
 
-## Related pages
+<Steps>
+  <Step title="Add the Deckflow MCP endpoint">
+    ```bash
+    claude mcp add --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+    ```
+  </Step>
+  <Step title="Authorize in Claude Code">
+    Run `/mcp` in Claude Code and follow the browser authorization prompt. The server supports MCP OAuth discovery, dynamic client registration, and PKCE.
+  </Step>
+  <Step title="Start a new Claude Code session">
+    Ask Claude Code to list Deckflow tools or run a small task, such as rendering Markdown or converting a hosted file URL.
+  </Step>
+</Steps>
 
-- [MCP Overview](/mcp/overview)
-- [Errors](/docs/errors)
+## Local stdio setup
+
+Build the MCP server locally, then register the stdio entry:
+
+```bash
+npm install
+npm run build
+
+claude mcp add deckflow \
+  -e DECKFLOW_API_KEY=<key> \
+  -- node /absolute/path/deckflow-mcp/dist/entry/stdio.js
+```
+
+Add `DECKFLOW_SPACE_ID=<spaceId>` when you want all calls to use a specific Deckflow space.
+
+## File input behavior
+
+| Transport | Accepted file inputs |
+|---|---|
+| Hosted HTTP | `http(s)` URLs and `fileId:<uploaded-file-id>` |
+| Local stdio | Local absolute paths, `http(s)` URLs, and `fileId:<uploaded-file-id>` |
+
+## Try it
+
+<CardGroup cols={1}>
+  <Card title="Generate a deck">
+    Ask Claude Code: `Use Deckflow to generate a 10-page executive presentation about our product launch.`
+  </Card>
+  <Card title="Translate a document">
+    Ask Claude Code: `Use Deckflow to translate this uploaded PPTX from Chinese to English, then return the download link.`
+  </Card>
+  <Card title="Render HTML">
+    Ask Claude Code: `Use Deckflow render_html to turn this HTML slide into a PPTX artifact.`
+  </Card>
+</CardGroup>
+
+## Validation checklist
+
+- Claude Code lists the `deckflow` server in `/mcp`.
+- Tool discovery shows generation, translation, rendering, file utility, and task management tools.
+- A small utility task returns either a completed result or a `taskId`.
+- Long-running tasks can be checked with `get_task` and downloaded with `download_task_result`.

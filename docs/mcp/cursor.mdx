@@ -1,18 +1,82 @@
 ---
-title: DeckHTML in Cursor
-sidebarTitle: DeckHTML in Cursor
-description: "Configure Cursor to call DeckHTML MCP tools for HTML-to-presentation conversion tasks."
+title: Deckflow MCP in Cursor
+sidebarTitle: Cursor
+description: "Connect Cursor to Deckflow MCP so coding agents can generate decks, render HTML, convert files, and manage document tasks."
 ---
 
-Cursor users typically benefit from DeckHTML through repeatable tool execution and structured outputs that stay close to the editing workflow.
+Cursor can call Deckflow MCP tools from inside an editing workflow. This is useful when an agent is writing slide HTML, preparing source files, or coordinating document operations alongside code changes.
 
-## Suggested setup guidance
+<Note>
+  Cursor MCP configuration may vary by version. Use the hosted HTTP endpoint when your Cursor build supports remote MCP servers. Use local stdio when you need local file path access.
+</Note>
 
-- Explain how to install or register the DeckHTML MCP server
-- Document the most important conversion tool first
-- Link back to CLI examples for equivalent manual execution
+## Hosted HTTP endpoint
 
-## Useful cross-links
+```text
+https://mcp.deckflow.com/mcp/v1/
+```
 
-- [MCP Tools](/mcp/tools)
-- [CLI Examples](/cli/examples)
+Use one of these authentication paths:
+
+| Method | When to use it |
+|---|---|
+| OAuth | Cursor supports remote MCP authorization in your environment. |
+| `Authorization: Bearer <API key>` | Cursor or a proxy can send custom headers. |
+| `?API_KEY=<key>` | Custom headers are not available. |
+
+## Local stdio configuration
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "command": "node",
+      "args": ["/absolute/path/deckflow-mcp/dist/entry/stdio.js"],
+      "env": {
+        "DECKFLOW_API_KEY": "<your-api-key>"
+      }
+    }
+  }
+}
+```
+
+Add `DECKFLOW_SPACE_ID` if you want Cursor to operate inside a fixed Deckflow space.
+
+## Recommended workflows
+
+<CardGroup cols={2}>
+  <Card title="HTML-to-artifact iteration" icon="code">
+    Let Cursor edit an HTML slide, then call `render_html` to create a PNG preview or PPTX output.
+  </Card>
+  <Card title="Document cleanup" icon="file-cog">
+    Convert, compress, inspect, split, or merge existing files while Cursor keeps the source project context nearby.
+  </Card>
+  <Card title="Deck generation" icon="sparkles">
+    Use `generate_presentation` from a product brief, README, or source document.
+  </Card>
+  <Card title="Task follow-up" icon="list-checks">
+    Poll with `get_task`, list prior tasks with `list_tasks`, then download with `download_task_result`.
+  </Card>
+</CardGroup>
+
+## Prompt examples
+
+```text
+Use Deckflow MCP to render docs/examples/intro.html as a PPTX.
+```
+
+```text
+Generate a presentation from this project README for a sales engineering audience.
+```
+
+```text
+Translate the uploaded deck from English to Simplified Chinese and return the PPTX download link.
+```
+
+## Troubleshooting
+
+| Symptom | Check |
+|---|---|
+| Cursor cannot read a local file | Use stdio mode, or upload the file and pass `fileId:<id>`. |
+| Authorization fails | Prefer OAuth, or verify the API key header/query value. |
+| Task does not finish before client timeout | Ask Cursor to call `get_task` later, or use a shorter `waitSeconds` and poll. |

@@ -1,57 +1,106 @@
 ---
-title: Overview
+title: Deckflow MCP
 sidebarTitle: Overview
-description: "Expose DeckHTML as MCP tools so agent environments can request conversions without shelling out manually."
+description: "Create presentations, translate documents, revamp decks, convert files, render HTML, and manage Deckflow tasks from MCP-compatible agents."
 ---
 
-DeckHTML can be exposed as MCP tools so agent environments can request conversions or related document operations without shelling out manually.
+Deckflow MCP is a hosted [Model Context Protocol](https://modelcontextprotocol.io) server for agent-driven presentation and document workflows. It lets tools such as Claude Code, Cursor, Codex, Manus, and other MCP clients call Deckflow capabilities directly instead of asking the model to compose shell commands by hand.
 
 <Note>
-  Use the MCP surface when conversion should be part of a larger agent workflow, not just a standalone command-line task.
+  The production Streamable HTTP endpoint is `https://mcp.deckflow.com/mcp/v1/`. Use OAuth when your client supports remote MCP authorization. Use bearer credentials or query-based credentials only for clients that cannot complete OAuth.
 </Note>
 
-## Why use MCP
+## What you can do
 
-<CardGroup cols={3}>
-  <Card title="Tool-first workflows">
-    Let agents call DeckHTML as a tool instead of generating shell commands manually.
+<CardGroup cols={2}>
+  <Card title="Generate presentations" icon="sparkles" href="/mcp/tools#presentation-and-document-creation">
+    Create a deck or document from a prompt, reference files, search settings, audience, page count, and author metadata.
   </Card>
-  <Card title="Structured execution">
-    Keep conversion inputs, outputs, and follow-up actions inside one agent session.
+  <Card title="Translate and revamp documents" icon="languages" href="/mcp/tools#presentation-and-document-creation">
+    Translate PPTX, PDF, DOCX, and related document files, or restyle an existing presentation into a refreshed deck.
   </Card>
-  <Card title="Client-specific setup">
-    Tailor the same DeckHTML capability for Codex, Cursor, Claude Code, and other MCP hosts.
+  <Card title="Render HTML and Markdown" icon="code" href="/mcp/tools#rendering-and-conversion">
+    Render inline HTML, HTML files, or Markdown into PNG, PPTX, or image artifacts for previews and presentation workflows.
+  </Card>
+  <Card title="Process files and PPTX" icon="file-cog" href="/mcp/tools#file-and-pptx-utilities">
+    Convert formats, split and merge decks, embed fonts, inspect slide text or fonts, run OCR, transform images, and compress files.
   </Card>
 </CardGroup>
 
-## What belongs here
-
-The MCP section is for:
-
-- Tool discovery
-- Environment-specific setup notes
-- Agent-oriented workflows
-- Tool input and output expectations
-
-## Audience
-
-Read this section if you are integrating DeckHTML into:
-
-- Codex
-- Cursor
-- Claude Code
-- Other MCP-compatible environments
-
-## Recommended path
+## How it works
 
 <Steps>
-  <Step title="Understand the DeckHTML tool surface">
-    Start with [MCP Tools](/mcp/tools) to understand what the agent can call and what each tool expects.
+  <Step title="Connect an MCP client">
+    Add the hosted endpoint to an MCP-compatible client, or run the stdio entry locally when the client needs local file access.
   </Step>
-  <Step title="Choose your MCP host">
-    Continue with the setup guide for [Codex](/mcp/codex), [Cursor](/mcp/cursor), or [Claude Code](/mcp/claude-code).
+  <Step title="Authenticate">
+    Use OAuth for remote clients that support browser authorization. For direct integrations, send `Authorization: Bearer <API key>`, `X-Auth-Token: <user_... token>`, or `?API_KEY=<key>`.
   </Step>
-  <Step title="Validate the end-to-end flow">
-    After setup, run a small conversion task and confirm the output can be consumed by the rest of your agent workflow.
+  <Step title="Call a tool">
+    Ask the agent to generate, translate, convert, render, inspect, or manage a task. Long-running creation tools return a `taskId` first.
+  </Step>
+  <Step title="Poll and download results">
+    Use `get_task` to wait for completion and `download_task_result` to retrieve the generated artifact.
   </Step>
 </Steps>
+
+## Transport options
+
+<Tabs>
+  <Tab title="Hosted HTTP">
+    Use hosted HTTP when your MCP client can connect to a remote server.
+
+    ```text
+    https://mcp.deckflow.com/mcp/v1/
+    ```
+
+    Hosted HTTP supports OAuth, bearer API keys, user tokens, and `API_KEY` query credentials. In this mode, file inputs should be URLs or `fileId:<uploaded-file-id>` references.
+  </Tab>
+  <Tab title="Local stdio">
+    Use local stdio when the MCP client should pass local absolute file paths to the server.
+
+    ```json
+    {
+      "mcpServers": {
+        "deckflow": {
+          "command": "node",
+          "args": ["/absolute/path/deckflow-mcp/dist/entry/stdio.js"],
+          "env": {
+            "DECKFLOW_API_KEY": "<your-api-key>"
+          }
+        }
+      }
+    }
+    ```
+
+    Stdio accepts local absolute paths, `http(s)` URLs, and `fileId:<uploaded-file-id>` inputs.
+  </Tab>
+</Tabs>
+
+## Authentication choices
+
+| Method | Best for | Notes |
+|---|---|---|
+| OAuth | Claude Code, Manus, and clients with remote MCP authorization | Add the URL and finish authorization in the browser. |
+| `Authorization: Bearer <API key>` | Direct HTTP clients and controlled integrations | Optionally include `X-Space-Id`. |
+| `X-Auth-Token: <user_... token>` | Existing Deckflow user-token workflows | Optionally include `X-Space-Id`. |
+| `?API_KEY=<key>` | Clients that cannot send custom headers | Use only when headers or OAuth are unavailable. |
+| `DECKFLOW_API_KEY` | Local stdio mode | Required for stdio unless credentials are supplied another way. |
+
+<Tip>
+  If your account belongs to multiple spaces, pass `DECKFLOW_SPACE_ID`, `X-Space-Id`, or `?spaceId=`. Without it, the server resolves the first activated space automatically.
+</Tip>
+
+## Recommended reading path
+
+<CardGroup cols={3}>
+  <Card title="Tool reference" icon="wrench" href="/mcp/tools">
+    Review all available MCP tools and the typical task lifecycle.
+  </Card>
+  <Card title="Codex setup" icon="terminal" href="/mcp/codex">
+    Connect Deckflow MCP to Codex-style agent workflows.
+  </Card>
+  <Card title="Claude Code setup" icon="bot" href="/mcp/claude-code">
+    Add Deckflow MCP to Claude Code with hosted HTTP or local stdio.
+  </Card>
+</CardGroup>

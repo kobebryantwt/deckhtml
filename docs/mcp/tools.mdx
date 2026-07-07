@@ -1,28 +1,120 @@
 ---
 title: MCP Tools
 sidebarTitle: MCP Tools
-description: "Review the DeckHTML MCP tool surface, expected inputs, and generated outputs for agent integrations."
+description: "Review the 19 Deckflow MCP tools for presentation generation, document translation, file conversion, rendering, PPTX utilities, OCR, and task management."
 ---
 
-This page describes the role of the DeckHTML MCP surface in the documentation set.
+Deckflow MCP exposes 19 tools. Creation tools can finish immediately for small jobs, or return a `taskId` for longer workflows. Management tools let the agent poll, list, download, retry, and delete tasks.
 
-## Tool categories
+<Note>
+  File inputs use one shared convention. In stdio mode, `file` and `files` can be local absolute paths, `http(s)` URLs, or `fileId:<uploaded-file-id>`. In hosted HTTP mode, use URLs or `fileId` references because the remote server cannot read your local filesystem.
+</Note>
 
-The current repository structure suggests three common classes of MCP behavior:
+## Typical lifecycle
 
-- Convert HTML into target artifacts
-- Inspect or validate inputs before conversion
-- Return structured results to the calling agent
+<Steps>
+  <Step title="Start a creation tool">
+    Call a tool such as `generate_presentation`, `translate_document`, `revamp_presentation`, `convert_file`, or `render_html`.
+  </Step>
+  <Step title="Use waitSeconds intentionally">
+    Small file utilities default to waiting up to 60 seconds. Long-running tools default to returning immediately with a `taskId`.
+  </Step>
+  <Step title="Wait for completion">
+    Call `get_task` with `wait: true` and a suitable `timeoutSeconds` when the MCP client supports longer waits and progress notifications.
+  </Step>
+  <Step title="Download the artifact">
+    Call `download_task_result` once the task is complete. The response includes temporary download URLs or result objects with accessible artifact links.
+  </Step>
+</Steps>
 
-## Expected usage pattern
+## Presentation and document creation
 
-An MCP client typically:
+| Tool | Purpose | Common inputs |
+|---|---|---|
+| `generate_presentation` | Generate a presentation or document from text and optional reference files. | `inputText`, `files`, `enableSearch`, `advancedModel`, `fastMode`, `intent`, `audience`, `pageCount`, `author` |
+| `revamp_presentation` | Refresh or restyle an existing presentation. | `file`, `lang` |
+| `translate_document` | Translate PPTX, PDF, DOCX, and related documents. | `file`, `from`, `to`, `model`, `useGlossary`, `imageTranslate` |
 
-1. Selects a DeckHTML tool
-2. Sends input HTML or references to input sources
-3. Receives output metadata or artifact locations
-4. Surfaces the result back into the editor or agent workflow
+<Tip>
+  These tools are usually minute-level jobs. Let them return a `taskId`, then use `get_task` and `download_task_result` rather than forcing the initial call to wait.
+</Tip>
 
-## Documentation note
+## Rendering and conversion
 
-As the code-backed MCP contracts mature, this page should become the precise contract reference for tool names, arguments, and response payloads.
+| Tool | Purpose | Common inputs |
+|---|---|---|
+| `convert_file` | Convert supported files across image, PDF, PPTX, HTML, and video formats. | `file`, `targetFormat`, `resolution`, `imageFormat` |
+| `render_html` | Render inline HTML or an HTML file to PNG or PPTX. | `html`, `file`, `target`, `scale`, `fullPage`, `width`, `height`, `needEmbedFonts`, `platform`, `lang` |
+| `render_markdown` | Render Markdown content or a Markdown file to an image. | `markdown`, `file`, `theme`, `scale`, `pageWidth` |
+| `build_html_player` | Package multiple HTML pages into a player experience. | `contents`, `pageWidth`, `pageHeight`, `title`, `description`, `brandMarkPosition` |
+
+### Supported conversion examples
+
+| Source | Targets |
+|---|---|
+| `.ppt` / `.pptx` | image, PDF, PPTX, video |
+| `.pdf` | image |
+| `.key` | image, HTML, PDF |
+| `.doc` / `.docx` | PDF |
+
+## File and PPTX utilities
+
+| Tool | Purpose | Common inputs |
+|---|---|---|
+| `split_pptx` | Split a PPTX into individual or selected slide ranges. | `file`, `indexes`, `allowSize` |
+| `merge_pptx` | Merge multiple PPTX files in order. | `files`, `hiddens`, `autoResize` |
+| `embed_pptx_fonts` | Embed selected fonts into a PPTX. | `file`, `usedFonts` |
+| `inspect_pptx` | Extract font or text-shape information from a PPTX. | `file`, `aspect`, `pickPages`, `includeLayout`, `includeMaster`, `includeNotes`, `onlyBrief` |
+| `ocr_image` | Recognize text in an image. | `file`, `language` |
+| `transform_image` | Resize an image or convert it to WebP. | `file`, `action`, `maxWidth`, `maxHeight` |
+| `compress_file` | Compress videos and general files. | `file` |
+
+## Task management
+
+| Tool | Purpose | Common inputs |
+|---|---|---|
+| `get_task` | Query task status, optionally blocking until completion or timeout. | `taskId`, `wait`, `timeoutSeconds` |
+| `download_task_result` | Retrieve completed task artifacts. | `taskId`, `resultType`, `savePath` |
+| `list_tasks` | List recent tasks in the current account or space. | `startIndex`, `maxResults` |
+| `delete_task` | Delete a task and its associated files. | `taskId` |
+| `start_task` | Trigger or retry a small utility task. | `taskId` |
+
+## Response pattern
+
+Creation tools return task metadata such as:
+
+```json
+{
+  "taskId": "task_...",
+  "type": "convertor.html2pptx",
+  "status": "processing",
+  "name": "Deckflow task",
+  "preview": null,
+  "result": null,
+  "download": null,
+  "next": "Call get_task to check progress."
+}
+```
+
+When `status` becomes `completed`, responses can include `download` URLs or result objects. If a wait times out, the tool can return `timedOut: true`; that is not a failure. Continue polling with `get_task`.
+
+## Long-running example
+
+```text
+generate_presentation {
+  inputText: "Create a product launch deck for Deckflow",
+  pageCount: 10,
+  audience: "Executives"
+}
+
+get_task {
+  taskId: "task_...",
+  wait: true,
+  timeoutSeconds: 600
+}
+
+download_task_result {
+  taskId: "task_...",
+  resultType: "pptx"
+}
+```
