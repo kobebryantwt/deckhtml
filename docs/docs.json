@@ -4,8 +4,8 @@
   "description": "DeckHTML developer documentation for HTML-to-PPTX workflows, API integration, MCP tooling, SDK usage, and automation guides.",
   "theme": "maple",
   "logo": {
-    "light": "/deckhtml-for-developers-light.png",
-    "dark": "/deckhtml-for-developers-dark.png",
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png",
     "href": "/docs/quick-start"
   },
   "favicon": "/favicon.ico",
