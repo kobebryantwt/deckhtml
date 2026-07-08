@@ -1,0 +1,101 @@
+---
+title: Deckflow MCP in WorkBuddy
+sidebarTitle: WorkBuddy
+description: "Connect WorkBuddy to Deckflow MCP from the Connectors UI, complete authorization, and verify the available Deckflow tools."
+---
+
+WorkBuddy can connect to Deckflow MCP so agent workflows can generate presentations, translate documents, render HTML, and process files without dropping into separate scripts. WorkBuddy does not use a CLI-style `add mcp` command. Instead, you add Deckflow from the Connectors UI, paste the MCP config into WorkBuddy's config editor, then complete the authorization flow in the MCP manager.
+
+<Note>
+  The hosted MCP endpoint is the easiest WorkBuddy setup path. After authorization succeeds, WorkBuddy shows the Deckflow tool list directly inside the MCP manager.
+</Note>
+
+## Open the WorkBuddy MCP configuration entry
+
+<Steps>
+  <Step title="Open the Connectors area">
+    In WorkBuddy, open the `Connectors` area from the top navigation. Then click `Custom Connector` to create a new MCP entry.
+  </Step>
+  <Step title="Open the MCP config editor">
+    In the MCP manager, click `Configure MCP`. WorkBuddy opens the config file editor where you can paste the Deckflow MCP definition and save it.
+  </Step>
+</Steps>
+
+![WorkBuddy MCP config entry](/images/mcp/workbuddy-mcp-entry.png)
+
+## Add the Deckflow MCP config
+
+Paste this config into WorkBuddy's MCP config editor:
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "url": "https://mcp.deckflow.com/mcp/v1/"
+    }
+  }
+}
+```
+
+Save the file after the new server entry is added.
+
+## Complete authorization
+
+<Steps>
+  <Step title="Return to the MCP manager">
+    After the config is saved, WorkBuddy lists `deckflow` under `My MCP`.
+  </Step>
+  <Step title="Connect the server">
+    If WorkBuddy marks the server as needing authentication, click `Connect` to start the authorization flow.
+  </Step>
+  <Step title="Finish verification">
+    Complete the authorization flow in the browser, then return to WorkBuddy.
+  </Step>
+</Steps>
+
+![WorkBuddy verification required state](/images/mcp/workbuddy-mcp-verify.png)
+
+## Verify the Deckflow tools
+
+After authorization succeeds, WorkBuddy expands the `deckflow` entry and shows the available MCP tools directly in the MCP manager.
+
+![WorkBuddy Deckflow tools list](/images/mcp/workbuddy-mcp-tools.png)
+
+## Good fits for WorkBuddy
+
+<CardGroup cols={2}>
+  <Card title="Deck creation from notes" icon="sparkles">
+    Generate a presentation from a project brief, status update, roadmap, or customer summary.
+  </Card>
+  <Card title="Artifact rendering" icon="code">
+    Turn HTML or Markdown content into presentation-ready outputs such as PPTX or PNG assets.
+  </Card>
+  <Card title="Conversion and delivery" icon="file-cog">
+    Convert, compress, inspect, or merge files as part of a broader workflow.
+  </Card>
+  <Card title="Task lifecycle management" icon="list-checks">
+    Use `get_task`, `list_tasks`, and `download_task_result` for long-running jobs.
+  </Card>
+</CardGroup>
+
+## Prompt examples
+
+```text
+Use Deckflow MCP to build a 6-slide weekly business review deck from these notes.
+```
+
+```text
+Render this HTML presentation into PPTX and also return a PNG preview.
+```
+
+```text
+Convert this PPTX to PDF, then compress the result if the file is too large to share.
+```
+
+## Validation checklist
+
+- WorkBuddy recognizes `deckflow` as an available MCP server.
+- WorkBuddy no longer shows the `needs authentication` state after the connection is completed.
+- Tool discovery shows the full Deckflow tool list in the MCP manager.
+- The tool list includes generation, rendering, file utility, and task lifecycle tools.
+- A completed task can be downloaded successfully from `download_task_result`.

@@ -176,7 +176,9 @@
                   "mcp/tools",
                   "mcp/codex",
                   "mcp/cursor",
-                  "mcp/claude-code"
+                  "mcp/claude-code",
+                  "mcp/trae",
+                  "mcp/workbuddy"
                 ]
               }
             ]
