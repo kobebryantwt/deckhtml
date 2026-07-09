@@ -1,7 +1,7 @@
 ---
 title: Node SDK
 sidebarTitle: Node SDK
-description: "Use the published Node programmatic API from @deckflow/deckhtml inside JavaScript and TypeScript code."
+description: "Use the Node programmatic API from @deckflow/deckhtml inside JavaScript and TypeScript code."
 ---
 
 Use the Node SDK when your conversion workflow lives in JavaScript or TypeScript services, workers, or internal tools.
@@ -12,11 +12,11 @@ Use the Node SDK when your conversion workflow lives in JavaScript or TypeScript
 npm install @deckflow/deckhtml playwright pptxgenjs
 ```
 
-The published package declares `playwright` and `pptxgenjs` as peer runtime dependencies. In practice, your application environment needs both available at runtime because the published converter stack imports them directly.
+The package declares `playwright` and `pptxgenjs` as peer runtime dependencies. In practice, your application environment needs both available at runtime because the converter stack imports them directly.
 
 ## Import the published API
 
-The published package exports `convertHtmlToPptx()` from its main entry:
+The package exports `convertHtmlToPptx()` from its main entry:
 
 ```ts
 import { convertHtmlToPptx } from '@deckflow/deckhtml';
@@ -51,7 +51,7 @@ await fs.writeFile('deck.pptx', result.data);
 
 ## Useful `ConversionOptions`
 
-The published type definitions expose these commonly useful options:
+The type definitions expose these commonly useful options:
 
 | Option | Type | Meaning |
 | --- | --- | --- |
@@ -85,7 +85,7 @@ await fs.writeFile('deck.pptx', result.data);
 
 ## Return type
 
-The published `ConversionResult` includes:
+The `ConversionResult` includes:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -96,4 +96,4 @@ The published `ConversionResult` includes:
 
 ## Practical note
 
-The Node SDK is currently focused on PPTX generation through the published `convertHtmlToPptx()` API. The CLI remains the documented surface for `pdf`, `png`, authentication flows, cloud flags, and shell-oriented workflows.
+The Node SDK is currently focused on PPTX generation through `convertHtmlToPptx()`. The CLI remains the documented surface for broader shell-oriented workflows, authentication flows, and cloud flags.

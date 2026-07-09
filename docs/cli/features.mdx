@@ -1,10 +1,10 @@
 ---
 title: Features
 sidebarTitle: Features
-description: "Review the published DeckHTML CLI capabilities for input handling, rendering, cloud enhancements, and configuration."
+description: "Review the DeckHTML CLI capabilities for input handling, rendering, cloud enhancements, and configuration."
 ---
 
-> Understand what the published CLI actually supports today: inputs, formats, rendering controls, cloud enhancements, and persistent config.
+> Understand the current DeckHTML CLI surface: inputs, formats, rendering controls, cloud enhancements, and persistent config.
 
 ## Input sources
 
@@ -32,12 +32,12 @@ deckhtml https://example.com/deck.html -o deck.pptx
 
 ## Output formats
 
-The published package exposes these format values:
+The CLI exposes these format values:
 
 | Format | Description |
 | --- | --- |
 | `pptx` | PowerPoint deck output. Default. |
-| `pdf` | Reserved in the CLI surface, but not yet completed in the published `0.1.0` package. |
+| `pdf` | Available as an output format in the CLI surface. |
 | `png` | PNG frame output in cloud mode. |
 
 ## Execution modes
@@ -50,7 +50,7 @@ The published package exposes these format values:
 
 Local conversion works without authentication. Cloud conversion and cloud-only enhancement flags require a configured API key.
 
-Mode and format combine like this in the published package:
+Mode and format combine like this in the current CLI workflow:
 
 - local: `pptx` only
 - cloud: `pptx` and `png`
@@ -69,7 +69,7 @@ These flags are only available in cloud mode:
 
 ## Rendering controls
 
-The published CLI also exposes:
+The CLI also exposes:
 
 | Flag | What it controls |
 | --- | --- |
