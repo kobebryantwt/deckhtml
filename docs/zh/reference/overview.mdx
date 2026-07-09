@@ -1,11 +1,49 @@
 ---
-title: 参考资料
-sidebarTitle: 参考资料
-description: "查看 DeckHTML API 的任务创建、状态查询和数据契约。"
+title: API 概览
+sidebarTitle: API 概览
+description: "查看 Deckflow API 的统一任务模型、两个核心接口，以及按业务场景组织的参考文档。"
 ---
 
-这里预留给中文参考文档。
+Deckflow API 的业务能力很多，但底层其实围绕同一套异步任务模型展开。无论是文档生成、翻译、焕新，还是文件转换与优化，本质上都建立在两个核心接口之上：
 
-后续会补齐输入 HTML、输出格式和报告结构。当前请先参考英文版：
+- `POST /tools/tasks`
+- `GET /tools/tasks/{id}`
 
-- [Reference](/reference/overview)
+因此，这一节会分成两层来讲：
+
+- **核心接口**：解释任务是如何被提交和查询的
+- **场景文档**：解释同一个接口在不同 `type + params` 下怎么覆盖不同业务能力
+
+<Note>
+  交互式接口页由仓库内的 OpenAPI 文件驱动；场景页则用于帮助你理解同一个接口在不同业务场景中的调用方式。
+</Note>
+
+## 先读这一组
+
+<CardGroup cols={3}>
+  <Card title="认证与任务模型" href="/zh/reference/authentication-and-task-model">
+    先理解共用的 Base URL、认证方式、表单字段和异步任务流程。
+  </Card>
+  <Card title="提交异步任务" href="/zh/reference/submit-async-task">
+    查看统一的 `POST /tools/tasks` 接口。
+  </Card>
+  <Card title="查询任务状态" href="/zh/reference/query-task-status">
+    查看统一的 `GET /tools/tasks/{id}` 接口。
+  </Card>
+  <Card title="文档生成场景" href="/zh/reference/generation-scenarios">
+    查看生成演示文稿时的 `type` 和 `params` 用法。
+  </Card>
+  <Card title="文档翻译场景" href="/zh/reference/translation-scenarios">
+    查看翻译任务在统一接口中的映射方式。
+  </Card>
+  <Card title="文档焕新场景" href="/zh/reference/revamp-scenarios">
+    查看焕新任务如何通过统一接口表达设计刷新需求。
+  </Card>
+  <Card title="工具 API 场景" href="/zh/reference/tool-api-scenarios">
+    查看转换器、提取器、合并与拆分器、优化器等工具类任务。
+  </Card>
+</CardGroup>
+
+<Tip>
+  可以把这套 API 记成一句话：**先用提交接口创建任务，再用查询接口等待结果；不同场景只是在 `type` 和 `params` 上做区分。**
+</Tip>

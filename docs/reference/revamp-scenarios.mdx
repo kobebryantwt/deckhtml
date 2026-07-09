@@ -1,0 +1,42 @@
+---
+title: Revamp Scenarios
+sidebarTitle: Revamp Scenarios
+description: "Use the shared task submit endpoint to restyle an existing PPTX deck with updated design direction and visual rules."
+---
+
+Revamp jobs let you refresh an existing presentation without changing the overall async model.
+
+## Core mapping
+
+| Field | Value |
+|---|---|
+| Endpoint | `POST /tools/tasks` |
+| `type` | `revamp` |
+| Files | PPTX presentation files |
+| Query endpoint | `GET /tools/tasks/{id}` |
+
+## Common revamp parameters
+
+The source Deckflow docs show revamp options such as:
+
+- `inputText`
+- `advancedModel`
+- `fastMode`
+
+`inputText` is typically used for style direction, branding notes, palette rules, or other visual refresh instructions.
+
+## Example `params`
+
+```json
+{
+  "inputText": "Use Outfit for headings and refresh the deck with a green-blue palette.",
+  "advancedModel": false,
+  "fastMode": false
+}
+```
+
+## Recommended usage
+
+- Upload the PPTX you want to refresh
+- Describe the design intent clearly in `inputText`
+- Treat this as a restyling workflow rather than a net-new generation flow

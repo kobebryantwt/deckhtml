@@ -1,0 +1,37 @@
+---
+title: 查询任务状态
+sidebarTitle: 查询任务状态
+description: "通过 GET /tools/tasks/{id} 查询任务状态、轮询进度并获取结果下载信息。"
+openapi: "/reference/默认模块.openapi.json GET /tools/tasks/{id}"
+---
+
+无论是生成、翻译、焕新还是工具类任务，最终都使用这个接口查询执行状态。
+
+## 这个接口会返回什么
+
+- 当前 `status`
+- 原始任务元数据
+- 可用时返回的 `result`
+- 任务完成后的下载链接
+
+## 推荐轮询方式
+
+<Steps>
+  <Step title="保存任务 ID">
+    从 `POST /tools/tasks` 的返回结果中读取 `id`。
+  </Step>
+  <Step title="持续查询">
+    使用 `GET /tools/tasks/{id}` 轮询，直到任务进入终态。
+  </Step>
+  <Step title="读取结果链接">
+    任务完成后，从结果对象中获取最终下载地址。
+  </Step>
+</Steps>
+
+## 可选的实时流模式
+
+源站文档还描述了基于 `response-event-stream: yes` 请求头的 SSE 模式。除非你的系统必须实时接收状态更新，否则优先使用普通 JSON 轮询即可。
+
+<Tip>
+  大多数业务不需要高频轮询。建议从较宽松的轮询间隔开始，并对长任务逐步退避。
+</Tip>

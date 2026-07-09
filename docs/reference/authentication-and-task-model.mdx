@@ -1,0 +1,66 @@
+---
+title: Authentication & Task Model
+sidebarTitle: Authentication & Task Model
+description: "Review the shared base URL, authentication headers, common form fields, and async task lifecycle used across Deckflow APIs."
+---
+
+All Deckflow business scenarios share the same transport model. Before looking at a generation, translation, revamp, or tool guide, make sure this common foundation is clear.
+
+## Base URL
+
+```text
+https://app.deckflow.com/api
+```
+
+## Required headers
+
+| Header | Required | Purpose |
+|---|---|---|
+| `Authorization` | Yes | Use `Bearer <YOUR_API_KEY>` for all API calls. |
+| `Content-Type` | Yes for submit | Use `multipart/form-data` when submitting a new task. |
+
+## Shared async flow
+
+<Steps>
+  <Step title="Authenticate">
+    Send your API key in the `Authorization` header.
+  </Step>
+  <Step title="Submit a task">
+    Upload one or more files, choose a `type`, and provide any scenario-specific JSON through `params`.
+  </Step>
+  <Step title="Track progress">
+    Store the returned task ID and query its state until it reaches a terminal status.
+  </Step>
+  <Step title="Download the result">
+    Once the task is complete, read the signed download URL from the task result.
+  </Step>
+</Steps>
+
+## Common submit fields
+
+| Field | Required | Meaning |
+|---|---|---|
+| `files` | Usually yes | Source files for the task. Multiple files are allowed for merge-style workflows. |
+| `type` | Yes | The scenario or tool identifier, such as `generation`, `translation`, `revamp`, or `convertor.html2pptx`. |
+| `params` | Usually yes | A JSON string containing scenario-specific options. |
+| `name` | No | A human-readable task label. |
+| `notifyURL` | No | Webhook callback URL for task status changes. |
+| `spaceId` | No | Space or workspace identifier when required by your environment. |
+
+## Status handling
+
+- Newly created tasks usually begin in a pending or processing state.
+- Poll the query endpoint until the task reaches a terminal state.
+- Successful tasks return file metadata and a temporary download URL.
+- Failed tasks return an error payload that you should surface or log.
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="Submit Async Task" href="/reference/submit-async-task">
+    Open the `POST /tools/tasks` endpoint reference.
+  </Card>
+  <Card title="Query Task Status" href="/reference/query-task-status">
+    Open the `GET /tools/tasks/{id}` endpoint reference.
+  </Card>
+</CardGroup>

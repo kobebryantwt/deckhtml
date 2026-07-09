@@ -1,0 +1,44 @@
+---
+title: Translation Scenarios
+sidebarTitle: Translation Scenarios
+description: "Use the shared task submit endpoint to translate PPTX, PDF, Word, and related documents while preserving layout where possible."
+---
+
+Translation jobs reuse the same async task API. The difference is the task type and the language settings inside `params`.
+
+## Core mapping
+
+| Field | Value |
+|---|---|
+| Endpoint | `POST /tools/tasks` |
+| `type` | `translation` |
+| Files | PPTX, Keynote, PDF, Word, Excel, and related presentation documents |
+| Query endpoint | `GET /tools/tasks/{id}` |
+
+## Common translation parameters
+
+The source Deckflow docs explicitly show:
+
+- `from`
+- `to`
+
+These select the source and target language codes for the translation task.
+
+## Example `params`
+
+```json
+{
+  "from": "zh",
+  "to": "en"
+}
+```
+
+## Recommended usage
+
+- Submit the original document through `files`
+- Keep language codes explicit even when the source language seems obvious
+- Poll for completion, then read the translated file URL from the task result
+
+<Tip>
+  Translation workflows are designed for presentation-style documents. The product documentation emphasizes preserving layout and visual structure where possible.
+</Tip>

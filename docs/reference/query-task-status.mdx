@@ -1,0 +1,37 @@
+---
+title: Query Task Status
+sidebarTitle: Query Task Status
+description: "Query the latest task state, poll for completion, and retrieve result metadata through GET /tools/tasks/{id}."
+openapi: "/reference/默认模块.openapi.json GET /tools/tasks/{id}"
+---
+
+Use this endpoint after submitting any Deckflow job. It is the shared status endpoint for generation, translation, revamp, and tool workflows.
+
+## What this endpoint returns
+
+- The current `status`
+- The original task metadata
+- Any available `result` payload
+- The final download URL when processing is complete
+
+## Polling pattern
+
+<Steps>
+  <Step title="Store the task ID">
+    Read the `id` value returned from `POST /tools/tasks`.
+  </Step>
+  <Step title="Poll until a terminal state">
+    Repeat `GET /tools/tasks/{id}` until the task is completed or failed.
+  </Step>
+  <Step title="Read the output URL">
+    Once the task completes, retrieve the signed file URL from the task result.
+  </Step>
+</Steps>
+
+## Optional streaming behavior
+
+The source Deckflow API documentation also describes an SSE-style mode using the `response-event-stream: yes` header. Use normal JSON polling unless your integration specifically benefits from streamed status updates.
+
+<Tip>
+  Most integrations do not need aggressive polling. Start with a modest retry interval and back off for long-running jobs.
+</Tip>

@@ -1,0 +1,42 @@
+---
+title: 文档焕新场景
+sidebarTitle: 文档焕新
+description: "通过统一任务接口提交焕新类任务，对已有 PPTX 演示文稿进行视觉刷新和风格改造。"
+---
+
+焕新任务用于重设计现有演示文稿，但底层仍然通过统一的任务提交接口完成。
+
+## 场景映射
+
+| 字段 | 值 |
+|---|---|
+| 接口 | `POST /tools/tasks` |
+| `type` | `revamp` |
+| 文件 | PPTX |
+| 查询接口 | `GET /tools/tasks/{id}` |
+
+## 常见焕新参数
+
+源站文档展示了以下字段：
+
+- `inputText`
+- `advancedModel`
+- `fastMode`
+
+其中 `inputText` 主要用于描述排版风格、品牌调性、配色规则或其他设计刷新要求。
+
+## `params` 示例
+
+```json
+{
+  "inputText": "将标题字体改为 Outfit，并统一使用绿蓝色系风格。",
+  "advancedModel": false,
+  "fastMode": false
+}
+```
+
+## 使用建议
+
+- 上传原始 PPTX 文件
+- 在 `inputText` 中清楚描述焕新目标
+- 这类任务更适合做视觉刷新，而不是从零开始新建文稿

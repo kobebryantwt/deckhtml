@@ -1,0 +1,59 @@
+---
+title: 工具 API 场景
+sidebarTitle: 工具 API
+description: "查看转换器、提取器、合并与拆分器、优化器等工具类能力如何映射到统一任务接口。"
+---
+
+Deckflow 的工具 API 依旧通过统一的 `POST /tools/tasks` 提交，差别主要体现在 `type` 的取值和 `params` 的结构上。
+
+## 文件转换器
+
+源站文档中这一组包含多种格式转换能力，例如：
+
+| 场景 | `type` | 说明 |
+|---|---|---|
+| HTML 转 PPTX | `convertor.html2pptx` | 支持 `.html` / `.htm`，`params` 可包含 `{"needEmbedFonts": true}` |
+| HTML 转 PNG | `convertor.html2png` | 支持直接粘贴 HTML |
+| PPT / PPTX 转 PDF | `convertor.ppt2pdf` | 将演示文稿导出为 PDF |
+| PDF 转图片 | `convertor.pdf2image` | 导出 PDF 页面的图片结果 |
+| Word 转 PDF | `convertor.doc2pdf` | 转换 `.doc` / `.docx` 文件 |
+
+## 提取器
+
+从源站文档中可以确认以下类型：
+
+| 场景 | `type` | 说明 |
+|---|---|---|
+| 图片 OCR | `image.ocr` | `params` 可传 `{"language":"zh-hans"}` |
+| PPTX 字体检测 | `pptx.getFontInfo` | 返回字体使用信息 |
+| PPTX 文本提取 | `pptx.getTextShapes` | 返回结构化文本层内容 |
+
+## 合并与拆分器
+
+源站文档中可以确认以下类型：
+
+| 场景 | `type` | 说明 |
+|---|---|---|
+| 合并 PPTX | `pptx.join` | 至少上传两个 PPTX 文件 |
+| 拆分 PPTX | `pptx.split` | 返回包含单页 PPTX 的 ZIP 压缩包 |
+
+源站还在这一组里描述了将多个 HTML 页面打包为网页播放器的能力。
+
+## 优化器
+
+源站文档中可以确认以下类型：
+
+| 场景 | `type` | 说明 |
+|---|---|---|
+| 文件压缩 | `file.compress` | 支持办公文档和压缩包 |
+| 图片尺寸调整 | `image.resize` | 保持宽高比缩放 |
+| PPTX 字体嵌入 | `pptx.embedFonts` | 将外部字体嵌入 PPTX |
+| 视频压缩 | `video.compress` | 压缩视频大小以便交付 |
+
+## 共用规则
+
+无论属于哪个工具分组，都遵循同一套规则：
+
+- 通过 `POST /tools/tasks` 提交
+- 通过 `params` 传递工具特有参数
+- 通过 `GET /tools/tasks/{id}` 查询结果

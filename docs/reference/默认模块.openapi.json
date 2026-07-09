@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "默认模块",
-    "description": "DeckHTML default module API for creating conversion tasks and retrieving task execution details.",
+    "description": "Deckflow task API for submitting async jobs and retrieving task execution details.",
     "version": "1.0.0"
   },
   "tags": [
@@ -14,9 +14,9 @@
   "paths": {
     "/tools/tasks": {
       "post": {
-        "summary": "Create html2pptx task",
+        "summary": "Submit async task",
         "deprecated": false,
-        "description": "Create a conversion task by uploading the source HTML file together with task metadata and optional execution parameters.",
+        "description": "Submit an asynchronous Deckflow task. Different business scenarios reuse this same endpoint and are selected through the `type` field plus the JSON string in `params`.",
         "tags": [
           "Tasks"
         ],
@@ -32,22 +32,31 @@
                   "files": {
                     "format": "binary",
                     "type": "string",
-                    "description": "要翻译的文件",
+                    "description": "One or more source files uploaded as multipart form data.",
                     "example": "file:///Users/redstone/Downloads/example-math/preview-6.html"
                   },
                   "params": {
-                    "description": "参数的JSON 序列",
-                    "example": "{}",
+                    "description": "Scenario-specific options encoded as a JSON string.",
+                    "example": "{\"inputText\":\"Create a 10-slide partner deck\",\"pageCount\":10}"
+                  },
+                  "name": {
+                    "description": "Optional display name for the task.",
+                    "example": "Partner deck generation",
+                    "type": "string"
+                  },
+                  "notifyURL": {
+                    "description": "Optional webhook callback URL for task status changes.",
+                    "example": "https://your.domain/callback",
                     "type": "string"
                   },
                   "spaceId": {
-                    "description": "空间ID",
+                    "description": "Optional space identifier.",
                     "example": "{{userId}}",
                     "type": "string"
                   },
                   "type": {
-                    "description": "任务类型",
-                    "example": "convertor.html2pptx",
+                    "description": "Business scenario or tool type identifier.",
+                    "example": "generation",
                     "type": "string"
                   }
                 },
@@ -58,9 +67,11 @@
               },
               "example": {
                 "files": "file:///Users/redstone/Downloads/example-math/preview-6.html",
-                "params": "{}",
+                "params": "{\"inputText\":\"Create a 10-slide partner deck\",\"pageCount\":10}",
+                "name": "Partner deck generation",
+                "notifyURL": "https://your.domain/callback",
                 "spaceId": "workspace_123",
-                "type": "convertor.html2pptx"
+                "type": "generation"
               }
             }
           }
@@ -102,9 +113,9 @@
     },
     "/tools/tasks/{id}": {
       "get": {
-        "summary": "Get task details",
+        "summary": "Query task status",
         "deprecated": false,
-        "description": "Retrieve the latest execution state for a previously created DeckHTML task.",
+        "description": "Retrieve the latest execution state for a previously submitted Deckflow task.",
         "tags": [
           "Tasks"
         ],
@@ -186,8 +197,8 @@
   },
   "servers": [
     {
-      "url": "https://app.deckflow.com/v1",
-      "description": "DeckHTML production API"
+      "url": "https://app.deckflow.com/api",
+      "description": "Deckflow production API"
     }
   ],
   "security": [

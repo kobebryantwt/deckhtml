@@ -1,0 +1,54 @@
+---
+title: Generation Scenarios
+sidebarTitle: Generation Scenarios
+description: "Use the shared task submit endpoint to generate presentation drafts from prompts, reference files, and scenario parameters."
+---
+
+Generation jobs are submitted through the same `POST /tools/tasks` endpoint used by every other workflow.
+
+## Core mapping
+
+| Field | Value |
+|---|---|
+| Endpoint | `POST /tools/tasks` |
+| `type` | `generation` |
+| Files | Reference files such as PDF, Word, or Markdown; multiple files are supported |
+| Query endpoint | `GET /tools/tasks/{id}` |
+
+## Common generation parameters
+
+The Deckflow source docs show these fields inside the `params` JSON string:
+
+- `inputText`
+- `enableSearch`
+- `advancedModel`
+- `fastMode`
+- `pageCount`
+- `author`
+
+## Example `params`
+
+```json
+{
+  "inputText": "Create a renewable energy trend deck with emphasis on solar and wind market share.",
+  "enableSearch": true,
+  "advancedModel": false,
+  "fastMode": false,
+  "pageCount": 10
+}
+```
+
+## Recommended usage
+
+- Keep the prompt specific about audience and outcome
+- Attach source documents when you want structure, terminology, or evidence to carry through
+- Use the query endpoint to wait for completion before downloading the final PPTX
+
+<CardGroup cols={2}>
+  <Card title="Submit Async Task" href="/reference/submit-async-task">
+    Open the shared submit endpoint.
+  </Card>
+  <Card title="Query Task Status" href="/reference/query-task-status">
+    Track the generation job until the result is ready.
+  </Card>
+</CardGroup>

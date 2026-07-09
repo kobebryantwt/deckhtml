@@ -1,0 +1,45 @@
+---
+title: 文档生成场景
+sidebarTitle: 文档生成
+description: "通过统一任务接口提交生成类任务，根据提示词、参考文件和参数创建演示文稿。"
+---
+
+文档生成并没有独立的新接口，它仍然通过统一的 `POST /tools/tasks` 提交。
+
+## 场景映射
+
+| 字段 | 值 |
+|---|---|
+| 接口 | `POST /tools/tasks` |
+| `type` | `generation` |
+| 文件 | PDF、Word、Markdown 等参考文件，支持多个 |
+| 查询接口 | `GET /tools/tasks/{id}` |
+
+## 常见生成参数
+
+源站文档展示了这些 `params` 字段：
+
+- `inputText`
+- `enableSearch`
+- `advancedModel`
+- `fastMode`
+- `pageCount`
+- `author`
+
+## `params` 示例
+
+```json
+{
+  "inputText": "生成一份关于可再生能源趋势的演示文稿，重点覆盖太阳能与风能市场。",
+  "enableSearch": true,
+  "advancedModel": false,
+  "fastMode": false,
+  "pageCount": 10
+}
+```
+
+## 使用建议
+
+- 在提示词里明确受众、用途和输出形式
+- 如果希望带入术语、结构或证据，请附带参考文件
+- 任务返回 ID 后，继续使用查询接口等待生成完成

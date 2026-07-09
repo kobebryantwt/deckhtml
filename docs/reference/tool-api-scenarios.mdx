@@ -1,0 +1,68 @@
+---
+title: Tool API Scenarios
+sidebarTitle: Tool API Scenarios
+description: "Map converter, extractor, merger/splitter, and optimizer workflows onto the shared async task API."
+---
+
+Deckflow's tool APIs still submit through the same `POST /tools/tasks` endpoint. What changes is the `type` value, plus any tool-specific JSON sent through `params`.
+
+## File converter
+
+The Deckflow source docs group multiple conversion tools under this family. Examples include:
+
+| Use case | `type` | Notes |
+|---|---|---|
+| HTML to PPTX | `convertor.html2pptx` | Supports `.html` / `.htm`; `params` can include `{"needEmbedFonts": true}` |
+| HTML to PNG | `convertor.html2png` | Supports direct HTML input |
+| PPT / PPTX to PDF | `convertor.ppt2pdf` | Converts slide decks to PDF |
+| PDF to image | `convertor.pdf2image` | Exports images from PDF pages |
+| Word to PDF | `convertor.doc2pdf` | Converts `.doc` / `.docx` to PDF |
+
+## Extractor
+
+Examples captured from the source docs:
+
+| Use case | `type` | Notes |
+|---|---|---|
+| Image OCR | `image.ocr` | `params` can include `{"language":"zh-hans"}` |
+| PPTX font inspection | `pptx.getFontInfo` | Returns font usage information |
+| PPTX text extraction | `pptx.getTextShapes` | Returns structured text-layer content |
+
+## Merger & splitter
+
+Examples captured from the source docs:
+
+| Use case | `type` | Notes |
+|---|---|---|
+| Merge PPTX files | `pptx.join` | Requires at least two uploaded PPTX files |
+| Split PPTX files | `pptx.split` | Returns a ZIP archive of single-slide PPTX files |
+
+The source documentation also describes packaging multiple HTML pages into a player-style output within this group.
+
+## Optimizer
+
+Examples captured from the source docs:
+
+| Use case | `type` | Notes |
+|---|---|---|
+| File compression | `file.compress` | Supports office files and archives |
+| Image resize | `image.resize` | Preserves aspect ratio while resizing |
+| PPTX font embedding | `pptx.embedFonts` | Embeds external fonts into a PPTX |
+| Video compression | `video.compress` | Reduces video size for delivery |
+
+## Common rule
+
+No matter which tool group you choose:
+
+- submit through `POST /tools/tasks`
+- encode tool-specific settings in `params`
+- poll through `GET /tools/tasks/{id}`
+
+<CardGroup cols={2}>
+  <Card title="Submit Async Task" href="/reference/submit-async-task">
+    Use the same submit endpoint for every tool family.
+  </Card>
+  <Card title="Query Task Status" href="/reference/query-task-status">
+    Poll tool tasks until the result is available.
+  </Card>
+</CardGroup>

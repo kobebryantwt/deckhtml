@@ -109,6 +109,16 @@
       "source": "/skill/deckhtml",
       "destination": "/skills/deckhtml",
       "permanent": true
+    },
+    {
+      "source": "/reference/create-html2pptx-task",
+      "destination": "/reference/submit-async-task",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get-task-details",
+      "destination": "/reference/query-task-status",
+      "permanent": true
     }
   ],
   "colors": {
@@ -157,11 +167,26 @@
             "tab": "API Reference",
             "groups": [
               {
-                "group": "Default Module",
+                "group": "Overview",
                 "pages": [
                   "reference/overview",
-                  "reference/create-html2pptx-task",
-                  "reference/get-task-details"
+                  "reference/authentication-and-task-model"
+                ]
+              },
+              {
+                "group": "Core APIs",
+                "pages": [
+                  "reference/submit-async-task",
+                  "reference/query-task-status"
+                ]
+              },
+              {
+                "group": "Scenario Guides",
+                "pages": [
+                  "reference/generation-scenarios",
+                  "reference/translation-scenarios",
+                  "reference/revamp-scenarios",
+                  "reference/tool-api-scenarios"
                 ]
               }
             ]
@@ -247,8 +272,30 @@
           },
           {
             "tab": "API Reference",
-            "pages": [
-              "zh/reference/overview"
+            "groups": [
+              {
+                "group": "概览",
+                "pages": [
+                  "zh/reference/overview",
+                  "zh/reference/authentication-and-task-model"
+                ]
+              },
+              {
+                "group": "核心接口",
+                "pages": [
+                  "zh/reference/submit-async-task",
+                  "zh/reference/query-task-status"
+                ]
+              },
+              {
+                "group": "场景文档",
+                "pages": [
+                  "zh/reference/generation-scenarios",
+                  "zh/reference/translation-scenarios",
+                  "zh/reference/revamp-scenarios",
+                  "zh/reference/tool-api-scenarios"
+                ]
+              }
             ]
           },
           {
