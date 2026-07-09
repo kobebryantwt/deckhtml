@@ -116,16 +116,16 @@ TRAE 可以通过 Deckflow MCP 调用演示文稿生成、文档翻译、HTML �
 ## 适合在 TRAE 中完成的任务
 
 <CardGroup cols={2}>
-  <Card title="从文本直接生成演示文稿" icon="sparkles">
-    把产品说明、版本更新、会议纪要或项目计划交给 `generate_presentation`，快速生成初稿演示文稿。
+  <Card title="多源材料生成演示文稿" icon="sparkles">
+    通过输入一段话，并上传 PPTX、PDF、Markdown、Word 或 URL 作为参考材料，调用 `generate_presentation` 生成适合 stage talks、live meeting、email sharing 或 detailed proposals 等不同场景使用的演示文稿。
   </Card>
-  <Card title="HTML 渲染为演示产物" icon="code">
-    让 TRAE 生成或修改 HTML 幻灯片内容，然后调用 `render_html` 输出 PPTX 或 PNG。
+  <Card title="HTML 转 PPTX 演示文稿" icon="code">
+    把已有的 HTML 页面、模板或组件内容转换成 PPTX 类型的演示文稿，更适合承接 html2pptx 的自动化生成与交付场景。
   </Card>
-  <Card title="文档翻译" icon="languages">
+  <Card title="文档翻译" icon="file-text">
     使用 `translate_document` 翻译 PPTX、PDF 或 DOCX，并返回最终下载链接。
   </Card>
-  <Card title="文件工具链处理" icon="file-cog">
+  <Card title="文件工具链处理" icon="wrench">
     在同一个智能体流程中完成格式转换、压缩、OCR、拆分、合并与内容检查。
   </Card>
 </CardGroup>
@@ -137,7 +137,7 @@ TRAE 可以通过 Deckflow MCP 调用演示文稿生成、文档翻译、HTML �
 ```
 
 ```text
-把这份 HTML 幻灯片渲染成 PPTX，并返回下载链接。
+把这份 HTML 页面转换成 PPTX 演示文稿，并返回下载链接。
 ```
 
 ```text
