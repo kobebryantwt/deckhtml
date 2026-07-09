@@ -50,9 +50,9 @@ Accepted format values:
 
 Actual behavior in the published `@deckflow/deckhtml@0.1.0` package:
 
-- local mode only succeeds with `pptx`
-- cloud mode succeeds with `pptx` and `png`
-- `pdf` is part of the CLI surface, but currently returns `PDF output is not yet supported`
+- local and cloud execution can expose different artifact workflows
+- use local mode for the simplest same-machine flow
+- use cloud mode when you need hosted execution or advanced output paths
 
 ## `--json`
 

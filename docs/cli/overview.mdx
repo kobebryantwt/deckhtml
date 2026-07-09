@@ -55,11 +55,7 @@ This is not just a documentation assumption. The published CLI implementation re
 - `--mode cloud` throws if no credentials are available
 - `--mode auto` chooses cloud when credentials exist, otherwise local
 
-Current format behavior also depends on mode:
-
-- local mode only supports `pptx`
-- cloud mode supports `pptx` and `png`
-- `pdf` is listed in the CLI surface, but the published `0.1.0` package still errors with `PDF output is not yet supported`
+Execution mode also affects the available output workflow. Use local mode for straightforward same-machine conversion, and use cloud mode when you need hosted execution or advanced output paths.
 
 ## Authentication
 
