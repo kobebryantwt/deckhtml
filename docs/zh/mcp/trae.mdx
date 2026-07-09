@@ -1,10 +1,10 @@
 ---
 title: 在 TRAE 中使用 Deckflow MCP
 sidebarTitle: TRAE
-description: "通过 TRAE 的 MCP 设置界面接入 Deckflow MCP，支持托管的 Streamable HTTP 模式和本地 stdio 模式。"
+description: "通过 TRAE 的 MCP 设置界面接入 Deckflow MCP，重点完成 HTML 转 PPTX、格式转换和演示文稿处理工作流。"
 ---
 
-TRAE 可以通过 Deckflow MCP 调用演示文稿生成、文档翻译、HTML 渲染和文件处理能力。与 Claude Code 这类带有 `add mcp` 命令的客户端不同，TRAE 的实际接入方式是通过设置界面手动添加 MCP 配置，然后填写托管的 Streamable HTTP 配置或本地 stdio 配置。
+TRAE 可以通过 Deckflow MCP 调用 HTML 转 PPTX、格式转换，以及文件和 PPTX 工具链能力。与 Claude Code 这类带有 `add mcp` 命令的客户端不同，TRAE 的实际接入方式是通过设置界面手动添加 MCP 配置，然后填写托管的 Streamable HTTP 配置或本地 stdio 配置。
 
 <Note>
   如果你想要最省事的接入体验，优先使用托管的 Streamable HTTP 模式，并通过浏览器完成授权。如果工作流需要传递本地绝对路径文件，再切换到本地 stdio 模式。
@@ -117,31 +117,31 @@ TRAE 可以通过 Deckflow MCP 调用演示文稿生成、文档翻译、HTML �
 
 <CardGroup cols={2}>
   <Card title="多源材料生成演示文稿" icon="sparkles">
-    通过输入一段话，并上传 PPTX、PDF、Markdown、Word 或 URL 作为参考材料，调用 `generate_presentation` 生成适合 stage talks、live meeting、email sharing 或 detailed proposals 等不同场景使用的演示文稿。
+    输入一句话，并补充 PPTX、PDF、Markdown、Word 或 URL 作为参考材料，生成适合 stage talks、live meeting、email sharing 或 detailed proposals 的演示文稿。
   </Card>
   <Card title="HTML 转 PPTX 演示文稿" icon="code">
-    把已有的 HTML 页面、模板或组件内容转换成 PPTX 类型的演示文稿，更适合承接 html2pptx 的自动化生成与交付场景。
+    将 HTML 页面、模板或组件内容直接转换成 PPTX，适合搭建稳定的 html2pptx 自动化生成与交付流程。
   </Card>
-  <Card title="文档翻译" icon="file-text">
-    使用 `translate_document` 翻译 PPTX、PDF 或 DOCX，并返回最终下载链接。
+  <Card title="文档翻译" icon="languages">
+    支持翻译 PPTX、PDF、DOCX 等格式，也支持图片内容翻译，并尽量保留和还原翻译后的原始版式。
   </Card>
-  <Card title="文件工具链处理" icon="wrench">
-    在同一个智能体流程中完成格式转换、压缩、OCR、拆分、合并与内容检查。
+  <Card title="文件工具链处理" icon="file-cog">
+    在同一个智能体流程中完成格式转换、压缩、OCR、拆分、合并、嵌入字体与内容检查。
   </Card>
 </CardGroup>
 
 ## 示例提示词
 
 ```text
-使用 Deckflow MCP，根据这些要点生成一份 8 页的合作伙伴入门介绍。
+把这份 HTML 页面转换成一份可编辑的 PPTX 演示文稿，并返回下载链接。
 ```
 
 ```text
-把这份 HTML 页面转换成 PPTX 演示文稿，并返回下载链接。
+把这个 PPTX 转成 PDF，如果结果仍然偏大，再进一步压缩。
 ```
 
 ```text
-把这个上传的中文演示文稿翻译成英文，并尽量保留原始版式。
+根据这段说明和附带的 PDF、Markdown 链接，生成一份适合 live meeting 使用的演示文稿。
 ```
 
 ## 验证清单

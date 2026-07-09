@@ -1,48 +1,56 @@
 ---
 title: Deckflow MCP
 sidebarTitle: Overview
-description: "Create presentations, translate documents, revamp decks, convert files, render HTML, and manage Deckflow tasks from MCP-compatible agents."
+description: "Add Deckflow to your agent to turn HTML into PPTX, convert formats, and run presentation-focused document workflows."
 ---
 
-Deckflow MCP is a hosted [Model Context Protocol](https://modelcontextprotocol.io) server for agent-driven presentation and document workflows. It lets tools such as Claude Code, Cursor, Codex, Manus, and other MCP clients call Deckflow capabilities directly instead of asking the model to compose shell commands by hand.
+Deckflow MCP lets your agent call Deckflow directly for presentation and document workflows. The most important use cases are turning HTML into PPTX decks, converting files across delivery formats, and handling PPTX or document-processing tasks without leaving the agent environment.
 
 <Note>
-  The production Streamable HTTP endpoint is `https://mcp.deckflow.com/mcp/v1/`. Use OAuth when your client supports remote MCP authorization. Use bearer credentials or query-based credentials only for clients that cannot complete OAuth.
+  The production Streamable HTTP endpoint is `https://mcp.deckflow.com/mcp/v1/`. Menu names vary slightly by agent, but the setup flow is usually the same: add the server, authenticate, then start calling Deckflow tools.
 </Note>
 
 ## What you can do
 
 <CardGroup cols={2}>
-  <Card title="Generate presentations" icon="sparkles" href="/mcp/tools#presentation-and-document-creation">
-    Create a deck or document from a prompt, reference files, search settings, audience, page count, and author metadata.
+  <Card title="Turn HTML into PPTX" icon="code" href="/mcp/tools#rendering-and-conversion">
+    Convert HTML pages, templates, or generated slide markup into PPTX decks for html2pptx workflows and automated presentation delivery.
   </Card>
-  <Card title="Translate and revamp documents" icon="languages" href="/mcp/tools#presentation-and-document-creation">
-    Translate PPTX, PDF, DOCX, and related document files, or restyle an existing presentation into a refreshed deck.
-  </Card>
-  <Card title="Render HTML and Markdown" icon="code" href="/mcp/tools#rendering-and-conversion">
-    Render inline HTML, HTML files, or Markdown into PNG, PPTX, or image artifacts for previews and presentation workflows.
+  <Card title="Convert delivery formats" icon="repeat" href="/mcp/tools#rendering-and-conversion">
+    Move between PPTX, PDF, image, HTML, and related output formats for review, handoff, publishing, and archive flows.
   </Card>
   <Card title="Process files and PPTX" icon="file-cog" href="/mcp/tools#file-and-pptx-utilities">
-    Convert formats, split and merge decks, embed fonts, inspect slide text or fonts, run OCR, transform images, and compress files.
+    Compress, OCR, split, merge, inspect, embed fonts, and run related PPTX or file utility operations inside the same agent workflow.
+  </Card>
+  <Card title="Generate, translate, and revamp decks" icon="sparkles" href="/mcp/tools#presentation-and-document-creation">
+    Start from a prompt plus reference files, translate image-rich documents while preserving layout, or restyle an existing deck into a refreshed presentation.
   </Card>
 </CardGroup>
 
-## How it works
+## Add Deckflow to your agent
 
 <Steps>
-  <Step title="Connect an MCP client">
-    Add the hosted endpoint to an MCP-compatible client, or run the stdio entry locally when the client needs local file access.
+  <Step title="Open your agent's MCP settings">
+    In your MCP-compatible agent, open the MCP, connectors, or tools settings area and choose the option for adding a custom server.
   </Step>
-  <Step title="Authenticate">
-    Use OAuth for remote clients that support browser authorization. For direct integrations, send `Authorization: Bearer <API key>`, `X-Auth-Token: <user_... token>`, or `?API_KEY=<key>`.
+  <Step title="Paste the Deckflow MCP endpoint">
+    Use the hosted Streamable HTTP endpoint:
+
+    ```text
+    https://mcp.deckflow.com/mcp/v1/
+    ```
   </Step>
-  <Step title="Call a tool">
-    Ask the agent to generate, translate, convert, render, inspect, or manage a task. Long-running creation tools return a `taskId` first.
+  <Step title="Authenticate with OAuth or credentials">
+    Prefer OAuth when your agent supports browser authorization. If it does not, use `Authorization: Bearer <API key>`, `X-Auth-Token: <user_... token>`, or `?API_KEY=<key>` depending on what the client can store.
   </Step>
-  <Step title="Poll and download results">
-    Use `get_task` to wait for completion and `download_task_result` to retrieve the generated artifact.
+  <Step title="Start creating">
+    Ask the agent to convert HTML into PPTX, convert a file, inspect a deck, or run a document workflow. Long-running jobs return a `taskId`, which you can follow with `get_task` and `download_task_result`.
   </Step>
 </Steps>
+
+<Tip>
+  Menu names vary slightly by client. For click-by-click setup, use the client-specific guides such as Codex, Cursor, or Claude Code.
+</Tip>
 
 ## Transport options
 
@@ -91,14 +99,17 @@ Deckflow MCP is a hosted [Model Context Protocol](https://modelcontextprotocol.i
   If your account belongs to multiple spaces, pass `DECKFLOW_SPACE_ID`, `X-Space-Id`, or `?spaceId=`. Without it, the server resolves the first activated space automatically.
 </Tip>
 
-## Recommended reading path
+## Setup guides
 
-<CardGroup cols={3}>
+<CardGroup cols={4}>
   <Card title="Tool reference" icon="wrench" href="/mcp/tools">
     Review all available MCP tools and the typical task lifecycle.
   </Card>
   <Card title="Codex setup" icon="terminal" href="/mcp/codex">
     Connect Deckflow MCP to Codex-style agent workflows.
+  </Card>
+  <Card title="Cursor setup" icon="code" href="/mcp/cursor">
+    Add Deckflow MCP to Cursor for HTML-to-PPTX and file conversion tasks.
   </Card>
   <Card title="Claude Code setup" icon="bot" href="/mcp/claude-code">
     Add Deckflow MCP to Claude Code with hosted HTTP or local stdio.

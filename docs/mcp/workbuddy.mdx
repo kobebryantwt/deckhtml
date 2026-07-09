@@ -1,10 +1,10 @@
 ---
 title: Deckflow MCP in WorkBuddy
 sidebarTitle: WorkBuddy
-description: "Connect WorkBuddy to Deckflow MCP from the Connectors UI, complete authorization, and verify the available Deckflow tools."
+description: "Connect WorkBuddy to Deckflow MCP from the Connectors UI for HTML-to-PPTX, format conversion, and presentation-processing workflows."
 ---
 
-WorkBuddy can connect to Deckflow MCP so agent workflows can generate presentations, translate documents, render HTML, and process files without dropping into separate scripts. WorkBuddy does not use a CLI-style `add mcp` command. Instead, you add Deckflow from the Connectors UI, paste the MCP config into WorkBuddy's config editor, then complete the authorization flow in the MCP manager.
+WorkBuddy can connect to Deckflow MCP so agent workflows can handle HTML-to-PPTX, format conversion, and presentation-processing tasks without dropping into separate scripts. WorkBuddy does not use a CLI-style `add mcp` command. Instead, you add Deckflow from the Connectors UI, paste the MCP config into WorkBuddy's config editor, then complete the authorization flow in the MCP manager.
 
 <Note>
   The hosted MCP endpoint is the easiest WorkBuddy setup path. After authorization succeeds, WorkBuddy shows the Deckflow tool list directly inside the MCP manager.
@@ -64,32 +64,32 @@ After authorization succeeds, WorkBuddy expands the `deckflow` entry and shows t
 ## Good fits for WorkBuddy
 
 <CardGroup cols={2}>
-  <Card title="Deck creation from notes" icon="sparkles">
-    Generate a presentation from a project brief, status update, roadmap, or customer summary.
+  <Card title="HTML to PPTX decks" icon="code">
+    Convert HTML pages, templates, or component-based slide content directly into editable PPTX decks for html2pptx workflows.
   </Card>
-  <Card title="Artifact rendering" icon="code">
-    Turn HTML or Markdown content into presentation-ready outputs such as PPTX or PNG assets.
+  <Card title="Format conversion" icon="repeat">
+    Convert between PPTX, PDF, image, and related delivery formats for handoff, review, archive, and sharing flows.
   </Card>
-  <Card title="Conversion and delivery" icon="file-cog">
-    Convert, compress, inspect, or merge files as part of a broader workflow.
+  <Card title="File and PPTX utilities" icon="file-cog">
+    Run OCR, compression, split, merge, font embedding, and inspection tasks inside the same agent workflow.
   </Card>
-  <Card title="Task lifecycle management" icon="list-checks">
-    Use `get_task`, `list_tasks`, and `download_task_result` for long-running jobs.
+  <Card title="Generate, translate, and revamp decks" icon="sparkles">
+    Start from a prompt plus reference files, translate image-rich documents while preserving layout, or restyle an existing deck.
   </Card>
 </CardGroup>
 
 ## Prompt examples
 
 ```text
-Use Deckflow MCP to build a 6-slide weekly business review deck from these notes.
+Use Deckflow MCP to convert this HTML page into an editable PPTX deck and return the download link.
 ```
 
 ```text
-Render this HTML presentation into PPTX and also return a PNG preview.
+Convert this PPTX to PDF, then compress the result if it is still too large to share.
 ```
 
 ```text
-Convert this PPTX to PDF, then compress the result if the file is too large to share.
+Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
 ```
 
 ## Validation checklist
