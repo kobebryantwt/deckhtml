@@ -305,6 +305,9 @@
                 "group": "MCP",
                 "pages": [
                   "zh/mcp/overview",
+                  "zh/mcp/codex",
+                  "zh/mcp/cursor",
+                  "zh/mcp/claude-code",
                   "zh/mcp/trae",
                   "zh/mcp/workbuddy"
                 ]

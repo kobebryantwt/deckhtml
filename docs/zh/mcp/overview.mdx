@@ -1,51 +1,73 @@
 ---
 title: MCP
 sidebarTitle: MCP
-description: "通过 Deckflow MCP 将 HTML 转成 PPTX、完成格式转换，并把这些能力接入到常见智能体客户端中。"
+description: "将 Deckflow MCP 接入常见智能体客户端，用于 HTML 转 PPTX、格式转换和演示文稿工作流。"
 ---
 
-Deckflow MCP 适合接入到常见智能体客户端中，重点解决 HTML 转 PPTX 演示文稿、格式转换，以及文件与 PPTX 处理这几类工作流。当前中文文档优先覆盖更常见的国内客户端接入方式。
+Deckflow MCP 可以接入常见的 MCP 客户端，让智能体直接调用 Deckflow 的演示文稿能力，包括 HTML 转可编辑 PPTX、格式转换、文件处理，以及生成、翻译、焕新等工作流。
 
 <Note>
-  生产环境托管端点为 `https://mcp.deckflow.com/mcp/v1/`。菜单名称会因客户端不同而略有差异，但整体流程通常都是：添加 MCP 配置、完成授权、再开始调用工具。
+  托管端点为 `https://mcp.deckflow.com/mcp/v1/`。大多数客户端的接入流程都类似：添加服务器、完成授权、确认工具可见，然后开始调用 Deckflow 工具。
 </Note>
 
-## 当前中文接入指南
+## 将 Deckflow 添加到你的智能体
 
-<CardGroup cols={2}>
-  <Card href="/zh/mcp/trae">
-    <div className="mcp-client-card">
-      <div className="mcp-client-card-header">
-        <img src="/images/mcp/trae-icon.png" alt="TRAE" width="28" height="28" />
-        <strong>TRAE</strong>
-      </div>
-      <p>查看如何在 TRAE 中手动添加 Deckflow MCP，并完成托管授权或本地 stdio 配置。</p>
-    </div>
-  </Card>
-  <Card href="/zh/mcp/workbuddy">
-    <div className="mcp-client-card">
-      <div className="mcp-client-card-header">
-        <img src="/images/mcp/workbuddy-icon.svg" alt="WorkBuddy" width="28" height="28" />
-        <strong>WorkBuddy</strong>
-      </div>
-      <p>查看如何通过 WorkBuddy 的连接器界面配置 Deckflow MCP，并确认可用工具列表。</p>
-    </div>
-  </Card>
-</CardGroup>
+<Steps>
+  <Step title="打开客户端的 MCP 配置入口">
+    在你的智能体客户端中找到 MCP、连接器或工具设置，并进入添加自定义服务器的入口。
+  </Step>
+  <Step title="填写 Deckflow MCP 端点">
+    使用托管端点：
+
+    ```text
+    https://mcp.deckflow.com/mcp/v1/
+    ```
+  </Step>
+  <Step title="按客户端要求完成授权">
+    有些客户端会自动拉起浏览器授权；有些客户端则通过配置文件、Header、Query 参数或环境变量保存凭证。
+  </Step>
+  <Step title="确认连接成功并开始调用工具">
+    配置完成后，先确认 `deckflow` 服务已可用，再开始执行 HTML 转 PPTX、格式转换或文档处理任务。
+  </Step>
+</Steps>
+
+<Tip>
+  不同客户端的菜单名称可能略有差异。下面的产品页会给出各自更具体的配置方式。
+</Tip>
+
+## 支持的产品
+
+当前文档已经提供以下接入指南：
+
+- [Codex](/zh/mcp/codex)：通过 Codex 设置页或编辑 `~/.codex/config.toml` 接入。
+- [Cursor](/zh/mcp/cursor)：通过 Cursor 的 MCP 设置页或配置文件接入。
+- [Claude Code](/zh/mcp/claude-code)：通过 `claude mcp add`、`.mcp.json` 或 `~/.claude.json` 接入。
+- [TRAE](/zh/mcp/trae)：通过图形化 MCP 面板手动添加托管配置或本地 stdio 配置。
+- [WorkBuddy](/zh/mcp/workbuddy)：通过连接器界面配置托管 Deckflow MCP，并完成授权。
+
+如果你的客户端支持自定义 MCP Server，通常也可以直接复用同一个 Deckflow 托管端点。
 
 ## 你可以做什么
 
-<CardGroup cols={2}>
-  <Card title="HTML 转 PPTX 演示文稿" icon="code">
-    把一份 HTML 幻灯片或网页内容直接转换成可编辑的 PPTX 演示文稿。
-  </Card>
-  <Card title="格式转换" icon="repeat">
-    在 PPTX、PDF、图片等格式之间转换，方便预览、交付和分享。
-  </Card>
-  <Card title="文件和 PPTX 工具链" icon="search">
-    完成压缩、OCR、拆分、合并、嵌入字体和内容检查等处理。
-  </Card>
-  <Card title="生成、翻译和改写演示文稿" icon="sparkles">
-    根据一句话和参考材料生成演示文稿，翻译包含图片的文档，并尽量保留原始版式。
-  </Card>
-</CardGroup>
+连接完成后，Deckflow MCP 主要适合这些场景：
+
+- [HTML 转可编辑 PPTX](/mcp/tools#rendering-and-conversion)：把 HTML 幻灯片页面或网页演示内容转成 PPTX 演示文稿。
+- [多种格式之间转换](/mcp/tools#rendering-and-conversion)：在 PPTX、PDF、图片、HTML 等格式之间转换，方便交付、评审和分享。
+- [处理 PPTX 与文件工具链](/mcp/tools#file-and-pptx-utilities)：在同一条工作流里完成 OCR、压缩、拆分、合并、嵌入字体和内容检查。
+- [生成、翻译与焕新演示文稿](/mcp/tools#presentation-and-document-creation)：基于提示词和参考材料生成初稿，翻译保留版式的文档，或重新整理已有演示文稿。
+
+## 接入方式说明
+
+大多数用户优先使用托管远端：
+
+```text
+https://mcp.deckflow.com/mcp/v1/
+```
+
+不同客户端通常会采用以下三种接入方式之一：
+
+- **图形界面添加**：在设置页里新增自定义 MCP Server，并在需要时完成浏览器授权。
+- **直接编辑配置文件**：手动把 Deckflow 写进 `config.toml`、`mcp.json` 或 `.mcp.json`。
+- **CLI 注册**：通过类似 `claude mcp add` 的命令快速完成配置。
+
+只有在必须读取本地绝对路径文件时，才建议切换到本地 stdio 模式。

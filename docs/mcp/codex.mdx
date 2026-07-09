@@ -1,80 +1,76 @@
 ---
 title: Deckflow MCP in Codex
 sidebarTitle: Codex
-description: "Configure Deckflow MCP in Codex-style environments for HTML-to-PPTX, format conversion, and presentation-processing workflows."
+description: "Configure Deckflow MCP in Codex through the settings UI or by editing Codex config files."
 ---
 
-Use this page to connect Deckflow MCP in Codex-style environments. Hosted HTTP is the best default when the runtime supports remote MCP authorization; switch to local stdio only when the server must read local absolute file paths.
+Use this page to connect Deckflow MCP in Codex. The goal here is simple: register the Deckflow server, confirm Codex can see it, and then start calling Deckflow tools from your normal coding workflow.
 
 <Note>
-  In hosted HTTP mode, pass URLs or `fileId:<uploaded-file-id>` values for files. Use local stdio only when local file path access is required.
+  Codex configuration is stored in `~/.codex/config.toml` at user scope, and can also be overridden per project with `.codex/config.toml`.
 </Note>
 
-## Connection options
+## Recommended setup
 
-<Tabs>
-  <Tab title="Hosted HTTP">
-    Add Deckflow as a remote MCP server:
+For most users, start from Codex settings and add the Deckflow server there. If you prefer managing MCP entries in source-controlled config, add the same server definition directly to a Codex config file.
+
+## Add the MCP server from the Codex UI
+
+<Steps>
+  <Step title="Open MCP server settings">
+    In Codex, open settings and go to the MCP Servers section.
+  </Step>
+  <Step title="Add a custom server">
+    Create a new MCP server entry named `deckflow`.
+  </Step>
+  <Step title="Use the Deckflow endpoint">
+    Register the hosted MCP server:
 
     ```text
     https://mcp.deckflow.com/mcp/v1/
     ```
-
-    Use OAuth if the Codex environment supports remote MCP authorization. Otherwise provide `Authorization: Bearer <API key>`, `X-Auth-Token: <user_... token>`, or `?API_KEY=<key>`.
-  </Tab>
-  <Tab title="Local stdio">
-    Use this shape when configuring a local MCP server:
-
-    ```json
-    {
-      "mcpServers": {
-        "deckflow": {
-          "command": "node",
-          "args": ["/absolute/path/deckflow-mcp/dist/entry/stdio.js"],
-          "env": {
-            "DECKFLOW_API_KEY": "<your-api-key>"
-          }
-        }
-      }
-    }
-    ```
-  </Tab>
-</Tabs>
-
-## Agent workflow pattern
-
-<Steps>
-  <Step title="Create or identify an input">
-    Codex can generate HTML, select a project document, or reference a URL or uploaded file ID.
   </Step>
-  <Step title="Call the right Deckflow tool">
-    Use `render_html` for HTML, `generate_presentation` for prompt-to-deck work, or `convert_file` for format conversion.
-  </Step>
-  <Step title="Track progress">
-    If the tool returns `taskId`, call `get_task` until the status reaches a terminal state.
-  </Step>
-  <Step title="Return the artifact">
-    Call `download_task_result`, then report the download URL and any relevant task metadata.
+  <Step title="Complete authentication if prompted">
+    If Codex opens a browser sign-in flow or asks for credentials, complete that step before returning to the MCP list.
   </Step>
 </Steps>
 
-## What to try after setup
+## Alternative: edit `config.toml` directly
 
-- Convert an HTML slide page into an editable PPTX deck.
-- Convert a PPTX file into PDF or image outputs for sharing.
-- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
-- Generate a first-draft presentation from a short brief plus reference files or URLs.
+You can also define Deckflow in your Codex config file:
 
-## Example prompts
+```toml
+[mcp_servers.deckflow]
+url = "https://mcp.deckflow.com/mcp/v1/"
+enabled = true
+```
+
+Use `~/.codex/config.toml` for your personal setup, or `.codex/config.toml` inside a trusted project when you want project-scoped configuration.
+
+## When to use local stdio instead
+
+Use local stdio only when the MCP server must read local absolute file paths from your machine. In that case, point Codex at the local Node entry instead of the hosted URL and pass `DECKFLOW_API_KEY` in the server environment.
+
+## Verify the connection
+
+After setup, confirm:
+
+- the `deckflow` server appears in Codex MCP settings
+- the server is enabled and connected
+- Deckflow tools are available in a new Codex session
+
+## Try a first task
+
+After the server is available, try one of these prompts:
 
 ```text
-Use Deckflow MCP to convert this HTML page into an editable PPTX deck and return the download link.
+Use Deckflow MCP to convert this HTML slide page into an editable PPTX deck and return the download link.
 ```
 
 ```text
-Convert this PPTX to PDF, then compress the result if it is still too large to share.
+Use Deckflow MCP to convert this PPTX into PDF and tell me when the result is ready.
 ```
 
 ```text
-Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
+Use Deckflow MCP to generate a presentation draft from this brief and the attached reference files.
 ```

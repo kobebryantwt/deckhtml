@@ -1,30 +1,55 @@
 ---
 title: Deckflow MCP in Cursor
 sidebarTitle: Cursor
-description: "Configure Deckflow MCP in Cursor for HTML-to-PPTX, format conversion, and presentation-processing workflows."
+description: "Configure Deckflow MCP in Cursor through the MCP settings UI or by editing Cursor's MCP config file."
 ---
 
-Use this page to connect Deckflow MCP in Cursor. Hosted HTTP is the best default when your Cursor build supports remote MCP servers; switch to local stdio only when the MCP server must read local absolute file paths.
+Use this page to connect Deckflow MCP in Cursor. The focus here is setup: add the server, authenticate if required, confirm Cursor can see the tools, and then start using Deckflow from your editor workflow.
 
 <Note>
-  Cursor MCP configuration may vary by version. Start with hosted HTTP unless you specifically need local file path access.
+  Cursor MCP setup can vary slightly by release, but the two common paths are the same: add the server from the UI, or edit the MCP config file directly.
 </Note>
 
-## Hosted HTTP endpoint
+## Add the MCP server from Cursor settings
 
-```text
-https://mcp.deckflow.com/mcp/v1/
+<Steps>
+  <Step title="Open Cursor MCP settings">
+    In Cursor, open Settings and go to the MCP or Tools & Integrations section.
+  </Step>
+  <Step title="Create a new MCP server entry">
+    Add a custom MCP server named `deckflow`.
+  </Step>
+  <Step title="Use the Deckflow endpoint">
+    Paste the hosted MCP URL:
+
+    ```text
+    https://mcp.deckflow.com/mcp/v1/
+    ```
+  </Step>
+  <Step title="Complete authentication if required">
+    If Cursor asks you to authorize the server in the browser, finish that step and return to the MCP panel.
+  </Step>
+</Steps>
+
+## Alternative: edit Cursor MCP config directly
+
+If Cursor opens or manages MCP entries through a JSON config file, add Deckflow like this:
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "url": "https://mcp.deckflow.com/mcp/v1/"
+    }
+  }
+}
 ```
 
-Use one of these authentication paths:
+Use the Cursor-managed MCP config location for your environment, or the project-level MCP file when you want the setup to live with the repository.
 
-| Method | When to use it |
-|---|---|
-| OAuth | Cursor supports remote MCP authorization in your environment. |
-| `Authorization: Bearer <API key>` | Cursor or a proxy can send custom headers. |
-| `?API_KEY=<key>` | Custom headers are not available. |
+## Local stdio option
 
-## Local stdio configuration
+If your Cursor workflow must send local absolute file paths, switch to local stdio instead:
 
 ```json
 {
@@ -40,33 +65,24 @@ Use one of these authentication paths:
 }
 ```
 
-Add `DECKFLOW_SPACE_ID` if you want Cursor to operate inside a fixed Deckflow space.
+## Verify the connection
 
-## What to try after setup
+After setup, check that:
 
-- Convert an HTML slide page into an editable PPTX deck.
-- Convert a PPTX file into PDF or image outputs for sharing.
-- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
-- Generate a first-draft presentation from a short brief plus reference files or URLs.
+- `deckflow` appears in Cursor's MCP list
+- the server is enabled and authenticated
+- Deckflow tools are available in chat or agent mode
 
-## Prompt examples
+## Try a first task
 
 ```text
-Use Deckflow MCP to convert docs/examples/intro.html into an editable PPTX deck and return the download link.
+Use Deckflow MCP to turn this HTML page into an editable PPTX deck.
 ```
 
 ```text
-Convert this PPTX to PDF, then compress the result if it is still too large to share.
+Use Deckflow MCP to convert this PPTX into images for review.
 ```
 
 ```text
-Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
+Use Deckflow MCP to translate this PDF and preserve the original layout as much as possible.
 ```
-
-## Troubleshooting
-
-| Symptom | Check |
-|---|---|
-| Cursor cannot read a local file | Use stdio mode, or upload the file and pass `fileId:<id>`. |
-| Authorization fails | Prefer OAuth, or verify the API key header/query value. |
-| Task does not finish before client timeout | Ask Cursor to call `get_task` later, or use a shorter `waitSeconds` and poll. |

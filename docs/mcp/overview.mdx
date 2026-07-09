@@ -1,117 +1,71 @@
 ---
 title: Deckflow MCP
 sidebarTitle: Overview
-description: "Add Deckflow to your agent to turn HTML into PPTX, convert formats, and run presentation-focused document workflows."
+description: "Add Deckflow to your agent to turn HTML into PPTX, convert files, and run presentation workflows from MCP-compatible clients."
 ---
 
-Deckflow MCP lets your agent call Deckflow directly for presentation and document workflows. The most important use cases are turning HTML into PPTX decks, converting files across delivery formats, and handling PPTX or document-processing tasks without leaving the agent environment.
+Deckflow MCP lets you connect Deckflow to MCP-compatible agents so they can turn HTML into editable PPTX decks, convert documents across delivery formats, and run presentation workflows without leaving the agent interface.
 
 <Note>
-  The production Streamable HTTP endpoint is `https://mcp.deckflow.com/mcp/v1/`. Menu names vary slightly by agent, but the setup flow is usually the same: add the server, authenticate, then start calling Deckflow tools.
+  Use the hosted endpoint `https://mcp.deckflow.com/mcp/v1/` for most setups. The usual flow is: add the server, complete authentication if required, then start calling Deckflow tools.
 </Note>
 
-## What you can do
-
-<CardGroup cols={2}>
-  <Card title="Turn HTML into PPTX" icon="code" href="/mcp/tools#rendering-and-conversion">
-    Turn an HTML slide page or web-based slide content into an editable PPTX deck.
-  </Card>
-  <Card title="Convert delivery formats" icon="repeat" href="/mcp/tools#rendering-and-conversion">
-    Move between PPTX, PDF, image, HTML, and related output formats for review, handoff, publishing, and archive flows.
-  </Card>
-  <Card title="Process files and PPTX" icon="search" href="/mcp/tools#file-and-pptx-utilities">
-    Compress, OCR, split, merge, inspect, and embed fonts in PPTX and related files inside the same workflow.
-  </Card>
-  <Card title="Generate, translate, and revamp decks" icon="sparkles" href="/mcp/tools#presentation-and-document-creation">
-    Start from a prompt plus reference files, translate image-rich documents while preserving layout, or restyle an existing deck into a refreshed presentation.
-  </Card>
-</CardGroup>
-
-## Add Deckflow to your agent
+## Add Deckflow to Your Agent
 
 <Steps>
   <Step title="Open your agent's MCP settings">
-    In your MCP-compatible agent, open the MCP, connectors, or tools settings area and choose the option for adding a custom server.
+    In your agent, open the MCP, connectors, or tools settings area and choose the option for adding a custom server.
   </Step>
   <Step title="Paste the Deckflow MCP endpoint">
-    Use the hosted Streamable HTTP endpoint:
+    Add the hosted Deckflow MCP URL:
 
     ```text
     https://mcp.deckflow.com/mcp/v1/
     ```
   </Step>
-  <Step title="Authenticate with OAuth or credentials">
-    Prefer OAuth when your agent supports browser authorization. If it does not, use `Authorization: Bearer <API key>`, `X-Auth-Token: <user_... token>`, or `?API_KEY=<key>` depending on what the client can store.
+  <Step title="Authenticate if your client requires it">
+    Some clients open a browser-based authorization flow after the server is added. Others let you store headers, query parameters, or local environment variables instead.
   </Step>
-  <Step title="Start creating">
-    Ask the agent to convert HTML into PPTX, convert a file, inspect a deck, or run a document workflow. Long-running jobs return a `taskId`, which you can follow with `get_task` and `download_task_result`.
+  <Step title="Verify the server and start using tools">
+    After setup, confirm the `deckflow` server is connected, then try a small task such as converting HTML to PPTX or rendering a file into a delivery format.
   </Step>
 </Steps>
 
 <Tip>
-  Menu names vary slightly by client. For click-by-click setup, use the client-specific guides such as Codex, Cursor, or Claude Code.
+  Menu names vary by client. Use the product guides below for the exact setup path supported by each agent.
 </Tip>
 
-## Transport options
+## Supported Products
 
-<Tabs>
-  <Tab title="Hosted HTTP">
-    Use hosted HTTP when your MCP client can connect to a remote server.
+Deckflow MCP currently has setup guides for:
 
-    ```text
-    https://mcp.deckflow.com/mcp/v1/
-    ```
+- [Codex](/mcp/codex): add Deckflow from Codex settings or by editing `~/.codex/config.toml`.
+- [Cursor](/mcp/cursor): add Deckflow from Cursor MCP settings or by editing Cursor's MCP config file.
+- [Claude Code](/mcp/claude-code): add Deckflow with `claude mcp add`, or by editing `~/.claude.json` / `.mcp.json`.
 
-    Hosted HTTP supports OAuth, bearer API keys, user tokens, and `API_KEY` query credentials. In this mode, file inputs should be URLs or `fileId:<uploaded-file-id>` references.
-  </Tab>
-  <Tab title="Local stdio">
-    Use local stdio when the MCP client should pass local absolute file paths to the server.
+If your client supports custom MCP servers, the same hosted endpoint usually works there as well.
 
-    ```json
-    {
-      "mcpServers": {
-        "deckflow": {
-          "command": "node",
-          "args": ["/absolute/path/deckflow-mcp/dist/entry/stdio.js"],
-          "env": {
-            "DECKFLOW_API_KEY": "<your-api-key>"
-          }
-        }
-      }
-    }
-    ```
+## What You Can Do
 
-    Stdio accepts local absolute paths, `http(s)` URLs, and `fileId:<uploaded-file-id>` inputs.
-  </Tab>
-</Tabs>
+Once connected, your agent can use Deckflow for:
 
-## Authentication choices
+- [Turn HTML into editable PPTX](/mcp/tools#rendering-and-conversion): convert HTML slide pages or web-based presentation content into PPTX decks.
+- [Convert files across delivery formats](/mcp/tools#rendering-and-conversion): move between PPTX, PDF, image, HTML, and related output formats for review, publishing, and handoff.
+- [Process PPTX and related files](/mcp/tools#file-and-pptx-utilities): run OCR, compression, splitting, merging, font embedding, and inspection in the same workflow.
+- [Generate, translate, and revamp presentations](/mcp/tools#presentation-and-document-creation): create draft decks from prompts and references, translate visual documents, and refresh existing presentations.
 
-| Method | Best for | Notes |
-|---|---|---|
-| OAuth | Claude Code, Manus, and clients with remote MCP authorization | Add the URL and finish authorization in the browser. |
-| `Authorization: Bearer <API key>` | Direct HTTP clients and controlled integrations | Optionally include `X-Space-Id`. |
-| `X-Auth-Token: <user_... token>` | Existing Deckflow user-token workflows | Optionally include `X-Space-Id`. |
-| `?API_KEY=<key>` | Clients that cannot send custom headers | Use only when headers or OAuth are unavailable. |
-| `DECKFLOW_API_KEY` | Local stdio mode | Required for stdio unless credentials are supplied another way. |
+## Authentication and Transport
 
-<Tip>
-  If your account belongs to multiple spaces, pass `DECKFLOW_SPACE_ID`, `X-Space-Id`, or `?spaceId=`. Without it, the server resolves the first activated space automatically.
-</Tip>
+Most users should start with the hosted remote server:
 
-## Setup guides
+```text
+https://mcp.deckflow.com/mcp/v1/
+```
 
-<CardGroup cols={4}>
-  <Card title="Tool reference" icon="wrench" href="/mcp/tools">
-    Review all available MCP tools and the typical task lifecycle.
-  </Card>
-  <Card title="Codex setup" icon="terminal" href="/mcp/codex">
-    Connect Deckflow MCP to Codex-style agent workflows.
-  </Card>
-  <Card title="Cursor setup" icon="code" href="/mcp/cursor">
-    Add Deckflow MCP to Cursor for HTML-to-PPTX and file conversion tasks.
-  </Card>
-  <Card title="Claude Code setup" icon="bot" href="/mcp/claude-code">
-    Add Deckflow MCP to Claude Code with hosted HTTP or local stdio.
-  </Card>
-</CardGroup>
+Depending on the client, Deckflow MCP can be connected in one of three ways:
+
+- **Client UI**: add a custom MCP server from a settings screen and finish browser-based auth if prompted.
+- **Config file**: write the server entry directly into a local MCP config file such as `config.toml`, `mcp.json`, or `.mcp.json`.
+- **CLI command**: register the server with a helper command such as `claude mcp add`.
+
+Use local stdio only when your workflow must pass local absolute file paths into the MCP server.

@@ -1,0 +1,123 @@
+---
+title: 在 Claude Code 中使用 Deckflow MCP
+sidebarTitle: Claude Code
+description: "通过 `claude mcp add`、直接编辑配置文件或本地 stdio，把 Deckflow MCP 接入到 Claude Code。"
+---
+
+本页重点说明如何在 Claude Code 中配置 Deckflow MCP。它主要是一份接入指南：添加 Deckflow 服务器、完成授权、确认连接成功，然后开始在 Claude Code 中调用 Deckflow 工具。
+
+<Note>
+  在目前这些客户端里，Claude Code 的 CLI 接入路径最清晰，通常也是最快能把 Deckflow MCP 跑起来的方式。
+</Note>
+
+## 前置条件
+
+- 已安装 Claude Code
+- 如果要使用本地 stdio，需确保本机可用 Node.js
+- 你已经拥有 Deckflow 账号或可用的 API key
+
+## 通过 CLI 添加 MCP Server
+
+在终端中执行：
+
+```bash
+claude mcp add --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+```
+
+如果希望所有项目都可用，使用用户级作用域：
+
+```bash
+claude mcp add --scope user --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+```
+
+如果希望把配置落到当前项目的 `.mcp.json` 中并共享给团队，使用项目级作用域：
+
+```bash
+claude mcp add --scope project --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+```
+
+## 备选方式：直接编辑配置
+
+你也可以不走 CLI，直接手动写入配置。
+
+用户级 `~/.claude.json` 示例：
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/mcp/v1/"
+    }
+  }
+}
+```
+
+项目级 `.mcp.json` 示例：
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/mcp/v1/"
+    }
+  }
+}
+```
+
+## 本地 stdio 方式
+
+如果 Claude Code 需要把本地绝对路径文件直接传入 MCP Server，可以改用本地 stdio：
+
+```bash
+claude mcp add deckflow -- node /绝对路径/deckflow-mcp/dist/entry/stdio.js
+```
+
+如果需要用 API key 做本地认证：
+
+```bash
+claude mcp add deckflow \
+  --env DECKFLOW_API_KEY=<你的 API key> \
+  -- node /绝对路径/deckflow-mcp/dist/entry/stdio.js
+```
+
+## 完成授权
+
+添加托管服务后，在 Claude Code 中运行：
+
+```text
+/mcp
+```
+
+如果服务需要浏览器授权，Claude Code 会在这里提示你继续完成认证。
+
+## 验证连接
+
+可以用命令行检查：
+
+```bash
+claude mcp list
+```
+
+也可以在 Claude Code 内查看：
+
+```text
+/mcp
+```
+
+理想状态下，你会看到 `deckflow` 已出现在列表中并处于已连接状态。
+
+## 先试一个任务
+
+```text
+使用 Deckflow MCP 把这份 HTML 幻灯片页面转换成可编辑的 PPTX，并返回结果链接。
+```
+
+```text
+使用 Deckflow MCP 把这个 PPTX 转成 PDF，并持续检查任务直到完成。
+```
+
+```text
+使用 Deckflow MCP 根据这段 brief 和附带参考文件生成一份演示文稿初稿。
+```

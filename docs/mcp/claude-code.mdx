@@ -1,77 +1,123 @@
 ---
 title: Deckflow MCP in Claude Code
 sidebarTitle: Claude Code
-description: "Configure Deckflow MCP in Claude Code with hosted HTTP OAuth or local stdio for presentation-processing workflows."
+description: "Configure Deckflow MCP in Claude Code with the add command, direct config edits, or local stdio when needed."
 ---
 
-Use this page to connect Deckflow MCP in Claude Code. Hosted HTTP is the best default when you want browser-based OAuth; use local stdio only when the agent must pass local absolute file paths.
+Use this page to connect Deckflow MCP in Claude Code. This is primarily a setup guide: add the Deckflow server, authenticate it, confirm the connection, and then start using Deckflow tools inside Claude Code.
 
 <Note>
-  Prefer hosted HTTP for normal use. Switch to local stdio only when your workflow depends on local files that are not available as URLs or uploaded `fileId:<id>` references.
+  Claude Code supports the cleanest CLI-based setup path of the current agent guides, so it is usually the fastest place to get Deckflow MCP running.
 </Note>
 
-## Hosted HTTP setup
+## Prerequisites
 
-<Steps>
-  <Step title="Add the Deckflow MCP endpoint">
-    ```bash
-    claude mcp add --transport http deckflow https://mcp.deckflow.com/mcp/v1/
-    ```
-  </Step>
-  <Step title="Authorize in Claude Code">
-    Run `/mcp` in Claude Code and follow the browser authorization prompt. The server supports MCP OAuth discovery, dynamic client registration, and PKCE.
-  </Step>
-  <Step title="Start a new Claude Code session">
-    Ask Claude Code to list Deckflow tools or run a small task, such as rendering Markdown or converting a hosted file URL.
-  </Step>
-</Steps>
+- Claude Code installed
+- Node.js available if you plan to use local stdio
+- A Deckflow account or API key, depending on the connection mode you choose
 
-## Local stdio setup
+## Add the MCP server with the CLI
 
-Build the MCP server locally, then register the stdio entry:
+Run this in your terminal:
 
 ```bash
-npm install
-npm run build
+claude mcp add --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+```
 
+To make the server available across all projects, use user scope:
+
+```bash
+claude mcp add --scope user --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+```
+
+To share the server with the current project through `.mcp.json`, use project scope:
+
+```bash
+claude mcp add --scope project --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+```
+
+## Alternative: edit config directly
+
+You can also add the hosted server by editing Claude Code config yourself.
+
+User-scoped example in `~/.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/mcp/v1/"
+    }
+  }
+}
+```
+
+Project-scoped example in `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/mcp/v1/"
+    }
+  }
+}
+```
+
+## Local stdio option
+
+Use local stdio only when Claude Code needs to pass local absolute file paths to the MCP server:
+
+```bash
+claude mcp add deckflow -- node /absolute/path/deckflow-mcp/dist/entry/stdio.js
+```
+
+If you need API-key-based local auth:
+
+```bash
 claude mcp add deckflow \
-  -e DECKFLOW_API_KEY=<key> \
+  --env DECKFLOW_API_KEY=<your-api-key> \
   -- node /absolute/path/deckflow-mcp/dist/entry/stdio.js
 ```
 
-Add `DECKFLOW_SPACE_ID=<spaceId>` when you want all calls to use a specific Deckflow space.
+## Authentication
 
-## File input behavior
-
-| Transport | Accepted file inputs |
-|---|---|
-| Hosted HTTP | `http(s)` URLs and `fileId:<uploaded-file-id>` |
-| Local stdio | Local absolute paths, `http(s)` URLs, and `fileId:<uploaded-file-id>` |
-
-## What to try after setup
-
-- Convert an HTML slide page into an editable PPTX deck.
-- Convert a PPTX file into PDF or image outputs for sharing.
-- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
-- Generate a first-draft presentation from a short brief plus reference files or URLs.
-
-## Example prompts
+After adding the hosted server, open Claude Code and run:
 
 ```text
-Use Deckflow MCP to convert this HTML page into an editable PPTX deck and return the download link.
+/mcp
+```
+
+If the server requires sign-in, Claude Code will prompt you to finish the browser-based authorization flow.
+
+## Verify the connection
+
+You can verify from either side:
+
+```bash
+claude mcp list
+```
+
+Or inside Claude Code:
+
+```text
+/mcp
+```
+
+You should see `deckflow` listed and connected.
+
+## Try a first task
+
+```text
+Use Deckflow MCP to convert this HTML slide page into an editable PPTX deck and return the result link.
 ```
 
 ```text
-Convert this PPTX to PDF, then compress the result if it is still too large to share.
+Use Deckflow MCP to convert this PPTX to PDF and check the task until it completes.
 ```
 
 ```text
-Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
+Use Deckflow MCP to generate a presentation draft from this short brief and the attached reference files.
 ```
-
-## Validation checklist
-
-- Claude Code lists the `deckflow` server in `/mcp`.
-- Tool discovery shows generation, translation, rendering, file utility, and task management tools.
-- A small utility task returns either a completed result or a `taskId`.
-- Long-running tasks can be checked with `get_task` and downloaded with `download_task_result`.
