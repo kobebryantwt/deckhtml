@@ -1,143 +1,66 @@
 ---
 title: Examples
 sidebarTitle: Examples
-description: "Explore practical DeckHTML CLI examples for converting files, URLs, and multi-output workflows."
+description: "Explore practical examples for the published DeckHTML CLI package."
 ---
 
-> Browse DeckHTML CLI workflows for local HTML files, stdin, ordered HTML files, hosted URLs, reports, script-friendly output, and cloud reconstruction.
+> Browse ready-to-run CLI examples based on the currently published `@deckflow/deckhtml` package.
 
-## Run Without Installing
-
-Convert a local HTML file with the npm package:
+## Run without installing
 
 ```bash
 npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
 ```
 
-Install the CLI globally when you use it often:
-
-```bash
-npm install -g @deckflow/deckhtml
-deckhtml --version
-```
-
-***
-
-## Convert a Single HTML File
-
-Convert a local HTML file to PPTX:
+## Convert a single file
 
 ```bash
 deckhtml index.html
-```
-
-The default output uses the input file name:
-
-```text
-index.pptx
-```
-
-Write to a specific output path:
-
-```bash
 deckhtml index.html -o deck.pptx
 ```
 
-***
-
-## Convert HTML from Stdin
-
-Pipe generated HTML into DeckHTML:
+## Convert stdin
 
 ```bash
 cat index.html | deckhtml - -o deck.pptx
 ```
 
-Use `-` as the stdin input placeholder. Provide `--output` or `-o` when converting stdin.
-
-***
-
-## Convert Multiple Ordered Files
-
-Pass files in the order they should appear:
+## Convert multiple ordered files
 
 ```bash
 deckhtml title.html agenda.html content.html summary.html -o deck.pptx
 ```
 
-***
-
 ## Convert a URL
-
-Convert a hosted HTML deck:
 
 ```bash
 deckhtml https://example.com/deck.html -o deck.pptx
-```
-
-Wait longer for client-side rendering:
-
-```bash
 deckhtml https://example.com/deck.html -o deck.pptx --render-wait 9
 ```
 
-***
-
-## Generate PDF or PNG Output
-
-Generate a PDF:
+## Generate PDF or PNG
 
 ```bash
 deckhtml index.html --format pdf -o deck.pdf
-```
-
-Generate PNG frames from one HTML file:
-
-```bash
 deckhtml index.html --format png -o frames
 ```
 
-Generate PNG frames from multiple explicit HTML files:
+## Set viewport width or platform mapping
 
 ```bash
-deckhtml title.html chart.html appendix.html --format png -o frames
+deckhtml index.html --width 1440 -o deck.pptx
+deckhtml index.html --platform win -o deck.pptx
 ```
 
-Generate the default PPTX format explicitly:
+## Use local, auto, or cloud mode
 
 ```bash
-deckhtml index.html --format pptx -o deck.pptx
+deckhtml index.html --mode local -o deck.pptx
+deckhtml index.html --mode auto -o deck.pptx
+deckhtml index.html --mode cloud -o deck.pptx
 ```
 
-***
-
-## Use Local, Auto, or Cloud Mode
-
-Force local conversion:
-
-```bash
-deckhtml index.html -o deck.pptx --mode local
-```
-
-Let DeckHTML choose the mode:
-
-```bash
-deckhtml index.html -o deck.pptx --mode auto
-```
-
-Force cloud conversion:
-
-```bash
-deckhtml index.html -o deck.pptx --mode cloud
-```
-
-`auto` uses cloud mode when an API key is configured and local mode otherwise. Local mode works without authentication.
-
-***
-
-## Use Cloud Reconstruction Features
-
-Rebuild richer presentation objects in cloud mode:
+## Use cloud-only enhancements
 
 ```bash
 deckhtml index.html \
@@ -149,23 +72,13 @@ deckhtml index.html \
   --map-motion
 ```
 
-These flags are cloud-only.
-
-***
-
-## Generate a Conversion Report
-
-Create a report next to the output:
+## Generate a report
 
 ```bash
 deckhtml index.html -o deck.pptx --report
 ```
 
-***
-
-## Get Machine-Readable Output
-
-Return JSON for scripts and CI:
+## Return machine-readable JSON
 
 ```bash
 deckhtml index.html -o deck.pptx --json
@@ -181,63 +94,18 @@ deckhtml index.html -o deck.pptx --json
 }
 ```
 
-Combine JSON with stdin:
-
-```bash
-cat index.html | deckhtml - -o deck.pptx --json
-```
-
-***
-
-## Adjust Log Output
-
-Print only the final result:
-
-```bash
-deckhtml index.html -o deck.pptx --quiet
-```
-
-Print detailed conversion logs:
-
-```bash
-deckhtml index.html -o deck.pptx --verbose
-```
-
-***
-
-## Configure Cloud Access
-
-Start browser login:
+## Authentication and config
 
 ```bash
 deckhtml auth login
-```
-
-Set an API key directly:
-
-```bash
+deckhtml auth status
 deckhtml config set api-key <key>
+deckhtml config show
 ```
 
-For CI, Docker, and agent environments, set the environment variable:
+For CI, Docker, and agent environments:
 
 ```bash
 export DECKHTML_API_KEY=your-api-key
-deckhtml index.html -o deck.pptx --mode cloud
+deckhtml index.html --mode cloud -o deck.pptx
 ```
-
-Verify your credentials:
-
-```bash
-deckhtml auth status
-```
-
-***
-
-## Configure PPTX Size
-
-```bash
-deckhtml config set size 1920x1080
-```
-
-The default PPTX size is `1920x1080`.

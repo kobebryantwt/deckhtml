@@ -1,58 +1,45 @@
 ---
 title: Overview
 sidebarTitle: Overview
-description: "Use DeckHTML SDK surfaces to wrap conversion behavior inside application code."
+description: "Use the published DeckHTML package inside application code through the Node programmatic API."
 ---
 
 The SDK section is for teams integrating DeckHTML into services, internal tools, and automation code.
 
 <Note>
-  Choose an SDK when conversion is part of application logic and you want a more stable integration boundary than shelling out from scripts.
+  The published npm package already exposes a Node programmatic API. For now, that is the concrete SDK surface we can document reliably.
 </Note>
 
-## When to use the SDK
-
-Choose an SDK when:
-
-- Conversion is part of backend logic
-- You need to wrap DeckHTML behind your own API
-- You want code-level composition instead of shell scripts
-
-## Integration surfaces
+## Available SDK documentation
 
 <CardGroup cols={2}>
   <Card title="Node SDK" href="/sdk/node">
-    Best for JavaScript and TypeScript services, internal platforms, and web backends.
+    Use the published `convertHtmlToPptx()` API from JavaScript or TypeScript.
   </Card>
   <Card title="Python SDK" href="/sdk/python">
-    Best for Python services, automation stacks, and data-oriented workflows.
+    Reserved for future Python-facing guidance.
   </Card>
 </CardGroup>
 
-## SDKs in this repository
+## When to use the SDK
 
-- [Node SDK](/sdk/node)
-- [Python SDK](/sdk/python)
+Choose the SDK layer when:
 
-## Design intent
-
-The SDK documentation should mirror the same mental model as the CLI:
-
-- specify input
-- choose output format
-- select mode
-- receive structured results
+- conversion is part of backend application logic
+- you want to call DeckHTML from JavaScript or TypeScript directly
+- you want typed options instead of shell flags
+- you need the conversion result as an in-memory `Buffer`
 
 ## Suggested adoption path
 
 <Steps>
   <Step title="Prototype with the CLI first">
-    Validate the HTML input and output you want before moving into application code.
+    Validate your HTML input and expected output behavior at the terminal.
   </Step>
-  <Step title="Pick the SDK that matches your runtime">
-    Move to [Node SDK](/sdk/node) or [Python SDK](/sdk/python) depending on your service environment.
+  <Step title="Move to the Node SDK for code-level integration">
+    Use the published `convertHtmlToPptx()` function in services, workers, or internal tools.
   </Step>
-  <Step title="Mirror the same conversion contract">
-    Keep the same mental model as the CLI: input, format, execution mode, and structured result.
+  <Step title="Add your own file writing or storage layer">
+    The programmatic API returns conversion output in memory, so your application decides how to persist or upload it.
   </Step>
 </Steps>

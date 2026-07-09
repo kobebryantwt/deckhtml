@@ -1,16 +1,17 @@
 ---
 title: Output Modes
 sidebarTitle: Output Modes
-description: "Choose between PPTX, PDF, PNG, and JSON output modes for DeckHTML command-line runs."
+description: "Choose between human-readable output, machine-readable JSON, and different artifact formats for DeckHTML CLI runs."
 ---
 
-> Pick the right DeckHTML CLI output mode for your workflow. Defaults to a human-readable final result; supports machine-readable JSON for scripts, CI, and agent workflows.
+> Pick the right output behavior for terminal use, automation, CI, and agent workflows.
 
-DeckHTML keeps command results and diagnostics separate. Final results go to stdout. Progress, warnings, verbose logs, and errors go to stderr.
+DeckHTML separates results and diagnostics:
 
-Supported inputs are stdin (`-`), one HTML file, multiple ordered HTML files, or a URL. Authentication is optional for local mode and required only for cloud execution or cloud-only enhancement flags.
+- stdout is for the final result
+- stderr is for progress, logs, and errors
 
-## Default: Human-Readable Result
+## Default output
 
 By default, DeckHTML prints the final result on stdout.
 
@@ -22,7 +23,7 @@ deckhtml index.html -o deck.pptx
 deck.pptx
 ```
 
-The default success output is the generated artifact path. Progress, if shown, is written to stderr so stdout remains easy to capture.
+If you omit `-o`, the CLI derives the output path from the input name when possible:
 
 ```bash
 deckhtml index.html
@@ -32,39 +33,25 @@ deckhtml index.html
 index.pptx
 ```
 
-Choose another format with `--format`:
+## Artifact formats
+
+Use `--format` to choose the artifact type:
 
 ```bash
-deckhtml report.html --format pdf -o report.pdf
+deckhtml index.html --format pdf -o deck.pdf
+deckhtml index.html --format png -o frames
+deckhtml index.html --format pptx -o deck.pptx
 ```
 
-```text
-report.pdf
-```
+Supported format values:
 
-For PNG output, use a file, stdin, URL, or multiple ordered HTML files:
+- `pptx`
+- `pdf`
+- `png`
 
-```bash
-deckhtml slide-1.html slide-2.html --format png -o frames
-```
+## `--json`
 
-```text
-frames
-```
-
-URL input behaves the same way:
-
-```bash
-deckhtml https://example.com/deck.html -o deck.pptx
-```
-
-```text
-deck.pptx
-```
-
-## `--json`: Machine-Readable Output
-
-Add `--json` when another program needs to parse the result.
+Use `--json` when another program needs to parse the result:
 
 ```bash
 deckhtml index.html -o deck.pptx --json
@@ -80,87 +67,23 @@ deckhtml index.html -o deck.pptx --json
 }
 ```
 
-With `--json`, stdout contains only JSON. Logs and diagnostics stay on stderr.
+With `--json`, stdout should contain only JSON. Logs and diagnostics remain on stderr.
 
-The exact JSON fields can evolve; treat the examples here as representative of the CLI result envelope, not as a formal schema.
+## `--quiet` and `--verbose`
 
-Example stdout:
-
-```json
-{
-  "ok": true,
-  "input": ["index.html"],
-  "output": "deck.pptx",
-  "format": "pptx",
-  "mode": "local"
-}
-```
-
-Example stderr when progress is enabled:
-
-```text
-Rendering index.html
-Writing deck.pptx
-```
-
-For stdin, the input is reported as `-`:
-
-```bash
-cat index.html | deckhtml - -o deck.pptx --json
-```
-
-```json
-{
-  "ok": true,
-  "input": ["-"],
-  "output": "deck.pptx",
-  "format": "pptx",
-  "mode": "local"
-}
-```
-
-## Quiet and Verbose Modes
-
-Use `--quiet` to suppress progress and non-essential messages:
+Use `--quiet` to suppress non-essential logs:
 
 ```bash
 deckhtml index.html -o deck.pptx --quiet
 ```
 
-Example stdout:
-
-```text
-deck.pptx
-```
-
-Example stderr: no output.
-
-
-Use `-v` or `--verbose` to write detailed logs to stderr:
+Use `--verbose` for detailed logs:
 
 ```bash
 deckhtml index.html -o deck.pptx --verbose
 ```
 
-Example stdout:
-
-```text
-deck.pptx
-```
-
-Example stderr:
-
-```text
-Mode: local
-Input: index.html
-Format: pptx
-Output: deck.pptx
-Rendering index.html
-Writing deck.pptx
-Done
-```
-
-`--quiet` and `--verbose` conflict:
+These flags conflict:
 
 ```bash
 deckhtml index.html --quiet --verbose
@@ -172,21 +95,11 @@ Representative stderr:
 Error: --quiet conflicts with --verbose
 ```
 
-Representative JSON stderr when `--json` is also present:
+## Errors and exit behavior
 
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "usage_error",
-    "message": "--quiet conflicts with --verbose"
-  }
-}
-```
+Errors are written to stderr. When `--json` is active, you should still expect diagnostic information to stay off stdout.
 
-## Errors
-
-Errors are written to stderr.
+Representative JSON-shaped error payload:
 
 ```json
 {
@@ -197,54 +110,18 @@ Errors are written to stderr.
 }
 ```
 
-Common error categories:
+Representative error categories used in the docs:
 
 | Code | Meaning |
 | --- | --- |
-| `usage_error` | Invalid flags, missing input, bad mode, or conflicting flags. |
-| `auth_error` | Cloud mode requires an API key but none is configured, or the key is invalid. |
+| `usage_error` | Invalid flags, missing input, or conflicting options. |
+| `auth_error` | Cloud mode requires a valid API key. |
 | `render_error` | The page could not be loaded or rendered. |
 | `conversion_error` | Conversion failed after rendering. |
 
-The error examples are representative. Scripts should rely on exit codes first, then parse JSON errors when `--json` is used.
-
-## Exit Codes
-
-| Code | Meaning |
-| --- | --- |
-| `0` | Success. |
-| `1` | General conversion or runtime error. |
-| `2` | Usage error. |
-| `3` | Authentication error. |
-
-## Configuring Output Defaults
-
-DeckHTML defines `--json`, `--quiet`, and `--verbose` as invocation flags. Persistent config covers API key, PPTX size, webhook, and retention hours:
-
-```bash
-deckhtml config set api-key <key>
-deckhtml config set size 1920x1080
-deckhtml config set webhook https://example.com/webhooks/deckhtml
-deckhtml config set retention-hours 3
-```
-
-For CI, Docker, and agent environments, `DECKHTML_API_KEY` takes precedence over stored credentials:
-
-```bash
-export DECKHTML_API_KEY=your-api-key
-```
-
-## Stdout vs Stderr
-
-DeckHTML separates data from diagnostics:
+## Stdout vs stderr
 
 | Stream | Content |
 | --- | --- |
 | stdout | Final output path or JSON result. |
 | stderr | Progress, warnings, verbose logs, and errors. |
-
-This keeps pipelines clean:
-
-```bash
-OUTPUT=$(deckhtml index.html -o deck.pptx --json | jq -r '.output')
-```

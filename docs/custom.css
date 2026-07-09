@@ -223,19 +223,20 @@ nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
 /* Keep the desktop sidebar header stable across locales. Mintlify localizes
    the theme-toggle aria label, so target the header structure instead. */
 #sidebar-content > .flex:first-child:has(.nav-logo) {
+  display: flex !important;
+  align-items: center !important;
   gap: 0.5rem;
 }
 
 #sidebar-content > .flex:first-child:has(.nav-logo) > a:has(.nav-logo) {
-  order: 1 !important;
   margin-left: 0 !important;
   margin-right: auto !important;
+  flex: 1 1 auto !important;
 }
 
 #sidebar-content > .flex:first-child:has(.nav-logo) > button {
-  order: 2 !important;
   flex-shrink: 0 !important;
-  margin-left: auto !important;
+  margin-left: 0 !important;
 }
 
 @media (max-width: 1023px) {

@@ -157,8 +157,7 @@
                   "docs/local-mode",
                   "docs/cloud-mode",
                   "docs/configuration",
-                  "docs/faq",
-                  "docs/errors"
+                  "docs/faq"
                 ]
               }
             ]
@@ -226,10 +225,10 @@
                 "group": "CLI",
                 "pages": [
                   "cli/overview",
+                  "cli/output-modes",
                   "cli/commands",
                   "cli/features",
-                  "cli/examples",
-                  "cli/output-modes"
+                  "cli/examples"
                 ]
               }
             ]
