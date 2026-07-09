@@ -36,7 +36,7 @@ Arguments:
 | `--quiet` | Only errors and final result. | `false` |
 | `-o, --output <path>` | Output path. | Derived from input when possible |
 | `--mode <mode>` | Execution mode: `auto`, `local`, or `cloud`. | `auto` |
-| `--format <format>` | Output format: `pptx`, `pdf`, or `png`. | `pptx` |
+| `--format <format>` | Accepted format values: `pptx`, `pdf`, or `png`. Current published behavior differs by mode. | `pptx` |
 | `--width <pixels>` | Playwright viewport width; height scales at `16:9`. | Package default |
 | `--platform <platform>` | Generic font mapping target: `win`, `mac`, `ios`, `android`, `linux`. | Current OS |
 | `--render-wait <seconds>` | Per-page wait before capture in cloud mode. | `3` |
@@ -57,6 +57,18 @@ Arguments:
 | HTML file | `deckhtml index.html` | Convert one local HTML file. |
 | HTML files | `deckhtml page1.html page2.html page3.html` | Convert files in argument order. |
 | URL | `deckhtml https://example.com/deck.html -o deck.pptx` | Load and convert a hosted page. |
+
+## Current mode and format behavior
+
+The published `@deckflow/deckhtml@0.1.0` package currently behaves like this:
+
+| Mode | What works |
+| --- | --- |
+| `local` | `pptx` only, no auth required |
+| `cloud` | `pptx` and `png`, auth required |
+| `auto` | Resolves to `cloud` when credentials exist, otherwise `local` |
+
+`pdf` is present in the command surface, but the published package still throws `PDF output is not yet supported`.
 
 ## Subcommands
 

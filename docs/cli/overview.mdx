@@ -1,10 +1,8 @@
 ---
 title: Overview
 sidebarTitle: Overview
-description: "Convert HTML files, stdin, or URLs into PPTX, PDF, or PNG artifacts from your terminal."
+description: "Convert HTML files, stdin, or URLs into presentation artifacts from your terminal."
 ---
-
-> Convert HTML files, stdin, or URLs into PPTX, PDF, or PNG artifacts from your terminal.
 
 The published `@deckflow/deckhtml` package gives you a command-line interface for HTML-to-presentation conversion. It accepts local files, multiple ordered HTML files, stdin, and hosted URLs. It supports local and cloud execution, human-readable output by default, and machine-readable JSON output for scripts and CI.
 
@@ -34,16 +32,76 @@ deckhtml --version
     Convert a single HTML file, multiple ordered files, stdin, or a hosted URL.
   </Card>
   <Card title="Multiple outputs">
-    Generate `pptx`, `pdf`, or `png` output from the same command surface.
+    Generate `pptx` locally, or `pptx` and `png` through cloud execution.
   </Card>
   <Card title="Automation-friendly">
     Use `--json`, `--quiet`, and cloud mode flags in scripts, CI, and agent workflows.
   </Card>
 </CardGroup>
 
+## Execution modes
+
+The published package supports three execution modes:
+
+| Mode | What it means | Auth required |
+| --- | --- | --- |
+| `local` | Always convert locally. | No |
+| `cloud` | Always convert in Deckflow Cloud. | Yes |
+| `auto` | Use cloud when credentials exist; otherwise fall back to local. | Only if cloud is selected |
+
+This is not just a documentation assumption. The published CLI implementation resolves mode exactly this way:
+
+- `--mode local` always stays local
+- `--mode cloud` throws if no credentials are available
+- `--mode auto` chooses cloud when credentials exist, otherwise local
+
+Current format behavior also depends on mode:
+
+- local mode only supports `pptx`
+- cloud mode supports `pptx` and `png`
+- `pdf` is listed in the CLI surface, but the published `0.1.0` package still errors with `PDF output is not yet supported`
+
+## Authentication
+
+Authentication is only required for cloud execution and cloud-only enhancement flags. If you plan to stay in local mode, you can start converting immediately without configuring credentials.
+
+```bash
+deckhtml auth login
+deckhtml auth status
+deckhtml config set api-key <key>
+```
+
+There are two credential paths for cloud usage:
+
+- `deckhtml auth login`: opens a browser, lets you sign in manually, receives the callback on `localhost`, and then automatically stores `token` and `spaceId` in `~/.deckflow/credentials`
+- `deckhtml config set api-key <key>`: stores an API key in the same credentials file for non-browser environments or manual setup
+
+After a successful browser login, you do **not** need to run `deckhtml config set api-key` again just to make the CLI usable. The CLI can already continue with the stored login token.
+
+If you configure both, they do not overwrite each other. The credentials file can hold `apiKey`, `token`, and `spaceId` at the same time. That said, it is usually cleaner to choose one primary path:
+
+- local desktop usage: prefer `deckhtml auth login`
+- CI, Docker, and agent runtimes: prefer `DECKHTML_API_KEY` or `deckhtml config set api-key`
+
+## CI, Docker, and agent environments
+
+In non-interactive environments such as CI pipelines, containers, and agent runtimes, browser login is usually unavailable and local credential files may be ephemeral. In those cases, use the environment variable instead of relying on saved credentials:
+
+```bash
+export DECKHTML_API_KEY=your-api-key
+```
+
+This is not a separate feature flag. It is simply the most reliable way to make the API key available in automated or disposable runtimes.
+
+Credential precedence is also worth knowing:
+
+- `DECKHTML_API_KEY` takes precedence over a stored `apiKey`
+- browser login stores `token` and `spaceId`, not an API key
+- both credential styles can coexist in the same file without one automatically deleting the other
+
 ## First run
 
-Convert a single local HTML file:
+Once your auth path is clear, convert a single local HTML file:
 
 ```bash
 deckhtml index.html
@@ -73,21 +131,20 @@ Convert a hosted page:
 deckhtml https://example.com/deck.html -o deck.pptx
 ```
 
-## Authentication
+## What the package does beyond output formats
 
-Authentication is only required for cloud execution and cloud-only enhancement flags.
+At the user-facing CLI level, the package is still centered on one core job: converting HTML inputs into presentation artifacts.
 
-```bash
-deckhtml auth login
-deckhtml auth status
-deckhtml config set api-key <key>
-```
+Beyond the output format itself, it also provides:
 
-For CI, Docker, and agent environments, the environment variable takes precedence over stored credentials:
+- multiple input modes: file, stdin, ordered files, URL
+- local vs cloud execution control
+- cloud-only enhancement flags such as SVG/chart rebuild and font embedding
+- report generation with `--report`
+- authentication and persistent config commands
+- machine-readable output for scripts with `--json`
 
-```bash
-export DECKHTML_API_KEY=your-api-key
-```
+What it does **not** expose as separate end-user workflows in this package is a broader product surface like translation, generation, revamp, or document-processing APIs. Those belong to other Deckflow surfaces, not this CLI package.
 
 ## Read next
 

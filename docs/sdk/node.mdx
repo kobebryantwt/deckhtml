@@ -9,14 +9,10 @@ Use the Node SDK when your conversion workflow lives in JavaScript or TypeScript
 ## Install
 
 ```bash
-npm install @deckflow/deckhtml
+npm install @deckflow/deckhtml playwright pptxgenjs
 ```
 
-The package also expects the runtime dependencies used by the converter stack, especially Playwright and PptxGenJS:
-
-```bash
-npm install playwright pptxgenjs
-```
+The published package declares `playwright` and `pptxgenjs` as peer runtime dependencies. In practice, your application environment needs both available at runtime because the published converter stack imports them directly.
 
 ## Import the published API
 

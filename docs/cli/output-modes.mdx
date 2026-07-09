@@ -1,7 +1,7 @@
 ---
 title: Output Modes
 sidebarTitle: Output Modes
-description: "Choose between human-readable output, machine-readable JSON, and different artifact formats for DeckHTML CLI runs."
+description: "Choose between human-readable output, machine-readable JSON, and the available artifact behaviors for DeckHTML CLI runs."
 ---
 
 > Pick the right output behavior for terminal use, automation, CI, and agent workflows.
@@ -38,16 +38,21 @@ index.pptx
 Use `--format` to choose the artifact type:
 
 ```bash
-deckhtml index.html --format pdf -o deck.pdf
-deckhtml index.html --format png -o frames
 deckhtml index.html --format pptx -o deck.pptx
+deckhtml index.html --mode cloud --format png -o frames
 ```
 
-Supported format values:
+Accepted format values:
 
 - `pptx`
 - `pdf`
 - `png`
+
+Actual behavior in the published `@deckflow/deckhtml@0.1.0` package:
+
+- local mode only succeeds with `pptx`
+- cloud mode succeeds with `pptx` and `png`
+- `pdf` is part of the CLI surface, but currently returns `PDF output is not yet supported`
 
 ## `--json`
 

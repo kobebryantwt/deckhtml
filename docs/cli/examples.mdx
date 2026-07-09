@@ -38,12 +38,13 @@ deckhtml https://example.com/deck.html -o deck.pptx
 deckhtml https://example.com/deck.html -o deck.pptx --render-wait 9
 ```
 
-## Generate PDF or PNG
+## Generate cloud outputs
 
 ```bash
-deckhtml index.html --format pdf -o deck.pdf
-deckhtml index.html --format png -o frames
+deckhtml index.html --mode cloud --format png -o frames
 ```
+
+In the published `0.1.0` package, `pdf` is not yet completed even though it appears in the CLI surface.
 
 ## Set viewport width or platform mapping
 

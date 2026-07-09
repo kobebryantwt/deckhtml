@@ -32,13 +32,13 @@ deckhtml https://example.com/deck.html -o deck.pptx
 
 ## Output formats
 
-The published package supports:
+The published package exposes these format values:
 
 | Format | Description |
 | --- | --- |
 | `pptx` | PowerPoint deck output. Default. |
-| `pdf` | PDF export. |
-| `png` | PNG frame output. |
+| `pdf` | Reserved in the CLI surface, but not yet completed in the published `0.1.0` package. |
+| `png` | PNG frame output in cloud mode. |
 
 ## Execution modes
 
@@ -49,6 +49,12 @@ The published package supports:
 | `cloud` | Force cloud conversion and require an API key. |
 
 Local conversion works without authentication. Cloud conversion and cloud-only enhancement flags require a configured API key.
+
+Mode and format combine like this in the published package:
+
+- local: `pptx` only
+- cloud: `pptx` and `png`
+- auto: cloud when credentials exist, otherwise local
 
 ## Cloud-only enhancements
 
