@@ -240,8 +240,7 @@
                 "group": "SDK",
                 "pages": [
                   "sdk/overview",
-                  "sdk/node",
-                  "sdk/python"
+                  "sdk/node"
                 ]
               }
             ]

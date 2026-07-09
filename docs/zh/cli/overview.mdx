@@ -64,11 +64,6 @@ deckhtml config set api-key <key>
 
 因此，如果你已经通过浏览器完成了 `deckhtml auth login`，通常**不需要**再额外执行一次 `deckhtml config set api-key`。CLI 会直接使用已经保存好的登录令牌继续访问云端能力。
 
-如果两种方式你都配置了，它们也不会互相覆盖。凭证文件里可以同时存在 `apiKey`、`token` 和 `spaceId`。不过从维护角度看，最好还是固定一种主路径：
-
-- 本机桌面使用：优先 `deckhtml auth login`
-- CI、Docker、Agent 环境：优先 `DECKHTML_API_KEY` 或 `deckhtml config set api-key`
-
 ## CI、Docker 与 Agent 环境
 
 在 CI、Docker、Agent 这类非交互环境里，浏览器登录通常不可用，本地凭证文件也未必稳定存在。此时更推荐直接通过环境变量传入 API Key：

@@ -70,4 +70,20 @@ https://mcp.deckflow.com/mcp/v1/
 - **直接编辑配置文件**：手动把 Deckflow 写进 `config.toml`、`mcp.json` 或 `.mcp.json`。
 - **CLI 注册**：通过类似 `claude mcp add` 的命令快速完成配置。
 
-只有在必须读取本地绝对路径文件时，才建议切换到本地 stdio 模式。
+如果你的工作流必须把本地绝对路径文件直接交给 MCP Server 处理，就需要改用本地 `stdio` 模式。一个典型配置如下：
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "command": "node",
+      "args": ["/绝对路径/deckflow-mcp/dist/entry/stdio.js"],
+      "env": {
+        "DECKFLOW_API_KEY": "<你的 API key>"
+      }
+    }
+  }
+}
+```
+
+如果你追求最省事的接入方式，优先使用托管端点；如果客户端必须直接访问你本机上的文件，再切换到本地 `stdio` 模式。

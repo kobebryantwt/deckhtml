@@ -78,11 +78,6 @@ There are two credential paths for cloud usage:
 
 After a successful browser login, you do **not** need to run `deckhtml config set api-key` again just to make the CLI usable. The CLI can already continue with the stored login token.
 
-If you configure both, they do not overwrite each other. The credentials file can hold `apiKey`, `token`, and `spaceId` at the same time. That said, it is usually cleaner to choose one primary path:
-
-- local desktop usage: prefer `deckhtml auth login`
-- CI, Docker, and agent runtimes: prefer `DECKHTML_API_KEY` or `deckhtml config set api-key`
-
 ## CI, Docker, and agent environments
 
 In non-interactive environments such as CI pipelines, containers, and agent runtimes, browser login is usually unavailable and local credential files may be ephemeral. In those cases, use the environment variable instead of relying on saved credentials:

@@ -68,4 +68,20 @@ Depending on the client, Deckflow MCP can be connected in one of three ways:
 - **Config file**: write the server entry directly into a local MCP config file such as `config.toml`, `mcp.json`, or `.mcp.json`.
 - **CLI command**: register the server with a helper command such as `claude mcp add`.
 
-Use local stdio only when your workflow must pass local absolute file paths into the MCP server.
+If your workflow must pass local absolute file paths into the MCP server, use local `stdio` instead of the hosted endpoint. A typical shape looks like this:
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "command": "node",
+      "args": ["/absolute/path/to/deckflow-mcp/dist/entry/stdio.js"],
+      "env": {
+        "DECKFLOW_API_KEY": "<your API key>"
+      }
+    }
+  }
+}
+```
+
+Use the hosted endpoint when you want the simplest setup. Use local `stdio` when the client must read local files directly from your machine.

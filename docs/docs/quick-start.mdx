@@ -1,7 +1,7 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: "Convert your first HTML file into a PPTX, PDF, or PNG artifact with DeckHTML."
+description: "Convert your first HTML file into a PPTX artifact with DeckHTML, then expand to other execution paths."
 ---
 
 This is the shortest path from an HTML file to a generated deck artifact.
@@ -47,17 +47,16 @@ This is the shortest path from an HTML file to a generated deck artifact.
     deckhtml index.html -o deck.pptx
     ```
   </Step>
-  <Step title="Check the generated output">
-    Successful conversion writes the target artifact and prints either the output path or structured JSON, depending on your output mode.
+  <Step title="Check the generated PPTX output">
+    Successful local conversion writes the target PPTX and prints either the output path or structured JSON, depending on your output mode.
 
     ```bash
-    deckhtml index.html -o deck.pdf --format pdf
-    deckhtml index.html -o ./frames --format png
+    deckhtml index.html -o deck.pptx
     deckhtml index.html -o deck.pptx --json
     ```
   </Step>
   <Step title="Choose the right execution mode">
-    Use [Local Mode](/docs/local-mode) when conversion should run on the same machine, or [Cloud Mode](/docs/cloud-mode) when you need remote execution or cloud-only enhancement features.
+    Use [Local Mode](/docs/local-mode) when conversion should run on the same machine, or [Cloud Mode](/docs/cloud-mode) when you need remote execution, hosted `png` output, or cloud-only enhancement features.
   </Step>
 </Steps>
 
@@ -76,5 +75,5 @@ This is the shortest path from an HTML file to a generated deck artifact.
 </CardGroup>
 
 <Tip>
-  If your first command succeeds, keep going with the same input and switch only one thing at a time: output format, execution mode, or integration surface.
+  If your first command succeeds, keep going with the same input and switch only one thing at a time: execution mode, output behavior, or integration surface.
 </Tip>
