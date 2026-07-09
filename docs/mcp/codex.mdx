@@ -1,13 +1,13 @@
 ---
 title: Deckflow MCP in Codex
 sidebarTitle: Codex
-description: "Use Deckflow MCP from Codex-style agent workflows to generate presentations, render HTML, convert files, and retrieve task artifacts."
+description: "Configure Deckflow MCP in Codex-style environments for HTML-to-PPTX, format conversion, and presentation-processing workflows."
 ---
 
-Codex can use Deckflow MCP when a documentation, code, or automation task needs a generated presentation artifact. The MCP server gives the agent a structured tool surface instead of relying on ad hoc shell commands.
+Use this page to connect Deckflow MCP in Codex-style environments. Hosted HTTP is the best default when the runtime supports remote MCP authorization; switch to local stdio only when the server must read local absolute file paths.
 
 <Note>
-  In hosted HTTP mode, pass URLs or `fileId:<uploaded-file-id>` values for files. Use local stdio mode when the MCP server must read local absolute file paths.
+  In hosted HTTP mode, pass URLs or `fileId:<uploaded-file-id>` values for files. Use local stdio only when local file path access is required.
 </Note>
 
 ## Connection options
@@ -41,23 +41,6 @@ Codex can use Deckflow MCP when a documentation, code, or automation task needs 
   </Tab>
 </Tabs>
 
-## Good fits for Codex
-
-<CardGroup cols={2}>
-  <Card title="Render generated HTML" icon="code">
-    Ask Codex to create or edit HTML slide content, then call `render_html` for PNG or PPTX output.
-  </Card>
-  <Card title="Turn specs into decks" icon="sparkles">
-    Feed product notes, PRDs, or release notes into `generate_presentation`.
-  </Card>
-  <Card title="Translate generated documents" icon="languages">
-    Use `translate_document` after a deck or document is created.
-  </Card>
-  <Card title="Inspect and repair files" icon="search">
-    Use `inspect_pptx`, `embed_pptx_fonts`, `compress_file`, and format conversion tools during delivery checks.
-  </Card>
-</CardGroup>
-
 ## Agent workflow pattern
 
 <Steps>
@@ -75,16 +58,23 @@ Codex can use Deckflow MCP when a documentation, code, or automation task needs 
   </Step>
 </Steps>
 
+## What to try after setup
+
+- Convert an HTML slide page into an editable PPTX deck.
+- Convert a PPTX file into PDF or image outputs for sharing.
+- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
+- Generate a first-draft presentation from a short brief plus reference files or URLs.
+
 ## Example prompts
 
 ```text
-Use Deckflow MCP to render this HTML slide into a PPTX and give me the download link.
+Use Deckflow MCP to convert this HTML page into an editable PPTX deck and return the download link.
 ```
 
 ```text
-Generate a concise investor update deck from these notes. Use 8 slides and target an executive audience.
+Convert this PPTX to PDF, then compress the result if it is still too large to share.
 ```
 
 ```text
-Convert this PPTX to PDF, then compress the result if needed.
+Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
 ```

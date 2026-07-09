@@ -1,13 +1,13 @@
 ---
 title: Deckflow MCP in Cursor
 sidebarTitle: Cursor
-description: "Connect Cursor to Deckflow MCP so coding agents can generate decks, render HTML, convert files, and manage document tasks."
+description: "Configure Deckflow MCP in Cursor for HTML-to-PPTX, format conversion, and presentation-processing workflows."
 ---
 
-Cursor can call Deckflow MCP tools from inside an editing workflow. This is useful when an agent is writing slide HTML, preparing source files, or coordinating document operations alongside code changes.
+Use this page to connect Deckflow MCP in Cursor. Hosted HTTP is the best default when your Cursor build supports remote MCP servers; switch to local stdio only when the MCP server must read local absolute file paths.
 
 <Note>
-  Cursor MCP configuration may vary by version. Use the hosted HTTP endpoint when your Cursor build supports remote MCP servers. Use local stdio when you need local file path access.
+  Cursor MCP configuration may vary by version. Start with hosted HTTP unless you specifically need local file path access.
 </Note>
 
 ## Hosted HTTP endpoint
@@ -42,35 +42,25 @@ Use one of these authentication paths:
 
 Add `DECKFLOW_SPACE_ID` if you want Cursor to operate inside a fixed Deckflow space.
 
-## Recommended workflows
+## What to try after setup
 
-<CardGroup cols={2}>
-  <Card title="HTML-to-artifact iteration" icon="code">
-    Let Cursor edit an HTML slide, then call `render_html` to create a PNG preview or PPTX output.
-  </Card>
-  <Card title="Document cleanup" icon="file-cog">
-    Convert, compress, inspect, split, or merge existing files while Cursor keeps the source project context nearby.
-  </Card>
-  <Card title="Deck generation" icon="sparkles">
-    Use `generate_presentation` from a product brief, README, or source document.
-  </Card>
-  <Card title="Task follow-up" icon="list-checks">
-    Poll with `get_task`, list prior tasks with `list_tasks`, then download with `download_task_result`.
-  </Card>
-</CardGroup>
+- Convert an HTML slide page into an editable PPTX deck.
+- Convert a PPTX file into PDF or image outputs for sharing.
+- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
+- Generate a first-draft presentation from a short brief plus reference files or URLs.
 
 ## Prompt examples
 
 ```text
-Use Deckflow MCP to render docs/examples/intro.html as a PPTX.
+Use Deckflow MCP to convert docs/examples/intro.html into an editable PPTX deck and return the download link.
 ```
 
 ```text
-Generate a presentation from this project README for a sales engineering audience.
+Convert this PPTX to PDF, then compress the result if it is still too large to share.
 ```
 
 ```text
-Translate the uploaded deck from English to Simplified Chinese and return the PPTX download link.
+Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
 ```
 
 ## Troubleshooting

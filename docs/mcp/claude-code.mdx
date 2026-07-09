@@ -1,13 +1,13 @@
 ---
 title: Deckflow MCP in Claude Code
 sidebarTitle: Claude Code
-description: "Add Deckflow MCP to Claude Code with hosted HTTP OAuth or local stdio for presentation and document automation workflows."
+description: "Configure Deckflow MCP in Claude Code with hosted HTTP OAuth or local stdio for presentation-processing workflows."
 ---
 
-Claude Code can use Deckflow MCP as either a hosted HTTP server or a local stdio server. Hosted HTTP is the easiest path when you want browser-based OAuth. Local stdio is useful when the agent must pass local absolute file paths.
+Use this page to connect Deckflow MCP in Claude Code. Hosted HTTP is the best default when you want browser-based OAuth; use local stdio only when the agent must pass local absolute file paths.
 
 <Note>
-  Prefer hosted HTTP for normal use. Use local stdio when your workflow depends on local files that are not available as URLs or uploaded `fileId` references.
+  Prefer hosted HTTP for normal use. Switch to local stdio only when your workflow depends on local files that are not available as URLs or uploaded `fileId:<id>` references.
 </Note>
 
 ## Hosted HTTP setup
@@ -48,19 +48,26 @@ Add `DECKFLOW_SPACE_ID=<spaceId>` when you want all calls to use a specific Deck
 | Hosted HTTP | `http(s)` URLs and `fileId:<uploaded-file-id>` |
 | Local stdio | Local absolute paths, `http(s)` URLs, and `fileId:<uploaded-file-id>` |
 
-## Try it
+## What to try after setup
 
-<CardGroup cols={1}>
-  <Card title="Generate a deck">
-    Ask Claude Code: `Use Deckflow to generate a 10-page executive presentation about our product launch.`
-  </Card>
-  <Card title="Translate a document">
-    Ask Claude Code: `Use Deckflow to translate this uploaded PPTX from Chinese to English, then return the download link.`
-  </Card>
-  <Card title="Render HTML">
-    Ask Claude Code: `Use Deckflow render_html to turn this HTML slide into a PPTX artifact.`
-  </Card>
-</CardGroup>
+- Convert an HTML slide page into an editable PPTX deck.
+- Convert a PPTX file into PDF or image outputs for sharing.
+- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
+- Generate a first-draft presentation from a short brief plus reference files or URLs.
+
+## Example prompts
+
+```text
+Use Deckflow MCP to convert this HTML page into an editable PPTX deck and return the download link.
+```
+
+```text
+Convert this PPTX to PDF, then compress the result if it is still too large to share.
+```
+
+```text
+Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
+```
 
 ## Validation checklist
 

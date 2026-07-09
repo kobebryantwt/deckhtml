@@ -136,6 +136,36 @@ pre {
   transform: translateY(-1px);
 }
 
+.mcp-client-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.mcp-client-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mcp-client-card-header img {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.mcp-client-card-header strong {
+  font-size: 1.125rem;
+  line-height: 1.15;
+  color: var(--deck-text);
+}
+
+.mcp-client-card p {
+  margin: 0;
+  color: var(--deck-text-muted);
+}
+
 [data-component-part="card-title"] {
   letter-spacing: 0;
 }

@@ -1,13 +1,13 @@
 ---
 title: Deckflow MCP in TRAE
 sidebarTitle: TRAE
-description: "Connect TRAE to Deckflow MCP through TRAE's MCP settings UI for HTML-to-PPTX, format conversion, and presentation-processing workflows."
+description: "Configure Deckflow MCP in TRAE with either the hosted Streamable HTTP endpoint or a local stdio server."
 ---
 
-TRAE can use Deckflow MCP for HTML-to-PPTX, format conversion, and presentation-processing workflows. Unlike Claude Code or some CLI-first clients, TRAE does not currently rely on an `add mcp` terminal command. In practice, you add Deckflow from TRAE's MCP settings UI by choosing the manual configuration flow, then paste either a hosted Streamable HTTP config or a local stdio config.
+Use this page to add Deckflow MCP in TRAE. Most teams should start with the hosted Streamable HTTP endpoint for browser-based authorization, and only switch to local stdio when TRAE must pass local file paths directly to the MCP server.
 
 <Note>
-  Use the hosted Streamable HTTP config for the easiest setup and OAuth authorization flow. Use local stdio when TRAE needs to pass local absolute file paths to the MCP server.
+  Start with hosted HTTP unless your workflow depends on local absolute file paths. Hosted mode is simpler to roll out and easier to verify.
 </Note>
 
 ## Open the MCP configuration entry
@@ -113,24 +113,14 @@ Paste this config into TRAE when you need a local stdio MCP server:
 
 TRAE does not need the OAuth verification screen in this mode. Instead, make sure the local server path is correct and the `DECKFLOW_API_KEY` environment variable is valid before you enable the server.
 
-## Recommended workflows
+## What to try after setup
 
-<CardGroup cols={2}>
-  <Card title="HTML to PPTX decks" icon="code">
-    Convert HTML pages, templates, or component-based slide content directly into editable PPTX decks for html2pptx workflows.
-  </Card>
-  <Card title="Format conversion" icon="repeat">
-    Convert between PPTX, PDF, image, and related delivery formats for handoff, review, archive, and sharing flows.
-  </Card>
-  <Card title="File and PPTX utilities" icon="file-cog">
-    Run OCR, compression, split, merge, font embedding, and inspection tasks without leaving the same agent workflow.
-  </Card>
-  <Card title="Generate, translate, and revamp decks" icon="sparkles">
-    Start from a prompt plus reference files, translate image-rich documents while preserving layout, or restyle an existing deck.
-  </Card>
-</CardGroup>
+- Convert an HTML slide page into an editable PPTX deck.
+- Convert a PPTX file into PDF or image outputs for sharing.
+- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
+- Generate a first-draft presentation from a short brief plus reference files or URLs.
 
-## Prompt examples
+## Example prompts
 
 ```text
 Use Deckflow MCP to convert this HTML page into an editable PPTX deck and return the download link.
