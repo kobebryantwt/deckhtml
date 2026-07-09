@@ -1,49 +1,65 @@
 ---
 title: API 概览
 sidebarTitle: API 概览
-description: "查看 Deckflow API 的统一任务模型、两个核心接口，以及按业务场景组织的参考文档。"
+description: "查看 Deckflow API 的通用异步任务流程、公共任务接口，以及不同业务场景的完整参数说明。"
 ---
 
-Deckflow API 的业务能力很多，但底层其实围绕同一套异步任务模型展开。无论是文档生成、翻译、焕新，还是文件转换与优化，本质上都建立在两个核心接口之上：
+Deckflow API 的底层组织方式，其实就是一套通用的异步任务流程。无论是文档生成、翻译、焕新，还是工具类文件处理，都会复用同一套任务提交、任务查询和结果下载模式。
+
+在参考文档这一层，最重要的公共接口是：
 
 - `POST /tools/tasks`
 - `GET /tools/tasks/{id}`
+- `GET /tools/tasks/{id}/download`
 
 因此，这一节会分成两层来讲：
 
-- **核心接口**：解释任务是如何被提交和查询的
-- **场景文档**：解释同一个接口在不同 `type + params` 下怎么覆盖不同业务能力
+- **核心接口**：如何提交任务、查询状态、下载结果
+- **场景文档**：不同业务场景下该传什么 `type`、`files` 和 `params`
 
 <Note>
-  交互式接口页由仓库内的 OpenAPI 文件驱动；场景页则用于帮助你理解同一个接口在不同业务场景中的调用方式。
+  你刚才提到的 `shared model` 不是 Deckflow 官方原词。这里更准确的说法应该是“通用异步任务流程”或“统一任务模型”，对应官方文档里的“接口调用模型 / 通用 API 与认证”。
 </Note>
+
+## 通用异步任务流程
+
+Deckflow 在不同业务场景下都遵循相同生命周期：
+
+- 通过 `Authorization: Bearer <YOUR_API_KEY>` 完成认证
+- 以 `multipart/form-data` 提交文件、任务类型和 JSON 参数
+- 立即拿到任务 ID
+- 通过轮询或 SSE 订阅持续跟踪任务状态
+- 任务成功后，通过 `result.url` 或专用下载接口获取最终文件
 
 ## 先读这一组
 
 <CardGroup cols={3}>
   <Card title="认证与任务模型" href="/zh/reference/authentication-and-task-model">
-    先理解共用的 Base URL、认证方式、表单字段和异步任务流程。
+    先理解 Base URL、请求头、公共表单字段和统一任务生命周期。
   </Card>
   <Card title="提交异步任务" href="/zh/reference/submit-async-task">
     查看统一的 `POST /tools/tasks` 接口。
   </Card>
   <Card title="查询任务状态" href="/zh/reference/query-task-status">
-    查看统一的 `GET /tools/tasks/{id}` 接口。
+    查看统一的 `GET /tools/tasks/{id}` 接口，包括轮询和 SSE 用法。
+  </Card>
+  <Card title="下载任务结果" href="/zh/reference/download-task-result">
+    查看任务完成后如何通过专用下载接口获取输出文件。
   </Card>
   <Card title="文档生成场景" href="/zh/reference/generation-scenarios">
-    查看生成演示文稿时的 `type` 和 `params` 用法。
+    查看生成场景的完整字段和 `params` 说明。
   </Card>
   <Card title="文档翻译场景" href="/zh/reference/translation-scenarios">
-    查看翻译任务在统一接口中的映射方式。
+    查看翻译场景的完整字段和语言参数说明。
   </Card>
   <Card title="文档焕新场景" href="/zh/reference/revamp-scenarios">
-    查看焕新任务如何通过统一接口表达设计刷新需求。
+    查看焕新场景的完整字段和设计指令参数说明。
   </Card>
   <Card title="工具 API 场景" href="/zh/reference/tool-api-scenarios">
-    查看转换器、提取器、合并与拆分器、优化器等工具类任务。
+    查看转换器、提取器、合并拆分器、优化器的完整类型和参数表。
   </Card>
 </CardGroup>
 
 <Tip>
-  可以把这套 API 记成一句话：**先用提交接口创建任务，再用查询接口等待结果；不同场景只是在 `type` 和 `params` 上做区分。**
+  可以把这套 API 记成一句话：**核心接口负责提交、查询、下载；场景页负责解释每种业务到底要传什么字段和参数。**
 </Tip>

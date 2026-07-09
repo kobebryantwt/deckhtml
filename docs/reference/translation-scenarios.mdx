@@ -1,10 +1,10 @@
 ---
 title: Translation Scenarios
 sidebarTitle: Translation Scenarios
-description: "Use the shared task submit endpoint to translate PPTX, PDF, Word, and related documents while preserving layout where possible."
+description: "Use the shared task submit endpoint to translate presentation-style documents and review the full translation field definitions."
 ---
 
-Translation jobs reuse the same async task API. The difference is the task type and the language settings inside `params`.
+Translation jobs reuse the same unified async task API. The difference is that the `type` field must be fixed to `translation`, and `params` must contain the language fields defined below.
 
 ## Core mapping
 
@@ -12,33 +12,37 @@ Translation jobs reuse the same async task API. The difference is the task type 
 |---|---|
 | Endpoint | `POST /tools/tasks` |
 | `type` | `translation` |
-| Files | PPTX, Keynote, PDF, Word, Excel, and related presentation documents |
+| Files | Presentation-style documents such as PPTX, Keynote, PDF, Word, and Excel |
 | Query endpoint | `GET /tools/tasks/{id}` |
 
-## Common translation parameters
+## Form-data fields
 
-The source Deckflow docs explicitly show:
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `spaceId` | `String` | No | Target workspace Space ID. |
+| `files` | `File` | Yes | Source documents to translate. The official docs list PPTX, Keynote, PDF, Word, and Excel. Multiple files are supported. |
+| `type` | `String` | Yes | Fixed value: `translation`. |
+| `name` | `String` | No | Human-readable task name, such as `"AI translation task"`. |
+| `params` | `String (JSON)` | Yes | JSON string containing the translation parameters below. |
 
-- `from`
-- `to`
+## `params` fields
 
-These select the source and target language codes for the translation task.
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `from` | `String` | Yes | Source language code, such as `"zh"`. |
+| `to` | `String` | Yes | Target language code, such as `"en"`. |
+| `notifyURL` | `String` | No | Webhook callback URL for task status changes. |
 
 ## Example `params`
 
 ```json
 {
   "from": "zh",
-  "to": "en"
+  "to": "en",
+  "notifyURL": "https://your.domain/callback"
 }
 ```
 
-## Recommended usage
-
-- Submit the original document through `files`
-- Keep language codes explicit even when the source language seems obvious
-- Poll for completion, then read the translated file URL from the task result
-
 <Tip>
-  Translation workflows are designed for presentation-style documents. The product documentation emphasizes preserving layout and visual structure where possible.
+  The official Deckflow docs position this workflow around presentation-style files and emphasize preserving layout and visual structure where possible.
 </Tip>

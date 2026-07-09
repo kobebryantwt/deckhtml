@@ -1,10 +1,10 @@
 ---
 title: 文档焕新场景
 sidebarTitle: 文档焕新
-description: "通过统一任务接口提交焕新类任务，对已有 PPTX 演示文稿进行视觉刷新和风格改造。"
+description: "通过统一任务接口提交焕新类任务，并查看焕新场景的完整字段和设计参数说明。"
 ---
 
-焕新任务用于重设计现有演示文稿，但底层仍然通过统一的任务提交接口完成。
+焕新任务仍然复用统一的异步任务接口。区别在于 `type` 必须固定为 `revamp`，同时 `params` 中需要放入焕新设计所需的指令字段。
 
 ## 场景映射
 
@@ -12,31 +12,35 @@ description: "通过统一任务接口提交焕新类任务，对已有 PPTX 演
 |---|---|
 | 接口 | `POST /tools/tasks` |
 | `type` | `revamp` |
-| 文件 | PPTX |
+| 文件 | PPTX 演示文稿文件 |
 | 查询接口 | `GET /tools/tasks/{id}` |
 
-## 常见焕新参数
+## Form Data 字段
 
-源站文档展示了以下字段：
+| 字段 | 类型 | 是否必填 | 说明 |
+|---|---|---|---|
+| `spaceId` | `String` | 否 | 目标工作空间 Space ID。 |
+| `files` | `File` | 是 | 待焕新的 PPTX 文件。官方文档说明支持上传多个文件。 |
+| `type` | `String` | 是 | 固定值：`revamp`。 |
+| `name` | `String` | 否 | 任务显示名称，例如 `"AI 焕新文档任务"`。 |
+| `params` | `String (JSON)` | 是 | 包含焕新参数的 JSON 字符串。 |
 
-- `inputText`
-- `advancedModel`
-- `fastMode`
+## `params` 字段说明
 
-其中 `inputText` 主要用于描述排版风格、品牌调性、配色规则或其他设计刷新要求。
+| 字段 | 类型 | 是否必填 | 说明 |
+|---|---|---|---|
+| `inputText` | `String` | 否 | 排版风格指南、配色规则、品牌 DNA 或其他视觉焕新指令。 |
+| `advancedModel` | `Boolean` | 否 | 是否使用高级设计推理 AI。默认值：`false`。 |
+| `fastMode` | `Boolean` | 否 | 是否优先开启快速模式。默认值：`false`。 |
+| `notifyURL` | `String` | 否 | 任务状态变更通知的 Webhook 回调地址。 |
 
 ## `params` 示例
 
 ```json
 {
-  "inputText": "将标题字体改为 Outfit，并统一使用绿蓝色系风格。",
+  "inputText": "将整套演示文稿刷新为蓝绿色主色调，并使用更简洁的现代版式。",
   "advancedModel": false,
-  "fastMode": false
+  "fastMode": false,
+  "notifyURL": "https://your.domain/callback"
 }
 ```
-
-## 使用建议
-
-- 上传原始 PPTX 文件
-- 在 `inputText` 中清楚描述焕新目标
-- 这类任务更适合做视觉刷新，而不是从零开始新建文稿

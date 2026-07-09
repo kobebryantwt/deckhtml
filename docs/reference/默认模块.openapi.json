@@ -2,26 +2,35 @@
   "openapi": "3.1.0",
   "info": {
     "title": "默认模块",
-    "description": "Deckflow task API for submitting async jobs and retrieving task execution details.",
+    "description": "Deckflow task API for submitting async jobs, querying task state, and downloading completed results.",
     "version": "1.0.0"
   },
   "tags": [
     {
       "name": "Tasks",
-      "description": "Submit DeckHTML jobs and inspect their execution state."
+      "description": "Submit Deckflow jobs, inspect their execution state, and download completed results."
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://app.deckflow.com/api",
+      "description": "Deckflow production API"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
     }
   ],
   "paths": {
     "/tools/tasks": {
       "post": {
         "summary": "Submit async task",
-        "deprecated": false,
         "description": "Submit an asynchronous Deckflow task. Different business scenarios reuse this same endpoint and are selected through the `type` field plus the JSON string in `params`.",
         "tags": [
           "Tasks"
         ],
-        "operationId": "createHtml2PptxTask",
-        "parameters": [],
+        "operationId": "submitAsyncTask",
         "requestBody": {
           "required": true,
           "content": {
@@ -29,49 +38,41 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "files": {
-                    "format": "binary",
-                    "type": "string",
-                    "description": "One or more source files uploaded as multipart form data.",
-                    "example": "file:///Users/redstone/Downloads/example-math/preview-6.html"
-                  },
-                  "params": {
-                    "description": "Scenario-specific options encoded as a JSON string.",
-                    "example": "{\"inputText\":\"Create a 10-slide partner deck\",\"pageCount\":10}"
-                  },
-                  "name": {
-                    "description": "Optional display name for the task.",
-                    "example": "Partner deck generation",
-                    "type": "string"
-                  },
-                  "notifyURL": {
-                    "description": "Optional webhook callback URL for task status changes.",
-                    "example": "https://your.domain/callback",
-                    "type": "string"
-                  },
                   "spaceId": {
-                    "description": "Optional space identifier.",
-                    "example": "{{userId}}",
-                    "type": "string"
+                    "type": "string",
+                    "description": "Optional target workspace or space identifier.",
+                    "example": "workspace_123"
+                  },
+                  "files": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "One or more source files uploaded as multipart form data.",
+                    "example": "file:///Users/example/Documents/source.pptx"
                   },
                   "type": {
+                    "type": "string",
                     "description": "Business scenario or tool type identifier.",
-                    "example": "generation",
-                    "type": "string"
+                    "example": "generation"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Optional display name for the task.",
+                    "example": "Partner deck generation"
+                  },
+                  "notifyURL": {
+                    "type": "string",
+                    "description": "Optional webhook callback URL for task status changes.",
+                    "example": "https://your.domain/callback"
+                  },
+                  "params": {
+                    "type": "string",
+                    "description": "Scenario-specific options encoded as a JSON string.",
+                    "example": "{\"inputText\":\"Create a 10-slide partner deck\",\"pageCount\":10}"
                   }
                 },
                 "required": [
-                  "files",
                   "type"
                 ]
-              },
-              "example": {
-                "files": "file:///Users/redstone/Downloads/example-math/preview-6.html",
-                "params": "{\"inputText\":\"Create a 10-slide partner deck\",\"pageCount\":10}",
-                "name": "Partner deck generation",
-                "notifyURL": "https://your.domain/callback",
-                "spaceId": "workspace_123",
-                "type": "generation"
               }
             }
           }
@@ -89,15 +90,30 @@
                       "type": "string",
                       "description": "Task identifier returned by the service."
                     },
+                    "name": {
+                      "type": "string",
+                      "description": "Task display name."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Task scenario or tool type."
+                    },
                     "status": {
                       "type": "string",
                       "description": "Initial task status after creation."
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
                     }
                   }
                 }
               }
-            },
-            "headers": {}
+            }
           },
           "400": {
             "description": "The request payload is invalid or missing required fields."
@@ -114,12 +130,11 @@
     "/tools/tasks/{id}": {
       "get": {
         "summary": "Query task status",
-        "deprecated": false,
-        "description": "Retrieve the latest execution state for a previously submitted Deckflow task.",
+        "description": "Retrieve the latest execution state for a previously submitted Deckflow task. This same endpoint also supports SSE mode when the `response-event-stream: yes` header is present.",
         "tags": [
           "Tasks"
         ],
-        "operationId": "getTaskDetails",
+        "operationId": "queryTaskStatus",
         "parameters": [
           {
             "name": "id",
@@ -133,12 +148,12 @@
           {
             "name": "response-event-stream",
             "in": "header",
-            "description": "Set to `yes` when you want the endpoint to return an SSE-compatible response stream.",
+            "description": "Set to `yes` to request a `text/event-stream` SSE response instead of standard JSON polling.",
             "required": false,
-            "example": "yes",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "yes"
           }
         ],
         "responses": {
@@ -165,9 +180,14 @@
                     }
                   }
                 }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "SSE stream of `data: { ...taskJSON }` events until the task reaches a terminal state."
+                }
               }
-            },
-            "headers": {}
+            }
           },
           "401": {
             "description": "The bearer token is missing or invalid."
@@ -180,12 +200,52 @@
           }
         }
       }
+    },
+    "/tools/tasks/{id}/download": {
+      "get": {
+        "summary": "Download task result",
+        "description": "Download the final result file for a completed task.",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "downloadTaskResult",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of a completed task.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Binary result stream returned successfully.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer token is missing or invalid."
+          },
+          "404": {
+            "description": "No completed task result exists for the provided identifier."
+          },
+          "409": {
+            "description": "The task has not completed yet, so no downloadable result is available."
+          }
+        }
+      }
     }
   },
-  "webhooks": {},
   "components": {
-    "schemas": {},
-    "responses": {},
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -194,16 +254,5 @@
         "description": "Use Authorization: Bearer <APIKEY>"
       }
     }
-  },
-  "servers": [
-    {
-      "url": "https://app.deckflow.com/api",
-      "description": "Deckflow production API"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ]
+  }
 }

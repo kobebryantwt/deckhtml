@@ -1,59 +1,65 @@
 ---
 title: Overview
 sidebarTitle: Overview
-description: "Use the Deckflow API reference to understand the shared task model, the two core endpoints, and the business scenarios built on top of them."
+description: "Use the Deckflow API reference to understand the common async task flow, the core task endpoints, and the scenario-specific parameters built on top of them."
 ---
 
-Deckflow's API is organized around a simple async task model. Even though the product exposes multiple business scenarios such as generation, translation, revamp, and file tools, they all build on the same two core endpoints:
+Deckflow's API is organized around a common async task flow. Business scenarios such as generation, translation, revamp, and tool APIs all reuse the same submission and task-management pattern.
+
+At the reference level, the most important shared endpoints are:
 
 - `POST /tools/tasks`
 - `GET /tools/tasks/{id}`
+- `GET /tools/tasks/{id}/download`
 
-This reference is therefore split into two layers:
+This section is therefore split into two layers:
 
-- **Core APIs**: the actual submit and query endpoints
-- **Scenario guides**: how to use `type` and `params` for generation, translation, revamp, and tool workflows
+- **Core APIs**: submit a task, query its status, and download the finished result
+- **Scenario guides**: understand which `type`, `files`, and `params` fields to send for each business workflow
 
 <Note>
-  The interactive API pages are generated from the OpenAPI file in this repository, while the scenario guides explain how to map the same endpoints to different product use cases.
+  The phrase "common async task flow" here is an interpretation of the official Deckflow docs section called "接口调用模型 / 通用 API 与认证". It is not a separate product term.
 </Note>
 
-## Shared model
+## Common async task flow
 
-Deckflow uses the same async lifecycle across business scenarios:
+Deckflow uses the same lifecycle across business scenarios:
 
 - Authenticate with `Authorization: Bearer <YOUR_API_KEY>`.
 - Submit files, task type, and JSON options as `multipart/form-data`.
 - Receive a task identifier immediately.
-- Poll the task endpoint until the job is complete or failed.
-- Download the final file from the signed URL returned in the task result.
+- Poll the task endpoint or subscribe through SSE until the job is complete or failed.
+- Download the final file from `result.url` or from the dedicated download endpoint.
 
 ## Read this section by group
 
 <CardGroup cols={3}>
   <Card title="Authentication & Task Model" href="/reference/authentication-and-task-model">
-    Review the shared base URL, headers, task lifecycle, and common form fields.
+    Review the base URL, headers, common submit fields, and the shared task lifecycle.
   </Card>
   <Card title="Submit Async Task" href="/reference/submit-async-task">
-    Inspect the core `POST /tools/tasks` contract and try it in the playground.
+    Inspect the unified `POST /tools/tasks` contract and try it in the playground.
   </Card>
   <Card title="Query Task Status" href="/reference/query-task-status">
-    Inspect the core `GET /tools/tasks/{id}` contract and see how polling works.
+    Inspect the unified `GET /tools/tasks/{id}` contract, including polling and SSE usage.
+  </Card>
+  <Card title="Download Task Result" href="/reference/download-task-result">
+    Inspect the direct download endpoint used after a task has completed successfully.
   </Card>
   <Card title="Generation Scenarios" href="/reference/generation-scenarios">
-    Learn how the same submit endpoint is used to create presentation-generation jobs.
+    Review every generation field, including the full `params` table.
   </Card>
   <Card title="Translation Scenarios" href="/reference/translation-scenarios">
-    Learn how translation jobs map onto the shared task contract.
+    Review the complete translation fields and language parameters.
   </Card>
   <Card title="Revamp Scenarios" href="/reference/revamp-scenarios">
-    Learn how deck refresh workflows are expressed through task parameters.
+    Review the full revamp request fields and design-guidance parameters.
   </Card>
   <Card title="Tool API Scenarios" href="/reference/tool-api-scenarios">
-    Review converter, extractor, merger/splitter, and optimizer task types.
+    Review complete converter, extractor, merger/splitter, and optimizer type tables.
   </Card>
 </CardGroup>
 
 <Tip>
-  If you only remember one rule, make it this: scenario pages explain **which `type` and `params` to send**, while the core API pages explain **where to send them**.
+  If you only remember one rule, make it this: scenario pages explain **what to send in `type`, `files`, and `params`**, while the core API pages explain **where and how to send it**.
 </Tip>

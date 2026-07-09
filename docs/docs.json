@@ -177,7 +177,8 @@
                 "group": "Core APIs",
                 "pages": [
                   "reference/submit-async-task",
-                  "reference/query-task-status"
+                  "reference/query-task-status",
+                  "reference/download-task-result"
                 ]
               },
               {
@@ -284,7 +285,8 @@
                 "group": "核心接口",
                 "pages": [
                   "zh/reference/submit-async-task",
-                  "zh/reference/query-task-status"
+                  "zh/reference/query-task-status",
+                  "zh/reference/download-task-result"
                 ]
               },
               {

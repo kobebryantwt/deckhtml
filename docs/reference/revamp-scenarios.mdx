@@ -1,10 +1,10 @@
 ---
 title: Revamp Scenarios
 sidebarTitle: Revamp Scenarios
-description: "Use the shared task submit endpoint to restyle an existing PPTX deck with updated design direction and visual rules."
+description: "Use the shared task submit endpoint to restyle existing PPTX decks and review the full revamp parameter definitions."
 ---
 
-Revamp jobs let you refresh an existing presentation without changing the overall async model.
+Revamp jobs still use the unified async task API. The difference is that the `type` field must be fixed to `revamp`, and `params` must contain the revamp-specific design guidance fields shown below.
 
 ## Core mapping
 
@@ -15,28 +15,32 @@ Revamp jobs let you refresh an existing presentation without changing the overal
 | Files | PPTX presentation files |
 | Query endpoint | `GET /tools/tasks/{id}` |
 
-## Common revamp parameters
+## Form-data fields
 
-The source Deckflow docs show revamp options such as:
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `spaceId` | `String` | No | Target workspace Space ID. |
+| `files` | `File` | Yes | PPTX files to restyle. Multiple files are supported by the official docs. |
+| `type` | `String` | Yes | Fixed value: `revamp`. |
+| `name` | `String` | No | Human-readable task name, such as `"AI revamp task"`. |
+| `params` | `String (JSON)` | Yes | JSON string containing the revamp parameters below. |
 
-- `inputText`
-- `advancedModel`
-- `fastMode`
+## `params` fields
 
-`inputText` is typically used for style direction, branding notes, palette rules, or other visual refresh instructions.
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `inputText` | `String` | No | Layout style guidance, color rules, branding DNA, or other design-refresh instructions. |
+| `advancedModel` | `Boolean` | No | Whether to use the advanced design reasoning model. Default: `false`. |
+| `fastMode` | `Boolean` | No | Whether to prioritize faster output. Default: `false`. |
+| `notifyURL` | `String` | No | Webhook callback URL for task status changes. |
 
 ## Example `params`
 
 ```json
 {
-  "inputText": "Use Outfit for headings and refresh the deck with a green-blue palette.",
+  "inputText": "Refresh the deck with a blue-green palette and cleaner modern layouts.",
   "advancedModel": false,
-  "fastMode": false
+  "fastMode": false,
+  "notifyURL": "https://your.domain/callback"
 }
 ```
-
-## Recommended usage
-
-- Upload the PPTX you want to refresh
-- Describe the design intent clearly in `inputText`
-- Treat this as a restyling workflow rather than a net-new generation flow

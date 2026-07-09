@@ -1,54 +1,62 @@
 ---
 title: 工具 API 场景
 sidebarTitle: 工具 API
-description: "查看转换器、提取器、合并与拆分器、优化器等工具类能力如何映射到统一任务接口。"
+description: "查看转换器、提取器、合并拆分器、优化器等工具类能力的完整类型、输入格式和参数说明。"
 ---
 
-Deckflow 的工具 API 依旧通过统一的 `POST /tools/tasks` 提交，差别主要体现在 `type` 的取值和 `params` 的结构上。
+Deckflow 的工具 API 依旧通过统一的 `POST /tools/tasks` 提交。真正变化的是 `type` 的取值、接受的文件格式、文件大小限制，以及 `params` 的结构。
+
+## 工具类公共 Form Data 字段
+
+| 字段 | 类型 | 是否必填 | 说明 |
+|---|---|---|---|
+| `files` | `File` | 是 | 待处理源文件。支持多个文件；某些合并类任务至少需要两个文件。 |
+| `type` | `String` | 是 | 工具任务类型标识，例如 `convertor.html2pptx`、`image.ocr`。 |
+| `params` | `String (JSON)` | 否 | 工具特定参数。未要求时默认可传 `{}`。 |
+| `notifyURL` | `String` | 否 | 任务状态变更时的 Webhook 回调地址。 |
 
 ## 文件转换器
 
-源站文档中这一组包含多种格式转换能力，例如：
-
-| 场景 | `type` | 说明 |
-|---|---|---|
-| HTML 转 PPTX | `convertor.html2pptx` | 支持 `.html` / `.htm`，`params` 可包含 `{"needEmbedFonts": true}` |
-| HTML 转 PNG | `convertor.html2png` | 支持直接粘贴 HTML |
-| PPT / PPTX 转 PDF | `convertor.ppt2pdf` | 将演示文稿导出为 PDF |
-| PDF 转图片 | `convertor.pdf2image` | 导出 PDF 页面的图片结果 |
-| Word 转 PDF | `convertor.doc2pdf` | 转换 `.doc` / `.docx` 文件 |
+| 工具 | `type` | 接受格式 | 单文件上限 | `params` |
+|---|---|---|---|---|
+| HTML 转 PNG | `convertor.html2png` | `.html`, `.htm` | 50 MB | `{}`；支持直接粘贴 HTML |
+| HTML 转 PPTX | `convertor.html2pptx` | `.html`, `.htm` | 50 MB | `{"needEmbedFonts": boolean}`；支持直接粘贴 HTML |
+| 图片转 WebP | `image.convertWebp` | `image/*` | 100 MB | `{}` |
+| Keynote 转 HTML | `convertor.keynote2html` | `.key` | 300 MB | `{}` |
+| Keynote 转图片 | `convertor.keynote2image` | `.key` | 300 MB | `{}` |
+| Keynote 转 PDF | `convertor.keynote2pdf` | `.key` | 300 MB | `{}` |
+| Markdown 转图片 | `convertor.markdown2png` | `.md`, `.markdown` | 10 MB | `{}`；支持直接粘贴 Markdown |
+| PDF 转图片 | `convertor.pdf2image` | `.pdf` | 300 MB | `{}` |
+| PPT 转 PPTX | `convertor.ppt2pptx` | `.ppt` | 300 MB | `{}` |
+| PowerPoint 转 PDF | `convertor.ppt2pdf` | `.ppt`, `.pptx` | 300 MB | `{}` |
+| PowerPoint 转图片 | `convertor.ppt2image` | `.ppt`, `.pptx` | 300 MB | `{}` |
+| PowerPoint 转视频 | `convertor.ppt2video` | `.ppt`, `.pptx` | 300 MB | `{}` |
+| Word 转 PDF | `convertor.doc2pdf` | `.doc`, `.docx` | 300 MB | `{}` |
 
 ## 提取器
 
-从源站文档中可以确认以下类型：
-
-| 场景 | `type` | 说明 |
-|---|---|---|
-| 图片 OCR | `image.ocr` | `params` 可传 `{"language":"zh-hans"}` |
-| PPTX 字体检测 | `pptx.getFontInfo` | 返回字体使用信息 |
-| PPTX 文本提取 | `pptx.getTextShapes` | 返回结构化文本层内容 |
+| 工具 | `type` | 接受格式 | 单文件上限 | `params` |
+|---|---|---|---|---|
+| 图片 OCR | `image.ocr` | `image/*` | 50 MB | `{"language":"zh-hans"}`。官方列出的可选语言包括 `zh-hans`、`zh-hant`、`en`、`ja`、`ko`、`fr`、`de`、`es` |
+| PPTX 字体查找器 | `pptx.getFontInfo` | `.pptx` | 300 MB | `{}` |
+| PPTX 文本提取器 | `pptx.getTextShapes` | `.pptx` | 300 MB | `{"hasChildren":false,"pickPages":[1,2,5],"imageFilter":0.2,"includeLayout":false,"includeMaster":false,"includeNotes":false,"ignoreEmptyText":true,"onlyBrief":true}` |
 
 ## 合并与拆分器
 
-源站文档中可以确认以下类型：
-
-| 场景 | `type` | 说明 |
-|---|---|---|
-| 合并 PPTX | `pptx.join` | 至少上传两个 PPTX 文件 |
-| 拆分 PPTX | `pptx.split` | 返回包含单页 PPTX 的 ZIP 压缩包 |
-
-源站还在这一组里描述了将多个 HTML 页面打包为网页播放器的能力。
+| 工具 | `type` | 接受格式 | 单文件上限 | `params` |
+|---|---|---|---|---|
+| PPTX 合并 | `pptx.join` | `.pptx` | 每个 300 MB | `{}`；上传顺序决定最终合并顺序 |
+| HTML Player 打包 | `html.buildPlayer` | `.html`, `.htm` | 每个 50 MB | `{"contents":[{},{}],"pageWidth":1280,"pageHeight":720,"title":"Presentation","description":"Details","brandMarkPosition":"none"}` |
+| PPTX 拆分 | `pptx.split` | `.pptx` | 300 MB | `{}`；输出为包含单页 PPTX 的 ZIP 压缩包 |
 
 ## 优化器
 
-源站文档中可以确认以下类型：
-
-| 场景 | `type` | 说明 |
-|---|---|---|
-| 文件压缩 | `file.compress` | 支持办公文档和压缩包 |
-| 图片尺寸调整 | `image.resize` | 保持宽高比缩放 |
-| PPTX 字体嵌入 | `pptx.embedFonts` | 将外部字体嵌入 PPTX |
-| 视频压缩 | `video.compress` | 压缩视频大小以便交付 |
+| 工具 | `type` | 接受格式 | 单文件上限 | `params` |
+|---|---|---|---|---|
+| 文件压缩 | `file.compress` | `.zip`, `.pptx`, `.key`, `.docx`, `.xlsx` | 300 MB | `{}` |
+| 图片尺寸调整 | `image.resize` | `image/*` | 100 MB | `{"maxWidth":800,"maxHeight":600}`；官方说明 `maxWidth` 与 `maxHeight` 互斥 |
+| PPTX 字体嵌入 | `pptx.embedFonts` | `.pptx` | 300 MB | `{"usedFonts":["Inter","Roboto"]}` |
+| 视频压缩 | `video.compress` | `video/*` | 300 MB | `{}` |
 
 ## 共用规则
 
@@ -57,3 +65,4 @@ Deckflow 的工具 API 依旧通过统一的 `POST /tools/tasks` 提交，差别
 - 通过 `POST /tools/tasks` 提交
 - 通过 `params` 传递工具特有参数
 - 通过 `GET /tools/tasks/{id}` 查询结果
+- 如有需要，再通过 `GET /tools/tasks/{id}/download` 直接下载输出文件

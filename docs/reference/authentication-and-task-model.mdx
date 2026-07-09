@@ -1,10 +1,10 @@
 ---
 title: Authentication & Task Model
 sidebarTitle: Authentication & Task Model
-description: "Review the shared base URL, authentication headers, common form fields, and async task lifecycle used across Deckflow APIs."
+description: "Review the Base URL, required headers, common form fields, and the common async task flow used across Deckflow APIs."
 ---
 
-All Deckflow business scenarios share the same transport model. Before looking at a generation, translation, revamp, or tool guide, make sure this common foundation is clear.
+All Deckflow business scenarios reuse the same API foundation. Before looking at generation, translation, revamp, or tool-specific guides, it helps to understand the common request model first.
 
 ## Base URL
 
@@ -16,10 +16,10 @@ https://app.deckflow.com/api
 
 | Header | Required | Purpose |
 |---|---|---|
-| `Authorization` | Yes | Use `Bearer <YOUR_API_KEY>` for all API calls. |
-| `Content-Type` | Yes for submit | Use `multipart/form-data` when submitting a new task. |
+| `Authorization` | Yes | Use `Bearer <YOUR_API_KEY>` for every authenticated API request. |
+| `Content-Type` | Yes for submit | Use `multipart/form-data` when creating a task through `POST /tools/tasks`. |
 
-## Shared async flow
+## Common async task flow
 
 <Steps>
   <Step title="Authenticate">
@@ -29,38 +29,43 @@ https://app.deckflow.com/api
     Upload one or more files, choose a `type`, and provide any scenario-specific JSON through `params`.
   </Step>
   <Step title="Track progress">
-    Store the returned task ID and query its state until it reaches a terminal status.
+    Store the returned task ID and query it through `GET /tools/tasks/{id}`, or subscribe through SSE by sending `response-event-stream: yes`.
   </Step>
   <Step title="Download the result">
-    Once the task is complete, read the signed download URL from the task result.
+    Once the task is complete, either use the `result.url` returned in the task payload or call the dedicated download endpoint directly.
   </Step>
 </Steps>
 
 ## Common submit fields
 
+These fields are reused across generation, translation, revamp, and tool APIs:
+
 | Field | Required | Meaning |
 |---|---|---|
-| `files` | Usually yes | Source files for the task. Multiple files are allowed for merge-style workflows. |
-| `type` | Yes | The scenario or tool identifier, such as `generation`, `translation`, `revamp`, or `convertor.html2pptx`. |
-| `params` | Usually yes | A JSON string containing scenario-specific options. |
-| `name` | No | A human-readable task label. |
+| `spaceId` | No | Target workspace or space identifier. |
+| `files` | Scenario-dependent | Source files to process. Some workflows require one file, some allow multiple, and some merge workflows require at least two. |
+| `type` | Yes | Business scenario or tool identifier such as `generation`, `translation`, `revamp`, or `convertor.html2pptx`. |
+| `name` | No | Human-readable task name shown in task history or dashboards. |
 | `notifyURL` | No | Webhook callback URL for task status changes. |
-| `spaceId` | No | Space or workspace identifier when required by your environment. |
+| `params` | Usually yes | A JSON string containing scenario-specific parameters. |
 
 ## Status handling
 
-- Newly created tasks usually begin in a pending or processing state.
-- Poll the query endpoint until the task reaches a terminal state.
-- Successful tasks return file metadata and a temporary download URL.
-- Failed tasks return an error payload that you should surface or log.
+- Newly created tasks typically start in `pending` or another non-terminal state.
+- Continue polling until the task becomes `completed` or `failed`.
+- Successful tasks return result metadata and a download URL.
+- Failed tasks return error information that should be logged or surfaced upstream.
 
 ## Related pages
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card title="Submit Async Task" href="/reference/submit-async-task">
     Open the `POST /tools/tasks` endpoint reference.
   </Card>
   <Card title="Query Task Status" href="/reference/query-task-status">
     Open the `GET /tools/tasks/{id}` endpoint reference.
+  </Card>
+  <Card title="Download Task Result" href="/reference/download-task-result">
+    Open the direct result download endpoint reference.
   </Card>
 </CardGroup>

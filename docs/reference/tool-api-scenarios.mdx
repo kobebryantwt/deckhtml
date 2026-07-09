@@ -1,54 +1,62 @@
 ---
 title: Tool API Scenarios
 sidebarTitle: Tool API Scenarios
-description: "Map converter, extractor, merger/splitter, and optimizer workflows onto the shared async task API."
+description: "Review the complete converter, extractor, merger/splitter, and optimizer task definitions that run through the unified task API."
 ---
 
-Deckflow's tool APIs still submit through the same `POST /tools/tasks` endpoint. What changes is the `type` value, plus any tool-specific JSON sent through `params`.
+Deckflow's tool APIs still submit through the same `POST /tools/tasks` endpoint. What changes is the `type` value, accepted file formats, file-size limits, and any tool-specific JSON sent through `params`.
 
-## File converter
+## Shared tool form-data fields
 
-The Deckflow source docs group multiple conversion tools under this family. Examples include:
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `files` | `File` | Yes | Source files to process. Multiple files are supported. Some merge workflows require at least two files. |
+| `type` | `String` | Yes | Tool task identifier such as `convertor.html2pptx` or `image.ocr`. |
+| `params` | `String (JSON)` | No | Tool-specific JSON parameters. Defaults to `{}` when not required. |
+| `notifyURL` | `String` | No | Webhook callback URL for task status changes. |
 
-| Use case | `type` | Notes |
-|---|---|---|
-| HTML to PPTX | `convertor.html2pptx` | Supports `.html` / `.htm`; `params` can include `{"needEmbedFonts": true}` |
-| HTML to PNG | `convertor.html2png` | Supports direct HTML input |
-| PPT / PPTX to PDF | `convertor.ppt2pdf` | Converts slide decks to PDF |
-| PDF to image | `convertor.pdf2image` | Exports images from PDF pages |
-| Word to PDF | `convertor.doc2pdf` | Converts `.doc` / `.docx` to PDF |
+## Converter tools
 
-## Extractor
+| Tool | `type` | Accepted input | Max file size | `params` |
+|---|---|---|---|---|
+| HTML to PNG | `convertor.html2png` | `.html`, `.htm` | 50 MB | `{}`; supports direct pasted HTML input |
+| HTML to PPTX | `convertor.html2pptx` | `.html`, `.htm` | 50 MB | `{"needEmbedFonts": boolean}`; supports direct pasted HTML input |
+| Image to WebP | `image.convertWebp` | `image/*` | 100 MB | `{}` |
+| Keynote to HTML | `convertor.keynote2html` | `.key` | 300 MB | `{}` |
+| Keynote to Image | `convertor.keynote2image` | `.key` | 300 MB | `{}` |
+| Keynote to PDF | `convertor.keynote2pdf` | `.key` | 300 MB | `{}` |
+| Markdown to Image | `convertor.markdown2png` | `.md`, `.markdown` | 10 MB | `{}`; supports direct pasted Markdown input |
+| PDF to Image | `convertor.pdf2image` | `.pdf` | 300 MB | `{}` |
+| PPT to PPTX | `convertor.ppt2pptx` | `.ppt` | 300 MB | `{}` |
+| PowerPoint to PDF | `convertor.ppt2pdf` | `.ppt`, `.pptx` | 300 MB | `{}` |
+| PowerPoint to Image | `convertor.ppt2image` | `.ppt`, `.pptx` | 300 MB | `{}` |
+| PowerPoint to Video | `convertor.ppt2video` | `.ppt`, `.pptx` | 300 MB | `{}` |
+| Word to PDF | `convertor.doc2pdf` | `.doc`, `.docx` | 300 MB | `{}` |
 
-Examples captured from the source docs:
+## Extractor tools
 
-| Use case | `type` | Notes |
-|---|---|---|
-| Image OCR | `image.ocr` | `params` can include `{"language":"zh-hans"}` |
-| PPTX font inspection | `pptx.getFontInfo` | Returns font usage information |
-| PPTX text extraction | `pptx.getTextShapes` | Returns structured text-layer content |
+| Tool | `type` | Accepted input | Max file size | `params` |
+|---|---|---|---|---|
+| Image OCR | `image.ocr` | `image/*` | 50 MB | `{"language":"zh-hans"}`. Supported values from the official docs: `zh-hans`, `zh-hant`, `en`, `ja`, `ko`, `fr`, `de`, `es` |
+| PPTX Font Finder | `pptx.getFontInfo` | `.pptx` | 300 MB | `{}` |
+| PPTX Text Extractor | `pptx.getTextShapes` | `.pptx` | 300 MB | `{"hasChildren":false,"pickPages":[1,2,5],"imageFilter":0.2,"includeLayout":false,"includeMaster":false,"includeNotes":false,"ignoreEmptyText":true,"onlyBrief":true}` |
 
-## Merger & splitter
+## Merger & splitter tools
 
-Examples captured from the source docs:
+| Tool | `type` | Accepted input | Max file size | `params` |
+|---|---|---|---|---|
+| PPTX Merger | `pptx.join` | `.pptx` | 300 MB each | `{}`; upload order controls merged slide order |
+| HTML Player Pack | `html.buildPlayer` | `.html`, `.htm` | 50 MB each | `{"contents":[{},{}],"pageWidth":1280,"pageHeight":720,"title":"Presentation","description":"Details","brandMarkPosition":"none"}` |
+| PPTX Splitter | `pptx.split` | `.pptx` | 300 MB | `{}`; output is a ZIP containing one-slide PPTX files |
 
-| Use case | `type` | Notes |
-|---|---|---|
-| Merge PPTX files | `pptx.join` | Requires at least two uploaded PPTX files |
-| Split PPTX files | `pptx.split` | Returns a ZIP archive of single-slide PPTX files |
+## Optimizer tools
 
-The source documentation also describes packaging multiple HTML pages into a player-style output within this group.
-
-## Optimizer
-
-Examples captured from the source docs:
-
-| Use case | `type` | Notes |
-|---|---|---|
-| File compression | `file.compress` | Supports office files and archives |
-| Image resize | `image.resize` | Preserves aspect ratio while resizing |
-| PPTX font embedding | `pptx.embedFonts` | Embeds external fonts into a PPTX |
-| Video compression | `video.compress` | Reduces video size for delivery |
+| Tool | `type` | Accepted input | Max file size | `params` |
+|---|---|---|---|---|
+| File Compressor | `file.compress` | `.zip`, `.pptx`, `.key`, `.docx`, `.xlsx` | 300 MB | `{}` |
+| Image Resizer | `image.resize` | `image/*` | 100 MB | `{"maxWidth":800,"maxHeight":600}`; `maxWidth` and `maxHeight` are mutually exclusive in the official docs |
+| PPTX Font Embedder | `pptx.embedFonts` | `.pptx` | 300 MB | `{"usedFonts":["Inter","Roboto"]}` |
+| Video Compressor | `video.compress` | `video/*` | 300 MB | `{}` |
 
 ## Common rule
 
@@ -57,12 +65,4 @@ No matter which tool group you choose:
 - submit through `POST /tools/tasks`
 - encode tool-specific settings in `params`
 - poll through `GET /tools/tasks/{id}`
-
-<CardGroup cols={2}>
-  <Card title="Submit Async Task" href="/reference/submit-async-task">
-    Use the same submit endpoint for every tool family.
-  </Card>
-  <Card title="Query Task Status" href="/reference/query-task-status">
-    Poll tool tasks until the result is available.
-  </Card>
-</CardGroup>
+- optionally download the result through `GET /tools/tasks/{id}/download`
