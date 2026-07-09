@@ -1,0 +1,153 @@
+---
+title: 在 TRAE 中使用 Deckflow MCP
+sidebarTitle: TRAE
+description: "通过 TRAE 的 MCP 设置界面接入 Deckflow MCP，支持托管的 Streamable HTTP 模式和本地 stdio 模式。"
+---
+
+TRAE 可以通过 Deckflow MCP 调用演示文稿生成、文档翻译、HTML 渲染和文件处理能力。与 Claude Code 这类带有 `add mcp` 命令的客户端不同，TRAE 的实际接入方式是通过设置界面手动添加 MCP 配置，然后填写托管的 Streamable HTTP 配置或本地 stdio 配置。
+
+<Note>
+  如果你想要最省事的接入体验，优先使用托管的 Streamable HTTP 模式，并通过浏览器完成授权。如果工作流需要传递本地绝对路径文件，再切换到本地 stdio 模式。
+</Note>
+
+## 打开 MCP 配置入口
+
+<Steps>
+  <Step title="打开 TRAE 设置">
+    在 TRAE 右上角点击设置图标，然后切换到 `MCP` 标签页。
+  </Step>
+  <Step title="新增自定义 MCP Server">
+    在 `MCP Servers` 区域点击 `Add`，再选择手动配置。TRAE 会打开一个可编辑的 `mcp.json` 标签页。
+  </Step>
+</Steps>
+
+![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
+
+## 选择配置模式
+
+<Tabs>
+  <Tab title="托管 Streamable HTTP">
+    将下面这段配置粘贴到 TRAE 的 `mcp.json` 编辑器中：
+
+    ```json
+    {
+      "mcpServers": {
+        "deckflow": {
+          "url": "https://mcp.deckflow.com/mcp/v1/"
+        }
+      }
+    }
+    ```
+
+    这种模式会连接到托管的 Deckflow MCP 服务，并通过浏览器完成授权。
+  </Tab>
+  <Tab title="本地 stdio">
+    如果希望 TRAE 连接到本地 stdio MCP 服务，使用下面这段配置：
+
+    ```json
+    {
+      "mcpServers": {
+        "deckflow": {
+          "command": "node",
+          "args": ["/绝对路径/deckflow-mcp/dist/entry/stdio.js"],
+          "env": {
+            "DECKFLOW_API_KEY": "<你的 API key>"
+          }
+        }
+      }
+    }
+    ```
+
+    当工作流依赖本地绝对路径文件时，推荐使用这种模式。如果你希望所有请求固定落到某个 Deckflow 空间中，可以额外添加 `DECKFLOW_SPACE_ID`。
+  </Tab>
+</Tabs>
+
+## 托管 Streamable HTTP 流程
+
+<Steps>
+  <Step title="粘贴托管配置">
+    使用上面的托管配置：
+
+    ```json
+    {
+      "mcpServers": {
+        "deckflow": {
+          "url": "https://mcp.deckflow.com/mcp/v1/"
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="等待验证提示">
+    保存后，TRAE 会在 MCP 列表中显示 `deckflow`。如果还没有完成授权，界面会提示当前服务需要验证，并提供继续验证的入口。
+  </Step>
+  <Step title="完成授权">
+    点击验证入口，在浏览器中完成授权流程，然后回到 TRAE。
+  </Step>
+  <Step title="确认服务可用">
+    授权成功后，TRAE 会提示验证已完成。此时可以关闭浏览器页面并回到 MCP 面板继续使用。
+  </Step>
+</Steps>
+
+![TRAE verification required state](/images/mcp/trae-mcp-verify.png)
+
+![TRAE verification success state](/images/mcp/trae-mcp-success.png)
+
+## 本地 stdio 流程
+
+当你需要本地 stdio MCP 服务时，把下面这段配置粘贴到 TRAE 中：
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "command": "node",
+      "args": ["/绝对路径/deckflow-mcp/dist/entry/stdio.js"],
+      "env": {
+        "DECKFLOW_API_KEY": "<你的 API key>"
+      }
+    }
+  }
+}
+```
+
+在这种模式下，不需要经过浏览器 OAuth 验证。你只需要确认本地服务路径正确，并且 `DECKFLOW_API_KEY` 已经正确填写即可。
+
+## 适合在 TRAE 中完成的任务
+
+<CardGroup cols={2}>
+  <Card title="从文本直接生成演示文稿" icon="sparkles">
+    把产品说明、版本更新、会议纪要或项目计划交给 `generate_presentation`，快速生成初稿演示文稿。
+  </Card>
+  <Card title="HTML 渲染为演示产物" icon="code">
+    让 TRAE 生成或修改 HTML 幻灯片内容，然后调用 `render_html` 输出 PPTX 或 PNG。
+  </Card>
+  <Card title="文档翻译" icon="languages">
+    使用 `translate_document` 翻译 PPTX、PDF 或 DOCX，并返回最终下载链接。
+  </Card>
+  <Card title="文件工具链处理" icon="file-cog">
+    在同一个智能体流程中完成格式转换、压缩、OCR、拆分、合并与内容检查。
+  </Card>
+</CardGroup>
+
+## 示例提示词
+
+```text
+使用 Deckflow MCP，根据这些要点生成一份 8 页的合作伙伴入门介绍。
+```
+
+```text
+把这份 HTML 幻灯片渲染成 PPTX，并返回下载链接。
+```
+
+```text
+把这个上传的中文演示文稿翻译成英文，并尽量保留原始版式。
+```
+
+## 验证清单
+
+- TRAE 在 MCP 列表中显示 `deckflow` 且状态为已启用。
+- 托管模式可以顺利完成验证流程。
+- Deckflow 的工具能够在 MCP 工具列表中被发现。
+- 轻量任务可以直接返回结果，长任务至少会返回有效的 `taskId`。
+- 完成后的任务可以通过 `get_task` 查询，并通过 `download_task_result` 下载结果。

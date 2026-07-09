@@ -1,33 +1,33 @@
 ---
-title: Deckflow MCP in Trae
-sidebarTitle: Trae
-description: "Connect Trae to Deckflow MCP through Trae's MCP settings UI using either the hosted Streamable HTTP endpoint or a local stdio server."
+title: Deckflow MCP in TRAE
+sidebarTitle: TRAE
+description: "Connect TRAE to Deckflow MCP through TRAE's MCP settings UI using either the hosted Streamable HTTP endpoint or a local stdio server."
 ---
 
-Trae can use Deckflow MCP for presentation generation, document translation, HTML rendering, and file conversion tasks. Unlike Claude Code or some CLI-first clients, Trae does not currently rely on an `add mcp` terminal command. In practice, you add Deckflow from Trae's MCP settings UI by choosing the manual configuration flow, then paste either a hosted Streamable HTTP config or a local stdio config.
+TRAE can use Deckflow MCP for presentation generation, document translation, HTML rendering, and file conversion tasks. Unlike Claude Code or some CLI-first clients, TRAE does not currently rely on an `add mcp` terminal command. In practice, you add Deckflow from TRAE's MCP settings UI by choosing the manual configuration flow, then paste either a hosted Streamable HTTP config or a local stdio config.
 
 <Note>
-  Use the hosted Streamable HTTP config for the easiest setup and OAuth authorization flow. Use local stdio when Trae needs to pass local absolute file paths to the MCP server.
+  Use the hosted Streamable HTTP config for the easiest setup and OAuth authorization flow. Use local stdio when TRAE needs to pass local absolute file paths to the MCP server.
 </Note>
 
 ## Open the MCP configuration entry
 
 <Steps>
-  <Step title="Open Trae settings">
-    In Trae, click the settings icon in the top-right corner, then switch to the `MCP` tab.
+  <Step title="Open TRAE settings">
+    In TRAE, click the settings icon in the top-right corner, then switch to the `MCP` tab.
   </Step>
   <Step title="Add a custom MCP server">
-    In `MCP Servers`, click `Add`, then choose the manual configuration option. Trae opens an editable `mcp.json` tab for the new server entry.
+    In `MCP Servers`, click `Add`, then choose the manual configuration option. TRAE opens an editable `mcp.json` tab for the new server entry.
   </Step>
 </Steps>
 
-![Trae MCP settings entry](/images/mcp/trae-mcp-entry.png)
+![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
 
 ## Choose a configuration mode
 
 <Tabs>
   <Tab title="Hosted Streamable HTTP">
-    Paste this config into Trae's `mcp.json` editor:
+    Paste this config into TRAE's `mcp.json` editor:
 
     ```json
     {
@@ -39,10 +39,10 @@ Trae can use Deckflow MCP for presentation generation, document translation, HTM
     }
     ```
 
-    This mode connects Trae to the hosted Deckflow MCP endpoint and then uses a browser-based authorization flow.
+    This mode connects TRAE to the hosted Deckflow MCP endpoint and then uses a browser-based authorization flow.
   </Tab>
   <Tab title="Local stdio">
-    Paste this config when you want Trae to talk to a locally running stdio server:
+    Paste this config when you want TRAE to talk to a locally running stdio server:
 
     ```json
     {
@@ -79,23 +79,23 @@ Trae can use Deckflow MCP for presentation generation, document translation, HTM
     ```
   </Step>
   <Step title="Wait for the verification prompt">
-    After saving the entry, Trae shows the `deckflow` server in the MCP list. If authorization is still required, Trae marks the server as needing verification and shows a link to continue the verification flow.
+    After saving the entry, TRAE shows the `deckflow` server in the MCP list. If authorization is still required, TRAE marks the server as needing verification and shows a link to continue the verification flow.
   </Step>
   <Step title="Complete authorization">
-    Click the verification link, finish the browser authorization flow, then return to Trae.
+    Click the verification link, finish the browser authorization flow, then return to TRAE.
   </Step>
   <Step title="Confirm the server is ready">
-    Once authorization succeeds, Trae reports that verification completed successfully. You can then close the browser page and return to the MCP panel.
+    Once authorization succeeds, TRAE reports that verification completed successfully. You can then close the browser page and return to the MCP panel.
   </Step>
 </Steps>
 
-![Trae verification required state](/images/mcp/trae-mcp-verify.png)
+![TRAE verification required state](/images/mcp/trae-mcp-verify.png)
 
-![Trae verification success state](/images/mcp/trae-mcp-success.png)
+![TRAE verification success state](/images/mcp/trae-mcp-success.png)
 
 ## Local stdio flow
 
-Paste this config into Trae when you need a local stdio MCP server:
+Paste this config into TRAE when you need a local stdio MCP server:
 
 ```json
 {
@@ -111,7 +111,7 @@ Paste this config into Trae when you need a local stdio MCP server:
 }
 ```
 
-Trae does not need the OAuth verification screen in this mode. Instead, make sure the local server path is correct and the `DECKFLOW_API_KEY` environment variable is valid before you enable the server.
+TRAE does not need the OAuth verification screen in this mode. Instead, make sure the local server path is correct and the `DECKFLOW_API_KEY` environment variable is valid before you enable the server.
 
 ## Recommended workflows
 
@@ -120,7 +120,7 @@ Trae does not need the OAuth verification screen in this mode. Instead, make sur
     Use `generate_presentation` to turn product notes, release plans, or meeting summaries into a draft presentation.
   </Card>
   <Card title="HTML rendering" icon="code">
-    Ask Trae to generate or edit HTML slide content, then call `render_html` for PPTX or PNG output.
+    Ask TRAE to generate or edit HTML slide content, then call `render_html` for PPTX or PNG output.
   </Card>
   <Card title="Document translation" icon="languages">
     Translate PPTX, PDF, or DOCX artifacts with `translate_document` and return the final download link.
@@ -146,7 +146,7 @@ Translate this uploaded presentation from Chinese to English and keep the origin
 
 ## Validation checklist
 
-- Trae shows the `deckflow` server as enabled in the MCP list.
+- TRAE shows the `deckflow` server as enabled in the MCP list.
 - Hosted HTTP mode completes the verification step successfully.
 - Deckflow tools are discoverable in the MCP tool list.
 - A small utility call succeeds directly, or a long-running call returns a valid `taskId`.

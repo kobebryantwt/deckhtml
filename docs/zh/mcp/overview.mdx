@@ -4,8 +4,33 @@ sidebarTitle: MCP
 description: "了解如何通过 MCP 在智能体环境中调用 DeckHTML 转换能力。"
 ---
 
-这里预留给中文 MCP 文档。
+Deckflow MCP 让智能体客户端可以直接调用演示文稿生成、文档翻译、HTML 渲染和文件处理能力，而不是依赖零散的脚本命令。当前中文文档优先覆盖更常见的国内客户端接入方式。
 
-后续会补齐 Codex、Cursor、Claude Code 以及工具说明。当前请先参考英文版：
+<Note>
+  生产环境托管端点为 `https://mcp.deckflow.com/mcp/v1/`。支持浏览器授权的客户端，优先使用托管模式完成授权。
+</Note>
 
-- [MCP Overview](/mcp/overview)
+## 当前中文接入指南
+
+<CardGroup cols={2}>
+  <Card title="TRAE" icon="sparkles" href="/zh/mcp/trae">
+    查看如何在 TRAE 中手动添加 Deckflow MCP，并完成托管授权或本地 stdio 配置。
+  </Card>
+  <Card title="WorkBuddy" icon="briefcase" href="/zh/mcp/workbuddy">
+    查看如何通过 WorkBuddy 的连接器界面配置 Deckflow MCP，并确认可用工具列表。
+  </Card>
+</CardGroup>
+
+## 推荐阅读路径
+
+<Steps>
+  <Step title="确认客户端">
+    先根据你使用的客户端选择对应接入页，例如 TRAE 或 WorkBuddy。
+  </Step>
+  <Step title="完成认证">
+    按照各客户端页面中的配置流程添加 MCP 服务，并完成授权。
+  </Step>
+  <Step title="验证工具可见性">
+    确认客户端已经能看到 Deckflow 暴露的工具，再开始生成、转换或渲染任务。
+  </Step>
+</Steps>

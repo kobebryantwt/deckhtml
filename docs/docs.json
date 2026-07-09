@@ -176,9 +176,7 @@
                   "mcp/tools",
                   "mcp/codex",
                   "mcp/cursor",
-                  "mcp/claude-code",
-                  "mcp/trae",
-                  "mcp/workbuddy"
+                  "mcp/claude-code"
                 ]
               }
             ]
@@ -255,8 +253,15 @@
           },
           {
             "tab": "MCP",
-            "pages": [
-              "zh/mcp/overview"
+            "groups": [
+              {
+                "group": "MCP",
+                "pages": [
+                  "zh/mcp/overview",
+                  "zh/mcp/trae",
+                  "zh/mcp/workbuddy"
+                ]
+              }
             ]
           },
           {

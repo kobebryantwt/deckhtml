@@ -1,0 +1,101 @@
+---
+title: 在 WorkBuddy 中使用 Deckflow MCP
+sidebarTitle: WorkBuddy
+description: "通过 WorkBuddy 的连接器界面配置 Deckflow MCP，完成授权后直接查看当前可用的 Deckflow 工具列表。"
+---
+
+WorkBuddy 可以通过 Deckflow MCP 调用演示文稿生成、文档翻译、HTML 渲染和文件处理能力。WorkBuddy 不使用命令行形式的 `add mcp` 命令，而是通过连接器界面新增自定义 MCP，并在内置配置编辑器中粘贴 Deckflow 的 MCP 配置。
+
+<Note>
+  在 WorkBuddy 里，托管的 MCP 端点是最简单的接入方式。完成授权后，你可以直接在 MCP 管理界面看到 Deckflow 当前暴露的工具列表。
+</Note>
+
+## 打开 WorkBuddy 的 MCP 配置入口
+
+<Steps>
+  <Step title="进入连接器区域">
+    在 WorkBuddy 顶部导航中打开 `连接器`，然后点击 `自定义连接器`，创建新的 MCP 条目。
+  </Step>
+  <Step title="打开 MCP 配置编辑器">
+    在 MCP 管理窗口中点击 `配置 MCP`。WorkBuddy 会打开配置文件编辑器，供你粘贴 Deckflow MCP 的配置内容并保存。
+  </Step>
+</Steps>
+
+![WorkBuddy MCP config entry](/images/mcp/workbuddy-mcp-entry.png)
+
+## 添加 Deckflow MCP 配置
+
+将下面这段配置粘贴到 WorkBuddy 的 MCP 配置编辑器中：
+
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "url": "https://mcp.deckflow.com/mcp/v1/"
+    }
+  }
+}
+```
+
+粘贴后保存配置文件。
+
+## 完成授权
+
+<Steps>
+  <Step title="返回 MCP 管理窗口">
+    保存完成后，WorkBuddy 会在 `我的 MCP` 区域显示 `deckflow`。
+  </Step>
+  <Step title="连接服务">
+    如果 WorkBuddy 提示该服务还需要认证，点击 `连接` 按钮启动授权流程。
+  </Step>
+  <Step title="完成验证">
+    在浏览器中完成授权，然后返回 WorkBuddy。
+  </Step>
+</Steps>
+
+![WorkBuddy verification required state](/images/mcp/workbuddy-mcp-verify.png)
+
+## 查看 Deckflow 工具列表
+
+授权完成后，WorkBuddy 会展开 `deckflow` 条目，并在 MCP 管理窗口中显示当前可用的 Deckflow 工具列表。
+
+![WorkBuddy Deckflow tools list](/images/mcp/workbuddy-mcp-tools.png)
+
+## 适合在 WorkBuddy 中完成的任务
+
+<CardGroup cols={2}>
+  <Card title="根据文本生成演示文稿" icon="sparkles">
+    根据项目简报、周报、路线图或客户沟通纪要生成演示文稿。
+  </Card>
+  <Card title="渲染演示产物" icon="code">
+    将 HTML 或 Markdown 内容渲染为 PPTX、PNG 等可交付格式。
+  </Card>
+  <Card title="转换与交付处理" icon="file-cog">
+    在同一条工作流中完成格式转换、压缩、检查和文件合并。
+  </Card>
+  <Card title="任务生命周期管理" icon="list-checks">
+    使用 `get_task`、`list_tasks` 和 `download_task_result` 跟踪长任务并获取产物。
+  </Card>
+</CardGroup>
+
+## 示例提示词
+
+```text
+使用 Deckflow MCP，根据这些周报要点生成一份 6 页的业务复盘演示文稿。
+```
+
+```text
+把这份 HTML 演示内容渲染成 PPTX，同时返回 PNG 预览。
+```
+
+```text
+把这个 PPTX 转成 PDF，如果文件太大，再进一步压缩结果。
+```
+
+## 验证清单
+
+- WorkBuddy 能够识别 `deckflow` 这个 MCP 服务。
+- 完成连接后，界面不再显示需要认证的状态。
+- MCP 管理窗口中能够看到完整的 Deckflow 工具列表。
+- 工具列表中包含生成、渲染、文件处理和任务管理相关工具。
+- 完成后的任务可以通过 `download_task_result` 下载结果。
