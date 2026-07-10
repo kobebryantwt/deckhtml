@@ -1,10 +1,10 @@
 ---
 title: 在 Cursor 中使用 Deckflow MCP
 sidebarTitle: Cursor
-description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把 Deckflow MCP 接入到 Cursor。"
+description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把一个或多个 Deckflow MCP Server 接入到 Cursor。"
 ---
 
-本页重点说明如何在 Cursor 中配置 Deckflow MCP。重点不是介绍工作流模式，而是帮助你完成接入：添加服务器、完成授权、确认工具可见，然后开始使用 Deckflow。
+本页重点说明如何在 Cursor 中配置 Deckflow MCP。重点不是介绍工作流模式，而是帮助你完成接入：添加所需服务器、完成授权、确认工具可见，然后开始使用 Deckflow。
 
 <Note>
   Cursor 的 MCP 入口会因版本略有差异，但常见方式基本一致：要么通过设置页添加，要么直接编辑 MCP 配置文件。
@@ -16,14 +16,16 @@ description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把 D
   <Step title="打开 Cursor 的 MCP 设置">
     在 Cursor 中进入 Settings，然后打开 MCP 或 Tools & Integrations 相关区域。
   </Step>
-  <Step title="新增自定义 MCP Server">
-    创建一个名为 `deckflow` 的服务器条目。
+  <Step title="新增一个或多个自定义 MCP Server">
+    创建类似 `deckflow_html2pptx`、`deckflow_pptx`、`deckflow_tools` 这样的服务器条目。
   </Step>
-  <Step title="填写 Deckflow 端点">
-    使用托管地址：
+  <Step title="填写对应的 Deckflow 端点">
+    按需使用这些托管地址：
 
     ```text
-    https://mcp.deckflow.com/mcp/v1/
+    https://mcp.deckflow.com/v1/html2pptx
+    https://mcp.deckflow.com/v1/pptx
+    https://mcp.deckflow.com/v1/tools
     ```
   </Step>
   <Step title="如有需要则完成授权">
@@ -38,8 +40,14 @@ description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把 D
 ```json
 {
   "mcpServers": {
-    "deckflow": {
-      "url": "https://mcp.deckflow.com/mcp/v1/"
+    "deckflow_html2pptx": {
+      "url": "https://mcp.deckflow.com/v1/html2pptx"
+    },
+    "deckflow_pptx": {
+      "url": "https://mcp.deckflow.com/v1/pptx"
+    },
+    "deckflow_tools": {
+      "url": "https://mcp.deckflow.com/v1/tools"
     }
   }
 }
@@ -51,20 +59,20 @@ description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把 D
 
 配置完成后，确认：
 
-- Cursor 的 MCP 列表中已经出现 `deckflow`
-- 服务状态正常，且已完成授权
+- Cursor 的 MCP 列表中已经出现你添加的 Deckflow Server
+- 每个服务状态都正常，且已完成授权
 - 在 chat 或 agent 模式下可以发现 Deckflow 工具
 
 ## 先试一个任务
 
 ```text
-使用 Deckflow MCP 把这个 HTML 页面转换成可编辑的 PPTX 演示文稿。
+使用 deckflow_html2pptx 把这个 HTML 页面转换成可编辑的 PPTX 演示文稿。
 ```
 
 ```text
-使用 Deckflow MCP 把这个 PPTX 渲染成一组图片，方便评审。
+使用 deckflow_pptx 检查这个演示文稿，并列出每页使用到的字体。
 ```
 
 ```text
-使用 Deckflow MCP 翻译这份 PDF，并尽量保留原始版式。
+使用 deckflow_tools 对这张图片执行 OCR，并返回识别出的文字。
 ```

@@ -1,14 +1,22 @@
 ---
 title: Deckflow MCP
 sidebarTitle: Overview
-description: "Add Deckflow to your agent to turn HTML into PPTX, convert files, and run presentation workflows from MCP-compatible clients."
+description: "Connect one or more Deckflow MCP servers for HTML-to-PPTX, PPTX utilities, and general file tools."
 ---
 
-Deckflow MCP lets you connect Deckflow to MCP-compatible agents so they can turn HTML into editable PPTX decks, convert documents across delivery formats, and run presentation workflows without leaving the agent interface.
+Deckflow MCP is now organized as three hosted MCP servers. You can add only the server that matches your workflow, or register all three when you want the full Deckflow toolset inside an MCP-compatible client.
 
 <Note>
-  Use the hosted endpoint `https://mcp.deckflow.com/mcp/v1/` for most setups. The usual flow is: add the server, complete authentication if required, then start calling Deckflow tools.
+  Start with `html2pptx` if your main job is turning HTML into PPTX or preview images. Add `pptx` and `tools` later when you need deck post-processing or general file utilities.
 </Note>
+
+## Available Deckflow MCP servers
+
+| Endpoint | Scope | Tools |
+| --- | --- | --- |
+| `https://mcp.deckflow.com/v1/html2pptx` | HTML-to-PPTX pipeline | `html_to_pptx`, `html_to_image`, `markdown_to_image`, `build_html_player` |
+| `https://mcp.deckflow.com/v1/pptx` | PPTX file utilities | `split_pptx`, `merge_pptx`, `embed_pptx_fonts`, `inspect_pptx` |
+| `https://mcp.deckflow.com/v1/tools` | General file tools | `convert_file`, `ocr_image`, `transform_image`, `compress_file` |
 
 ## Add Deckflow to Your Agent
 
@@ -16,18 +24,17 @@ Deckflow MCP lets you connect Deckflow to MCP-compatible agents so they can turn
   <Step title="Open your agent's MCP settings">
     In your agent, open the MCP, connectors, or tools settings area and choose the option for adding a custom server.
   </Step>
-  <Step title="Paste the Deckflow MCP endpoint">
-    Add the hosted Deckflow MCP URL:
-
-    ```text
-    https://mcp.deckflow.com/mcp/v1/
-    ```
+  <Step title="Choose the server or servers you need">
+    Decide whether you need the `html2pptx`, `pptx`, or `tools` server. Many teams start with `html2pptx` first, then add the other two later.
+  </Step>
+  <Step title="Add each hosted endpoint as its own MCP server">
+    Register one custom MCP server per endpoint. Recommended names are `deckflow_html2pptx`, `deckflow_pptx`, and `deckflow_tools`.
   </Step>
   <Step title="Authenticate if your client requires it">
-    Some clients open a browser-based authorization flow after the server is added. Others let you store headers, query parameters, or local environment variables instead.
+    Some clients open a browser-based authorization flow after the server is added. Others let you store the connection and then complete auth from the MCP manager.
   </Step>
-  <Step title="Verify the server and start using tools">
-    After setup, confirm the `deckflow` server is connected, then try a small task such as converting HTML to PPTX or rendering a file into a delivery format.
+  <Step title="Verify the servers and start using tools">
+    After setup, confirm the Deckflow servers are connected, then try a small task such as converting HTML to PPTX or splitting a PPTX file.
   </Step>
 </Steps>
 
@@ -39,27 +46,30 @@ Deckflow MCP lets you connect Deckflow to MCP-compatible agents so they can turn
 
 Deckflow MCP currently has setup guides for:
 
-- [Codex](/mcp/codex): add Deckflow from Codex settings or by editing `~/.codex/config.toml`.
-- [Cursor](/mcp/cursor): add Deckflow from Cursor MCP settings or by editing Cursor's MCP config file.
-- [Claude Code](/mcp/claude-code): add Deckflow with `claude mcp add`, or by editing `~/.claude.json` / `.mcp.json`.
+- [Codex](/mcp/codex): add one or more Deckflow servers from Codex settings or by editing `~/.codex/config.toml`.
+- [Cursor](/mcp/cursor): add one or more Deckflow servers from Cursor MCP settings or by editing Cursor's MCP config file.
+- [Claude Code](/mcp/claude-code): add one or more Deckflow servers with `claude mcp add`, or by editing `~/.claude.json` / `.mcp.json`.
+- [TRAE](/mcp/trae): add the hosted Deckflow server configs from the MCP settings panel and complete browser authorization.
+- [WorkBuddy](/mcp/workbuddy): paste the hosted Deckflow server configs into the Connectors UI and confirm the tool lists.
 
-If your client supports custom MCP servers, the same hosted endpoint usually works there as well.
+If your client supports custom MCP servers, these hosted endpoints usually work there as well.
 
 ## What You Can Do
 
 Once connected, your agent can use Deckflow for:
 
-- [Turn HTML into editable PPTX](/mcp/tools#rendering-and-conversion): convert HTML slide pages or web-based presentation content into PPTX decks.
-- [Convert files across delivery formats](/mcp/tools#rendering-and-conversion): move between PPTX, PDF, image, HTML, and related output formats for review, publishing, and handoff.
-- [Process PPTX and related files](/mcp/tools#file-and-pptx-utilities): run OCR, compression, splitting, merging, font embedding, and inspection in the same workflow.
-- [Generate, translate, and revamp presentations](/mcp/tools#presentation-and-document-creation): create draft decks from prompts and references, translate visual documents, and refresh existing presentations.
+- [Turn HTML into editable PPTX or preview images](/mcp/tools#html-to-pptx-pipeline): use the `html2pptx` server for HTML rendering and publishing workflows.
+- [Process PPTX files after generation](/mcp/tools#pptx-file-utilities): split, merge, inspect, and embed fonts through the `pptx` server.
+- [Run general file utilities](/mcp/tools#general-file-tools): convert files, run OCR, resize images, and compress outputs through the `tools` server.
 
 ## Authentication and Transport
 
-Deckflow MCP documentation now focuses on the hosted remote server:
+Deckflow MCP documentation now focuses on these hosted endpoints:
 
 ```text
-https://mcp.deckflow.com/mcp/v1/
+https://mcp.deckflow.com/v1/html2pptx
+https://mcp.deckflow.com/v1/pptx
+https://mcp.deckflow.com/v1/tools
 ```
 
 Depending on the client, Deckflow MCP can be connected in one of three ways:
@@ -68,4 +78,4 @@ Depending on the client, Deckflow MCP can be connected in one of three ways:
 - **Config file**: write the server entry directly into a local MCP config file such as `config.toml`, `mcp.json`, or `.mcp.json`.
 - **CLI command**: register the server with a helper command such as `claude mcp add`.
 
-Use the hosted endpoint as the standard Deckflow MCP setup path.
+Use one MCP server entry per endpoint. If you want the full Deckflow setup, register all three.

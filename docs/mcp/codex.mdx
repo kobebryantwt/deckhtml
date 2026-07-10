@@ -1,10 +1,10 @@
 ---
 title: Deckflow MCP in Codex
 sidebarTitle: Codex
-description: "Configure Deckflow MCP in Codex through the settings UI or by editing Codex config files."
+description: "Configure one or more Deckflow MCP servers in Codex through the settings UI or by editing Codex config files."
 ---
 
-Use this page to connect Deckflow MCP in Codex. The goal here is simple: register the Deckflow server, confirm Codex can see it, and then start calling Deckflow tools from your normal coding workflow.
+Use this page to connect Deckflow MCP in Codex. The goal here is simple: register one or more Deckflow MCP servers, confirm Codex can see them, and then start calling Deckflow tools from your normal coding workflow.
 
 <Note>
   Codex configuration is stored in `~/.codex/config.toml` at user scope, and can also be overridden per project with `.codex/config.toml`.
@@ -12,22 +12,24 @@ Use this page to connect Deckflow MCP in Codex. The goal here is simple: registe
 
 ## Recommended setup
 
-For most users, start from Codex settings and add the Deckflow server there. If you prefer managing MCP entries in source-controlled config, add the same server definition directly to a Codex config file.
+For most users, start from Codex settings and add the Deckflow servers there. If you prefer managing MCP entries in source-controlled config, add the same definitions directly to a Codex config file.
 
-## Add the MCP server from the Codex UI
+## Add the MCP servers from the Codex UI
 
 <Steps>
   <Step title="Open MCP server settings">
     In Codex, open settings and go to the MCP Servers section.
   </Step>
-  <Step title="Add a custom server">
-    Create a new MCP server entry named `deckflow`.
+  <Step title="Add one or more custom servers">
+    Create MCP server entries such as `deckflow_html2pptx`, `deckflow_pptx`, and `deckflow_tools`.
   </Step>
-  <Step title="Use the Deckflow endpoint">
-    Register the hosted MCP server:
+  <Step title="Use the matching Deckflow endpoints">
+    Register the hosted MCP servers you need:
 
     ```text
-    https://mcp.deckflow.com/mcp/v1/
+    https://mcp.deckflow.com/v1/html2pptx
+    https://mcp.deckflow.com/v1/pptx
+    https://mcp.deckflow.com/v1/tools
     ```
   </Step>
   <Step title="Complete authentication if prompted">
@@ -37,11 +39,19 @@ For most users, start from Codex settings and add the Deckflow server there. If 
 
 ## Alternative: edit `config.toml` directly
 
-You can also define Deckflow in your Codex config file:
+You can also define the Deckflow servers in your Codex config file:
 
 ```toml
-[mcp_servers.deckflow]
-url = "https://mcp.deckflow.com/mcp/v1/"
+[mcp_servers.deckflow_html2pptx]
+url = "https://mcp.deckflow.com/v1/html2pptx"
+enabled = true
+
+[mcp_servers.deckflow_pptx]
+url = "https://mcp.deckflow.com/v1/pptx"
+enabled = true
+
+[mcp_servers.deckflow_tools]
+url = "https://mcp.deckflow.com/v1/tools"
 enabled = true
 ```
 
@@ -51,22 +61,20 @@ Use `~/.codex/config.toml` for your personal setup, or `.codex/config.toml` insi
 
 After setup, confirm:
 
-- the `deckflow` server appears in Codex MCP settings
-- the server is enabled and connected
+- the Deckflow servers you added appear in Codex MCP settings
+- each server is enabled and connected
 - Deckflow tools are available in a new Codex session
 
 ## Try a first task
 
-After the server is available, try one of these prompts:
-
 ```text
-Use Deckflow MCP to convert this HTML slide page into an editable PPTX deck and return the download link.
+Use deckflow_html2pptx to convert this HTML slide page into an editable PPTX deck.
 ```
 
 ```text
-Use Deckflow MCP to convert this PPTX into PDF and tell me when the result is ready.
+Use deckflow_pptx to split this presentation into separate section files.
 ```
 
 ```text
-Use Deckflow MCP to generate a presentation draft from this brief and the attached reference files.
+Use deckflow_tools to convert this PDF into images for review.
 ```

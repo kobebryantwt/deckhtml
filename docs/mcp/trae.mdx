@@ -1,13 +1,13 @@
 ---
 title: Deckflow MCP in TRAE
 sidebarTitle: TRAE
-description: "Configure Deckflow MCP in TRAE with the hosted Streamable HTTP endpoint."
+description: "Configure one or more Deckflow MCP servers in TRAE with the hosted Streamable HTTP endpoints."
 ---
 
-Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP endpoint and complete browser-based authorization.
+Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP endpoints and complete browser-based authorization.
 
 <Note>
-  Use the hosted HTTP endpoint in TRAE. It is the standard setup path and the easiest one to verify.
+  Add one MCP server per endpoint in TRAE. Most teams start with `deckflow_html2pptx`, then add `deckflow_pptx` or `deckflow_tools` when needed.
 </Note>
 
 ## Set up Deckflow MCP in TRAE
@@ -17,25 +17,31 @@ Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP end
     In TRAE, click the settings icon in the top-right corner, switch to the `MCP` tab, then choose `Add` and the manual configuration option. TRAE opens an editable `mcp.json` tab for the new server entry.
   </Step>
   <Step title="Paste the Deckflow server config">
-    Add this hosted MCP configuration:
+    Add the hosted MCP configuration you need. A full setup looks like this:
 
     ```json
     {
       "mcpServers": {
-        "deckflow": {
-          "url": "https://mcp.deckflow.com/mcp/v1/"
+        "deckflow_html2pptx": {
+          "url": "https://mcp.deckflow.com/v1/html2pptx"
+        },
+        "deckflow_pptx": {
+          "url": "https://mcp.deckflow.com/v1/pptx"
+        },
+        "deckflow_tools": {
+          "url": "https://mcp.deckflow.com/v1/tools"
         }
       }
     }
     ```
   </Step>
   <Step title="Save and wait for the verification prompt">
-    After saving the entry, TRAE shows the `deckflow` server in the MCP list. If authorization is still required, TRAE marks the server as needing verification and shows a link to continue the verification flow.
+    After saving the entry, TRAE shows the new Deckflow servers in the MCP list. If authorization is still required, TRAE marks each server as needing verification and shows a link to continue the verification flow.
   </Step>
   <Step title="Complete authorization">
     Click the verification link, finish the browser authorization flow, then return to TRAE.
   </Step>
-  <Step title="Confirm the server is ready">
+  <Step title="Confirm the servers are ready">
     Once authorization succeeds, TRAE reports that verification completed successfully. You can then close the browser page and return to the MCP panel.
   </Step>
 </Steps>
@@ -49,28 +55,27 @@ Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP end
 ## What to try after setup
 
 - Convert an HTML slide page into an editable PPTX deck.
-- Convert a PPTX file into PDF or image outputs for sharing.
-- Translate a PPTX, PDF, or DOCX file, including text inside images, while preserving layout where possible.
-- Generate a first-draft presentation from a short brief plus reference files or URLs.
+- Render an HTML page or Markdown snippet into preview images.
+- Split, merge, inspect, or embed fonts in PPTX files.
+- Convert files, run OCR, resize images, or compress large outputs.
 
 ## Example prompts
 
 ```text
-Use Deckflow MCP to convert this HTML page into an editable PPTX deck and return the download link.
+Use deckflow_html2pptx to convert this HTML page into an editable PPTX deck.
 ```
 
 ```text
-Convert this PPTX to PDF, then compress the result if it is still too large to share.
+Use deckflow_pptx to split this deck into single-slide PPTX files.
 ```
 
 ```text
-Create a presentation for a live meeting from this brief and the attached PDF and Markdown references.
+Use deckflow_tools to convert this PDF into images and then compress them for sharing.
 ```
 
 ## Validation checklist
 
-- TRAE shows the `deckflow` server as enabled in the MCP list.
+- TRAE shows the Deckflow servers you added as enabled in the MCP list.
 - Hosted HTTP mode completes the verification step successfully.
 - Deckflow tools are discoverable in the MCP tool list.
-- A small utility call succeeds directly, or a long-running call returns a valid `taskId`.
-- Completed tasks can be checked with `get_task` and downloaded with `download_task_result`.
+- HTML-to-PPTX, PPTX utilities, and general file tools are exposed under the expected server names.

@@ -1,10 +1,10 @@
 ---
 title: Deckflow MCP in Claude Code
 sidebarTitle: Claude Code
-description: "Configure Deckflow MCP in Claude Code with the add command or direct config edits."
+description: "Configure one or more Deckflow MCP servers in Claude Code with the add command or direct config edits."
 ---
 
-Use this page to connect Deckflow MCP in Claude Code. This is primarily a setup guide: add the Deckflow server, authenticate it, confirm the connection, and then start using Deckflow tools inside Claude Code.
+Use this page to connect Deckflow MCP in Claude Code. This is primarily a setup guide: add the Deckflow servers you need, authenticate them, confirm the connection, and then start using Deckflow tools inside Claude Code.
 
 <Note>
   Claude Code supports the cleanest CLI-based setup path of the current agent guides, so it is usually the fastest place to get Deckflow MCP running.
@@ -15,38 +15,52 @@ Use this page to connect Deckflow MCP in Claude Code. This is primarily a setup 
 - Claude Code installed
 - A Deckflow account or API key, depending on the connection mode you choose
 
-## Add the MCP server with the CLI
+## Add the MCP servers with the CLI
 
-Run this in your terminal:
+Run these in your terminal:
 
 ```bash
-claude mcp add --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+claude mcp add --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
 ```
 
-To make the server available across all projects, use user scope:
+To make the servers available across all projects, use user scope:
 
 ```bash
-claude mcp add --scope user --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+claude mcp add --scope user --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --scope user --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --scope user --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
 ```
 
-To share the server with the current project through `.mcp.json`, use project scope:
+To share the servers with the current project through `.mcp.json`, use project scope:
 
 ```bash
-claude mcp add --scope project --transport http deckflow https://mcp.deckflow.com/mcp/v1/
+claude mcp add --scope project --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --scope project --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --scope project --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
 ```
 
 ## Alternative: edit config directly
 
-You can also add the hosted server by editing Claude Code config yourself.
+You can also add the hosted servers by editing Claude Code config yourself.
 
 User-scoped example in `~/.claude.json`:
 
 ```json
 {
   "mcpServers": {
-    "deckflow": {
+    "deckflow_html2pptx": {
       "type": "http",
-      "url": "https://mcp.deckflow.com/mcp/v1/"
+      "url": "https://mcp.deckflow.com/v1/html2pptx"
+    },
+    "deckflow_pptx": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/v1/pptx"
+    },
+    "deckflow_tools": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/v1/tools"
     }
   }
 }
@@ -57,9 +71,17 @@ Project-scoped example in `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "deckflow": {
+    "deckflow_html2pptx": {
       "type": "http",
-      "url": "https://mcp.deckflow.com/mcp/v1/"
+      "url": "https://mcp.deckflow.com/v1/html2pptx"
+    },
+    "deckflow_pptx": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/v1/pptx"
+    },
+    "deckflow_tools": {
+      "type": "http",
+      "url": "https://mcp.deckflow.com/v1/tools"
     }
   }
 }
@@ -67,13 +89,13 @@ Project-scoped example in `.mcp.json`:
 
 ## Authentication
 
-After adding the hosted server, open Claude Code and run:
+After adding the hosted servers, open Claude Code and run:
 
 ```text
 /mcp
 ```
 
-If the server requires sign-in, Claude Code will prompt you to finish the browser-based authorization flow.
+If a server requires sign-in, Claude Code will prompt you to finish the browser-based authorization flow.
 
 ## Verify the connection
 
@@ -89,18 +111,18 @@ Or inside Claude Code:
 /mcp
 ```
 
-You should see `deckflow` listed and connected.
+You should see the Deckflow servers you added listed and connected.
 
 ## Try a first task
 
 ```text
-Use Deckflow MCP to convert this HTML slide page into an editable PPTX deck and return the result link.
+Use deckflow_html2pptx to convert this HTML slide page into an editable PPTX deck.
 ```
 
 ```text
-Use Deckflow MCP to convert this PPTX to PDF and check the task until it completes.
+Use deckflow_pptx to merge these two decks into one file.
 ```
 
 ```text
-Use Deckflow MCP to generate a presentation draft from this short brief and the attached reference files.
+Use deckflow_tools to convert this DOCX file into PDF.
 ```
