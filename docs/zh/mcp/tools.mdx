@@ -22,6 +22,8 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 
 这两个工具会出现在 3 组端点里。很多 MCP 客户端会自动带上服务名命名空间，例如 `deckflow-tools_get_task` 或 `deckflow-pptx_download_task_result`。
 
+正常使用时，你通常**不需要把 schema 里所有字段都填满**。建议先只填写必填参数；只有在你需要控制版式、语言、输出形态或等待时长时，再补充可选参数。
+
 ### `get_task`
 
 当某个工具调用超时，或者你想主动轮询已有任务时，就使用它。
@@ -57,11 +59,30 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | `markdown_to_image` | 把 Markdown 渲染成 PNG 图片 | `markdown` 或 `file`、`theme`、`scale`、`pageWidth`、`waitSeconds` |
 | `build_html_player` | 把多页内联 HTML 打包为播放器 | `contents`、`pageWidth`、`pageHeight`、`title`、`description`、`brandMarkPosition`、`waitSeconds` |
 
-说明：
-- `html_to_pptx`、`html_to_image`、`markdown_to_image` 都要求“内联内容”和 `file` 二选一
-- `html_to_pptx.platform` 支持 `mac`、`win`
-- `html_to_pptx.lang` 支持 `latin`、`sc`、`tc`、`jp`、`kr`、`ar`、`he`
-- `build_html_player` 只接受 `contents` 中提供的内联 HTML 页面内容
+建议这样理解这一组参数：
+
+- **最小必填**
+  `html_to_pptx`：`html` 和 `file` 二选一
+- **最小必填**
+  `html_to_image`：`html` 和 `file` 二选一
+- **最小必填**
+  `markdown_to_image`：`markdown` 和 `file` 二选一
+- **最小必填**
+  `build_html_player`：填写 `contents`
+- **什么叫内联内容**
+  就是把原始 HTML 或 Markdown 文本直接粘贴进工具参数里，而不是传文件路径或 URL
+- **常用可选**
+  当你需要控制画布尺寸、截图清晰度或页面宽度时，再填写 `width`、`height`、`scale`、`pageWidth`
+- **常用可选**
+  当你希望工具等待更久再返回时，再填写 `waitSeconds`
+- **按需填写**
+  `needEmbedFonts` 适用于你希望导出的 PPTX 自带字体的场景
+- **按需填写**
+  `platform` 仅支持 `mac`、`win`
+- **按需填写**
+  `lang` 支持 `latin`、`sc`、`tc`、`jp`、`kr`、`ar`、`he`
+- **按需填写**
+  `build_html_player` 只接受 `contents` 中提供的内联 HTML 页面内容
 
 ## `deckflow-pptx`
 
@@ -74,11 +95,26 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | `embed_pptx_fonts` | 将指定字体嵌入到 PPTX | `file`、`usedFonts`、`waitSeconds` |
 | `inspect_pptx` | 提取字体信息或文本形状结构 | `file`、`aspect`、`pickPages`、`includeLayout`、`includeMaster`、`includeNotes`、`ignoreEmptyText`、`onlyBrief`、`imageFilter`、`hasChildren`、`waitSeconds` |
 
-说明：
-- `split_pptx.indexes` 使用从 `0` 开始的页索引
-- `merge_pptx.files` 至少需要 2 个 PPTX 文件
-- `inspect_pptx.aspect` 支持 `fonts` 或 `texts`
-- `inspect_pptx` 中多数可选参数只在 `aspect=texts` 时生效
+建议这样理解这一组参数：
+
+- **最小必填**
+  `split_pptx`：填写 `file`
+- **最小必填**
+  `merge_pptx`：填写 `files`，且至少提供 2 个 PPTX 文件
+- **最小必填**
+  `embed_pptx_fonts`：填写 `file`
+- **最小必填**
+  `inspect_pptx`：填写 `file` 和 `aspect`
+- **常用可选**
+  `indexes` 只在你想拆指定页时才需要，且页码从 `0` 开始
+- **常用可选**
+  `usedFonts` 只在你希望把指定字体嵌入输出 PPTX 时才需要
+- **常用可选**
+  大文件或复杂文件处理时，可以补 `waitSeconds`
+- **按需填写**
+  `inspect_pptx.aspect` 支持 `fonts` 或 `texts`
+- **按需填写**
+  `inspect_pptx` 中多数可选参数只在 `aspect=texts` 时生效
 
 ## `deckflow-tools`
 
@@ -91,13 +127,34 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | `transform_image` | 缩放图片或转成 WebP | `file`、`action`、`maxWidth`、`maxHeight`、`waitSeconds` |
 | `compress_file` | 压缩普通文件或视频文件 | `file`、`waitSeconds` |
 
-说明：
-- `convert_file.targetFormat` 支持 `image`、`pdf`、`pptx`、`html`、`video`
-- `convert_file.resolution` 支持 `1080`、`1920`、`2560`
-- `convert_file.imageFormat` 支持 `png`、`jpg`
-- `ocr_image.language` 支持：`ar`、`bg`、`cs`、`da`、`de`、`el`、`en`、`es`、`et`、`fi`、`fr`、`hu`、`id`、`it`、`ja`、`ko`、`lt`、`lv`、`nb`、`nl`、`pl`、`pt`、`ro`、`ru`、`sk`、`sl`、`sv`、`tr`、`uk`、`zh-hans`、`zh-hant`
-- `transform_image.action` 支持 `resize`、`to_webp`
-- 当 `action=resize` 时，至少要提供 `maxWidth` 或 `maxHeight` 其中一个
+建议这样理解这一组参数：
+
+- **最小必填**
+  `convert_file`：填写 `file` 和 `targetFormat`
+- **最小必填**
+  `ocr_image`：填写 `file` 和 `language`
+- **最小必填**
+  `transform_image`：填写 `file` 和 `action`
+- **最小必填**
+  `compress_file`：填写 `file`
+- **常用可选**
+  只有当你要控制输出分辨率或图片格式时，才需要 `resolution`、`imageFormat`
+- **常用可选**
+  只有当 `action=resize` 时，才需要 `maxWidth` 或 `maxHeight`
+- **常用可选**
+  大文件转换时，可以补 `waitSeconds`
+- **按需填写**
+  `convert_file.targetFormat` 支持 `image`、`pdf`、`pptx`、`html`、`video`
+- **按需填写**
+  `convert_file.resolution` 支持 `1080`、`1920`、`2560`
+- **按需填写**
+  `convert_file.imageFormat` 支持 `png`、`jpg`
+- **按需填写**
+  `ocr_image.language` 支持：`ar`、`bg`、`cs`、`da`、`de`、`el`、`en`、`es`、`et`、`fi`、`fr`、`hu`、`id`、`it`、`ja`、`ko`、`lt`、`lv`、`nb`、`nl`、`pl`、`pt`、`ro`、`ru`、`sk`、`sl`、`sv`、`tr`、`uk`、`zh-hans`、`zh-hant`
+- **按需填写**
+  `transform_image.action` 支持 `resize`、`to_webp`
+- **按需填写**
+  当 `action=resize` 时，至少要提供 `maxWidth` 或 `maxHeight` 其中一个
 
 ## 推荐接入组合
 
