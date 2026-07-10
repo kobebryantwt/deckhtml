@@ -29,8 +29,7 @@
       "copy",
       "claude",
       "cursor",
-      "vscode",
-      "mcp"
+      "vscode"
     ]
   },
   "api": {
