@@ -206,18 +206,6 @@
             ]
           },
           {
-            "tab": "Skills",
-            "groups": [
-              {
-                "group": "Skills",
-                "pages": [
-                  "skills/overview",
-                  "skills/deckhtml"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "CLI",
             "groups": [
               {
