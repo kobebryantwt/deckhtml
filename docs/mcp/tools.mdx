@@ -75,26 +75,14 @@ Endpoint: `https://mcp.deckflow.com/v1/html2pptx`
 | Only when needed | `html_to_pptx` | `lang` supports `latin`, `sc`, `tc`, `jp`, `kr`, `ar`, `he` |
 | Only when needed | `build_html_player` | `contents` must be inline HTML page content |
 
-### Minimal examples
+### Example prompts
 
-```json
-{
-  "html_to_pptx": {
-    "file": "https://example.com/slides.html"
-  },
-  "html_to_image": {
-    "file": "https://example.com/slides.html"
-  },
-  "markdown_to_image": {
-    "markdown": "# Release Notes\n\n- Item 1\n- Item 2"
-  },
-  "build_html_player": {
-    "contents": [
-      "<section><h1>Hello Deckflow</h1></section>"
-    ]
-  }
-}
-```
+| Tool | Example prompt |
+| --- | --- |
+| `html_to_pptx` | “Use Deckflow to convert this HTML page into an editable PPTX deck and keep the original slide layout.” |
+| `html_to_image` | “Render this HTML page as a PNG preview image for review.” |
+| `markdown_to_image` | “Turn this Markdown release note into a clean PNG image for sharing in chat.” |
+| `build_html_player` | “Package these HTML slide sections into a browser-based player I can open and review.” |
 
 ## `deckflow-pptx`
 
@@ -121,29 +109,14 @@ Endpoint: `https://mcp.deckflow.com/v1/pptx`
 | Only when needed | `inspect_pptx` | `aspect` is `fonts` or `texts` |
 | Only when needed | `inspect_pptx` | Most optional inspection fields apply only when `aspect=texts` |
 
-### Minimal examples
+### Example prompts
 
-```json
-{
-  "split_pptx": {
-    "file": "fileId:uploaded-pptx-id"
-  },
-  "merge_pptx": {
-    "files": [
-      "fileId:deck-a",
-      "fileId:deck-b"
-    ]
-  },
-  "embed_pptx_fonts": {
-    "file": "fileId:uploaded-pptx-id",
-    "usedFonts": ["Arial"]
-  },
-  "inspect_pptx": {
-    "file": "fileId:uploaded-pptx-id",
-    "aspect": "fonts"
-  }
-}
-```
+| Tool | Example prompt |
+| --- | --- |
+| `split_pptx` | “Split this PPTX into separate slide files so I can review each page individually.” |
+| `merge_pptx` | “Merge these two PPTX decks into one file and preserve their original order.” |
+| `embed_pptx_fonts` | “Embed the fonts used in this PPTX so the deck displays consistently on other machines.” |
+| `inspect_pptx` | “Inspect this PPTX and tell me which fonts it uses.” |
 
 ## `deckflow-tools`
 
@@ -174,28 +147,14 @@ Endpoint: `https://mcp.deckflow.com/v1/tools`
 | Only when needed | `transform_image` | `action` is `resize` or `to_webp` |
 | Only when needed | `transform_image` | `resize` requires at least one of `maxWidth` or `maxHeight` |
 
-### Minimal examples
+### Example prompts
 
-```json
-{
-  "convert_file": {
-    "file": "fileId:source-file-id",
-    "targetFormat": "pdf"
-  },
-  "ocr_image": {
-    "file": "fileId:image-file-id",
-    "language": "en"
-  },
-  "transform_image": {
-    "file": "fileId:image-file-id",
-    "action": "resize",
-    "maxWidth": 1280
-  },
-  "compress_file": {
-    "file": "fileId:large-file-id"
-  }
-}
-```
+| Tool | Example prompt |
+| --- | --- |
+| `convert_file` | “Convert this PDF into images so I can use each page as a visual asset.” |
+| `ocr_image` | “Read the text from this screenshot and return the extracted content in English.” |
+| `transform_image` | “Resize this image to a smaller width for web delivery.” |
+| `compress_file` | “Compress this large file so it is easier to upload and share.” |
 
 ## Recommended setup patterns
 

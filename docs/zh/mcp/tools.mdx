@@ -75,26 +75,14 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | 按需填写 | `html_to_pptx` | `lang` 支持 `latin`、`sc`、`tc`、`jp`、`kr`、`ar`、`he` |
 | 按需填写 | `build_html_player` | `contents` 只接受内联 HTML 页面内容 |
 
-### 最小示例
+### 示例提示词
 
-```json
-{
-  "html_to_pptx": {
-    "file": "https://example.com/slides.html"
-  },
-  "html_to_image": {
-    "file": "https://example.com/slides.html"
-  },
-  "markdown_to_image": {
-    "markdown": "# 发布说明\n\n- 条目 1\n- 条目 2"
-  },
-  "build_html_player": {
-    "contents": [
-      "<section><h1>Hello Deckflow</h1></section>"
-    ]
-  }
-}
-```
+| 工具 | 示例提示词 |
+| --- | --- |
+| `html_to_pptx` | “请用 Deckflow 把这个 HTML 页面转换成可编辑的 PPTX，并尽量保留原始版式。” |
+| `html_to_image` | “把这个 HTML 页面渲染成 PNG 预览图，方便我先审阅效果。” |
+| `markdown_to_image` | “把这份 Markdown 发布说明转换成一张干净的 PNG 图片，方便发到群里。” |
+| `build_html_player` | “把这些 HTML 幻灯片片段打包成一个浏览器里可直接打开的播放器。” |
 
 ## `deckflow-pptx`
 
@@ -121,29 +109,14 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | 按需填写 | `inspect_pptx` | `aspect` 支持 `fonts` 或 `texts` |
 | 按需填写 | `inspect_pptx` | 多数检查类可选参数只在 `aspect=texts` 时生效 |
 
-### 最小示例
+### 示例提示词
 
-```json
-{
-  "split_pptx": {
-    "file": "fileId:uploaded-pptx-id"
-  },
-  "merge_pptx": {
-    "files": [
-      "fileId:deck-a",
-      "fileId:deck-b"
-    ]
-  },
-  "embed_pptx_fonts": {
-    "file": "fileId:uploaded-pptx-id",
-    "usedFonts": ["Arial"]
-  },
-  "inspect_pptx": {
-    "file": "fileId:uploaded-pptx-id",
-    "aspect": "fonts"
-  }
-}
-```
+| 工具 | 示例提示词 |
+| --- | --- |
+| `split_pptx` | “把这个 PPTX 按页拆开，方便我逐页检查内容。” |
+| `merge_pptx` | “把这两个 PPTX 按顺序合并成一个文件。” |
+| `embed_pptx_fonts` | “把这个 PPTX 用到的字体嵌进去，避免换机器后版式跑掉。” |
+| `inspect_pptx` | “检查这个 PPTX，用了哪些字体，帮我列出来。” |
 
 ## `deckflow-tools`
 
@@ -174,28 +147,14 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | 按需填写 | `transform_image` | `action` 支持 `resize`、`to_webp` |
 | 按需填写 | `transform_image` | 当 `action=resize` 时，至少要提供 `maxWidth` 或 `maxHeight` 其中一个 |
 
-### 最小示例
+### 示例提示词
 
-```json
-{
-  "convert_file": {
-    "file": "fileId:source-file-id",
-    "targetFormat": "pdf"
-  },
-  "ocr_image": {
-    "file": "fileId:image-file-id",
-    "language": "en"
-  },
-  "transform_image": {
-    "file": "fileId:image-file-id",
-    "action": "resize",
-    "maxWidth": 1280
-  },
-  "compress_file": {
-    "file": "fileId:large-file-id"
-  }
-}
-```
+| 工具 | 示例提示词 |
+| --- | --- |
+| `convert_file` | “把这个 PDF 转成图片，我想把每一页单独拿出来使用。” |
+| `ocr_image` | “识别这张截图里的文字，并把提取结果返回给我。” |
+| `transform_image` | “把这张图片缩小到更适合网页使用的宽度。” |
+| `compress_file` | “压缩这个大文件，方便我上传和分享。” |
 
 ## 推荐接入组合
 
