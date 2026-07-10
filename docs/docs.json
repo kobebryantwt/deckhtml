@@ -326,18 +326,6 @@
             ]
           },
           {
-            "tab": "扩展",
-            "groups": [
-              {
-                "group": "扩展",
-                "pages": [
-                  "zh/skills/overview",
-                  "zh/skills/deckhtml"
-                ]
-              }
-            ]
-          },
-          {
             "tab": "CLI",
             "groups": [
               {
