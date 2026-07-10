@@ -4,11 +4,76 @@ sidebarTitle: 快速开始
 description: "用 DeckHTML 将第一个 HTML 文件转换为 PPTX 输出。"
 ---
 
-这是中文快速开始页的占位版本。
+这是从一个 HTML 文件到生成演示文稿产物的最短路径。
 
-当前仓库已经支持中英文入口切换，但中文正文还没有开始逐页翻译。后续会按照英文版的结构，补齐安装、示例、输出格式和常见问题。
+<Note>
+  这个页面刻意以 CLI 为起点。只要你先跑通一次本地转换，后续就可以把同样的输入迁移到 SDK 或 MCP 使用。
+</Note>
 
-在中文内容完善前，请先参考：
+## 五步开始
 
-- [English Quickstart](/docs/quick-start)
-- [CLI Overview](/cli/overview)
+<Steps>
+  <Step title="准备一个 HTML 幻灯片页面">
+    创建一个 HTML 文件，例如 `index.html`。DeckHTML 最适合处理“一个页面对应一页幻灯片”或“一个文件内包含清晰多页结构”的输入。
+
+    ```html
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Hello DeckHTML</title>
+      </head>
+      <body>
+        <section>
+          <h1>Hello DeckHTML</h1>
+          <p>Convert this page into presentation output.</p>
+        </section>
+      </body>
+    </html>
+    ```
+  </Step>
+  <Step title="无需全局安装，直接运行">
+    直接通过 `npx` 使用最新版本：
+
+    ```bash
+    npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+    ```
+  </Step>
+  <Step title="或者安装一次后重复使用">
+    如果你希望保留本地命令：
+
+    ```bash
+    npm install -g @deckflow/deckhtml
+    deckhtml index.html -o deck.pptx
+    ```
+  </Step>
+  <Step title="检查生成结果">
+    本地转换成功后，会输出目标 PPTX，并打印输出路径或 JSON 结果。
+
+    ```bash
+    deckhtml index.html -o deck.pptx
+    deckhtml index.html -o deck.pptx --json
+    ```
+  </Step>
+  <Step title="根据场景选择执行模式">
+    如果希望在当前机器上直接转换，使用 [CLI 概览](/zh/cli/overview) 里的本地路径；如果需要托管执行、认证能力或接入智能体工作流，可以继续看 [MCP 概览](/zh/mcp/overview) 和 [API 概览](/zh/reference/overview)。
+  </Step>
+</Steps>
+
+## 接下来读什么
+
+<CardGroup cols={3}>
+  <Card title="CLI 概览" href="/zh/cli/overview">
+    继续了解模式选择、认证方式、参数和常见命令。
+  </Card>
+  <Card title="API Reference" href="/zh/reference/overview">
+    查看任务提交、状态查询和不同业务场景下的接口组织方式。
+  </Card>
+  <Card title="MCP 概览" href="/zh/mcp/overview">
+    把 Deckflow 作为 MCP Server 接入常见智能体客户端。
+  </Card>
+</CardGroup>
+
+<Tip>
+  第一次接入时，建议先保持同一个输入文件不变，只逐项切换执行模式、输出方式或接入面，这样最容易定位问题。
+</Tip>

@@ -4,23 +4,59 @@ sidebarTitle: 概览
 description: "了解 DeckHTML 开发者文档的核心入口、能力范围和推荐阅读路径。"
 ---
 
-# DeckHTML 中文文档
+# 使用 DeckHTML 构建演示文稿工作流
 
-这里是 DeckHTML 中文帮助中心入口。
+DeckHTML 面向开发者提供从 HTML 到演示文稿产物的工作流能力。你可以从 CLI 开始验证输入输出，再接入 API、SDK，或者通过 MCP 暴露给智能体客户端使用。
 
-当前阶段我们先把中文站点结构和语言切换能力搭好，具体页面内容会在英文文档稳定后逐步翻译补齐。
+<Note>
+  这套文档优先按照开发者实际接入路径组织：先跑通一次端到端转换，再根据你的使用场景进入 CLI、API、SDK 或 MCP。
+</Note>
 
-## 当前可用内容
+## 从哪里开始
 
-- [快速开始](/zh/docs/quick-start)
-- [CLI 目录占位页](/zh/cli/overview)
-- [SDK 目录占位页](/zh/sdk/overview)
-- [MCP 目录占位页](/zh/mcp/overview)
-- [参考资料占位页](/zh/reference/overview)
+<CardGroup cols={2}>
+  <Card title="快速开始" href="/zh/docs/quick-start">
+    从一个 HTML 文件开始，在几分钟内生成第一个 `pptx`，然后再扩展到云端和自动化路径。
+  </Card>
+  <Card title="CLI" href="/zh/cli/overview">
+    查看命令行模式、认证方式、常用参数和本地使用路径。
+  </Card>
+  <Card title="API Reference" href="/zh/reference/overview">
+    了解异步任务模型、核心接口，以及不同业务场景下的参数组织方式。
+  </Card>
+  <Card title="MCP" href="/zh/mcp/overview">
+    将 Deckflow 接入 Codex、Cursor、Claude Code、TRAE、WorkBuddy 等 MCP 客户端。
+  </Card>
+</CardGroup>
 
-## 临时说明
+## 可以用它做什么
 
-如果你现在需要完整内容，请先参考英文版入口：
+<CardGroup cols={3}>
+  <Card title="PPTX 演示文稿">
+    生成适合继续编辑、评审或交付的演示文稿文件。
+  </Card>
+  <Card title="PDF 输出">
+    输出固定版式文档，用于分享、留档和审阅。
+  </Card>
+  <Card title="PNG 画面">
+    把页面渲染成图片，适合缩略图、预览图和自动化管线。
+  </Card>
+</CardGroup>
 
-- [English Home](/docs/overview)
-- [English Quickstart](/docs/quick-start)
+## 推荐阅读顺序
+
+<Steps>
+  <Step title="先跑通第一次转换">
+    从 [快速开始](/zh/docs/quick-start) 开始，先确认你的 HTML 输入可以顺利生成目标产物。
+  </Step>
+  <Step title="理解接入模型">
+    然后阅读 [CLI 概览](/zh/cli/overview)、[MCP 概览](/zh/mcp/overview) 和 [API 概览](/zh/reference/overview)，判断后续应走哪条集成路径。
+  </Step>
+  <Step title="选择具体接入面">
+    终端和脚本场景进入 [CLI](/zh/cli/overview)，服务端代码场景进入 [SDK](/zh/sdk/overview)，智能体场景进入 [MCP](/zh/mcp/overview)。
+  </Step>
+</Steps>
+
+<Tip>
+  如果你的主要目标是接入智能体工作流，建议在读完快速开始后直接进入 [MCP 概览](/zh/mcp/overview)，不用先深入 CLI 的全部细节。
+</Tip>
