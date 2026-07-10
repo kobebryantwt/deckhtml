@@ -10,38 +10,14 @@ description: "通过 TRAE 的 MCP 设置界面配置托管的 Deckflow MCP。"
   在 TRAE 中统一使用托管模式即可。它是标准接入方式，也最容易验证是否接入成功。
 </Note>
 
-## 打开 MCP 配置入口
+## 在 TRAE 中完成 Deckflow MCP 配置
 
 <Steps>
-  <Step title="打开 TRAE 设置">
-    在 TRAE 右上角点击设置图标，然后切换到 `MCP` 标签页。
+  <Step title="打开 MCP 设置">
+    在 TRAE 右上角点击设置图标，切换到 `MCP` 标签页，然后点击 `Add` 并选择手动配置。TRAE 会打开一个可编辑的 `mcp.json` 标签页。
   </Step>
-  <Step title="新增自定义 MCP Server">
-    在 `MCP Servers` 区域点击 `Add`，再选择手动配置。TRAE 会打开一个可编辑的 `mcp.json` 标签页。
-  </Step>
-</Steps>
-
-![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
-
-## 添加托管配置
-
-将下面这段配置粘贴到 TRAE 的 `mcp.json` 编辑器中：
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "url": "https://mcp.deckflow.com/mcp/v1/"
-    }
-  }
-}
-```
-
-## 托管 Streamable HTTP 流程
-
-<Steps>
-  <Step title="粘贴托管配置">
-    使用上面的托管配置：
+  <Step title="粘贴 Deckflow 配置">
+    将下面这段托管配置粘贴进去：
 
     ```json
     {
@@ -53,7 +29,7 @@ description: "通过 TRAE 的 MCP 设置界面配置托管的 Deckflow MCP。"
     }
     ```
   </Step>
-  <Step title="等待验证提示">
+  <Step title="保存并等待验证提示">
     保存后，TRAE 会在 MCP 列表中显示 `deckflow`。如果还没有完成授权，界面会提示当前服务需要验证，并提供继续验证的入口。
   </Step>
   <Step title="完成授权">
@@ -63,6 +39,8 @@ description: "通过 TRAE 的 MCP 设置界面配置托管的 Deckflow MCP。"
     授权成功后，TRAE 会提示验证已完成。此时可以关闭浏览器页面并回到 MCP 面板继续使用。
   </Step>
 </Steps>
+
+![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
 
 ![TRAE verification required state](/images/mcp/trae-mcp-verify.png)
 

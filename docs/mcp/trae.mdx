@@ -10,38 +10,14 @@ Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP end
   Use the hosted HTTP endpoint in TRAE. It is the standard setup path and the easiest one to verify.
 </Note>
 
-## Open the MCP configuration entry
+## Set up Deckflow MCP in TRAE
 
 <Steps>
-  <Step title="Open TRAE settings">
-    In TRAE, click the settings icon in the top-right corner, then switch to the `MCP` tab.
+  <Step title="Open the MCP settings">
+    In TRAE, click the settings icon in the top-right corner, switch to the `MCP` tab, then choose `Add` and the manual configuration option. TRAE opens an editable `mcp.json` tab for the new server entry.
   </Step>
-  <Step title="Add a custom MCP server">
-    In `MCP Servers`, click `Add`, then choose the manual configuration option. TRAE opens an editable `mcp.json` tab for the new server entry.
-  </Step>
-</Steps>
-
-![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
-
-## Add the hosted configuration
-
-Paste this config into TRAE's `mcp.json` editor:
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "url": "https://mcp.deckflow.com/mcp/v1/"
-    }
-  }
-}
-```
-
-## Hosted Streamable HTTP flow
-
-<Steps>
-  <Step title="Paste the hosted config">
-    Use the hosted config shown above:
+  <Step title="Paste the Deckflow server config">
+    Add this hosted MCP configuration:
 
     ```json
     {
@@ -53,7 +29,7 @@ Paste this config into TRAE's `mcp.json` editor:
     }
     ```
   </Step>
-  <Step title="Wait for the verification prompt">
+  <Step title="Save and wait for the verification prompt">
     After saving the entry, TRAE shows the `deckflow` server in the MCP list. If authorization is still required, TRAE marks the server as needing verification and shows a link to continue the verification flow.
   </Step>
   <Step title="Complete authorization">
@@ -63,6 +39,8 @@ Paste this config into TRAE's `mcp.json` editor:
     Once authorization succeeds, TRAE reports that verification completed successfully. You can then close the browser page and return to the MCP panel.
   </Step>
 </Steps>
+
+![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
 
 ![TRAE verification required state](/images/mcp/trae-mcp-verify.png)
 
