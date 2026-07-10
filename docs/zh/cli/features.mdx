@@ -1,0 +1,112 @@
+---
+title: 功能特性
+sidebarTitle: 功能特性
+description: "查看 DeckHTML CLI 当前支持的输入方式、输出格式、渲染控制、云端增强和配置能力。"
+---
+
+> 这一页关注的是当前 CLI 接入面的能力范围：输入、格式、渲染控制、云端增强和持久化配置。
+
+## 输入来源
+
+DeckHTML 通过一套统一命令界面接收输入：
+
+```bash
+deckhtml [inputs...]
+```
+
+当前常见支持的输入形式：
+
+- 单个本地 HTML 文件
+- 多个有序本地 HTML 文件
+- 通过 `-` 传入的 stdin
+- 托管 URL
+
+示例：
+
+```bash
+deckhtml index.html
+deckhtml title.html agenda.html body.html -o deck.pptx
+cat index.html | deckhtml - -o deck.pptx
+deckhtml https://example.com/deck.html -o deck.pptx
+```
+
+## 输出格式
+
+CLI 当前暴露的格式值有：
+
+| 格式 | 说明 |
+| --- | --- |
+| `pptx` | PowerPoint 演示文稿输出，默认值 |
+| `pdf` | 作为 CLI 输出格式暴露 |
+| `png` | 适合图片帧和预览输出 |
+
+## 执行模式
+
+| 模式 | 行为 |
+| --- | --- |
+| `auto` | 有 API Key 时优先走云端，否则走本地 |
+| `local` | 强制本地执行 |
+| `cloud` | 强制云端执行，并要求有效凭证 |
+
+本地转换可以不认证；云端转换以及云端专属增强参数则需要配置凭证。
+
+从整体工作流上看：
+
+- 本地模式更适合最直接的终端验证
+- 云端模式更适合托管执行与增强能力
+- `auto` 适合开发者在“本地与云端都可能存在”的环境中快速切换
+
+## 云端专属增强
+
+以下参数仅在云端模式中可用：
+
+| 参数 | 说明 |
+| --- | --- |
+| `--rebuild-svg` | 重建 SVG 对象 |
+| `--rebuild-chart` | 重建图表对象 |
+| `--embed-fonts` | 将字体嵌入输出 |
+| `--map-motion` | 把动画映射到输出结果 |
+
+## 渲染控制
+
+CLI 还提供这些控制项：
+
+| 参数 | 控制内容 |
+| --- | --- |
+| `--width <pixels>` | Playwright 视口宽度，高度按 `16:9` 推导 |
+| `--platform <platform>` | 通用字体映射目标：`win`、`mac`、`ios`、`android`、`linux` |
+| `--render-wait <seconds>` | 云端模式下逐页截图前的等待秒数 |
+
+这些参数适合需要等待前端渲染完成、控制字体回退，或显式指定视口宽度的页面。
+
+## 日志与机器可读输出
+
+| 参数 | 用途 |
+| --- | --- |
+| `--json` | 在 stdout 输出机器可读 JSON |
+| `--quiet` | 降低输出，只保留错误和最终结果 |
+| `--verbose` | 在 stderr 输出更详细日志 |
+| `--report` | 在输出旁额外生成转换报告 |
+
+`--quiet` 和 `--verbose` 不能同时启用。
+
+## 认证与配置
+
+认证相关命令：
+
+```bash
+deckhtml auth login
+deckhtml auth status
+```
+
+持久化配置：
+
+```bash
+deckhtml config set api-key <key>
+deckhtml config set size 1920x1080
+deckhtml config set webhook https://example.com/webhooks/deckhtml
+deckhtml config set retention-hours 3
+deckhtml config show
+```
+
+在 CI、Docker 或智能体运行环境中，`DECKHTML_API_KEY` 的优先级高于本地保存的凭证。

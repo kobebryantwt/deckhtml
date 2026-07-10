@@ -1,0 +1,132 @@
+---
+title: 输出模式
+sidebarTitle: 输出模式
+description: "了解 DeckHTML CLI 在终端、自动化和 CI 场景下的人类可读输出、JSON 输出以及产物行为。"
+---
+
+> 当你在终端、脚本、CI 或智能体环境中使用 DeckHTML 时，输出行为本身就是接口的一部分。
+
+DeckHTML 会把“最终结果”和“过程信息”分开：
+
+- stdout：用于输出最终结果
+- stderr：用于输出进度、日志、警告和错误
+
+## 默认输出
+
+默认情况下，DeckHTML 会在 stdout 打印最终结果：
+
+```bash
+deckhtml index.html -o deck.pptx
+```
+
+```text
+deck.pptx
+```
+
+如果省略 `-o`，CLI 会尽量根据输入名称自动推导输出路径：
+
+```bash
+deckhtml index.html
+```
+
+```text
+index.pptx
+```
+
+## 产物格式
+
+通过 `--format` 选择产物类型：
+
+```bash
+deckhtml index.html --format pptx -o deck.pptx
+deckhtml index.html --mode cloud --format png -o frames
+```
+
+可接受的格式值有：
+
+- `pptx`
+- `pdf`
+- `png`
+
+执行模式也会影响具体产物行为：
+
+- 本地与云端可能暴露不同的产物路径
+- 最简单的同机转换优先使用本地模式
+- 需要托管执行或更完整输出路径时使用云端模式
+
+## `--json`
+
+当另一个程序需要解析结果时，使用 `--json`：
+
+```bash
+deckhtml index.html -o deck.pptx --json
+```
+
+```json
+{
+  "ok": true,
+  "input": ["index.html"],
+  "output": "deck.pptx",
+  "format": "pptx",
+  "mode": "local"
+}
+```
+
+启用 `--json` 后，stdout 应只包含 JSON；日志和诊断信息仍然会输出到 stderr。
+
+## `--quiet` 与 `--verbose`
+
+使用 `--quiet` 抑制非必要日志：
+
+```bash
+deckhtml index.html -o deck.pptx --quiet
+```
+
+使用 `--verbose` 输出更详细日志：
+
+```bash
+deckhtml index.html -o deck.pptx --verbose
+```
+
+这两个参数不能同时使用：
+
+```bash
+deckhtml index.html --quiet --verbose
+```
+
+代表性的 stderr 错误：
+
+```text
+Error: --quiet conflicts with --verbose
+```
+
+## 错误与退出行为
+
+错误信息会写入 stderr。即使在 `--json` 模式下，也应默认认为诊断信息不会写入 stdout。
+
+一个典型的 JSON 形态错误可能像这样：
+
+```json
+{
+  "error": {
+    "code": "usage_error",
+    "message": "--quiet conflicts with --verbose"
+  }
+}
+```
+
+文档里常见的错误类别包括：
+
+| Code | 含义 |
+| --- | --- |
+| `usage_error` | 参数非法、输入缺失或参数冲突 |
+| `auth_error` | 云端模式缺少有效凭证 |
+| `render_error` | 页面无法加载或渲染 |
+| `conversion_error` | 渲染后转换失败 |
+
+## stdout 与 stderr 的边界
+
+| 流 | 内容 |
+| --- | --- |
+| stdout | 最终输出路径或 JSON 结果 |
+| stderr | 进度、警告、详细日志和错误 |

@@ -1,0 +1,120 @@
+---
+title: MCP 工具
+sidebarTitle: MCP 工具
+description: "查看 Deckflow MCP 提供的 19 个工具，覆盖演示文稿生成、文档翻译、格式转换、渲染、PPTX 工具链、OCR 和任务管理。"
+---
+
+Deckflow MCP 当前暴露了 19 个工具。创建类工具在小任务上可能会直接完成，也可能返回 `taskId` 交给后续轮询。管理类工具则负责查询、列表、下载、重试和删除任务。
+
+<Note>
+  文件输入遵循统一约定。在 `stdio` 模式下，`file` 和 `files` 可以是本地绝对路径、`http(s)` URL，或者 `fileId:<uploaded-file-id>`。在托管 HTTP 模式下，应使用 URL 或 `fileId`，因为远端服务无法直接读取你本机文件系统。
+</Note>
+
+## 典型生命周期
+
+<Steps>
+  <Step title="先启动一个创建类工具">
+    例如调用 `generate_presentation`、`translate_document`、`revamp_presentation`、`convert_file` 或 `render_html`。
+  </Step>
+  <Step title="有意识地使用 waitSeconds">
+    小型文件工具通常默认最多等待 60 秒。更长的任务则通常立刻返回 `taskId`，由客户端后续跟进。
+  </Step>
+  <Step title="等待任务完成">
+    当 MCP 客户端支持更长等待和进度反馈时，可以通过 `get_task` 并设置 `wait: true` 与合适的 `timeoutSeconds` 来阻塞等待。
+  </Step>
+  <Step title="下载最终产物">
+    当任务完成后，调用 `download_task_result` 获取产物。返回值通常包含临时下载链接或可直接访问的结果对象。
+  </Step>
+</Steps>
+
+## 演示文稿与文档创建
+
+| 工具 | 作用 | 常见输入 |
+| --- | --- | --- |
+| `generate_presentation` | 根据文本和参考材料生成演示文稿或文档。 | `inputText`, `files`, `enableSearch`, `advancedModel`, `fastMode`, `intent`, `audience`, `pageCount`, `author` |
+| `revamp_presentation` | 对已有演示文稿进行焕新或重排版。 | `file`, `lang` |
+| `translate_document` | 翻译 PPTX、PDF、DOCX 等视觉文档。 | `file`, `from`, `to`, `model`, `useGlossary`, `imageTranslate` |
+
+<Tip>
+  这类工具通常是分钟级任务。更推荐先让它返回 `taskId`，再配合 `get_task` 和 `download_task_result` 获取结果，而不是强制首次调用一直等待。
+</Tip>
+
+## 渲染与格式转换
+
+| 工具 | 作用 | 常见输入 |
+| --- | --- | --- |
+| `convert_file` | 在图片、PDF、PPTX、HTML、视频等格式之间转换。 | `file`, `targetFormat`, `resolution`, `imageFormat` |
+| `render_html` | 将内联 HTML 或 HTML 文件渲染为 PNG 或 PPTX。 | `html`, `file`, `target`, `scale`, `fullPage`, `width`, `height`, `needEmbedFonts`, `platform`, `lang` |
+| `render_markdown` | 将 Markdown 内容或文件渲染成图片。 | `markdown`, `file`, `theme`, `scale`, `pageWidth` |
+| `build_html_player` | 将多个 HTML 页面打包为播放器式体验。 | `contents`, `pageWidth`, `pageHeight`, `title`, `description`, `brandMarkPosition` |
+
+### 常见转换示例
+
+| 来源 | 目标 |
+| --- | --- |
+| `.ppt` / `.pptx` | image, PDF, PPTX, video |
+| `.pdf` | image |
+| `.key` | image, HTML, PDF |
+| `.doc` / `.docx` | PDF |
+
+## 文件与 PPTX 工具链
+
+| 工具 | 作用 | 常见输入 |
+| --- | --- | --- |
+| `split_pptx` | 按页或指定范围拆分 PPTX。 | `file`, `indexes`, `allowSize` |
+| `merge_pptx` | 按顺序合并多个 PPTX。 | `files`, `hiddens`, `autoResize` |
+| `embed_pptx_fonts` | 把指定字体嵌入到 PPTX。 | `file`, `usedFonts` |
+| `inspect_pptx` | 提取 PPTX 的字体、文本框或结构信息。 | `file`, `aspect`, `pickPages`, `includeLayout`, `includeMaster`, `includeNotes`, `onlyBrief` |
+| `ocr_image` | 识别图片中的文本。 | `file`, `language` |
+| `transform_image` | 调整图片尺寸或转成 WebP。 | `file`, `action`, `maxWidth`, `maxHeight` |
+| `compress_file` | 压缩视频或通用文件。 | `file` |
+
+## 任务管理
+
+| 工具 | 作用 | 常见输入 |
+| --- | --- | --- |
+| `get_task` | 查询任务状态，也可以阻塞等待完成或超时。 | `taskId`, `wait`, `timeoutSeconds` |
+| `download_task_result` | 下载已完成任务的产物。 | `taskId`, `resultType`, `savePath` |
+| `list_tasks` | 列出当前账号或空间中的近期任务。 | `startIndex`, `maxResults` |
+| `delete_task` | 删除任务及其关联文件。 | `taskId` |
+| `start_task` | 触发或重试一个小型工具任务。 | `taskId` |
+
+## 返回模式
+
+创建类工具通常会返回类似这样的任务元信息：
+
+```json
+{
+  "taskId": "task_...",
+  "type": "convertor.html2pptx",
+  "status": "processing",
+  "name": "Deckflow task",
+  "preview": null,
+  "result": null,
+  "download": null,
+  "next": "Call get_task to check progress."
+}
+```
+
+当 `status` 变成 `completed` 后，返回值可能包含 `download` 链接或结果对象。如果等待超时，工具可能会返回 `timedOut: true`；这不代表失败，只需要继续通过 `get_task` 轮询。
+
+## 长任务示例
+
+```text
+generate_presentation {
+  inputText: "Create a product launch deck for Deckflow",
+  pageCount: 10,
+  audience: "Executives"
+}
+
+get_task {
+  taskId: "task_...",
+  wait: true,
+  timeoutSeconds: 600
+}
+
+download_task_result {
+  taskId: "task_...",
+  resultType: "pptx"
+}
+```

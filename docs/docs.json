@@ -316,6 +316,7 @@
                 "group": "MCP",
                 "pages": [
                   "zh/mcp/overview",
+                  "zh/mcp/tools",
                   "zh/mcp/codex",
                   "zh/mcp/cursor",
                   "zh/mcp/claude-code",
@@ -327,20 +328,41 @@
           },
           {
             "tab": "扩展",
-            "pages": [
-              "zh/skills/overview"
+            "groups": [
+              {
+                "group": "扩展",
+                "pages": [
+                  "zh/skills/overview",
+                  "zh/skills/deckhtml"
+                ]
+              }
             ]
           },
           {
             "tab": "CLI",
-            "pages": [
-              "zh/cli/overview"
+            "groups": [
+              {
+                "group": "CLI",
+                "pages": [
+                  "zh/cli/overview",
+                  "zh/cli/output-modes",
+                  "zh/cli/commands",
+                  "zh/cli/features",
+                  "zh/cli/examples"
+                ]
+              }
             ]
           },
           {
             "tab": "SDK",
-            "pages": [
-              "zh/sdk/overview"
+            "groups": [
+              {
+                "group": "SDK",
+                "pages": [
+                  "zh/sdk/overview",
+                  "zh/sdk/node"
+                ]
+              }
             ]
           }
         ]

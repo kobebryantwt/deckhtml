@@ -1,0 +1,102 @@
+---
+title: 命令参考
+sidebarTitle: 命令参考
+description: "查看 DeckHTML CLI 当前提供的命令、参数和子命令。"
+---
+
+> 这里整理的是 DeckHTML CLI 当前对外暴露的命令界面。
+
+主命令遵循下面这个模式：
+
+```bash
+deckhtml [options] [command] [inputs...]
+```
+
+可以通过 `deckhtml --help` 查看当前帮助文本，通过 `deckhtml --version` 查看版本信息。
+
+## 根命令
+
+```bash
+deckhtml [inputs...]
+```
+
+参数：
+
+| 参数 | 含义 |
+| --- | --- |
+| `inputs` | HTML 文件、URL，或 `-` 表示从 stdin 读取 |
+
+## 根级参数
+
+| 参数 | 说明 | 默认值 |
+| --- | --- | --- |
+| `-V, --version` | 显示版本 | 关闭 |
+| `--json` | 在 stdout 输出机器可读 JSON | `false` |
+| `-v, --verbose` | 在 stderr 输出详细日志 | `false` |
+| `--quiet` | 只输出错误和最终结果 | `false` |
+| `-o, --output <path>` | 输出路径 | 尽可能从输入自动推导 |
+| `--mode <mode>` | 执行模式：`auto`、`local`、`cloud` | `auto` |
+| `--format <format>` | 输出格式：`pptx`、`pdf`、`png` | `pptx` |
+| `--width <pixels>` | Playwright 视口宽度，高度按 `16:9` 推导 | 包默认值 |
+| `--platform <platform>` | 通用字体映射目标：`win`、`mac`、`ios`、`android`、`linux` | 当前系统 |
+| `--render-wait <seconds>` | 云端模式下逐页截图前的等待秒数 | `3` |
+| `--rebuild-svg` | 重建 SVG 对象，仅云端 | `false` |
+| `--rebuild-chart` | 重建图表对象，仅云端 | `false` |
+| `--embed-fonts` | 嵌入字体，仅云端 | `false` |
+| `--map-motion` | 映射动画，仅云端 | `false` |
+| `--webhook <url>` | 云端转换事件的回调地址 | 无 |
+| `--retention-hours <n>` | 云端文件保留时长（小时） | 无 |
+| `--report` | 在输出旁边生成转换报告 | `false` |
+| `-h, --help` | 显示帮助 | 关闭 |
+
+## 支持的输入形式
+
+| 输入形式 | 示例 | 说明 |
+| --- | --- | --- |
+| stdin | `cat index.html \| deckhtml - -o deck.pptx` | 从 stdin 读取 HTML |
+| HTML 文件 | `deckhtml index.html` | 转换单个本地 HTML 文件 |
+| 多个 HTML 文件 | `deckhtml page1.html page2.html page3.html` | 按参数顺序组合多个页面 |
+| URL | `deckhtml https://example.com/deck.html -o deck.pptx` | 加载并转换托管页面 |
+
+## 当前模式行为
+
+DeckHTML 的执行模式解析如下：
+
+| 模式 | 行为 |
+| --- | --- |
+| `local` | 确定走本地执行，不依赖云端凭证 |
+| `cloud` | 确定走托管执行，并需要凭证 |
+| `auto` | 有凭证时走 `cloud`，否则回退到 `local` |
+
+## 子命令
+
+### `deckhtml auth`
+
+```bash
+deckhtml auth [command]
+```
+
+| 子命令 | 说明 |
+| --- | --- |
+| `deckhtml auth login` | 通过浏览器登录并保存凭证 |
+| `deckhtml auth status` | 查看当前认证状态 |
+
+### `deckhtml config`
+
+```bash
+deckhtml config [command]
+```
+
+| 子命令 | 说明 |
+| --- | --- |
+| `deckhtml config set <key> <value>` | 写入一个配置项 |
+| `deckhtml config show` | 查看当前配置 |
+
+## README 中提到的配置键
+
+| 键名 | 说明 | 默认值 |
+| --- | --- | --- |
+| `api-key` | 云端请求使用的 API Key | 无 |
+| `size` | PPTX 尺寸 | `1920x1080` |
+| `webhook` | 默认回调地址 | 无 |
+| `retention-hours` | 云端文件保留时长（小时） | `3` |
