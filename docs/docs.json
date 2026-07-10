@@ -264,7 +264,18 @@
                 "group": "开始使用",
                 "pages": [
                   "zh/docs/quick-start",
-                  "zh/docs/overview"
+                  "zh/docs/overview",
+                  "zh/docs/concepts",
+                  "zh/docs/architecture"
+                ]
+              },
+              {
+                "group": "使用方式",
+                "pages": [
+                  "zh/docs/local-mode",
+                  "zh/docs/cloud-mode",
+                  "zh/docs/configuration",
+                  "zh/docs/faq"
                 ]
               }
             ]

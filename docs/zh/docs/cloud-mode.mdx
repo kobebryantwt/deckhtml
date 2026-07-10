@@ -1,0 +1,35 @@
+---
+title: 云端模式
+sidebarTitle: 云端模式
+description: "使用 DeckHTML 云端模式完成远端转换、托管执行和云端专属增强工作流。"
+---
+
+云端模式会把转换请求发送到远端服务，而不是在本机完整执行整个流程。
+
+## 什么时候用
+
+以下场景更适合云端模式：
+
+- 你需要使用云端专属增强能力
+- 你希望把转换纳入托管执行流程
+- 团队内部统一采用服务化转换路径
+
+## 认证方式
+
+云端执行需要凭证，你可以任选其中一种方式：
+
+- 通过 `deckhtml auth login` 完成交互式登录
+- 通过 `deckhtml config set api-key <key>` 写入 API Key
+- 在 CI、容器或自动化环境中提供 `DECKHTML_API_KEY`
+
+## 示例
+
+```bash
+deckhtml index.html \
+  -o deck.pptx \
+  --mode cloud \
+  --rebuild-svg \
+  --rebuild-chart \
+  --embed-fonts \
+  --map-motion
+```
