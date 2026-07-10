@@ -212,11 +212,7 @@ button[aria-label*="logout" i],
 logout-link,
 #sidebar-content > :last-child a:nth-of-type(2),
 #sidebar-content > :last-child a[href*="login" i],
-#sidebar-content > :last-child a[href*="logout" i],
-#sidebar > [class*="border-t"]:last-child > :nth-child(2),
-#sidebar > [class*="border-t"]:last-child > div > :nth-child(2),
-nav[aria-label="Pages"] > [class*="border-t"]:last-child > :nth-child(2),
-nav[aria-label="Pages"] > [class*="border-t"]:last-child > div > :nth-child(2) {
+#sidebar-content > :last-child a[href*="logout" i] {
   display: none !important;
 }
 
