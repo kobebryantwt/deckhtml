@@ -4,7 +4,7 @@ sidebarTitle: MCP Tools
 description: "Review the three Deckflow MCP servers and the tools exposed by each hosted endpoint."
 ---
 
-Deckflow MCP is now split into three hosted servers. Each server maps to a narrower product surface, so you can register only the tools you actually need in your MCP client.
+Deckflow MCP currently provides three hosted servers. Each server maps to a different product surface, so you can register only the tools you actually need in your MCP client.
 
 <Note>
   File inputs use one shared convention. In the hosted MCP setup, use `http(s)` URLs or `fileId:<uploaded-file-id>` references because the remote server cannot read your local filesystem directly.
@@ -47,6 +47,6 @@ Deckflow MCP is now split into three hosted servers. Each server maps to a narro
 
 ## Recommended setup patterns
 
-- Add only `deckflow_html2pptx` when your client mainly generates PPTX decks or preview images from HTML.
-- Add `deckflow_html2pptx` and `deckflow_pptx` together when you also need to split, merge, inspect, or embed fonts after generation.
-- Add all three servers when your workflow includes OCR, format conversion, image processing, or compression.
+- Register only `deckflow_html2pptx` when your client mainly generates PPTX decks or preview images from HTML.
+- Register `deckflow_html2pptx` together with `deckflow_pptx` when you also need to split, merge, inspect, or embed fonts in PPTX files.
+- Register all three servers when your workflow also includes OCR, format conversion, image processing, or compression.

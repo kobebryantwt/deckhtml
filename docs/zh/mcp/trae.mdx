@@ -7,7 +7,7 @@ description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 Dec
 本页重点说明如何在 TRAE 中通过托管的 Streamable HTTP 方式接入 Deckflow MCP，并完成浏览器授权。
 
 <Note>
-  在 TRAE 中，每个端点都应作为独立的 MCP Server 添加。很多团队会先接入 `deckflow_html2pptx`，后面再补 `deckflow_pptx` 和 `deckflow_tools`。
+  在 TRAE 中，每个端点都应作为独立的 MCP Server 添加。`deckflow_html2pptx` 负责 HTML 渲染相关能力，`deckflow_pptx` 负责 PPTX 文件处理，`deckflow_tools` 负责通用文件小工具。
 </Note>
 
 ## 在 TRAE 中完成 Deckflow MCP 配置

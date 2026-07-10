@@ -4,7 +4,7 @@ sidebarTitle: MCP 工具
 description: "查看 Deckflow 3 个 MCP Server 以及每个托管端点当前暴露的工具。"
 ---
 
-Deckflow MCP 现在拆成 3 个托管 Server。每个 Server 对应一条更清晰的产品线，你可以只接入自己真正需要的工具。
+Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 对应一条更清晰的产品线，你可以只接入自己真正需要的工具。
 
 <Note>
   文件输入遵循统一约定。在托管 MCP 接入方式下，应使用 `http(s)` URL 或 `fileId:<uploaded-file-id>`，因为远端服务无法直接读取你本机文件系统。
@@ -48,5 +48,5 @@ Deckflow MCP 现在拆成 3 个托管 Server。每个 Server 对应一条更清�
 ## 推荐接入组合
 
 - 只需要 HTML 转 PPTX 或预览图时，只接入 `deckflow_html2pptx`
-- 如果还要继续拆分、合并、检查 PPTX，再补上 `deckflow_pptx`
-- 如果流程里还涉及 OCR、格式转换、图片处理或压缩，就把 `deckflow_tools` 一起接入
+- 如果还需要额外做 PPTX 拆分、合并、检查或嵌入字体，就接入 `deckflow_pptx`
+- 如果流程里还涉及 OCR、格式转换、图片处理或压缩，就接入 `deckflow_tools`

@@ -4,10 +4,10 @@ sidebarTitle: Overview
 description: "Connect one or more Deckflow MCP servers for HTML-to-PPTX, PPTX utilities, and general file tools."
 ---
 
-Deckflow MCP is now organized as three hosted MCP servers. You can add only the server that matches your workflow, or register all three when you want the full Deckflow toolset inside an MCP-compatible client.
+Deckflow MCP currently provides three hosted MCP servers. You can register only the server that matches your workflow, or add all three when you want the full Deckflow toolset inside an MCP-compatible client.
 
 <Note>
-  Start with `html2pptx` if your main job is turning HTML into PPTX or preview images. Add `pptx` and `tools` later when you need deck post-processing or general file utilities.
+  If your main job is turning HTML into PPTX or preview images, use the `html2pptx` server. If you also need PPTX post-processing or general file utilities, register the `pptx` and `tools` servers as well.
 </Note>
 
 ## Available Deckflow MCP servers
@@ -25,7 +25,7 @@ Deckflow MCP is now organized as three hosted MCP servers. You can add only the 
     In your agent, open the MCP, connectors, or tools settings area and choose the option for adding a custom server.
   </Step>
   <Step title="Choose the server or servers you need">
-    Decide whether you need the `html2pptx`, `pptx`, or `tools` server. Many teams start with `html2pptx` first, then add the other two later.
+    Decide whether you need the `html2pptx`, `pptx`, or `tools` server, based on the capabilities you want to expose in your client.
   </Step>
   <Step title="Add each hosted endpoint as its own MCP server">
     Register one custom MCP server per endpoint. Recommended names are `deckflow_html2pptx`, `deckflow_pptx`, and `deckflow_tools`.
