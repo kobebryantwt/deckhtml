@@ -47,24 +47,6 @@ If Cursor opens or manages MCP entries through a JSON config file, add Deckflow 
 
 Use the Cursor-managed MCP config location for your environment, or the project-level MCP file when you want the setup to live with the repository.
 
-## Local stdio option
-
-If your Cursor workflow must send local absolute file paths, switch to local stdio instead:
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "command": "node",
-      "args": ["/absolute/path/deckflow-mcp/dist/entry/stdio.js"],
-      "env": {
-        "DECKFLOW_API_KEY": "<your-api-key>"
-      }
-    }
-  }
-}
-```
-
 ## Verify the connection
 
 After setup, check that:

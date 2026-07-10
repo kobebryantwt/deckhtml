@@ -7,7 +7,7 @@ description: "查看 Deckflow MCP 提供的 19 个工具，覆盖演示文稿生
 Deckflow MCP 当前暴露了 19 个工具。创建类工具在小任务上可能会直接完成，也可能返回 `taskId` 交给后续轮询。管理类工具则负责查询、列表、下载、重试和删除任务。
 
 <Note>
-  文件输入遵循统一约定。在 `stdio` 模式下，`file` 和 `files` 可以是本地绝对路径、`http(s)` URL，或者 `fileId:<uploaded-file-id>`。在托管 HTTP 模式下，应使用 URL 或 `fileId`，因为远端服务无法直接读取你本机文件系统。
+  文件输入遵循统一约定。在托管 MCP 接入方式下，应使用 `http(s)` URL 或 `fileId:<uploaded-file-id>`，因为远端服务无法直接读取你本机文件系统。
 </Note>
 
 ## 典型生命周期

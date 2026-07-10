@@ -1,7 +1,7 @@
 ---
 title: Deckflow MCP in Claude Code
 sidebarTitle: Claude Code
-description: "Configure Deckflow MCP in Claude Code with the add command, direct config edits, or local stdio when needed."
+description: "Configure Deckflow MCP in Claude Code with the add command or direct config edits."
 ---
 
 Use this page to connect Deckflow MCP in Claude Code. This is primarily a setup guide: add the Deckflow server, authenticate it, confirm the connection, and then start using Deckflow tools inside Claude Code.
@@ -13,7 +13,6 @@ Use this page to connect Deckflow MCP in Claude Code. This is primarily a setup 
 ## Prerequisites
 
 - Claude Code installed
-- Node.js available if you plan to use local stdio
 - A Deckflow account or API key, depending on the connection mode you choose
 
 ## Add the MCP server with the CLI
@@ -64,22 +63,6 @@ Project-scoped example in `.mcp.json`:
     }
   }
 }
-```
-
-## Local stdio option
-
-Use local stdio only when Claude Code needs to pass local absolute file paths to the MCP server:
-
-```bash
-claude mcp add deckflow -- node /absolute/path/deckflow-mcp/dist/entry/stdio.js
-```
-
-If you need API-key-based local auth:
-
-```bash
-claude mcp add deckflow \
-  --env DECKFLOW_API_KEY=<your-api-key> \
-  -- node /absolute/path/deckflow-mcp/dist/entry/stdio.js
 ```
 
 ## Authentication

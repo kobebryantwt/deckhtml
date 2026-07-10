@@ -47,24 +47,6 @@ description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把 D
 
 把这段配置写入当前环境对应的 Cursor MCP 配置位置，或者写入项目级 MCP 文件中。
 
-## 本地 stdio 方式
-
-如果你的 Cursor 工作流必须传递本地绝对路径文件，可以切换成本地 stdio：
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "command": "node",
-      "args": ["/绝对路径/deckflow-mcp/dist/entry/stdio.js"],
-      "env": {
-        "DECKFLOW_API_KEY": "<你的 API key>"
-      }
-    }
-  }
-}
-```
-
 ## 验证连接
 
 配置完成后，确认：

@@ -1,13 +1,13 @@
 ---
 title: 在 TRAE 中使用 Deckflow MCP
 sidebarTitle: TRAE
-description: "通过 TRAE 的 MCP 设置界面配置 Deckflow MCP，支持托管的 Streamable HTTP 模式和本地 stdio 模式。"
+description: "通过 TRAE 的 MCP 设置界面配置托管的 Deckflow MCP。"
 ---
 
-本页重点说明如何在 TRAE 中完成 Deckflow MCP 的接入。大多数场景建议优先使用托管的 Streamable HTTP 模式，通过浏览器完成授权；只有当 TRAE 必须直接传递本地文件路径时，再切换到本地 stdio 模式。
+本页重点说明如何在 TRAE 中通过托管的 Streamable HTTP 方式接入 Deckflow MCP，并完成浏览器授权。
 
 <Note>
-  如果不是必须读取本地绝对路径文件，优先使用托管模式。它更容易配置，也更容易验证是否接入成功。
+  在 TRAE 中统一使用托管模式即可。它是标准接入方式，也最容易验证是否接入成功。
 </Note>
 
 ## 打开 MCP 配置入口
@@ -23,44 +23,19 @@ description: "通过 TRAE 的 MCP 设置界面配置 Deckflow MCP，支持托管
 
 ![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
 
-## 选择配置模式
+## 添加托管配置
 
-<Tabs>
-  <Tab title="托管 Streamable HTTP">
-    将下面这段配置粘贴到 TRAE 的 `mcp.json` 编辑器中：
+将下面这段配置粘贴到 TRAE 的 `mcp.json` 编辑器中：
 
-    ```json
-    {
-      "mcpServers": {
-        "deckflow": {
-          "url": "https://mcp.deckflow.com/mcp/v1/"
-        }
-      }
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "url": "https://mcp.deckflow.com/mcp/v1/"
     }
-    ```
-
-    这种模式会连接到托管的 Deckflow MCP 服务，并通过浏览器完成授权。
-  </Tab>
-  <Tab title="本地 stdio">
-    如果希望 TRAE 连接到本地 stdio MCP 服务，使用下面这段配置：
-
-    ```json
-    {
-      "mcpServers": {
-        "deckflow": {
-          "command": "node",
-          "args": ["/绝对路径/deckflow-mcp/dist/entry/stdio.js"],
-          "env": {
-            "DECKFLOW_API_KEY": "<你的 API key>"
-          }
-        }
-      }
-    }
-    ```
-
-    当工作流依赖本地绝对路径文件时，推荐使用这种模式。如果你希望所有请求固定落到某个 Deckflow 空间中，可以额外添加 `DECKFLOW_SPACE_ID`。
-  </Tab>
-</Tabs>
+  }
+}
+```
 
 ## 托管 Streamable HTTP 流程
 
@@ -92,26 +67,6 @@ description: "通过 TRAE 的 MCP 设置界面配置 Deckflow MCP，支持托管
 ![TRAE verification required state](/images/mcp/trae-mcp-verify.png)
 
 ![TRAE verification success state](/images/mcp/trae-mcp-success.png)
-
-## 本地 stdio 流程
-
-当你需要本地 stdio MCP 服务时，把下面这段配置粘贴到 TRAE 中：
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "command": "node",
-      "args": ["/绝对路径/deckflow-mcp/dist/entry/stdio.js"],
-      "env": {
-        "DECKFLOW_API_KEY": "<你的 API key>"
-      }
-    }
-  }
-}
-```
-
-在这种模式下，不需要经过浏览器 OAuth 验证。你只需要确认本地服务路径正确，并且 `DECKFLOW_API_KEY` 已经正确填写即可。
 
 ## 配置完成后先试这些
 

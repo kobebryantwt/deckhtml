@@ -56,7 +56,7 @@ Once connected, your agent can use Deckflow for:
 
 ## Authentication and Transport
 
-Most users should start with the hosted remote server:
+Deckflow MCP documentation now focuses on the hosted remote server:
 
 ```text
 https://mcp.deckflow.com/mcp/v1/
@@ -68,20 +68,4 @@ Depending on the client, Deckflow MCP can be connected in one of three ways:
 - **Config file**: write the server entry directly into a local MCP config file such as `config.toml`, `mcp.json`, or `.mcp.json`.
 - **CLI command**: register the server with a helper command such as `claude mcp add`.
 
-If your workflow must pass local absolute file paths into the MCP server, use local `stdio` instead of the hosted endpoint. A typical shape looks like this:
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "command": "node",
-      "args": ["/absolute/path/to/deckflow-mcp/dist/entry/stdio.js"],
-      "env": {
-        "DECKFLOW_API_KEY": "<your API key>"
-      }
-    }
-  }
-}
-```
-
-Use the hosted endpoint when you want the simplest setup. Use local `stdio` when the client must read local files directly from your machine.
+Use the hosted endpoint as the standard Deckflow MCP setup path.

@@ -7,7 +7,7 @@ description: "Review the 19 Deckflow MCP tools for presentation generation, docu
 Deckflow MCP exposes 19 tools. Creation tools can finish immediately for small jobs, or return a `taskId` for longer workflows. Management tools let the agent poll, list, download, retry, and delete tasks.
 
 <Note>
-  File inputs use one shared convention. In stdio mode, `file` and `files` can be local absolute paths, `http(s)` URLs, or `fileId:<uploaded-file-id>`. In hosted HTTP mode, use URLs or `fileId` references because the remote server cannot read your local filesystem.
+  File inputs use one shared convention. In the hosted MCP setup, use `http(s)` URLs or `fileId:<uploaded-file-id>` references because the remote server cannot read your local filesystem directly.
 </Note>
 
 ## Typical lifecycle

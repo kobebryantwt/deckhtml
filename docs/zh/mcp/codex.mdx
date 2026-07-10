@@ -47,10 +47,6 @@ enabled = true
 
 如果这是你个人环境，写入 `~/.codex/config.toml` 即可；如果你希望只在某个项目中生效，可以写入项目目录下的 `.codex/config.toml`。
 
-## 什么时候需要本地 stdio
-
-只有当 Codex 必须把本地绝对路径文件直接传给 MCP Server 时，才建议改用本地 stdio。那时需要把服务入口改成本地 Node 启动方式，并通过环境变量传入 `DECKFLOW_API_KEY`。
-
 ## 验证连接
 
 配置完成后，至少确认以下几点：

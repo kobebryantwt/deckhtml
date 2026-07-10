@@ -42,7 +42,7 @@ Deckflow MCP 可以接入常见的 MCP 客户端，让智能体直接调用 Deck
 - [Codex](/zh/mcp/codex)：通过 Codex 设置页或编辑 `~/.codex/config.toml` 接入。
 - [Cursor](/zh/mcp/cursor)：通过 Cursor 的 MCP 设置页或配置文件接入。
 - [Claude Code](/zh/mcp/claude-code)：通过 `claude mcp add`、`.mcp.json` 或 `~/.claude.json` 接入。
-- [TRAE](/zh/mcp/trae)：通过图形化 MCP 面板手动添加托管配置或本地 stdio 配置。
+- [TRAE](/zh/mcp/trae)：通过图形化 MCP 面板手动添加托管配置并完成授权。
 - [WorkBuddy](/zh/mcp/workbuddy)：通过连接器界面配置托管 Deckflow MCP，并完成授权。
 
 如果你的客户端支持自定义 MCP Server，通常也可以直接复用同一个 Deckflow 托管端点。
@@ -58,7 +58,7 @@ Deckflow MCP 可以接入常见的 MCP 客户端，让智能体直接调用 Deck
 
 ## 接入方式说明
 
-大多数用户优先使用托管端点：
+Deckflow MCP 文档现在统一以托管端点为标准接入方式：
 
 ```text
 https://mcp.deckflow.com/mcp/v1/
@@ -70,20 +70,4 @@ https://mcp.deckflow.com/mcp/v1/
 - **直接编辑配置文件**：手动把 Deckflow 写进 `config.toml`、`mcp.json` 或 `.mcp.json`。
 - **CLI 注册**：通过类似 `claude mcp add` 的命令快速完成配置。
 
-如果你的工作流必须把本地绝对路径文件直接交给 MCP Server 处理，就需要改用本地 `stdio` 模式。一个典型配置如下：
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "command": "node",
-      "args": ["/绝对路径/deckflow-mcp/dist/entry/stdio.js"],
-      "env": {
-        "DECKFLOW_API_KEY": "<你的 API key>"
-      }
-    }
-  }
-}
-```
-
-如果你追求最省事的接入方式，优先使用托管端点；如果客户端必须直接访问你本机上的文件，再切换到本地 `stdio` 模式。
+如果你希望使用最稳定、最容易验证的方式，就统一使用这个托管端点。

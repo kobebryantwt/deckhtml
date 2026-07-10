@@ -1,7 +1,7 @@
 ---
 title: 在 Claude Code 中使用 Deckflow MCP
 sidebarTitle: Claude Code
-description: "通过 `claude mcp add`、直接编辑配置文件或本地 stdio，把 Deckflow MCP 接入到 Claude Code。"
+description: "通过 `claude mcp add` 或直接编辑配置文件，把 Deckflow MCP 接入到 Claude Code。"
 ---
 
 本页重点说明如何在 Claude Code 中配置 Deckflow MCP。它主要是一份接入指南：添加 Deckflow 服务器、完成授权、确认连接成功，然后开始在 Claude Code 中调用 Deckflow 工具。
@@ -13,7 +13,6 @@ description: "通过 `claude mcp add`、直接编辑配置文件或本地 stdio�
 ## 前置条件
 
 - 已安装 Claude Code
-- 如果要使用本地 stdio，需确保本机可用 Node.js
 - 你已经拥有 Deckflow 账号或可用的 API key
 
 ## 通过 CLI 添加 MCP Server
@@ -64,22 +63,6 @@ claude mcp add --scope project --transport http deckflow https://mcp.deckflow.co
     }
   }
 }
-```
-
-## 本地 stdio 方式
-
-如果 Claude Code 需要把本地绝对路径文件直接传入 MCP Server，可以改用本地 stdio：
-
-```bash
-claude mcp add deckflow -- node /绝对路径/deckflow-mcp/dist/entry/stdio.js
-```
-
-如果需要用 API key 做本地认证：
-
-```bash
-claude mcp add deckflow \
-  --env DECKFLOW_API_KEY=<你的 API key> \
-  -- node /绝对路径/deckflow-mcp/dist/entry/stdio.js
 ```
 
 ## 完成授权

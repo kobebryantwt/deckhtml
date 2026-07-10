@@ -1,13 +1,13 @@
 ---
 title: Deckflow MCP in TRAE
 sidebarTitle: TRAE
-description: "Configure Deckflow MCP in TRAE with either the hosted Streamable HTTP endpoint or a local stdio server."
+description: "Configure Deckflow MCP in TRAE with the hosted Streamable HTTP endpoint."
 ---
 
-Use this page to add Deckflow MCP in TRAE. Most teams should start with the hosted Streamable HTTP endpoint for browser-based authorization, and only switch to local stdio when TRAE must pass local file paths directly to the MCP server.
+Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP endpoint and complete browser-based authorization.
 
 <Note>
-  Start with hosted HTTP unless your workflow depends on local absolute file paths. Hosted mode is simpler to roll out and easier to verify.
+  Use the hosted HTTP endpoint in TRAE. It is the standard setup path and the easiest one to verify.
 </Note>
 
 ## Open the MCP configuration entry
@@ -23,44 +23,19 @@ Use this page to add Deckflow MCP in TRAE. Most teams should start with the host
 
 ![TRAE MCP settings entry](/images/mcp/trae-mcp-entry.png)
 
-## Choose a configuration mode
+## Add the hosted configuration
 
-<Tabs>
-  <Tab title="Hosted Streamable HTTP">
-    Paste this config into TRAE's `mcp.json` editor:
+Paste this config into TRAE's `mcp.json` editor:
 
-    ```json
-    {
-      "mcpServers": {
-        "deckflow": {
-          "url": "https://mcp.deckflow.com/mcp/v1/"
-        }
-      }
+```json
+{
+  "mcpServers": {
+    "deckflow": {
+      "url": "https://mcp.deckflow.com/mcp/v1/"
     }
-    ```
-
-    This mode connects TRAE to the hosted Deckflow MCP endpoint and then uses a browser-based authorization flow.
-  </Tab>
-  <Tab title="Local stdio">
-    Paste this config when you want TRAE to talk to a locally running stdio server:
-
-    ```json
-    {
-      "mcpServers": {
-        "deckflow": {
-          "command": "node",
-          "args": ["/absolute/path/deckflow-mcp/dist/entry/stdio.js"],
-          "env": {
-            "DECKFLOW_API_KEY": "<your API key>"
-          }
-        }
-      }
-    }
-    ```
-
-    Use stdio mode when your workflow depends on local absolute file paths. Add `DECKFLOW_SPACE_ID` when you want all calls to resolve into a fixed Deckflow space.
-  </Tab>
-</Tabs>
+  }
+}
+```
 
 ## Hosted Streamable HTTP flow
 
@@ -92,26 +67,6 @@ Use this page to add Deckflow MCP in TRAE. Most teams should start with the host
 ![TRAE verification required state](/images/mcp/trae-mcp-verify.png)
 
 ![TRAE verification success state](/images/mcp/trae-mcp-success.png)
-
-## Local stdio flow
-
-Paste this config into TRAE when you need a local stdio MCP server:
-
-```json
-{
-  "mcpServers": {
-    "deckflow": {
-      "command": "node",
-      "args": ["/absolute/path/deckflow-mcp/dist/entry/stdio.js"],
-      "env": {
-        "DECKFLOW_API_KEY": "<your API key>"
-      }
-    }
-  }
-}
-```
-
-TRAE does not need the OAuth verification screen in this mode. Instead, make sure the local server path is correct and the `DECKFLOW_API_KEY` environment variable is valid before you enable the server.
 
 ## What to try after setup
 
