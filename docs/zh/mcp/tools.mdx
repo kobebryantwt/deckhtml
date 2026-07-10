@@ -79,10 +79,10 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 
 | 工具 | 示例提示词 |
 | --- | --- |
-| `html_to_pptx` | “请用 Deckflow 把这个 HTML 页面转换成可编辑的 PPTX，并尽量保留原始版式。” |
-| `html_to_image` | “把这个 HTML 页面渲染成 PNG 预览图，方便我先审阅效果。” |
-| `markdown_to_image` | “把这份 Markdown 发布说明转换成一张干净的 PNG 图片，方便发到群里。” |
-| `build_html_player` | “把这些 HTML 幻灯片片段打包成一个浏览器里可直接打开的播放器。” |
+| `html_to_pptx` | “请调用 Deckflow MCP 的 `html2pptx` server，把这个 HTML 页面转换成可编辑的 PPTX，并尽量保留原始版式。” |
+| `html_to_image` | “请调用 Deckflow MCP 的 `html2pptx` server，把这个 HTML 页面渲染成 PNG 预览图，方便我先审阅效果。” |
+| `markdown_to_image` | “请调用 Deckflow MCP 的 `html2pptx` server，把这份 Markdown 发布说明转换成一张干净的 PNG 图片，方便发到群里。” |
+| `build_html_player` | “请调用 Deckflow MCP 的 `html2pptx` server，把这些 HTML 幻灯片片段打包成一个浏览器里可直接打开的播放器。” |
 
 ## `deckflow-pptx`
 
@@ -113,10 +113,10 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 
 | 工具 | 示例提示词 |
 | --- | --- |
-| `split_pptx` | “把这个 PPTX 按页拆开，方便我逐页检查内容。” |
-| `merge_pptx` | “把这两个 PPTX 按顺序合并成一个文件。” |
-| `embed_pptx_fonts` | “把这个 PPTX 用到的字体嵌进去，避免换机器后版式跑掉。” |
-| `inspect_pptx` | “检查这个 PPTX，用了哪些字体，帮我列出来。” |
+| `split_pptx` | “请调用 Deckflow MCP 的 `pptx` server，把这个 PPTX 按页拆开，方便我逐页检查内容。” |
+| `merge_pptx` | “请调用 Deckflow MCP 的 `pptx` server，把这两个 PPTX 按顺序合并成一个文件。” |
+| `embed_pptx_fonts` | “请调用 Deckflow MCP 的 `pptx` server，把这个 PPTX 用到的字体嵌进去，避免换机器后版式跑掉。” |
+| `inspect_pptx` | “请调用 Deckflow MCP 的 `pptx` server，检查这个 PPTX 用了哪些字体，并帮我列出来。” |
 
 ## `deckflow-tools`
 
@@ -151,10 +151,10 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 
 | 工具 | 示例提示词 |
 | --- | --- |
-| `convert_file` | “把这个 PDF 转成图片，我想把每一页单独拿出来使用。” |
-| `ocr_image` | “识别这张截图里的文字，并把提取结果返回给我。” |
-| `transform_image` | “把这张图片缩小到更适合网页使用的宽度。” |
-| `compress_file` | “压缩这个大文件，方便我上传和分享。” |
+| `convert_file` | “请调用 Deckflow MCP 的 `tools` server，把这个 PDF 转成图片，我想把每一页单独拿出来使用。” |
+| `ocr_image` | “请调用 Deckflow MCP 的 `tools` server，识别这张截图里的文字，并把提取结果返回给我。” |
+| `transform_image` | “请调用 Deckflow MCP 的 `tools` server，把这张图片缩小到更适合网页使用的宽度。” |
+| `compress_file` | “请调用 Deckflow MCP 的 `tools` server，压缩这个大文件，方便我上传和分享。” |
 
 ## 推荐接入组合
 
