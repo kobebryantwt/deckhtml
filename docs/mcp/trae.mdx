@@ -7,7 +7,7 @@ description: "Configure one or more Deckflow MCP servers in TRAE with the hosted
 Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP endpoints and complete browser-based authorization.
 
 <Note>
-  Add one MCP server per endpoint in TRAE. Use `deckflow_html2pptx` for HTML rendering workflows, `deckflow_pptx` for PPTX post-processing, and `deckflow_tools` for general file utilities.
+  Add one MCP server per endpoint in TRAE. Use `deckflow-html2pptx` for HTML rendering workflows, `deckflow-pptx` for PPTX post-processing, and `deckflow-tools` for general file utilities.
 </Note>
 
 ## Set up Deckflow MCP in TRAE
@@ -22,13 +22,13 @@ Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP end
     ```json
     {
       "mcpServers": {
-        "deckflow_html2pptx": {
+        "deckflow-html2pptx": {
           "url": "https://mcp.deckflow.com/v1/html2pptx"
         },
-        "deckflow_pptx": {
+        "deckflow-pptx": {
           "url": "https://mcp.deckflow.com/v1/pptx"
         },
-        "deckflow_tools": {
+        "deckflow-tools": {
           "url": "https://mcp.deckflow.com/v1/tools"
         }
       }
@@ -62,15 +62,15 @@ Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP end
 ## Example prompts
 
 ```text
-Use deckflow_html2pptx to convert this HTML page into an editable PPTX deck.
+Use deckflow-html2pptx to convert this HTML page into an editable PPTX deck.
 ```
 
 ```text
-Use deckflow_pptx to split this deck into single-slide PPTX files.
+Use deckflow-pptx to split this deck into single-slide PPTX files.
 ```
 
 ```text
-Use deckflow_tools to convert this PDF into images and then compress them for sharing.
+Use deckflow-tools to convert this PDF into images and then compress them for sharing.
 ```
 
 ## Validation checklist

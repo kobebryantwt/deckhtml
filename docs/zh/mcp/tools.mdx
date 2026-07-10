@@ -1,10 +1,10 @@
 ---
 title: MCP 工具
 sidebarTitle: MCP 工具
-description: "查看 Deckflow 3 个 MCP Server 以及每个托管端点当前暴露的工具。"
+description: "查看 Deckflow 3 个 MCP Server、每组 4 个能力工具，以及每个端点都会提供的 2 个支撑工具。"
 ---
 
-Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 对应一条更清晰的产品线，你可以只接入自己真正需要的工具。
+Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个能力工具，并且每个端点都会同时提供同样的 2 个支撑工具：`get_task` 和 `download_task_result`。
 
 <Note>
   文件输入遵循统一约定。在托管 MCP 接入方式下，应使用 `http(s)` URL 或 `fileId:<uploaded-file-id>`，因为远端服务无法直接读取你本机文件系统。
@@ -12,41 +12,95 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 对应一条�
 
 ## Server 对照表
 
-| Server | 端点 | 适合的场景 |
+| Server | 端点 | 工具数量 | 适合的场景 |
+| --- | --- | --- | --- |
+| `deckflow-html2pptx` | `https://mcp.deckflow.com/v1/html2pptx` | 4 个能力工具 + 2 个支撑工具 | HTML 幻灯片渲染、PPTX 导出、预览图生成、播放器打包 |
+| `deckflow-pptx` | `https://mcp.deckflow.com/v1/pptx` | 4 个能力工具 + 2 个支撑工具 | PPTX 拆分、合并、检查、嵌入字体 |
+| `deckflow-tools` | `https://mcp.deckflow.com/v1/tools` | 4 个能力工具 + 2 个支撑工具 | 跨格式转换、OCR、图片处理、压缩 |
+
+## 公共支撑工具
+
+这两个工具会出现在 3 组端点里。很多 MCP 客户端会自动带上服务名命名空间，例如 `deckflow-tools_get_task` 或 `deckflow-pptx_download_task_result`。
+
+### `get_task`
+
+当某个工具调用超时，或者你想主动轮询已有任务时，就使用它。
+
+| 参数 | 类型 | 说明 |
 | --- | --- | --- |
-| `deckflow_html2pptx` | `https://mcp.deckflow.com/v1/html2pptx` | HTML 幻灯片渲染、PPTX 导出、预览图生成、播放器打包 |
-| `deckflow_pptx` | `https://mcp.deckflow.com/v1/pptx` | PPTX 拆分、合并、检查、嵌入字体 |
-| `deckflow_tools` | `https://mcp.deckflow.com/v1/tools` | 跨格式转换、OCR、图片处理、压缩 |
+| `taskId` | `string` | 必填，任务 ID |
+| `wait` | `boolean` | 可选；`true` 时阻塞等待到终态或超时 |
+| `timeoutSeconds` | `number` | 可选；默认 `120`，最大 `600` |
 
-## HTML→PPTX 生产线
+### `download_task_result`
 
-| 工具 | 作用 | 常见输入 |
+当任务已经完成，需要重新获取产物地址或刷新下载链接时，使用它。
+
+| 参数 | 类型 | 说明 |
 | --- | --- | --- |
-| `html_to_pptx` | 把 HTML 幻灯片内容转换成可编辑 PPTX。 | `html`, `file`, `width`, `height`, `platform`, `needEmbedFonts` |
-| `html_to_image` | 把 HTML 内容或页面渲染成图片。 | `html`, `file`, `width`, `height`, `scale`, `fullPage` |
-| `markdown_to_image` | 将 Markdown 内容或文件渲染成图片。 | `markdown`, `file`, `theme`, `scale`, `pageWidth` |
-| `build_html_player` | 将多个 HTML 页面打包为播放器式体验。 | `contents`, `pageWidth`, `pageHeight`, `title`, `description`, `brandMarkPosition` |
+| `taskId` | `string` | 必填，任务 ID |
+| `resultType` | `html \| pptx \| image` | 可选，产物形态提示 |
+| `savePath` | `string` | 可选；仅 stdio 模式、且单文件产物时有意义 |
 
-## PPTX 文件处理
+<Tip>
+  各个能力工具都支持 `waitSeconds`。小任务通常会默认等待最多 120 秒并直接返回产物；如果超时，不代表失败，而是继续用 `get_task` 查询，完成后再用 `download_task_result` 获取结果。
+</Tip>
 
-| 工具 | 作用 | 常见输入 |
+## `deckflow-html2pptx`
+
+端点：`https://mcp.deckflow.com/v1/html2pptx`
+
+| 工具 | 作用 | 关键参数 |
 | --- | --- | --- |
-| `split_pptx` | 按页或指定范围拆分 PPTX。 | `file`, `indexes`, `allowSize` |
-| `merge_pptx` | 按顺序合并多个 PPTX。 | `files`, `hiddens`, `autoResize` |
-| `embed_pptx_fonts` | 把指定字体嵌入到 PPTX。 | `file`, `usedFonts` |
-| `inspect_pptx` | 提取 PPTX 的字体、文本框或结构信息。 | `file`, `aspect`, `pickPages`, `includeLayout`, `includeMaster`, `includeNotes`, `onlyBrief` |
+| `html_to_pptx` | 把 HTML 转换成可编辑 PPTX | `html` 或 `file`、`needEmbedFonts`、`platform`、`lang`、`width`、`height`、`waitSeconds` |
+| `html_to_image` | 把 HTML 渲染成 PNG 截图 | `html` 或 `file`、`scale`、`fullPage`、`width`、`height`、`waitSeconds` |
+| `markdown_to_image` | 把 Markdown 渲染成 PNG 图片 | `markdown` 或 `file`、`theme`、`scale`、`pageWidth`、`waitSeconds` |
+| `build_html_player` | 把多页内联 HTML 打包为播放器 | `contents`、`pageWidth`、`pageHeight`、`title`、`description`、`brandMarkPosition`、`waitSeconds` |
 
-## 通用文件小工具
+说明：
+- `html_to_pptx`、`html_to_image`、`markdown_to_image` 都要求“内联内容”和 `file` 二选一
+- `html_to_pptx.platform` 支持 `mac`、`win`
+- `html_to_pptx.lang` 支持 `latin`、`sc`、`tc`、`jp`、`kr`、`ar`、`he`
+- `build_html_player` 只接受 `contents` 中提供的内联 HTML 页面内容
 
-| 工具 | 作用 | 常见输入 |
+## `deckflow-pptx`
+
+端点：`https://mcp.deckflow.com/v1/pptx`
+
+| 工具 | 作用 | 关键参数 |
 | --- | --- | --- |
-| `convert_file` | 在 PPT、PDF、Keynote、DOC 等交付格式之间转换文件。 | `file`, `targetFormat`, `resolution`, `imageFormat` |
-| `ocr_image` | 识别图片中的文本。 | `file`, `language` |
-| `transform_image` | 调整图片尺寸或转成 WebP。 | `file`, `action`, `maxWidth`, `maxHeight` |
-| `compress_file` | 压缩视频或通用文件。 | `file` |
+| `split_pptx` | 按页或按指定范围拆分 PPTX | `file`、`indexes`、`allowSize`、`waitSeconds` |
+| `merge_pptx` | 按顺序合并多个 PPTX | `files`、`hiddens`、`autoResize`、`waitSeconds` |
+| `embed_pptx_fonts` | 将指定字体嵌入到 PPTX | `file`、`usedFonts`、`waitSeconds` |
+| `inspect_pptx` | 提取字体信息或文本形状结构 | `file`、`aspect`、`pickPages`、`includeLayout`、`includeMaster`、`includeNotes`、`ignoreEmptyText`、`onlyBrief`、`imageFilter`、`hasChildren`、`waitSeconds` |
+
+说明：
+- `split_pptx.indexes` 使用从 `0` 开始的页索引
+- `merge_pptx.files` 至少需要 2 个 PPTX 文件
+- `inspect_pptx.aspect` 支持 `fonts` 或 `texts`
+- `inspect_pptx` 中多数可选参数只在 `aspect=texts` 时生效
+
+## `deckflow-tools`
+
+端点：`https://mcp.deckflow.com/v1/tools`
+
+| 工具 | 作用 | 关键参数 |
+| --- | --- | --- |
+| `convert_file` | 在 Deckflow 支持的交付格式之间转换文件 | `file`、`targetFormat`、`resolution`、`imageFormat`、`waitSeconds` |
+| `ocr_image` | 识别图片中的文本 | `file`、`language`、`waitSeconds` |
+| `transform_image` | 缩放图片或转成 WebP | `file`、`action`、`maxWidth`、`maxHeight`、`waitSeconds` |
+| `compress_file` | 压缩普通文件或视频文件 | `file`、`waitSeconds` |
+
+说明：
+- `convert_file.targetFormat` 支持 `image`、`pdf`、`pptx`、`html`、`video`
+- `convert_file.resolution` 支持 `1080`、`1920`、`2560`
+- `convert_file.imageFormat` 支持 `png`、`jpg`
+- `ocr_image.language` 支持：`ar`、`bg`、`cs`、`da`、`de`、`el`、`en`、`es`、`et`、`fi`、`fr`、`hu`、`id`、`it`、`ja`、`ko`、`lt`、`lv`、`nb`、`nl`、`pl`、`pt`、`ro`、`ru`、`sk`、`sl`、`sv`、`tr`、`uk`、`zh-hans`、`zh-hant`
+- `transform_image.action` 支持 `resize`、`to_webp`
+- 当 `action=resize` 时，至少要提供 `maxWidth` 或 `maxHeight` 其中一个
 
 ## 推荐接入组合
 
-- 只需要 HTML 转 PPTX 或预览图时，只接入 `deckflow_html2pptx`
-- 如果还需要额外做 PPTX 拆分、合并、检查或嵌入字体，就接入 `deckflow_pptx`
-- 如果流程里还涉及 OCR、格式转换、图片处理或压缩，就接入 `deckflow_tools`
+- 只需要 HTML 转 PPTX 或预览图时，只接入 `deckflow-html2pptx`
+- 如果还需要额外做 PPTX 拆分、合并、检查或嵌入字体，就接入 `deckflow-pptx`
+- 如果流程里还涉及 OCR、格式转换、图片处理或压缩，就接入 `deckflow-tools`

@@ -4,10 +4,10 @@ sidebarTitle: WorkBuddy
 description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow MCP Server，并确认当前可用的工具列表。"
 ---
 
-本页重点说明如何在 WorkBuddy 中完成 Deckflow MCP 的接入。标准流程是创建自定义连接器、粘贴托管 MCP 配置、完成授权，然后确认 WorkBuddy 已经能看到 Deckflow 暴露的工具列表。
+本页重点说明如何在 WorkBuddy 中完成 Deckflow MCP 的接入。标准流程是创建自定义连接器、粘贴托管 MCP 配置、完成首次信任确认，然后确认 WorkBuddy 已经能看到 Deckflow 暴露的工具列表。
 
 <Note>
-  在 WorkBuddy 里，优先使用托管模式。每个端点都作为独立的 MCP Server 添加，授权完成后就能在 MCP 管理界面里看到对应工具列表。
+  在 WorkBuddy 里，优先使用托管模式。每个端点都作为独立的 MCP Server 添加，首次连接时先完成信任确认，之后就能在 MCP 管理界面里看到对应工具列表。
 </Note>
 
 ## 打开 WorkBuddy 的 MCP 配置入口
@@ -30,13 +30,13 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
 ```json
 {
   "mcpServers": {
-    "deckflow_html2pptx": {
+    "deckflow-html2pptx": {
       "url": "https://mcp.deckflow.com/v1/html2pptx"
     },
-    "deckflow_pptx": {
+    "deckflow-pptx": {
       "url": "https://mcp.deckflow.com/v1/pptx"
     },
-    "deckflow_tools": {
+    "deckflow-tools": {
       "url": "https://mcp.deckflow.com/v1/tools"
     }
   }
@@ -45,17 +45,17 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
 
 粘贴后保存配置文件。
 
-## 完成授权
+## 完成信任并启用服务
 
 <Steps>
   <Step title="返回 MCP 管理窗口">
     保存完成后，WorkBuddy 会在 `我的 MCP` 区域显示新加的 Deckflow Server。
   </Step>
-  <Step title="连接服务">
-    如果 WorkBuddy 提示某个服务还需要认证，点击 `连接` 按钮启动授权流程。
+  <Step title="信任每个服务">
+    首次连接时，WorkBuddy 会要求你对每个 Deckflow Server 做信任确认。分别点击 `信任`，允许 `deckflow-html2pptx`、`deckflow-pptx`、`deckflow-tools` 接入。
   </Step>
-  <Step title="完成验证">
-    在浏览器中完成授权，然后返回 WorkBuddy。
+  <Step title="确认 3 个服务都已启用">
+    信任完成后，WorkBuddy 会启用这 3 个 MCP Server，并显示各自的工具数量。
   </Step>
 </Steps>
 
@@ -63,7 +63,7 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
 
 ## 查看 Deckflow 工具列表
 
-授权完成后，WorkBuddy 会展开每个 Deckflow 条目，并在 MCP 管理窗口中显示当前可用的工具列表。
+信任完成并启用后，WorkBuddy 会展开每个 Deckflow 条目，并在 MCP 管理窗口中显示当前可用的工具列表。
 
 ![WorkBuddy Deckflow tools list](/images/mcp/workbuddy-mcp-tools.png)
 
@@ -77,20 +77,20 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
 ## 示例提示词
 
 ```text
-使用 deckflow_html2pptx 把这份 HTML 页面转换成一份可编辑的 PPTX 演示文稿。
+使用 deckflow-html2pptx 把这份 HTML 页面转换成一份可编辑的 PPTX 演示文稿。
 ```
 
 ```text
-使用 deckflow_pptx 检查这个演示文稿，并列出它使用到的字体。
+使用 deckflow-pptx 检查这个演示文稿，并列出它使用到的字体。
 ```
 
 ```text
-使用 deckflow_tools 对这张图片执行 OCR，并返回识别出的文字。
+使用 deckflow-tools 对这张图片执行 OCR，并返回识别出的文字。
 ```
 
 ## 验证清单
 
 - WorkBuddy 能够识别你添加的 Deckflow Server。
-- 完成连接后，界面不再显示需要认证的状态。
-- MCP 管理窗口中能够看到每个 Deckflow Server 对应的工具列表。
-- 工具列表与 HTML→PPTX、PPTX 文件处理、通用文件工具这 3 组能力一致。
+- 首次连接时的信任提示不再阻塞这 3 个服务的启用。
+- MCP 管理窗口中每个 Deckflow Server 下都能看到 6 个工具。
+- 每组都包含 4 个能力工具，以及共享的 `get_task` 和 `download_task_result` 支撑工具。

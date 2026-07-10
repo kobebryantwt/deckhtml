@@ -21,7 +21,7 @@ description: "通过 Codex 设置页或直接编辑配置文件，把一个或�
     在 Codex 中进入设置页，并打开 MCP Servers 相关区域。
   </Step>
   <Step title="新增一个或多个自定义服务器">
-    创建类似 `deckflow_html2pptx`、`deckflow_pptx`、`deckflow_tools` 这样的 MCP Server 条目。
+    创建类似 `deckflow-html2pptx`、`deckflow-pptx`、`deckflow-tools` 这样的 MCP Server 条目。
   </Step>
   <Step title="填写对应的 Deckflow 端点">
     按需添加这些托管端点：
@@ -42,15 +42,15 @@ description: "通过 Codex 设置页或直接编辑配置文件，把一个或�
 你也可以在 Codex 配置文件中直接写入这些 Deckflow Server：
 
 ```toml
-[mcp_servers.deckflow_html2pptx]
+[mcp_servers.deckflow-html2pptx]
 url = "https://mcp.deckflow.com/v1/html2pptx"
 enabled = true
 
-[mcp_servers.deckflow_pptx]
+[mcp_servers.deckflow-pptx]
 url = "https://mcp.deckflow.com/v1/pptx"
 enabled = true
 
-[mcp_servers.deckflow_tools]
+[mcp_servers.deckflow-tools]
 url = "https://mcp.deckflow.com/v1/tools"
 enabled = true
 ```
@@ -68,13 +68,13 @@ enabled = true
 ## 先试一个任务
 
 ```text
-使用 deckflow_html2pptx 把这份 HTML 幻灯片页面转换成可编辑的 PPTX。
+使用 deckflow-html2pptx 把这份 HTML 幻灯片页面转换成可编辑的 PPTX。
 ```
 
 ```text
-使用 deckflow_pptx 把这个演示文稿按章节拆成多个 PPTX 文件。
+使用 deckflow-pptx 把这个演示文稿按章节拆成多个 PPTX 文件。
 ```
 
 ```text
-使用 deckflow_tools 把这个 PDF 转成图片，方便评审。
+使用 deckflow-tools 把这个 PDF 转成图片，方便评审。
 ```

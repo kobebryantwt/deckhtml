@@ -4,10 +4,10 @@ sidebarTitle: WorkBuddy
 description: "Configure one or more Deckflow MCP servers in WorkBuddy from the Connectors UI and verify that the tool lists are available."
 ---
 
-Use this page to add Deckflow MCP in WorkBuddy. The normal path is to create a custom connector, paste the hosted MCP config, complete the authorization flow, and then confirm that WorkBuddy can see the Deckflow tools.
+Use this page to add Deckflow MCP in WorkBuddy. The normal path is to create a custom connector, paste the hosted MCP config, confirm trust for each server, and then verify that WorkBuddy can see the Deckflow tools.
 
 <Note>
-  Hosted HTTP is the recommended WorkBuddy setup path. Add one MCP server per endpoint, then verify the tool lists directly in the MCP manager.
+  Hosted HTTP is the recommended WorkBuddy setup path. Add one MCP server per endpoint, trust each server the first time it appears, then verify the tool lists directly in the MCP manager.
 </Note>
 
 ## Open the WorkBuddy MCP configuration entry
@@ -30,13 +30,13 @@ Paste this config into WorkBuddy's MCP config editor:
 ```json
 {
   "mcpServers": {
-    "deckflow_html2pptx": {
+    "deckflow-html2pptx": {
       "url": "https://mcp.deckflow.com/v1/html2pptx"
     },
-    "deckflow_pptx": {
+    "deckflow-pptx": {
       "url": "https://mcp.deckflow.com/v1/pptx"
     },
-    "deckflow_tools": {
+    "deckflow-tools": {
       "url": "https://mcp.deckflow.com/v1/tools"
     }
   }
@@ -45,17 +45,17 @@ Paste this config into WorkBuddy's MCP config editor:
 
 Save the file after the new server entries are added.
 
-## Complete authorization
+## Trust and enable the servers
 
 <Steps>
   <Step title="Return to the MCP manager">
     After the config is saved, WorkBuddy lists the new Deckflow servers under `My MCP`.
   </Step>
-  <Step title="Connect the servers">
-    If WorkBuddy marks a server as needing authentication, click `Connect` to start the authorization flow.
+  <Step title="Trust each server">
+    On first connection, WorkBuddy asks for trust confirmation for each Deckflow server. Click `Trust` for `deckflow-html2pptx`, `deckflow-pptx`, and `deckflow-tools`.
   </Step>
-  <Step title="Finish verification">
-    Complete the authorization flow in the browser, then return to WorkBuddy.
+  <Step title="Confirm that all three servers are enabled">
+    After trust is granted, WorkBuddy enables the three MCP servers and shows their tool counts in the manager.
   </Step>
 </Steps>
 
@@ -63,7 +63,7 @@ Save the file after the new server entries are added.
 
 ## Verify the Deckflow tools
 
-After authorization succeeds, WorkBuddy expands each Deckflow entry and shows the available MCP tools directly in the MCP manager.
+After the servers are trusted and enabled, WorkBuddy expands each Deckflow entry and shows the available MCP tools directly in the MCP manager.
 
 ![WorkBuddy Deckflow tools list](/images/mcp/workbuddy-mcp-tools.png)
 
@@ -77,20 +77,20 @@ After authorization succeeds, WorkBuddy expands each Deckflow entry and shows th
 ## Example prompts
 
 ```text
-Use deckflow_html2pptx to convert this HTML page into an editable PPTX deck.
+Use deckflow-html2pptx to convert this HTML page into an editable PPTX deck.
 ```
 
 ```text
-Use deckflow_pptx to inspect this presentation and list the fonts it uses.
+Use deckflow-pptx to inspect this presentation and list the fonts it uses.
 ```
 
 ```text
-Use deckflow_tools to run OCR on this image and return the extracted text.
+Use deckflow-tools to run OCR on this image and return the extracted text.
 ```
 
 ## Validation checklist
 
 - WorkBuddy recognizes the Deckflow servers you added as available MCP servers.
-- WorkBuddy no longer shows the `needs authentication` state after the connection is completed.
-- Tool discovery shows the expected tool list under each Deckflow server entry.
-- The tool list matches the HTML-to-PPTX, PPTX utility, and general file-tool groupings.
+- The first-connection trust prompt no longer blocks the three server entries.
+- Tool discovery shows 6 tools under each Deckflow server entry.
+- Each group contains 4 capability tools plus the shared `get_task` and `download_task_result` support tools.

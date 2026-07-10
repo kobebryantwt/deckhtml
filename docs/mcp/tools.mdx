@@ -1,10 +1,10 @@
 ---
 title: MCP Tools
 sidebarTitle: MCP Tools
-description: "Review the three Deckflow MCP servers and the tools exposed by each hosted endpoint."
+description: "Review the three Deckflow MCP servers, the four capability tools in each group, and the shared support tools exposed by every endpoint."
 ---
 
-Deckflow MCP currently provides three hosted servers. Each server maps to a different product surface, so you can register only the tools you actually need in your MCP client.
+Deckflow MCP currently provides three hosted servers. Each server exposes four capability tools, and each endpoint also includes the same two support tools: `get_task` and `download_task_result`.
 
 <Note>
   File inputs use one shared convention. In the hosted MCP setup, use `http(s)` URLs or `fileId:<uploaded-file-id>` references because the remote server cannot read your local filesystem directly.
@@ -12,41 +12,95 @@ Deckflow MCP currently provides three hosted servers. Each server maps to a diff
 
 ## Server map
 
-| Server | Endpoint | Best for |
+| Server | Endpoint | Tool count | Best for |
+| --- | --- | --- | --- |
+| `deckflow-html2pptx` | `https://mcp.deckflow.com/v1/html2pptx` | 4 capability tools + 2 support tools | HTML slide rendering, PPTX export, preview images, and player packaging |
+| `deckflow-pptx` | `https://mcp.deckflow.com/v1/pptx` | 4 capability tools + 2 support tools | PPTX splitting, merging, font embedding, and inspection |
+| `deckflow-tools` | `https://mcp.deckflow.com/v1/tools` | 4 capability tools + 2 support tools | Cross-format conversion, OCR, image transforms, and compression |
+
+## Shared support tools
+
+These two tools appear in all three endpoint groups. MCP clients usually namespace them by server name, for example `deckflow-tools_get_task` or `deckflow-pptx_download_task_result`.
+
+### `get_task`
+
+Use this when a tool call times out or when you want to poll an existing task.
+
+| Parameter | Type | Meaning |
 | --- | --- | --- |
-| `deckflow_html2pptx` | `https://mcp.deckflow.com/v1/html2pptx` | HTML slide rendering, PPTX export, preview images, and player packaging |
-| `deckflow_pptx` | `https://mcp.deckflow.com/v1/pptx` | PPTX splitting, merging, font embedding, and inspection |
-| `deckflow_tools` | `https://mcp.deckflow.com/v1/tools` | Cross-format conversion, OCR, image transforms, and compression |
+| `taskId` | `string` | Required task identifier |
+| `wait` | `boolean` | Optional; when `true`, block until terminal state or timeout |
+| `timeoutSeconds` | `number` | Optional; default `120`, max `600` |
 
-## HTML-to-PPTX pipeline
+### `download_task_result`
 
-| Tool | Purpose | Common inputs |
+Use this to refresh or retrieve the final artifact for a completed task.
+
+| Parameter | Type | Meaning |
 | --- | --- | --- |
-| `html_to_pptx` | Convert HTML slide content into an editable PPTX deck. | `html`, `file`, `width`, `height`, `platform`, `needEmbedFonts` |
-| `html_to_image` | Render HTML content or a page into image output. | `html`, `file`, `width`, `height`, `scale`, `fullPage` |
-| `markdown_to_image` | Render Markdown content or a Markdown file to an image. | `markdown`, `file`, `theme`, `scale`, `pageWidth` |
-| `build_html_player` | Package multiple HTML pages into a player experience. | `contents`, `pageWidth`, `pageHeight`, `title`, `description`, `brandMarkPosition` |
+| `taskId` | `string` | Required task identifier |
+| `resultType` | `html \| pptx \| image` | Optional output type hint |
+| `savePath` | `string` | Optional; only meaningful in stdio mode for single-file outputs |
 
-## PPTX file utilities
+<Tip>
+  Capability tools accept `waitSeconds`. For small jobs, they usually wait up to 120 seconds and return the artifact directly. If the task does not finish in time, continue with `get_task`, then use `download_task_result` when the task is complete.
+</Tip>
 
-| Tool | Purpose | Common inputs |
+## `deckflow-html2pptx`
+
+Endpoint: `https://mcp.deckflow.com/v1/html2pptx`
+
+| Tool | Purpose | Key parameters |
 | --- | --- | --- |
-| `split_pptx` | Split a PPTX into individual or selected slide ranges. | `file`, `indexes`, `allowSize` |
-| `merge_pptx` | Merge multiple PPTX files in order. | `files`, `hiddens`, `autoResize` |
-| `embed_pptx_fonts` | Embed selected fonts into a PPTX. | `file`, `usedFonts` |
-| `inspect_pptx` | Extract font or text-shape information from a PPTX. | `file`, `aspect`, `pickPages`, `includeLayout`, `includeMaster`, `includeNotes`, `onlyBrief` |
+| `html_to_pptx` | Convert HTML into an editable PPTX deck | `html` or `file`, `needEmbedFonts`, `platform`, `lang`, `width`, `height`, `waitSeconds` |
+| `html_to_image` | Render HTML into a PNG screenshot | `html` or `file`, `scale`, `fullPage`, `width`, `height`, `waitSeconds` |
+| `markdown_to_image` | Render Markdown into a PNG image | `markdown` or `file`, `theme`, `scale`, `pageWidth`, `waitSeconds` |
+| `build_html_player` | Package multi-page inline HTML into a player | `contents`, `pageWidth`, `pageHeight`, `title`, `description`, `brandMarkPosition`, `waitSeconds` |
 
-## General file tools
+Notes:
+- `html_to_pptx`, `html_to_image`, and `markdown_to_image` all require exactly one content source: inline content or `file`
+- `platform` in `html_to_pptx` is `mac` or `win`
+- `lang` in `html_to_pptx` supports `latin`, `sc`, `tc`, `jp`, `kr`, `ar`, `he`
+- `build_html_player` only accepts inline HTML page content through `contents`
 
-| Tool | Purpose | Common inputs |
+## `deckflow-pptx`
+
+Endpoint: `https://mcp.deckflow.com/v1/pptx`
+
+| Tool | Purpose | Key parameters |
 | --- | --- | --- |
-| `convert_file` | Convert supported files across PPT, PDF, Keynote, DOC, and related delivery formats. | `file`, `targetFormat`, `resolution`, `imageFormat` |
-| `ocr_image` | Recognize text in an image. | `file`, `language` |
-| `transform_image` | Resize an image or convert it to WebP. | `file`, `action`, `maxWidth`, `maxHeight` |
-| `compress_file` | Compress videos and general files. | `file` |
+| `split_pptx` | Split one PPTX into individual or selected slide outputs | `file`, `indexes`, `allowSize`, `waitSeconds` |
+| `merge_pptx` | Merge multiple PPTX files in order | `files`, `hiddens`, `autoResize`, `waitSeconds` |
+| `embed_pptx_fonts` | Embed selected fonts into a PPTX | `file`, `usedFonts`, `waitSeconds` |
+| `inspect_pptx` | Extract font info or text-shape structure | `file`, `aspect`, `pickPages`, `includeLayout`, `includeMaster`, `includeNotes`, `ignoreEmptyText`, `onlyBrief`, `imageFilter`, `hasChildren`, `waitSeconds` |
+
+Notes:
+- `split_pptx.indexes` uses 0-based slide indexes
+- `merge_pptx.files` requires at least 2 PPTX files
+- `inspect_pptx.aspect` is `fonts` or `texts`
+- Most `inspect_pptx` optional fields apply only when `aspect=texts`
+
+## `deckflow-tools`
+
+Endpoint: `https://mcp.deckflow.com/v1/tools`
+
+| Tool | Purpose | Key parameters |
+| --- | --- | --- |
+| `convert_file` | Convert supported files across Deckflow delivery formats | `file`, `targetFormat`, `resolution`, `imageFormat`, `waitSeconds` |
+| `ocr_image` | Recognize text in an image | `file`, `language`, `waitSeconds` |
+| `transform_image` | Resize an image or convert it to WebP | `file`, `action`, `maxWidth`, `maxHeight`, `waitSeconds` |
+| `compress_file` | Compress a file or video | `file`, `waitSeconds` |
+
+Notes:
+- `convert_file.targetFormat` is `image`, `pdf`, `pptx`, `html`, or `video`
+- `convert_file.resolution` supports `1080`, `1920`, or `2560`
+- `convert_file.imageFormat` supports `png` or `jpg`
+- `ocr_image.language` supports: `ar`, `bg`, `cs`, `da`, `de`, `el`, `en`, `es`, `et`, `fi`, `fr`, `hu`, `id`, `it`, `ja`, `ko`, `lt`, `lv`, `nb`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `tr`, `uk`, `zh-hans`, `zh-hant`
+- `transform_image.action` is `resize` or `to_webp`
+- `resize` requires at least one of `maxWidth` or `maxHeight`
 
 ## Recommended setup patterns
 
-- Register only `deckflow_html2pptx` when your client mainly generates PPTX decks or preview images from HTML.
-- Register `deckflow_html2pptx` together with `deckflow_pptx` when you also need to split, merge, inspect, or embed fonts in PPTX files.
+- Register only `deckflow-html2pptx` when your client mainly generates PPTX decks or preview images from HTML.
+- Register `deckflow-html2pptx` together with `deckflow-pptx` when you also need to split, merge, inspect, or embed fonts in PPTX files.
 - Register all three servers when your workflow also includes OCR, format conversion, image processing, or compression.

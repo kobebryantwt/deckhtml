@@ -20,25 +20,25 @@ description: "通过 `claude mcp add` 或直接编辑配置文件，把一个或
 在终端中执行：
 
 ```bash
-claude mcp add --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
-claude mcp add --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
-claude mcp add --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
+claude mcp add --transport http deckflow-html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --transport http deckflow-pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --transport http deckflow-tools https://mcp.deckflow.com/v1/tools
 ```
 
 如果希望所有项目都可用，使用用户级作用域：
 
 ```bash
-claude mcp add --scope user --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
-claude mcp add --scope user --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
-claude mcp add --scope user --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
+claude mcp add --scope user --transport http deckflow-html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --scope user --transport http deckflow-pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --scope user --transport http deckflow-tools https://mcp.deckflow.com/v1/tools
 ```
 
 如果希望把配置落到当前项目的 `.mcp.json` 中并共享给团队，使用项目级作用域：
 
 ```bash
-claude mcp add --scope project --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
-claude mcp add --scope project --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
-claude mcp add --scope project --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
+claude mcp add --scope project --transport http deckflow-html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --scope project --transport http deckflow-pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --scope project --transport http deckflow-tools https://mcp.deckflow.com/v1/tools
 ```
 
 ## 备选方式：直接编辑配置
@@ -50,15 +50,15 @@ claude mcp add --scope project --transport http deckflow_tools https://mcp.deckf
 ```json
 {
   "mcpServers": {
-    "deckflow_html2pptx": {
+    "deckflow-html2pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/html2pptx"
     },
-    "deckflow_pptx": {
+    "deckflow-pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/pptx"
     },
-    "deckflow_tools": {
+    "deckflow-tools": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/tools"
     }
@@ -71,15 +71,15 @@ claude mcp add --scope project --transport http deckflow_tools https://mcp.deckf
 ```json
 {
   "mcpServers": {
-    "deckflow_html2pptx": {
+    "deckflow-html2pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/html2pptx"
     },
-    "deckflow_pptx": {
+    "deckflow-pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/pptx"
     },
-    "deckflow_tools": {
+    "deckflow-tools": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/tools"
     }
@@ -116,13 +116,13 @@ claude mcp list
 ## 先试一个任务
 
 ```text
-使用 deckflow_html2pptx 把这份 HTML 幻灯片页面转换成可编辑的 PPTX。
+使用 deckflow-html2pptx 把这份 HTML 幻灯片页面转换成可编辑的 PPTX。
 ```
 
 ```text
-使用 deckflow_pptx 把这两个演示文稿合并成一个文件。
+使用 deckflow-pptx 把这两个演示文稿合并成一个文件。
 ```
 
 ```text
-使用 deckflow_tools 把这个 DOCX 文件转换成 PDF。
+使用 deckflow-tools 把这个 DOCX 文件转换成 PDF。
 ```

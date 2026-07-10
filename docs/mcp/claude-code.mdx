@@ -20,25 +20,25 @@ Use this page to connect Deckflow MCP in Claude Code. This is primarily a setup 
 Run these in your terminal:
 
 ```bash
-claude mcp add --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
-claude mcp add --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
-claude mcp add --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
+claude mcp add --transport http deckflow-html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --transport http deckflow-pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --transport http deckflow-tools https://mcp.deckflow.com/v1/tools
 ```
 
 To make the servers available across all projects, use user scope:
 
 ```bash
-claude mcp add --scope user --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
-claude mcp add --scope user --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
-claude mcp add --scope user --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
+claude mcp add --scope user --transport http deckflow-html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --scope user --transport http deckflow-pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --scope user --transport http deckflow-tools https://mcp.deckflow.com/v1/tools
 ```
 
 To share the servers with the current project through `.mcp.json`, use project scope:
 
 ```bash
-claude mcp add --scope project --transport http deckflow_html2pptx https://mcp.deckflow.com/v1/html2pptx
-claude mcp add --scope project --transport http deckflow_pptx https://mcp.deckflow.com/v1/pptx
-claude mcp add --scope project --transport http deckflow_tools https://mcp.deckflow.com/v1/tools
+claude mcp add --scope project --transport http deckflow-html2pptx https://mcp.deckflow.com/v1/html2pptx
+claude mcp add --scope project --transport http deckflow-pptx https://mcp.deckflow.com/v1/pptx
+claude mcp add --scope project --transport http deckflow-tools https://mcp.deckflow.com/v1/tools
 ```
 
 ## Alternative: edit config directly
@@ -50,15 +50,15 @@ User-scoped example in `~/.claude.json`:
 ```json
 {
   "mcpServers": {
-    "deckflow_html2pptx": {
+    "deckflow-html2pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/html2pptx"
     },
-    "deckflow_pptx": {
+    "deckflow-pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/pptx"
     },
-    "deckflow_tools": {
+    "deckflow-tools": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/tools"
     }
@@ -71,15 +71,15 @@ Project-scoped example in `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "deckflow_html2pptx": {
+    "deckflow-html2pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/html2pptx"
     },
-    "deckflow_pptx": {
+    "deckflow-pptx": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/pptx"
     },
-    "deckflow_tools": {
+    "deckflow-tools": {
       "type": "http",
       "url": "https://mcp.deckflow.com/v1/tools"
     }
@@ -116,13 +116,13 @@ You should see the Deckflow servers you added listed and connected.
 ## Try a first task
 
 ```text
-Use deckflow_html2pptx to convert this HTML slide page into an editable PPTX deck.
+Use deckflow-html2pptx to convert this HTML slide page into an editable PPTX deck.
 ```
 
 ```text
-Use deckflow_pptx to merge these two decks into one file.
+Use deckflow-pptx to merge these two decks into one file.
 ```
 
 ```text
-Use deckflow_tools to convert this DOCX file into PDF.
+Use deckflow-tools to convert this DOCX file into PDF.
 ```

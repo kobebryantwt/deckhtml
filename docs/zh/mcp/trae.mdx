@@ -7,7 +7,7 @@ description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 Dec
 本页重点说明如何在 TRAE 中通过托管的 Streamable HTTP 方式接入 Deckflow MCP，并完成浏览器授权。
 
 <Note>
-  在 TRAE 中，每个端点都应作为独立的 MCP Server 添加。`deckflow_html2pptx` 负责 HTML 渲染相关能力，`deckflow_pptx` 负责 PPTX 文件处理，`deckflow_tools` 负责通用文件小工具。
+  在 TRAE 中，每个端点都应作为独立的 MCP Server 添加。`deckflow-html2pptx` 负责 HTML 渲染相关能力，`deckflow-pptx` 负责 PPTX 文件处理，`deckflow-tools` 负责通用文件小工具。
 </Note>
 
 ## 在 TRAE 中完成 Deckflow MCP 配置
@@ -22,13 +22,13 @@ description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 Dec
     ```json
     {
       "mcpServers": {
-        "deckflow_html2pptx": {
+        "deckflow-html2pptx": {
           "url": "https://mcp.deckflow.com/v1/html2pptx"
         },
-        "deckflow_pptx": {
+        "deckflow-pptx": {
           "url": "https://mcp.deckflow.com/v1/pptx"
         },
-        "deckflow_tools": {
+        "deckflow-tools": {
           "url": "https://mcp.deckflow.com/v1/tools"
         }
       }
@@ -62,15 +62,15 @@ description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 Dec
 ## 示例提示词
 
 ```text
-使用 deckflow_html2pptx 把这份 HTML 页面转换成一份可编辑的 PPTX 演示文稿。
+使用 deckflow-html2pptx 把这份 HTML 页面转换成一份可编辑的 PPTX 演示文稿。
 ```
 
 ```text
-使用 deckflow_pptx 把这个演示文稿按单页拆分成多个 PPTX 文件。
+使用 deckflow-pptx 把这个演示文稿按单页拆分成多个 PPTX 文件。
 ```
 
 ```text
-使用 deckflow_tools 把这个 PDF 转成图片，并进一步压缩结果文件。
+使用 deckflow-tools 把这个 PDF 转成图片，并进一步压缩结果文件。
 ```
 
 ## 验证清单

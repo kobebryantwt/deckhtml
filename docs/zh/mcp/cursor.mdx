@@ -17,7 +17,7 @@ description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把�
     在 Cursor 中进入 Settings，然后打开 MCP 或 Tools & Integrations 相关区域。
   </Step>
   <Step title="新增一个或多个自定义 MCP Server">
-    创建类似 `deckflow_html2pptx`、`deckflow_pptx`、`deckflow_tools` 这样的服务器条目。
+    创建类似 `deckflow-html2pptx`、`deckflow-pptx`、`deckflow-tools` 这样的服务器条目。
   </Step>
   <Step title="填写对应的 Deckflow 端点">
     按需使用这些托管地址：
@@ -40,13 +40,13 @@ description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把�
 ```json
 {
   "mcpServers": {
-    "deckflow_html2pptx": {
+    "deckflow-html2pptx": {
       "url": "https://mcp.deckflow.com/v1/html2pptx"
     },
-    "deckflow_pptx": {
+    "deckflow-pptx": {
       "url": "https://mcp.deckflow.com/v1/pptx"
     },
-    "deckflow_tools": {
+    "deckflow-tools": {
       "url": "https://mcp.deckflow.com/v1/tools"
     }
   }
@@ -66,13 +66,13 @@ description: "通过 Cursor 的 MCP 设置页或直接编辑配置文件，把�
 ## 先试一个任务
 
 ```text
-使用 deckflow_html2pptx 把这个 HTML 页面转换成可编辑的 PPTX 演示文稿。
+使用 deckflow-html2pptx 把这个 HTML 页面转换成可编辑的 PPTX 演示文稿。
 ```
 
 ```text
-使用 deckflow_pptx 检查这个演示文稿，并列出每页使用到的字体。
+使用 deckflow-pptx 检查这个演示文稿，并列出每页使用到的字体。
 ```
 
 ```text
-使用 deckflow_tools 对这张图片执行 OCR，并返回识别出的文字。
+使用 deckflow-tools 对这张图片执行 OCR，并返回识别出的文字。
 ```
