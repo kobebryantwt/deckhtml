@@ -59,30 +59,42 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | `markdown_to_image` | 把 Markdown 渲染成 PNG 图片 | `markdown` 或 `file`、`theme`、`scale`、`pageWidth`、`waitSeconds` |
 | `build_html_player` | 把多页内联 HTML 打包为播放器 | `contents`、`pageWidth`、`pageHeight`、`title`、`description`、`brandMarkPosition`、`waitSeconds` |
 
-建议这样理解这一组参数：
+### 参数使用方式
 
-- **最小必填**
-  `html_to_pptx`：`html` 和 `file` 二选一
-- **最小必填**
-  `html_to_image`：`html` 和 `file` 二选一
-- **最小必填**
-  `markdown_to_image`：`markdown` 和 `file` 二选一
-- **最小必填**
-  `build_html_player`：填写 `contents`
-- **什么叫内联内容**
-  就是把原始 HTML 或 Markdown 文本直接粘贴进工具参数里，而不是传文件路径或 URL
-- **常用可选**
-  当你需要控制画布尺寸、截图清晰度或页面宽度时，再填写 `width`、`height`、`scale`、`pageWidth`
-- **常用可选**
-  当你希望工具等待更久再返回时，再填写 `waitSeconds`
-- **按需填写**
-  `needEmbedFonts` 适用于你希望导出的 PPTX 自带字体的场景
-- **按需填写**
-  `platform` 仅支持 `mac`、`win`
-- **按需填写**
-  `lang` 支持 `latin`、`sc`、`tc`、`jp`、`kr`、`ar`、`he`
-- **按需填写**
-  `build_html_player` 只接受 `contents` 中提供的内联 HTML 页面内容
+| 分类 | 适用工具 | 建议写法 |
+| --- | --- | --- |
+| 最小必填 | `html_to_pptx` | `html` 和 `file` 二选一 |
+| 最小必填 | `html_to_image` | `html` 和 `file` 二选一 |
+| 最小必填 | `markdown_to_image` | `markdown` 和 `file` 二选一 |
+| 最小必填 | `build_html_player` | 填写 `contents` |
+| 输入方式 | `html_to_pptx`、`html_to_image`、`markdown_to_image` | “内联内容”就是把原始 HTML 或 Markdown 文本直接粘贴进参数里，而不是传文件路径或 URL |
+| 常用可选 | 渲染类工具 | 只有当你要控制画布尺寸、截图清晰度或页面宽度时，再填写 `width`、`height`、`scale`、`pageWidth` |
+| 常用可选 | 本组所有工具 | 只有当你希望工具等待更久再返回时，再填写 `waitSeconds` |
+| 按需填写 | `html_to_pptx` | `needEmbedFonts` 适用于导出的 PPTX 需要自带字体的场景 |
+| 按需填写 | `html_to_pptx` | `platform` 仅支持 `mac`、`win` |
+| 按需填写 | `html_to_pptx` | `lang` 支持 `latin`、`sc`、`tc`、`jp`、`kr`、`ar`、`he` |
+| 按需填写 | `build_html_player` | `contents` 只接受内联 HTML 页面内容 |
+
+### 最小示例
+
+```json
+{
+  "html_to_pptx": {
+    "file": "https://example.com/slides.html"
+  },
+  "html_to_image": {
+    "file": "https://example.com/slides.html"
+  },
+  "markdown_to_image": {
+    "markdown": "# 发布说明\n\n- 条目 1\n- 条目 2"
+  },
+  "build_html_player": {
+    "contents": [
+      "<section><h1>Hello Deckflow</h1></section>"
+    ]
+  }
+}
+```
 
 ## `deckflow-pptx`
 
@@ -95,26 +107,43 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | `embed_pptx_fonts` | 将指定字体嵌入到 PPTX | `file`、`usedFonts`、`waitSeconds` |
 | `inspect_pptx` | 提取字体信息或文本形状结构 | `file`、`aspect`、`pickPages`、`includeLayout`、`includeMaster`、`includeNotes`、`ignoreEmptyText`、`onlyBrief`、`imageFilter`、`hasChildren`、`waitSeconds` |
 
-建议这样理解这一组参数：
+### 参数使用方式
 
-- **最小必填**
-  `split_pptx`：填写 `file`
-- **最小必填**
-  `merge_pptx`：填写 `files`，且至少提供 2 个 PPTX 文件
-- **最小必填**
-  `embed_pptx_fonts`：填写 `file`
-- **最小必填**
-  `inspect_pptx`：填写 `file` 和 `aspect`
-- **常用可选**
-  `indexes` 只在你想拆指定页时才需要，且页码从 `0` 开始
-- **常用可选**
-  `usedFonts` 只在你希望把指定字体嵌入输出 PPTX 时才需要
-- **常用可选**
-  大文件或复杂文件处理时，可以补 `waitSeconds`
-- **按需填写**
-  `inspect_pptx.aspect` 支持 `fonts` 或 `texts`
-- **按需填写**
-  `inspect_pptx` 中多数可选参数只在 `aspect=texts` 时生效
+| 分类 | 适用工具 | 建议写法 |
+| --- | --- | --- |
+| 最小必填 | `split_pptx` | 填写 `file` |
+| 最小必填 | `merge_pptx` | 填写 `files`，且至少提供 2 个 PPTX 文件 |
+| 最小必填 | `embed_pptx_fonts` | 填写 `file` |
+| 最小必填 | `inspect_pptx` | 填写 `file` 和 `aspect` |
+| 常用可选 | `split_pptx` | 只有当你想拆指定页时，才填写 `indexes`；页码从 `0` 开始 |
+| 常用可选 | `embed_pptx_fonts` | 只有当你要嵌入指定字体集时，才填写 `usedFonts` |
+| 常用可选 | 本组所有工具 | 大文件或复杂文件处理时，可以补 `waitSeconds` |
+| 按需填写 | `inspect_pptx` | `aspect` 支持 `fonts` 或 `texts` |
+| 按需填写 | `inspect_pptx` | 多数检查类可选参数只在 `aspect=texts` 时生效 |
+
+### 最小示例
+
+```json
+{
+  "split_pptx": {
+    "file": "fileId:uploaded-pptx-id"
+  },
+  "merge_pptx": {
+    "files": [
+      "fileId:deck-a",
+      "fileId:deck-b"
+    ]
+  },
+  "embed_pptx_fonts": {
+    "file": "fileId:uploaded-pptx-id",
+    "usedFonts": ["Arial"]
+  },
+  "inspect_pptx": {
+    "file": "fileId:uploaded-pptx-id",
+    "aspect": "fonts"
+  }
+}
+```
 
 ## `deckflow-tools`
 
@@ -127,34 +156,46 @@ Deckflow MCP 当前分别提供 3 个托管 Server。每个 Server 暴露 4 个�
 | `transform_image` | 缩放图片或转成 WebP | `file`、`action`、`maxWidth`、`maxHeight`、`waitSeconds` |
 | `compress_file` | 压缩普通文件或视频文件 | `file`、`waitSeconds` |
 
-建议这样理解这一组参数：
+### 参数使用方式
 
-- **最小必填**
-  `convert_file`：填写 `file` 和 `targetFormat`
-- **最小必填**
-  `ocr_image`：填写 `file` 和 `language`
-- **最小必填**
-  `transform_image`：填写 `file` 和 `action`
-- **最小必填**
-  `compress_file`：填写 `file`
-- **常用可选**
-  只有当你要控制输出分辨率或图片格式时，才需要 `resolution`、`imageFormat`
-- **常用可选**
-  只有当 `action=resize` 时，才需要 `maxWidth` 或 `maxHeight`
-- **常用可选**
-  大文件转换时，可以补 `waitSeconds`
-- **按需填写**
-  `convert_file.targetFormat` 支持 `image`、`pdf`、`pptx`、`html`、`video`
-- **按需填写**
-  `convert_file.resolution` 支持 `1080`、`1920`、`2560`
-- **按需填写**
-  `convert_file.imageFormat` 支持 `png`、`jpg`
-- **按需填写**
-  `ocr_image.language` 支持：`ar`、`bg`、`cs`、`da`、`de`、`el`、`en`、`es`、`et`、`fi`、`fr`、`hu`、`id`、`it`、`ja`、`ko`、`lt`、`lv`、`nb`、`nl`、`pl`、`pt`、`ro`、`ru`、`sk`、`sl`、`sv`、`tr`、`uk`、`zh-hans`、`zh-hant`
-- **按需填写**
-  `transform_image.action` 支持 `resize`、`to_webp`
-- **按需填写**
-  当 `action=resize` 时，至少要提供 `maxWidth` 或 `maxHeight` 其中一个
+| 分类 | 适用工具 | 建议写法 |
+| --- | --- | --- |
+| 最小必填 | `convert_file` | 填写 `file` 和 `targetFormat` |
+| 最小必填 | `ocr_image` | 填写 `file` 和 `language` |
+| 最小必填 | `transform_image` | 填写 `file` 和 `action` |
+| 最小必填 | `compress_file` | 填写 `file` |
+| 常用可选 | `convert_file` | 只有当你要控制输出分辨率或图片格式时，才填写 `resolution`、`imageFormat` |
+| 常用可选 | `transform_image` | 只有当 `action=resize` 时，才填写 `maxWidth` 或 `maxHeight` |
+| 常用可选 | 本组所有工具 | 大文件转换时，可以补 `waitSeconds` |
+| 按需填写 | `convert_file` | `targetFormat` 支持 `image`、`pdf`、`pptx`、`html`、`video` |
+| 按需填写 | `convert_file` | `resolution` 支持 `1080`、`1920`、`2560` |
+| 按需填写 | `convert_file` | `imageFormat` 支持 `png`、`jpg` |
+| 按需填写 | `ocr_image` | `language` 支持：`ar`、`bg`、`cs`、`da`、`de`、`el`、`en`、`es`、`et`、`fi`、`fr`、`hu`、`id`、`it`、`ja`、`ko`、`lt`、`lv`、`nb`、`nl`、`pl`、`pt`、`ro`、`ru`、`sk`、`sl`、`sv`、`tr`、`uk`、`zh-hans`、`zh-hant` |
+| 按需填写 | `transform_image` | `action` 支持 `resize`、`to_webp` |
+| 按需填写 | `transform_image` | 当 `action=resize` 时，至少要提供 `maxWidth` 或 `maxHeight` 其中一个 |
+
+### 最小示例
+
+```json
+{
+  "convert_file": {
+    "file": "fileId:source-file-id",
+    "targetFormat": "pdf"
+  },
+  "ocr_image": {
+    "file": "fileId:image-file-id",
+    "language": "en"
+  },
+  "transform_image": {
+    "file": "fileId:image-file-id",
+    "action": "resize",
+    "maxWidth": 1280
+  },
+  "compress_file": {
+    "file": "fileId:large-file-id"
+  }
+}
+```
 
 ## 推荐接入组合
 

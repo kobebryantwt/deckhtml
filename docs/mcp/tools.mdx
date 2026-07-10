@@ -59,30 +59,42 @@ Endpoint: `https://mcp.deckflow.com/v1/html2pptx`
 | `markdown_to_image` | Render Markdown into a PNG image | `markdown` or `file`, `theme`, `scale`, `pageWidth`, `waitSeconds` |
 | `build_html_player` | Package multi-page inline HTML into a player | `contents`, `pageWidth`, `pageHeight`, `title`, `description`, `brandMarkPosition`, `waitSeconds` |
 
-Recommended way to read these parameters:
+### Parameter usage
 
-- **Minimum required**
-  `html_to_pptx`: provide exactly one of `html` or `file`
-- **Minimum required**
-  `html_to_image`: provide exactly one of `html` or `file`
-- **Minimum required**
-  `markdown_to_image`: provide exactly one of `markdown` or `file`
-- **Minimum required**
-  `build_html_player`: provide `contents`
-- **Inline content**
-  “Inline content” means pasting the raw HTML or Markdown directly into the tool input instead of passing a file path or URL
-- **Common optional**
-  Use `width`, `height`, `scale`, or `pageWidth` when you need to control canvas size or screenshot density
-- **Common optional**
-  Use `waitSeconds` when you want the tool to wait longer before returning a task ID
-- **Only when needed**
-  `needEmbedFonts` matters when your PPTX must carry embedded fonts
-- **Only when needed**
-  `platform` in `html_to_pptx` is `mac` or `win`
-- **Only when needed**
-  `lang` in `html_to_pptx` supports `latin`, `sc`, `tc`, `jp`, `kr`, `ar`, `he`
-- **Only when needed**
-  `build_html_player` only accepts inline HTML page content through `contents`
+| Category | Applies to | What to do |
+| --- | --- | --- |
+| Minimum required | `html_to_pptx` | Provide exactly one of `html` or `file` |
+| Minimum required | `html_to_image` | Provide exactly one of `html` or `file` |
+| Minimum required | `markdown_to_image` | Provide exactly one of `markdown` or `file` |
+| Minimum required | `build_html_player` | Provide `contents` |
+| Input model | `html_to_pptx`, `html_to_image`, `markdown_to_image` | “Inline content” means pasting raw HTML or Markdown directly into the tool input instead of passing a file path or URL |
+| Common optional | Rendering tools | Use `width`, `height`, `scale`, or `pageWidth` when you need to control canvas size or screenshot density |
+| Common optional | All tools in this group | Use `waitSeconds` when you want the tool to wait longer before returning a task ID |
+| Only when needed | `html_to_pptx` | Use `needEmbedFonts` when the exported PPTX must carry embedded fonts |
+| Only when needed | `html_to_pptx` | `platform` is `mac` or `win` |
+| Only when needed | `html_to_pptx` | `lang` supports `latin`, `sc`, `tc`, `jp`, `kr`, `ar`, `he` |
+| Only when needed | `build_html_player` | `contents` must be inline HTML page content |
+
+### Minimal examples
+
+```json
+{
+  "html_to_pptx": {
+    "file": "https://example.com/slides.html"
+  },
+  "html_to_image": {
+    "file": "https://example.com/slides.html"
+  },
+  "markdown_to_image": {
+    "markdown": "# Release Notes\n\n- Item 1\n- Item 2"
+  },
+  "build_html_player": {
+    "contents": [
+      "<section><h1>Hello Deckflow</h1></section>"
+    ]
+  }
+}
+```
 
 ## `deckflow-pptx`
 
@@ -95,26 +107,43 @@ Endpoint: `https://mcp.deckflow.com/v1/pptx`
 | `embed_pptx_fonts` | Embed selected fonts into a PPTX | `file`, `usedFonts`, `waitSeconds` |
 | `inspect_pptx` | Extract font info or text-shape structure | `file`, `aspect`, `pickPages`, `includeLayout`, `includeMaster`, `includeNotes`, `ignoreEmptyText`, `onlyBrief`, `imageFilter`, `hasChildren`, `waitSeconds` |
 
-Recommended way to read these parameters:
+### Parameter usage
 
-- **Minimum required**
-  `split_pptx`: provide `file`
-- **Minimum required**
-  `merge_pptx`: provide `files`, with at least 2 PPTX files
-- **Minimum required**
-  `embed_pptx_fonts`: provide `file`
-- **Minimum required**
-  `inspect_pptx`: provide `file` and `aspect`
-- **Common optional**
-  Use `indexes` in `split_pptx` only when you want selected slides; indexes are 0-based
-- **Common optional**
-  Use `usedFonts` only when you want to embed a specific font set into the output PPTX
-- **Common optional**
-  Use `waitSeconds` when the file is large and you want the tool to wait longer
-- **Only when needed**
-  `inspect_pptx.aspect` is `fonts` or `texts`
-- **Only when needed**
-  Most `inspect_pptx` optional fields apply only when `aspect=texts`
+| Category | Applies to | What to do |
+| --- | --- | --- |
+| Minimum required | `split_pptx` | Provide `file` |
+| Minimum required | `merge_pptx` | Provide `files`, with at least 2 PPTX files |
+| Minimum required | `embed_pptx_fonts` | Provide `file` |
+| Minimum required | `inspect_pptx` | Provide `file` and `aspect` |
+| Common optional | `split_pptx` | Use `indexes` only when you want selected slides; indexes are 0-based |
+| Common optional | `embed_pptx_fonts` | Use `usedFonts` only when you want to embed a specific font set |
+| Common optional | All tools in this group | Use `waitSeconds` when the file is large and you want the tool to wait longer |
+| Only when needed | `inspect_pptx` | `aspect` is `fonts` or `texts` |
+| Only when needed | `inspect_pptx` | Most optional inspection fields apply only when `aspect=texts` |
+
+### Minimal examples
+
+```json
+{
+  "split_pptx": {
+    "file": "fileId:uploaded-pptx-id"
+  },
+  "merge_pptx": {
+    "files": [
+      "fileId:deck-a",
+      "fileId:deck-b"
+    ]
+  },
+  "embed_pptx_fonts": {
+    "file": "fileId:uploaded-pptx-id",
+    "usedFonts": ["Arial"]
+  },
+  "inspect_pptx": {
+    "file": "fileId:uploaded-pptx-id",
+    "aspect": "fonts"
+  }
+}
+```
 
 ## `deckflow-tools`
 
@@ -127,34 +156,46 @@ Endpoint: `https://mcp.deckflow.com/v1/tools`
 | `transform_image` | Resize an image or convert it to WebP | `file`, `action`, `maxWidth`, `maxHeight`, `waitSeconds` |
 | `compress_file` | Compress a file or video | `file`, `waitSeconds` |
 
-Recommended way to read these parameters:
+### Parameter usage
 
-- **Minimum required**
-  `convert_file`: provide `file` and `targetFormat`
-- **Minimum required**
-  `ocr_image`: provide `file` and `language`
-- **Minimum required**
-  `transform_image`: provide `file` and `action`
-- **Minimum required**
-  `compress_file`: provide `file`
-- **Common optional**
-  Use `resolution` and `imageFormat` only when the target output is image-like and you need to control output quality or format
-- **Common optional**
-  Use `maxWidth` or `maxHeight` only when `action=resize`
-- **Common optional**
-  Use `waitSeconds` for larger conversions
-- **Only when needed**
-  `convert_file.targetFormat` is `image`, `pdf`, `pptx`, `html`, or `video`
-- **Only when needed**
-  `convert_file.resolution` supports `1080`, `1920`, or `2560`
-- **Only when needed**
-  `convert_file.imageFormat` supports `png` or `jpg`
-- **Only when needed**
-  `ocr_image.language` supports: `ar`, `bg`, `cs`, `da`, `de`, `el`, `en`, `es`, `et`, `fi`, `fr`, `hu`, `id`, `it`, `ja`, `ko`, `lt`, `lv`, `nb`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `tr`, `uk`, `zh-hans`, `zh-hant`
-- **Only when needed**
-  `transform_image.action` is `resize` or `to_webp`
-- **Only when needed**
-  `resize` requires at least one of `maxWidth` or `maxHeight`
+| Category | Applies to | What to do |
+| --- | --- | --- |
+| Minimum required | `convert_file` | Provide `file` and `targetFormat` |
+| Minimum required | `ocr_image` | Provide `file` and `language` |
+| Minimum required | `transform_image` | Provide `file` and `action` |
+| Minimum required | `compress_file` | Provide `file` |
+| Common optional | `convert_file` | Use `resolution` and `imageFormat` only when you need to control output quality or image format |
+| Common optional | `transform_image` | Use `maxWidth` or `maxHeight` only when `action=resize` |
+| Common optional | All tools in this group | Use `waitSeconds` for larger conversions |
+| Only when needed | `convert_file` | `targetFormat` is `image`, `pdf`, `pptx`, `html`, or `video` |
+| Only when needed | `convert_file` | `resolution` supports `1080`, `1920`, or `2560` |
+| Only when needed | `convert_file` | `imageFormat` supports `png` or `jpg` |
+| Only when needed | `ocr_image` | `language` supports: `ar`, `bg`, `cs`, `da`, `de`, `el`, `en`, `es`, `et`, `fi`, `fr`, `hu`, `id`, `it`, `ja`, `ko`, `lt`, `lv`, `nb`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `tr`, `uk`, `zh-hans`, `zh-hant` |
+| Only when needed | `transform_image` | `action` is `resize` or `to_webp` |
+| Only when needed | `transform_image` | `resize` requires at least one of `maxWidth` or `maxHeight` |
+
+### Minimal examples
+
+```json
+{
+  "convert_file": {
+    "file": "fileId:source-file-id",
+    "targetFormat": "pdf"
+  },
+  "ocr_image": {
+    "file": "fileId:image-file-id",
+    "language": "en"
+  },
+  "transform_image": {
+    "file": "fileId:image-file-id",
+    "action": "resize",
+    "maxWidth": 1280
+  },
+  "compress_file": {
+    "file": "fileId:large-file-id"
+  }
+}
+```
 
 ## Recommended setup patterns
 
