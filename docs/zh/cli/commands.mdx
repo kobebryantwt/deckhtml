@@ -34,15 +34,11 @@ deckhtml [inputs...]
 | `--json` | 在 stdout 输出机器可读 JSON | `false` |
 | `-v, --verbose` | 在 stderr 输出详细日志 | `false` |
 | `--quiet` | 只输出错误和最终结果 | `false` |
-| `-o, --output <path>` | 输出路径 | 尽可能从输入自动推导 |
+| `-o, --output <path>` | 输出路径，使用 `.pptx` 或 `.png` 扩展名 | 尽可能从输入自动推导 |
 | `--mode <mode>` | 执行模式：`auto`、`local`、`cloud` | `auto` |
-| `--format <format>` | 输出格式：`pptx`、`pdf`、`png` | `pptx` |
 | `--width <pixels>` | Playwright 视口宽度，高度按 `16:9` 推导 | 包默认值 |
 | `--platform <platform>` | 通用字体映射目标：`win`、`mac`、`ios`、`android`、`linux` | 当前系统 |
-| `--render-wait <seconds>` | 云端模式下逐页截图前的等待秒数 | `3` |
 | `--embed-fonts` | 嵌入字体，仅云端 | `false` |
-| `--webhook <url>` | 云端转换事件的回调地址 | 无 |
-| `--retention-hours <n>` | 云端文件保留时长（小时） | 无 |
 | `--report` | 在输出旁边生成转换报告 | `false` |
 | `-h, --help` | 显示帮助 | 关闭 |
 
@@ -55,7 +51,7 @@ deckhtml [inputs...]
 | 多个 HTML 文件 | `deckhtml page1.html page2.html page3.html` | 按参数顺序组合多个页面 |
 | URL | `deckhtml https://example.com/deck.html -o deck.pptx` | 加载并转换托管页面 |
 
-## 当前模式行为
+## 当前模式与输出行为
 
 DeckHTML 的执行模式解析如下：
 
@@ -64,6 +60,13 @@ DeckHTML 的执行模式解析如下：
 | `local` | 确定走本地执行，不依赖云端凭证 |
 | `cloud` | 确定走托管执行，并需要凭证 |
 | `auto` | 有凭证时走 `cloud`，否则回退到 `local` |
+
+已发布 `0.3.0` 包的输出行为可以概括为：
+
+- 文档层面当前支持的产物是 `pptx` 和 `png`
+- 输出类型通过 `-o` 的扩展名推断，而不是通过 `--format` 指定
+- 如果省略 `-o`，CLI 会自动推导一个 `.pptx` 输出路径
+- 如果输入来自 stdin，则必须显式提供 `-o`
 
 ## 子命令
 
@@ -77,6 +80,8 @@ deckhtml auth [command]
 | --- | --- |
 | `deckhtml auth login` | 通过浏览器登录并保存凭证 |
 | `deckhtml auth status` | 查看当前认证状态 |
+
+`deckhtml auth login` 还支持 `--port <port>`，用于覆盖本地回调端口。
 
 ### `deckhtml config`
 
@@ -94,6 +99,6 @@ deckhtml config [command]
 | 键名 | 说明 | 默认值 |
 | --- | --- | --- |
 | `api-key` | 云端请求使用的 API Key | 无 |
-| `size` | PPTX 尺寸 | `1920x1080` |
+| `space-id` | 云端执行时优先使用的 Deckflow Space | 无 |
 | `webhook` | 默认回调地址 | 无 |
 | `retention-hours` | 云端文件保留时长（小时） | `3` |

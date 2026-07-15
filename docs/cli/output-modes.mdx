@@ -35,24 +35,23 @@ index.pptx
 
 ## Artifact formats
 
-Use `--format` to choose the artifact type:
+The published CLI infers artifact type from the `-o` extension:
 
 ```bash
-deckhtml index.html --format pptx -o deck.pptx
-deckhtml index.html --mode cloud --format png -o frames
+deckhtml index.html -o deck.pptx
+deckhtml index.html -o frames.png
 ```
 
-Accepted format values:
+Documented artifact types:
 
 - `pptx`
-- `pdf`
 - `png`
 
 Execution mode also affects artifact behavior:
 
-- local and cloud execution can expose different artifact workflows
+- local and cloud execution can expose different processing paths
 - use local mode for the simplest same-machine flow
-- use cloud mode when you need hosted execution or advanced output paths
+- use cloud mode when you need hosted execution or cloud-only font embedding
 
 ## `--json`
 

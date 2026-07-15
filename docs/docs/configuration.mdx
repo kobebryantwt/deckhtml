@@ -18,9 +18,13 @@ Environment variables are preferred in CI and other non-interactive environments
 Common output-related settings are passed as command flags:
 
 - `-o` or `--output` for the target artifact path
-- `--format` for `pptx`, `pdf`, or `png`
 - `--json` for machine-readable output
 - `--report` to emit a conversion report
+
+The published CLI infers artifact type from the `-o` extension:
+
+- use `.pptx` when you want a PowerPoint deck
+- use `.png` when you want PNG frame output
 
 ## Mode selection
 

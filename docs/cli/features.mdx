@@ -37,8 +37,7 @@ The CLI exposes these format values:
 | Format | Description |
 | --- | --- |
 | `pptx` | PowerPoint deck output. Default. |
-| `pdf` | Available as an output format in the CLI surface. |
-| `png` | PNG frame output in cloud mode. |
+| `png` | PNG frame output for preview or image workflows. |
 
 ## Execution modes
 
@@ -48,11 +47,11 @@ The CLI exposes these format values:
 | `local` | Force local conversion. |
 | `cloud` | Force cloud conversion and require an API key. |
 
-Local conversion works without authentication. Cloud conversion and cloud-only enhancement flags require a configured API key.
+Local conversion works without authentication. Cloud conversion and the cloud-only `--embed-fonts` flag require credentials.
 
 Mode and format combine like this in the current CLI workflow:
 
-- local: `pptx` only
+- local: `pptx` and `png`
 - cloud: `pptx` and `png`
 - auto: cloud when credentials exist, otherwise local
 
@@ -72,9 +71,8 @@ The CLI also exposes:
 | --- | --- |
 | `--width <pixels>` | Playwright viewport width. Height scales at `16:9`. |
 | `--platform <platform>` | Target platform for generic font mapping: `win`, `mac`, `ios`, `android`, `linux`. |
-| `--render-wait <seconds>` | Per-page wait before capture in cloud mode. |
 
-These are useful when the page depends on client-side rendering, platform-specific font fallback, or a controlled viewport width.
+These are useful when the page depends on platform-specific font fallback or a controlled viewport width.
 
 ## Logging and machine-readable output
 
@@ -100,7 +98,7 @@ Persistent config:
 
 ```bash
 deckhtml config set api-key <key>
-deckhtml config set size 1920x1080
+deckhtml config set space-id <space-id>
 deckhtml config set webhook https://example.com/webhooks/deckhtml
 deckhtml config set retention-hours 3
 deckhtml config show

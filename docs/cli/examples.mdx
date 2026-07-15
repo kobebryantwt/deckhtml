@@ -35,13 +35,13 @@ deckhtml title.html agenda.html content.html summary.html -o deck.pptx
 
 ```bash
 deckhtml https://example.com/deck.html -o deck.pptx
-deckhtml https://example.com/deck.html -o deck.pptx --render-wait 9
 ```
 
-## Generate cloud outputs
+## Generate PNG output
 
 ```bash
-deckhtml index.html --mode cloud --format png -o frames
+deckhtml index.html -o frames.png
+deckhtml index.html --mode cloud -o frames.png
 ```
 
 ## Set viewport width or platform mapping

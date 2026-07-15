@@ -34,15 +34,11 @@ Arguments:
 | `--json` | Machine-readable JSON on stdout. | `false` |
 | `-v, --verbose` | Detailed logs to stderr. | `false` |
 | `--quiet` | Only errors and final result. | `false` |
-| `-o, --output <path>` | Output path. | Derived from input when possible |
+| `-o, --output <path>` | Output path. Use a `.pptx` or `.png` extension. | Derived from input when possible |
 | `--mode <mode>` | Execution mode: `auto`, `local`, or `cloud`. | `auto` |
-| `--format <format>` | Accepted format values: `pptx`, `pdf`, or `png`. Current published behavior differs by mode. | `pptx` |
 | `--width <pixels>` | Playwright viewport width; height scales at `16:9`. | Package default |
 | `--platform <platform>` | Generic font mapping target: `win`, `mac`, `ios`, `android`, `linux`. | Current OS |
-| `--render-wait <seconds>` | Per-page wait before capture in cloud mode. | `3` |
 | `--embed-fonts` | Embed fonts. Cloud only. | `false` |
-| `--webhook <url>` | Callback URL for cloud conversion events. | None |
-| `--retention-hours <n>` | Cloud file retention hours. | None |
 | `--report` | Generate a conversion report next to output. | `false` |
 | `-h, --help` | Show help. | Off |
 
@@ -55,7 +51,7 @@ Arguments:
 | HTML files | `deckhtml page1.html page2.html page3.html` | Convert files in argument order. |
 | URL | `deckhtml https://example.com/deck.html -o deck.pptx` | Load and convert a hosted page. |
 
-## Current mode and format behavior
+## Current mode and output behavior
 
 DeckHTML resolves execution mode like this:
 
@@ -64,6 +60,13 @@ DeckHTML resolves execution mode like this:
 | `local` | Deterministic local execution with no cloud credential requirement |
 | `cloud` | Hosted execution with credentials |
 | `auto` | Resolves to `cloud` when credentials exist, otherwise `local` |
+
+Output behavior in the published `0.3.0` package is:
+
+- `pptx` and `png` are the documented output artifacts
+- output type is inferred from `-o` file extension, not from a `--format` flag
+- if `-o` is omitted, the CLI defaults to a derived `.pptx` path
+- when reading from stdin, `-o` is required
 
 ## Subcommands
 
@@ -77,6 +80,8 @@ deckhtml auth [command]
 | --- | --- |
 | `deckhtml auth login` | Login via browser and save credentials. |
 | `deckhtml auth status` | Show authentication status. |
+
+`deckhtml auth login` also supports `--port <port>` to override the local callback port.
 
 ### `deckhtml config`
 
@@ -94,6 +99,6 @@ deckhtml config [command]
 | Key | Description | Default |
 | --- | --- | --- |
 | `api-key` | API key for cloud requests. | None |
-| `size` | PPTX dimensions. | `1920x1080` |
+| `space-id` | Preferred Deckflow space for cloud runs. | None |
 | `webhook` | Default callback URL. | None |
 | `retention-hours` | Cloud file retention time in hours. | `3` |

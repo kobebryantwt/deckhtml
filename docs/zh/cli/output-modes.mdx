@@ -35,24 +35,23 @@ index.pptx
 
 ## 产物格式
 
-通过 `--format` 选择产物类型：
+当前已发布 CLI 通过 `-o` 的扩展名推断产物类型：
 
 ```bash
-deckhtml index.html --format pptx -o deck.pptx
-deckhtml index.html --mode cloud --format png -o frames
+deckhtml index.html -o deck.pptx
+deckhtml index.html -o frames.png
 ```
 
-可接受的格式值有：
+当前文档层面支持的产物类型有：
 
 - `pptx`
-- `pdf`
 - `png`
 
 执行模式也会影响具体产物行为：
 
-- 本地与云端可能暴露不同的产物路径
+- 本地与云端可能采用不同的处理路径
 - 最简单的同机转换优先使用本地模式
-- 需要托管执行或更完整输出路径时使用云端模式
+- 需要托管执行或云端字体嵌入时使用云端模式
 
 ## `--json`
 

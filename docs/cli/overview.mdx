@@ -32,7 +32,7 @@ deckhtml --version
     Convert a single HTML file, multiple ordered files, stdin, or a hosted URL.
   </Card>
   <Card title="Multiple outputs">
-    Generate `pptx` locally, or `pptx` and `png` through cloud execution.
+    Generate `pptx` or `png` artifacts through the published CLI workflow.
   </Card>
   <Card title="Automation-friendly">
     Use `--json`, `--quiet`, and cloud mode flags in scripts, CI, and agent workflows.
@@ -55,11 +55,11 @@ This is not just a documentation assumption. The published CLI implementation re
 - `--mode cloud` throws if no credentials are available
 - `--mode auto` chooses cloud when credentials exist, otherwise local
 
-Execution mode also affects the available output workflow. Use local mode for straightforward same-machine conversion, and use cloud mode when you need hosted execution or advanced output paths.
+Execution mode also affects the processing path. Use local mode for straightforward same-machine conversion, and use cloud mode when you need hosted execution or cloud-only font embedding.
 
 ## Authentication
 
-Authentication is only required for cloud execution and cloud-only enhancement flags. If you plan to stay in local mode, you can start converting immediately without configuring credentials.
+Authentication is only required for cloud execution and the cloud-only `--embed-fonts` flag. If you plan to stay in local mode, you can start converting immediately without configuring credentials.
 
 ```bash
 deckhtml auth login
@@ -130,7 +130,7 @@ Beyond the output format itself, it also provides:
 
 - multiple input modes: file, stdin, ordered files, URL
 - local vs cloud execution control
-- cloud-only enhancement flags such as SVG/chart rebuild and font embedding
+- the cloud-only `--embed-fonts` enhancement flag
 - report generation with `--report`
 - authentication and persistent config commands
 - machine-readable output for scripts with `--json`

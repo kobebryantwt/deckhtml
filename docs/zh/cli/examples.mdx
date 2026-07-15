@@ -35,13 +35,13 @@ deckhtml title.html agenda.html content.html summary.html -o deck.pptx
 
 ```bash
 deckhtml https://example.com/deck.html -o deck.pptx
-deckhtml https://example.com/deck.html -o deck.pptx --render-wait 9
 ```
 
-## 生成云端输出
+## 生成 PNG 输出
 
 ```bash
-deckhtml index.html --mode cloud --format png -o frames
+deckhtml index.html -o frames.png
+deckhtml index.html --mode cloud -o frames.png
 ```
 
 ## 指定视口宽度或平台映射

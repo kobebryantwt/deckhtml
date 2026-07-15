@@ -18,9 +18,13 @@ description: "查看 DeckHTML 在 CLI、SDK、API 和 MCP 场景下常见的配�
 常见输出相关设置一般通过命令参数传入：
 
 - `-o` 或 `--output`：指定输出路径
-- `--format`：指定 `pptx`、`pdf` 或 `png`
 - `--json`：输出机器可读 JSON
 - `--report`：额外生成转换报告
+
+当前已发布 CLI 会通过 `-o` 的扩展名推断输出类型：
+
+- 使用 `.pptx` 生成 PowerPoint 演示文稿
+- 使用 `.png` 生成 PNG 帧输出
 
 ## 模式选择
 
