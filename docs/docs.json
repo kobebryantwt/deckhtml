@@ -33,7 +33,7 @@
     ]
   },
   "api": {
-    "openapi": "reference/默认模块.openapi.json",
+    "openapi": "reference/default-module.openapi.json",
     "playground": {
       "display": "interactive"
     }

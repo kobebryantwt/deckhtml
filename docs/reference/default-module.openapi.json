@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "默认模块",
+    "title": "Default Module",
     "description": "Deckflow task API for submitting async jobs, querying task state, and downloading completed results.",
     "version": "1.0.0"
   },
