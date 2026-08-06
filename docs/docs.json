@@ -22,7 +22,8 @@
     }
   },
   "appearance": {
-    "default": "light"
+    "default": "system",
+    "strict": false
   },
   "contextual": {
     "options": ["copy", "claude", "cursor", "vscode"]
@@ -261,7 +262,7 @@
         ]
       },
       {
-        "language": "zh",
+        "language": "zh-Hans",
         "navbar": {
           "primary": {
             "type": "button",
