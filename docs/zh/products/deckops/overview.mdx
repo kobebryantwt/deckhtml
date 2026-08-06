@@ -1,23 +1,37 @@
 ---
 title: DeckOps
 sidebarTitle: 概览
-description: "将文件解析成中间表示，并生成单向派生格式。"
+description: "将文档深度解析成结构化信息，用于分析、IR 构建和单向还原工作流。"
 ---
 
 # DeckOps
 
-DeckOps 是单向文档操作层，负责解析源文件、提供中间表示（IR），并还原或导出支持的下游文件格式。
+DeckOps 是深度解析和单向文档操作层。它的解析目标是 **Document Information**：对文件身份、物理与逻辑结构，以及已提取内容智能的结构化描述。
+
+解析完成后，Document Information 可以进一步 Schema 化为 IR，供下游分析、转换或还原使用。DeckOps 实现可用后，再补充具体 IR 契约。
+
+<CardGroup cols={2}>
+  <Card title="Document Information" href="/zh/products/deckops/document-information">
+    查看文件身份、文档结构和内容智能三个目标层次。
+  </Card>
+  <Card title="DeckProbe 与 DeckOps" href="/zh/getting-started/deckprobe-vs-deckops">
+    对比目标式轻量嗅探与深度文档解析。
+  </Card>
+</CardGroup>
 
 ## 适用场景
 
-- 管线需要结构化文档数据，而不是视觉渲染结果。
-- 输入解析与输出生成之间需要稳定的 IR。
-- 转换或还原过程不需要保留与原始源文件的可编辑关系。
+- 工作流需要实际文本、图片、表格、图表、公式、评论或其他文档对象。
+- 需要表达页面、幻灯片、工作表、章节、母版、版式或工作簿结构，而不只是计数。
+- 下游处理需要对象位置、样式、关系和格式专属行为。
+- 解析结果需要 Schema 化为 IR，或还原成其他支持的格式。
 
 ## 产品边界
 
-DeckOps 刻意保持单向。变更需要写回支持的源文件时使用 [DeckUse](/zh/products/deckuse/overview)，只需要视觉产物时使用 [DeckRender](/zh/products/deckrender/overview)。
+DeckOps 比 [DeckProbe](/zh/products/deckprobe/overview) 更深入：Probe 返回目标式文档事实及证据，Ops 构建包含实际内容的结构模型。
+
+在产品模型中，DeckOps 仍然是单向操作。需要通过源文件感知模型应用变更并写回支持的源文件时，使用 [DeckUse](/zh/products/deckuse/overview)；结果目标是视觉画面而非结构化内容时，使用 [DeckRender](/zh/products/deckrender/overview)。
 
 <Note>
-  DeckOps 项目地址和契约提供后，再补充 IR Schema、支持格式和具体接入页面。
+  本站的 Document Information 描述当前产品设计方向。DeckOps 源码和契约可用前，准确字段名、IR Schema、支持格式和还原保证仍属于待确认内容。
 </Note>

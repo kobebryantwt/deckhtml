@@ -1,0 +1,56 @@
+---
+title: DeckOps Document Information
+sidebarTitle: Document Information
+description: "理解 DeckOps 深度解析的目标，以及解析信息 Schema 化为 IR 前的结构。"
+---
+
+# Document Information
+
+Document Information 是 DeckOps 的解析目标。它比 DeckProbe Report 更详细，由三个层次组成。
+
+## File Identity
+
+文件身份将通用文件元数据与格式专属状态结合起来。根据源格式，可以包括：
+
+- PDF 版本、Creator、Producer、XMP 元数据、加密和权限。
+- PowerPoint 版本、公司、主题、语言和安全状态。
+- Word 标题、主题、语言、生成版本和安全状态。
+- Excel 计算模式、保护状态、生成版本和安全状态。
+- Keynote、Pages 或 Numbers 的生成版本和声明元数据。
+
+## Document Structure
+
+文档结构表达文件的物理和逻辑组织，而不只是汇总数量。例如：
+
+- 页面、幻灯片、画布或工作表尺寸与方向。
+- 隐藏幻灯片或工作表、章节、母版、版式和主题。
+- 文档大纲、幻灯片结构、工作簿结构和分页结构。
+- 字体、图层、资源、命名区域、数据透视表、表单字段和嵌入文件。
+
+## Content Intelligence
+
+内容智能包含实际文档对象及其可用属性，目标模型包括：
+
+- 文本块、段落、标题和文本样式。
+- 图片、形状、图标、图表、表格、SmartArt 和公式。
+- 单元格、公式、条件格式、验证规则和筛选条件。
+- 备注、评论、标注、脚注、修订和超链接。
+- 在源格式支持范围内的音频、视频、嵌入对象、切换、构建动画和动画。
+
+与 DeckProbe 的信号或计数不同，DeckOps 对象可以携带内容、位置、样式、层级、引用，以及下游解释或还原所需的其他信息。
+
+## 从解析到 IR
+
+当前概念流程为：
+
+```text
+源文档
+  ↓ 解析
+Document Information
+  ↓ Schema 化
+文档 IR
+  ↓ 转换或还原
+派生产物
+```
+
+Document Information 描述解析器需要恢复哪些信息；IR 是这些解析信息经过 Schema 化后的结果。DeckOps 实现可用后，再进一步明确两者边界和具体 Schema。

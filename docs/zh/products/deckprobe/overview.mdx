@@ -1,33 +1,43 @@
 ---
 title: DeckProbe
 sidebarTitle: 概览
-description: "无需渲染即可嗅探 PDF、Microsoft Office 和 Apple iWork 文件。"
+description: "无需完整解析或渲染文件，即可嗅探文档身份、结构、安全状态和格式专属事实。"
 ---
 
 # DeckProbe
 
-DeckProbe 是 Deckflow 产品体系中的文件嗅探层。它无需渲染文档或启动桌面 Office 软件，即可识别文件格式，并按需返回页数、幻灯片数量、元数据、安全信号和格式特有属性。
+DeckProbe 是 Deckflow 产品体系中的发现与嗅探层。它无需先构建完整的页面和元素模型，也无需渲染文件，就能回答针对文档的目标问题。
+
+调用方只需指定所需事实，例如已验证格式、幻灯片数量、工作表名称、加密状态或资源数量；DeckProbe 会在置信度和预算约束下，选择能够满足目标的最低成本有效探测路径。
 
 <CardGroup cols={2}>
   <Card title="快速开始" href="/zh/products/deckprobe/quick-start">
     安装原生 CLI，并嗅探第一个文档。
   </Card>
+  <Card title="输出模型" href="/zh/products/deckprobe/output-model">
+    了解稳定报告外壳、Target Scope、证据和当前实现边界。
+  </Card>
   <Card title="接入界面" href="/zh/products/deckprobe/interfaces">
     在原生 CLI、常驻 JSONL 和浏览器 SDK 之间选择。
   </Card>
+  <Card title="DeckProbe 与 DeckOps" href="/zh/getting-started/deckprobe-vs-deckops">
+    判断文档级事实是否足够，以及何时需要深度解析。
+  </Card>
 </CardGroup>
 
-## 适用场景
+## DeckProbe 回答什么
 
-- 上传文件后，先识别文件再选择解析器或渲染器。
-- 只读取工作流需要的事实，不完整解包整个文档。
-- 在明确的 I/O、解压、归档条目和时间预算内检查不可信文件。
-- 为自动化或智能体工作流返回带置信度与证据的确定性 JSON。
+- **文件身份**：已验证格式、MIME 类型、扩展名匹配、文件大小、作者、声明时间和生成应用。
+- **主要结构**：由格式驱动实现的数量、名称、尺寸，以及幻灯片、工作表、页面、母版或版式等事实。
+- **安全与质量**：在格式支持范围内探测加密、密码保护、宏、签名、外部关系、嵌入文件、活动内容风险和结构质量。
+- **资源摘要**：在格式支持范围内统计图片、媒体、预览图、字体、评论、附件和嵌入对象。
 
-## 产品边界
+## DeckProbe 不负责什么
 
-DeckProbe 只读取文件事实，不负责生成视觉预览、转换文件或修改源内容。可继续阅读[产品模型](/zh/getting-started/product-model)选择后续产品。
+DeckProbe 不会返回用于复现文档的完整文本块、形状、表格单元格、样式、坐标和关系。这类深度解析属于 [DeckOps](/zh/products/deckops/overview)。
+
+DeckProbe 也不生成视觉预览或修改源文件。渲染使用 [DeckRender](/zh/products/deckrender/overview)，源文件感知编辑使用 [DeckUse](/zh/products/deckuse/overview)。
 
 <Info>
-  DeckProbe 已开源，完整实现与参考文档位于 [deckflow/deckprobe](https://github.com/deckflow/deckprobe)。
+  DeckProbe 已开源，实际实现、实时 Target 注册表以及完整 CLI 和 SDK 参考文档位于 [deckflow/deckprobe](https://github.com/deckflow/deckprobe)。
 </Info>

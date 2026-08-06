@@ -1,0 +1,39 @@
+---
+title: DeckProbe 与 DeckOps
+sidebarTitle: DeckProbe 与 DeckOps
+description: "在目标式文档嗅探与包含实际内容的深度解析之间进行选择。"
+---
+
+# DeckProbe 与 DeckOps
+
+DeckProbe 和 DeckOps 可能返回部分相同的高层事实，但它们服务于文档工作流的不同阶段。
+
+| 维度 | DeckProbe | DeckOps |
+| --- | --- | --- |
+| 主要目标 | 发现、路由和策略判断 | 深度解析、分析、IR 构建和还原 |
+| 典型问题 | 这是什么文件、包含什么、数量是多少？ | 实际对象是什么、在哪里、如何组织？ |
+| 信息粒度 | 文档级 Target 和证据 | 文档、页面或幻灯片、元素级信息 |
+| 跨格式模型 | 通用 Target 加 Office 与格式扩展 | 格式专属解析统一成 Document Information，之后再形成 IR |
+| 结构 | 数量、名称、尺寸和有边界的格式事实 | 结构树、节点、层级、坐标和关系 |
+| 内容 | 已实现的信号与摘要统计 | 实际文本、资源、样式、表格单元格、图表数据、备注、评论和动态行为 |
+| 成本模型 | 在明确预算内选择最低成本有效路径 | 执行恢复内容与结构所需的深度工作 |
+| 输出 | 带 Target 证据和执行成本的 Schema v2 Report | Document Information，以及后续 Schema 化的 IR |
+| 源文件修改 | 不支持 | 不负责源文件感知回写，此类工作流使用 DeckUse |
+
+## 推荐工作流
+
+<Steps>
+  <Step title="先嗅探">
+    使用 DeckProbe 验证格式、检查安全和质量信号、估计文档形态，并判断是否适合继续深度处理。
+  </Step>
+  <Step title="需要内容时再解析">
+    当工作流需要页面树、实际对象、内容、样式或关系时，将文档交给 DeckOps。
+  </Step>
+  <Step title="Schema 化后继续处理">
+    将解析得到的 Document Information Schema 化为 DeckOps IR，再进行分析、转换或目标格式还原。
+  </Step>
+</Steps>
+
+<Note>
+  DeckProbe 的 `deep` 级别仍然返回 Target 证据，不会变成 DeckOps 的元素级解析。“Deep”描述允许使用的 Probe Path 和预算，而不是两个产品共享同一种输出模型。
+</Note>

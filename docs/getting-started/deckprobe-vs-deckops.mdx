@@ -1,0 +1,39 @@
+---
+title: DeckProbe vs. DeckOps
+sidebarTitle: DeckProbe vs. DeckOps
+description: "Choose between targeted document inspection and deep content-bearing parsing."
+---
+
+# DeckProbe vs. DeckOps
+
+DeckProbe and DeckOps can report some of the same high-level facts, but they serve different stages of a document workflow.
+
+| Dimension | DeckProbe | DeckOps |
+| --- | --- | --- |
+| Primary purpose | Discovery, routing, and policy decisions | Deep parsing, analysis, IR construction, and reconstruction |
+| Typical question | What is this file, what does it contain, and how much? | What are the actual objects, where are they, and how are they structured? |
+| Granularity | Document-level targets and evidence | Document, page or slide, and element-level information |
+| Cross-format model | Common targets plus Office and format-owned extensions | Format-specific parsing normalized into Document Information and later an IR |
+| Structure | Counts, names, dimensions, and bounded format facts | Structural trees, nodes, hierarchy, coordinates, and relationships |
+| Content | Signals and summary statistics where implemented | Actual text, assets, styles, table cells, chart data, notes, comments, and dynamic behavior |
+| Cost model | Chooses the lowest-cost valid path under explicit budgets | Performs the deeper work required to recover content and structure |
+| Output | Schema v2 report with target evidence and execution cost | Document Information, followed by a schema-normalized IR |
+| Source mutation | No | No source-aware write-back; use DeckUse for that workflow |
+
+## Recommended workflow
+
+<Steps>
+  <Step title="Probe first">
+    Use DeckProbe to verify the format, inspect security and quality signals, estimate document shape, and decide whether deeper processing is appropriate.
+  </Step>
+  <Step title="Parse when content is required">
+    Send the document to DeckOps when a workflow needs page trees, actual objects, content, styles, or relationships.
+  </Step>
+  <Step title="Normalize and continue">
+    Normalize parsed Document Information into the DeckOps IR, then analyze, transform, or reconstruct the required derived format.
+  </Step>
+</Steps>
+
+<Note>
+  A DeckProbe `deep` level still returns target evidence; it does not become a DeckOps element-level parse. “Deep” describes the allowed probe paths and budgets, not a shared output model between the two products.
+</Note>

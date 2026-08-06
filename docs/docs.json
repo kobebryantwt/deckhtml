@@ -103,6 +103,7 @@
                 "pages": [
                   "getting-started/overview",
                   "getting-started/product-model",
+                  "getting-started/deckprobe-vs-deckops",
                   "getting-started/architecture"
                 ]
               }
@@ -116,6 +117,7 @@
                 "pages": [
                   "products/deckprobe/overview",
                   "products/deckprobe/quick-start",
+                  "products/deckprobe/output-model",
                   "products/deckprobe/interfaces"
                 ]
               }
@@ -130,7 +132,13 @@
           {
             "tab": "DeckOps",
             "groups": [
-              { "group": "DeckOps", "pages": ["products/deckops/overview"] }
+              {
+                "group": "DeckOps",
+                "pages": [
+                  "products/deckops/overview",
+                  "products/deckops/document-information"
+                ]
+              }
             ]
           },
           {
@@ -256,6 +264,7 @@
                 "pages": [
                   "zh/getting-started/overview",
                   "zh/getting-started/product-model",
+                  "zh/getting-started/deckprobe-vs-deckops",
                   "zh/getting-started/architecture"
                 ]
               }
@@ -269,6 +278,7 @@
                 "pages": [
                   "zh/products/deckprobe/overview",
                   "zh/products/deckprobe/quick-start",
+                  "zh/products/deckprobe/output-model",
                   "zh/products/deckprobe/interfaces"
                 ]
               }
@@ -283,7 +293,13 @@
           {
             "tab": "DeckOps",
             "groups": [
-              { "group": "DeckOps", "pages": ["zh/products/deckops/overview"] }
+              {
+                "group": "DeckOps",
+                "pages": [
+                  "zh/products/deckops/overview",
+                  "zh/products/deckops/document-information"
+                ]
+              }
             ]
           },
           {

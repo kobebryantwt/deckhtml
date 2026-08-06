@@ -1,23 +1,37 @@
 ---
 title: DeckOps
 sidebarTitle: Overview
-description: "Parse files into an intermediate representation and produce one-way derived formats."
+description: "Deeply parse documents into structured information for analysis, IR construction, and one-way reconstruction workflows."
 ---
 
 # DeckOps
 
-DeckOps is the one-way document operations layer. It parses source files, exposes an intermediate representation (IR), and can reconstruct or export supported downstream file formats.
+DeckOps is the deep parsing and one-way document operations layer. Its parsing target is **Document Information**: a structured description of the file's identity, physical and logical structure, and extracted content intelligence.
+
+After parsing, that information can be normalized into a schema-based IR for downstream analysis, transformation, or reconstruction. The detailed IR contract will be documented after the DeckOps implementation is available.
+
+<CardGroup cols={2}>
+  <Card title="Document Information" href="/products/deckops/document-information">
+    Review the intended identity, structure, and content-intelligence layers.
+  </Card>
+  <Card title="DeckProbe vs. DeckOps" href="/getting-started/deckprobe-vs-deckops">
+    Compare lightweight target probing with deep document parsing.
+  </Card>
+</CardGroup>
 
 ## Use DeckOps when
 
-- A pipeline needs structured document data rather than a visual rendering.
-- Consumers need a stable IR between input parsing and output generation.
-- A conversion or reconstruction does not need to preserve an editable connection to the original source.
+- A workflow needs actual text, images, tables, charts, formulas, comments, or other document objects.
+- Page, slide, sheet, section, master, layout, or workbook structure must be represented rather than merely counted.
+- Object positions, styles, relationships, and format-specific behavior are needed for downstream processing.
+- Parsed information must be schema-normalized into an IR or reconstructed into another supported format.
 
 ## Product boundary
 
-DeckOps is intentionally one-way. Use [DeckUse](/products/deckuse/overview) when changes must be applied back to a supported source file, or [DeckRender](/products/deckrender/overview) when only visual output is needed.
+DeckOps is deeper than [DeckProbe](/products/deckprobe/overview): Probe returns targeted document facts and evidence, while Ops builds a content-bearing structural model.
+
+DeckOps remains one-way in the product model. Use [DeckUse](/products/deckuse/overview) when changes must be applied through a source-aware model and written back to a supported source file. Use [DeckRender](/products/deckrender/overview) when the required result is visual output rather than structured content.
 
 <Note>
-  IR schemas, supported formats, and concrete integration pages will be added after the DeckOps project address and contracts are available.
+  The Document Information model on this site describes the current product direction. Exact field names, IR schemas, supported formats, and reconstruction guarantees remain provisional until they can be verified against the DeckOps source and contracts.
 </Note>
