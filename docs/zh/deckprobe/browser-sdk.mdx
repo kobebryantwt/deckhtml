@@ -1,0 +1,81 @@
+---
+title: DeckProbe Browser SDK
+sidebarTitle: Browser SDK
+description: "安装 DeckProbe npm 包，并通过主线程或 Worker 在浏览器本地运行 WebAssembly 文档嗅探。"
+---
+
+`@deckflow/deckprobe` 包通过 WebAssembly 运行同一套目标驱动 Rust 引擎，接受 `File`、`Blob`、`ArrayBuffer` 和 `Uint8Array`，文档字节始终留在浏览器中。
+
+## 安装
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+## 在主线程中 Probe
+
+`probe()` 会延迟初始化 WebAssembly。可以在应用启动或空闲时调用 `initDeckProbe()`，提前准备第一次交互：
+
+```ts
+import { initDeckProbe, probe } from "@deckflow/deckprobe";
+
+await initDeckProbe();
+
+const report = await probe(file, {
+  targets: ["@summary", "@security"],
+  level: "metadata",
+});
+```
+
+浏览器 `File` 自带文件名；`Blob`、`ArrayBuffer` 或 `Uint8Array` 需要传入逻辑文件名，让扩展名选择格式：
+
+```ts
+const bytes = await fetch("/documents/quarterly-deck").then((response) =>
+  response.arrayBuffer(),
+);
+
+const report = await probe(bytes, {
+  name: "quarterly-deck.pptx",
+  targets: ["powerpoint.slide_count"],
+});
+```
+
+## 在 Worker 中 Probe
+
+用户文件、大文件或不应占用 UI 线程的 Deep Probe 使用 Worker 入口：
+
+```ts
+import { createDeckProbeWorker } from "@deckflow/deckprobe/worker";
+
+const worker = createDeckProbeWorker();
+try {
+  const report = await worker.probe(file, {
+    targets: ["@summary"],
+    level: "deep",
+  });
+} finally {
+  worker.terminate();
+}
+```
+
+一批任务可以复用同一个 Worker，在所属页面或任务结束时终止。`terminate()` 会取消尚未完成的 Probe。
+
+## 发现可用能力
+
+主 SDK 入口导出 `formats()`、`targets(format)`、`schema()` 和 `version()`：
+
+```ts
+import { formats, schema, targets, version } from "@deckflow/deckprobe";
+
+const engineVersion = version();
+const supportedFormats = formats();
+const pdfTargets = targets("pdf");
+const reportSchema = schema();
+```
+
+这些函数可用于生成格式和 Target Selector、按照内置契约校验响应，以及展示当前引擎版本。
+
+## 继续处理报告
+
+主线程与 Worker API 返回相同的 Schema v2 报告。报告结构、Target 状态、证据和执行成本请参阅[输出模型](/zh/deckprobe/output-model)。
+

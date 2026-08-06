@@ -1,0 +1,44 @@
+---
+title: Document Operations
+sidebarTitle: Document Operations
+description: "Understand the document operations exposed across DeckProbe, DeckRender, DeckOps, DeckUse, and DeckHTML."
+---
+
+Deckflow products are separated by the operation performed on a document and by the result returned to the application. These terms describe developer-facing capabilities, not internal implementation layers.
+
+## Capability map
+
+| Operation | What it does | Primary result | Product |
+| --- | --- | --- | --- |
+| Probe | Answers targeted questions about identity, metadata, structure, security, and assets without building a complete page model | Document facts with evidence | [DeckProbe](/deckprobe/overview) |
+| Render | Turns supported documents into page or slide visuals | Images and previews | [DeckRender](/deckrender/overview) |
+| Parse | Normalizes supported formats into one schema-based representation | Document IR | [DeckOps](/deckops/overview) |
+| Extract | Reads semantic page structure such as titles, subtitles, charts, speaker notes, and footnotes | Structured semantic results | [DeckOps](/deckops/overview) |
+| Convert | Produces another document format from the parsed source | Converted document | [DeckOps](/deckops/overview) |
+| Manipulate | Changes supported Office source files while preserving an editable source artifact | Updated Office file | [DeckUse](/deckuse/overview) |
+| Generate from HTML | Uses HTML as the source for presentation structure and visual design | Presentation artifact | [DeckHTML](/deckhtml/overview) |
+
+## How the operations differ
+
+### Inspect without transforming
+
+Use **Probe** when document facts are the final result. The output can drive upload validation, routing, policy checks, indexing decisions, or interface hints without rendering the file or constructing Document IR.
+
+### Normalize and derive results
+
+Use **Parse** when downstream work needs a unified representation of page and element structure. Document IR can then support semantic **Extract**, format **Convert**, or combined rendering workflows in DeckOps.
+
+### Produce visual output
+
+Use **Render** when the required result is a visual page or slide. Rendering does not by itself imply semantic extraction or editable source-file manipulation.
+
+### Preserve an editable source
+
+Use **Manipulate** when the existing Office document must remain the source artifact after elements are changed or removed. This differs from producing a derived representation or converted file.
+
+### Author from HTML
+
+Use **Generate from HTML** when HTML defines the deck's structure and visual design. This is an authoring workflow rather than analysis of an existing Office file.
+
+For concrete product boundaries, continue with [Choose a product](/product-guide).
+

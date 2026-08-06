@@ -6,19 +6,32 @@ description: "无需渲染文档或启动对应桌面软件，即可嗅探不可
 
 DeckProbe 是目标驱动的文档嗅探引擎，提供原生 Rust CLI 和 Browser JavaScript SDK。它无需渲染文档，也无需启动 Microsoft Office、Apple iWork 或其他桌面办公套件，即可检查不可信文件。
 
-支持范围包括 PDF；现代与旧版 Microsoft Word、Excel、PowerPoint 格式；以及现代 Apple Keynote、Numbers、Pages 文档。原生 CLI 运行时不依赖 Python、JVM、Microsoft Office 或外部 PDF 库；Browser SDK 通过 WebAssembly 在浏览器本地运行同一套引擎，不上传文档字节。
+<CardGroup cols={2}>
+  <Card title="支持的文档格式" icon="file-check">
+    - PDF
+    - 现代与旧版 Microsoft Word、Excel、PowerPoint
+    - 现代 Apple Keynote、Numbers、Pages
+  </Card>
+  <Card title="本地执行" icon="laptop">
+    - 原生 CLI 不依赖 Python、JVM、Microsoft Office 或外部 PDF 库
+    - Browser SDK 通过 WebAssembly 在浏览器本地运行同一套引擎，不上传文档字节
+  </Card>
+</CardGroup>
 
 DeckProbe 不会预先解包所有内容，而是根据请求的 Target 和置信度，只执行必要的 Probe Path。结果为确定性的 Schema v2 JSON，并包含 Target 级证据和实际 I/O 成本。
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="快速开始" href="/zh/deckprobe/quick-start">
     安装并验证 CLI，然后嗅探第一个文档。
   </Card>
   <Card title="输出模型" href="/zh/deckprobe/output-model">
     了解完整报告、紧凑 Values、错误和 JSON Schema。
   </Card>
-  <Card title="CLI 与 Browser SDK" href="/zh/deckprobe/interfaces">
-    通过原生命令、JSONL 或 WebAssembly 接入。
+  <Card title="CLI" href="/zh/deckprobe/cli">
+    安装原生可执行文件，通过本地文件、stdin 或常驻 JSONL 使用。
+  </Card>
+  <Card title="Browser SDK" href="/zh/deckprobe/browser-sdk">
+    安装 npm 包，通过 WebAssembly 在浏览器本地嗅探文件。
   </Card>
 </CardGroup>
 
@@ -57,7 +70,9 @@ DeckProbe 不会预先解包所有内容，而是根据请求的 Target 和置�
 
 DeckProbe 返回文档事实，不生成渲染画面，也不构建完整的可编辑对象模型。它不会执行 OCR、运行宏、访问外部链接或把文件发送到远程服务。
 
-需要页面和元素级 Document IR、语义提取或格式转换时，继续使用 [DeckOps](/zh/deckops/overview)；需要渲染时使用 [DeckRender](/zh/deckrender/overview)；需要修改支持的 Office 源文件时使用 [DeckUse](/zh/deckuse/overview)。
+- 需要页面和元素级 Document IR、语义提取或格式转换时，使用 [DeckOps](/zh/deckops/overview)。
+- 需要渲染文档时，使用 [DeckRender](/zh/deckrender/overview)。
+- 需要修改支持的 Office 源文件时，使用 [DeckUse](/zh/deckuse/overview)。
 
 <Info>
   DeckProbe 是开源项目。可以前往 [DeckProbe GitHub 仓库](https://github.com/deckflow/deckprobe)查看源代码、Release 记录、Issue 和实现级参考文档。

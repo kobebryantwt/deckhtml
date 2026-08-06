@@ -1,0 +1,81 @@
+---
+title: DeckProbe Browser SDK
+sidebarTitle: Browser SDK
+description: "Install the DeckProbe npm package and probe local browser files through WebAssembly on the main thread or in a Worker."
+---
+
+The `@deckflow/deckprobe` package runs the same target-driven Rust engine in WebAssembly. It accepts `File`, `Blob`, `ArrayBuffer`, and `Uint8Array`; document bytes remain in the browser.
+
+## Install
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+## Probe on the main thread
+
+`probe()` initializes WebAssembly lazily. Call `initDeckProbe()` during startup or idle time to prepare the first interaction:
+
+```ts
+import { initDeckProbe, probe } from "@deckflow/deckprobe";
+
+await initDeckProbe();
+
+const report = await probe(file, {
+  targets: ["@summary", "@security"],
+  level: "metadata",
+});
+```
+
+A browser `File` supplies its own name. For `Blob`, `ArrayBuffer`, or `Uint8Array`, pass a logical filename so the extension can select the format:
+
+```ts
+const bytes = await fetch("/documents/quarterly-deck").then((response) =>
+  response.arrayBuffer(),
+);
+
+const report = await probe(bytes, {
+  name: "quarterly-deck.pptx",
+  targets: ["powerpoint.slide_count"],
+});
+```
+
+## Probe in a Worker
+
+Use the Worker entry for user-provided files, large inputs, or deep probes that should not occupy the UI thread:
+
+```ts
+import { createDeckProbeWorker } from "@deckflow/deckprobe/worker";
+
+const worker = createDeckProbeWorker();
+try {
+  const report = await worker.probe(file, {
+    targets: ["@summary"],
+    level: "deep",
+  });
+} finally {
+  worker.terminate();
+}
+```
+
+Reuse one Worker for a batch, then terminate it when the owning screen or job ends. `terminate()` cancels pending probes.
+
+## Discover capabilities
+
+The main SDK entry exports `formats()`, `targets(format)`, `schema()`, and `version()`:
+
+```ts
+import { formats, schema, targets, version } from "@deckflow/deckprobe";
+
+const engineVersion = version();
+const supportedFormats = formats();
+const pdfTargets = targets("pdf");
+const reportSchema = schema();
+```
+
+Use these functions to populate format and target selectors, validate responses against the bundled contract, and display the active engine version.
+
+## Continue with the report
+
+Both the main-thread and Worker APIs return the same Schema v2 report. See [Output Model](/deckprobe/output-model) for report shapes, target statuses, evidence, and execution costs.
+

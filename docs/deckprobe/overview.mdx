@@ -6,19 +6,32 @@ description: "Inspect untrusted PDF, Microsoft Office, and modern Apple iWork do
 
 DeckProbe is a target-driven document inspection engine available as a native Rust CLI and a Browser JavaScript SDK. It inspects untrusted documents without rendering them and without starting Microsoft Office, Apple iWork, or another desktop office suite.
 
-It supports PDF; modern and legacy Microsoft Word, Excel, and PowerPoint formats; and modern Apple Keynote, Numbers, and Pages documents. The native CLI has no runtime dependency on Python, the JVM, Microsoft Office, or an external PDF library. The browser SDK runs the same engine locally through WebAssembly and does not upload document bytes.
+<CardGroup cols={2}>
+  <Card title="Supported document formats" icon="file-check">
+    - PDF
+    - Modern and legacy Microsoft Word, Excel, and PowerPoint
+    - Modern Apple Keynote, Numbers, and Pages
+  </Card>
+  <Card title="Local execution" icon="laptop">
+    - The native CLI does not depend on Python, the JVM, Microsoft Office, or an external PDF library
+    - The Browser SDK runs the same engine locally through WebAssembly and does not upload document bytes
+  </Card>
+</CardGroup>
 
 Instead of unpacking everything, DeckProbe executes only the probe paths needed for the requested targets and confidence level. Results are deterministic Schema v2 JSON with target-level evidence and measured I/O cost.
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="Quickstart" href="/deckprobe/quick-start">
     Install the CLI, verify it, and inspect a document.
   </Card>
   <Card title="Output Model" href="/deckprobe/output-model">
     Understand full reports, compact values, errors, and JSON Schema.
   </Card>
-  <Card title="CLI and Browser SDK" href="/deckprobe/interfaces">
-    Integrate through native commands, JSONL, or WebAssembly.
+  <Card title="CLI" href="/deckprobe/cli">
+    Install the native executable and use files, stdin, or persistent JSONL.
+  </Card>
+  <Card title="Browser SDK" href="/deckprobe/browser-sdk">
+    Install the npm package and probe browser files through WebAssembly.
   </Card>
 </CardGroup>
 
@@ -57,7 +70,9 @@ Instead of unpacking everything, DeckProbe executes only the probe paths needed 
 
 DeckProbe returns document facts, not rendered output or a complete editable object model. It does not run OCR, execute macros, follow external links, or send files to a remote service.
 
-When a workflow needs page- and element-level Document IR, semantic extraction, or format conversion, continue with [DeckOps](/deckops/overview). For rendering, use [DeckRender](/deckrender/overview); for modifying supported Office source files, use [DeckUse](/deckuse/overview).
+- For page- and element-level Document IR, semantic extraction, or format conversion, use [DeckOps](/deckops/overview).
+- To render documents, use [DeckRender](/deckrender/overview).
+- To modify supported Office source files, use [DeckUse](/deckuse/overview).
 
 <Info>
   DeckProbe is an open-source project. Visit the [DeckProbe GitHub repository](https://github.com/deckflow/deckprobe) to review the source code, release history, issue tracker, and implementation-level reference documentation.

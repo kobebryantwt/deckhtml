@@ -38,19 +38,21 @@
     { "source": "/", "destination": "/introduction", "permanent": true },
     { "source": "/quickstart", "destination": "/deckhtml/quick-start", "permanent": true },
     { "source": "/concepts", "destination": "/product-guide", "permanent": true },
-    { "source": "/architecture", "destination": "/runtime-architecture", "permanent": true },
+    { "source": "/architecture", "destination": "/document-operations", "permanent": true },
     { "source": "/getting-started/overview", "destination": "/introduction", "permanent": true },
     { "source": "/getting-started/product-model", "destination": "/product-guide", "permanent": true },
     { "source": "/getting-started/deckprobe-vs-deckops", "destination": "/product-guide", "permanent": true },
-    { "source": "/getting-started/runtime-architecture", "destination": "/runtime-architecture", "permanent": true },
-    { "source": "/getting-started/architecture", "destination": "/runtime-architecture", "permanent": true },
+    { "source": "/runtime-architecture", "destination": "/document-operations", "permanent": true },
+    { "source": "/getting-started/runtime-architecture", "destination": "/document-operations", "permanent": true },
+    { "source": "/getting-started/architecture", "destination": "/document-operations", "permanent": true },
+    { "source": "/deckprobe/interfaces", "destination": "/deckprobe/cli", "permanent": true },
     { "source": "/products/deckops/document-information", "destination": "/deckops/document-ir", "permanent": true },
     { "source": "/products/deckhtml/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
     { "source": "/products/:path*", "destination": "/:path*", "permanent": true },
     { "source": "/docs/quick-start", "destination": "/deckhtml/quick-start", "permanent": true },
     { "source": "/docs/overview", "destination": "/introduction", "permanent": true },
     { "source": "/docs/concepts", "destination": "/product-guide", "permanent": true },
-    { "source": "/docs/architecture", "destination": "/runtime-architecture", "permanent": true },
+    { "source": "/docs/architecture", "destination": "/document-operations", "permanent": true },
     { "source": "/docs/local-mode", "destination": "/deckhtml/guides/local-mode", "permanent": true },
     { "source": "/docs/cloud-mode", "destination": "/deckhtml/guides/cloud-mode", "permanent": true },
     { "source": "/docs/configuration", "destination": "/deckhtml/guides/configuration", "permanent": true },
@@ -73,15 +75,17 @@
     { "source": "/zh/getting-started/overview", "destination": "/zh/introduction", "permanent": true },
     { "source": "/zh/getting-started/product-model", "destination": "/zh/product-guide", "permanent": true },
     { "source": "/zh/getting-started/deckprobe-vs-deckops", "destination": "/zh/product-guide", "permanent": true },
-    { "source": "/zh/getting-started/runtime-architecture", "destination": "/zh/runtime-architecture", "permanent": true },
-    { "source": "/zh/getting-started/architecture", "destination": "/zh/runtime-architecture", "permanent": true },
+    { "source": "/zh/runtime-architecture", "destination": "/zh/document-operations", "permanent": true },
+    { "source": "/zh/getting-started/runtime-architecture", "destination": "/zh/document-operations", "permanent": true },
+    { "source": "/zh/getting-started/architecture", "destination": "/zh/document-operations", "permanent": true },
+    { "source": "/zh/deckprobe/interfaces", "destination": "/zh/deckprobe/cli", "permanent": true },
     { "source": "/zh/products/deckops/document-information", "destination": "/zh/deckops/document-ir", "permanent": true },
     { "source": "/zh/products/deckhtml/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
     { "source": "/zh/products/:path*", "destination": "/zh/:path*", "permanent": true },
     { "source": "/zh/docs/quick-start", "destination": "/zh/deckhtml/quick-start", "permanent": true },
     { "source": "/zh/docs/overview", "destination": "/zh/introduction", "permanent": true },
     { "source": "/zh/docs/concepts", "destination": "/zh/product-guide", "permanent": true },
-    { "source": "/zh/docs/architecture", "destination": "/zh/runtime-architecture", "permanent": true },
+    { "source": "/zh/docs/architecture", "destination": "/zh/document-operations", "permanent": true },
     { "source": "/zh/docs/local-mode", "destination": "/zh/deckhtml/guides/local-mode", "permanent": true },
     { "source": "/zh/docs/cloud-mode", "destination": "/zh/deckhtml/guides/cloud-mode", "permanent": true },
     { "source": "/zh/docs/configuration", "destination": "/zh/deckhtml/guides/configuration", "permanent": true },
@@ -118,8 +122,14 @@
                 "group": "Start Here",
                 "pages": [
                   "introduction",
-                  "product-guide",
-                  "runtime-architecture"
+                  "getting-started",
+                  "product-guide"
+                ]
+              },
+              {
+                "group": "Core Concepts",
+                "pages": [
+                  "document-operations"
                 ]
               }
             ]
@@ -128,12 +138,23 @@
             "tab": "DeckProbe",
             "groups": [
               {
-                "group": "DeckProbe",
+                "group": "Get Started",
                 "pages": [
                   "deckprobe/overview",
-                  "deckprobe/quick-start",
-                  "deckprobe/output-model",
-                  "deckprobe/interfaces"
+                  "deckprobe/quick-start"
+                ]
+              },
+              {
+                "group": "Interfaces",
+                "pages": [
+                  "deckprobe/cli",
+                  "deckprobe/browser-sdk"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "deckprobe/output-model"
                 ]
               }
             ]
@@ -278,8 +299,14 @@
                 "group": "开始使用",
                 "pages": [
                   "zh/introduction",
-                  "zh/product-guide",
-                  "zh/runtime-architecture"
+                  "zh/getting-started",
+                  "zh/product-guide"
+                ]
+              },
+              {
+                "group": "核心概念",
+                "pages": [
+                  "zh/document-operations"
                 ]
               }
             ]
@@ -288,12 +315,23 @@
             "tab": "DeckProbe",
             "groups": [
               {
-                "group": "DeckProbe",
+                "group": "开始使用",
                 "pages": [
                   "zh/deckprobe/overview",
-                  "zh/deckprobe/quick-start",
-                  "zh/deckprobe/output-model",
-                  "zh/deckprobe/interfaces"
+                  "zh/deckprobe/quick-start"
+                ]
+              },
+              {
+                "group": "接入方式",
+                "pages": [
+                  "zh/deckprobe/cli",
+                  "zh/deckprobe/browser-sdk"
+                ]
+              },
+              {
+                "group": "参考",
+                "pages": [
+                  "zh/deckprobe/output-model"
                 ]
               }
             ]
