@@ -11,16 +11,16 @@ description: "理解 Deckflow 五个产品的职责和边界。"
 | 产品 | 方向 | 主要职责 | 不负责 |
 | --- | --- | --- | --- |
 | DeckProbe | 只读 | 带证据、置信度和探测成本的目标式文档事实 | 元素级内容提取、渲染、转换或修改 |
-| DeckRender | 源文件到视觉产物 | 文件渲染与预览 | 编辑源文件 |
-| DeckOps | 单向 | 解析 Document Information、Schema 化为 IR，并支持还原或派生格式 | 通过源文件感知模型回写变更 |
-| DeckUse | 双向 | 读取和修改支持的源格式 | HTML 优先的演示文稿创作 |
-| DeckHTML | HTML 到 PPTX | 从 HTML 生成演示文稿 | 通用已有文档嗅探或编辑 |
+| DeckRender | 源文件到视觉产物 | 通过 SDK 调用云端文件渲染 | 解析成 IR 或编辑源文件 |
+| DeckOps | 源文件到 IR 与派生结果 | 在统一云端运行时中提供 Probe、Parse 成 Document IR、Extract、Convert 和 Render | 通过源文件感知模型回写变更 |
+| DeckUse | 双向 | Manipulate 支持的 Office 源文件 | 通用文档转换或 HTML 原生创作 |
+| DeckHTML | HTML-native Deck Engine | 通过本地与云端路径从 HTML 生成演示文稿产物 | 通用已有文档嗅探或 Manipulate |
 
 ## 典型组合
 
 1. 使用 DeckProbe 只请求路由与策略判断所需的文档事实。
-2. 根据目标操作把文件路由到 DeckRender、DeckOps 或 DeckUse；需要实际内容和结构时使用 DeckOps 深度解析。
-3. 当 HTML 是 PPTX 的创作源时，单独使用 DeckHTML。
+2. 只需渲染时使用 DeckRender；需要统一 IR、语义 Extract、Convert 或组合运行时时使用 DeckOps。
+3. Manipulate 支持的 Office 源文件时使用 DeckUse；HTML 是 Deck 原生创作源时使用 DeckHTML。
 
 <Warning>
   不要从接入界面的名称推断产品契约。例如，一个 MCP Server 可能暴露多个产品支持的工具。应以能力与产品边界为准，传输方式是第二层概念。

@@ -1,37 +1,48 @@
 ---
 title: DeckOps
 sidebarTitle: 概览
-description: "将文档深度解析成结构化信息，用于分析、IR 构建和单向还原工作流。"
+description: "把不同文档格式解析成统一 Document IR，再进行语义提取、格式转换或渲染。"
 ---
 
 # DeckOps
 
-DeckOps 是深度解析和单向文档操作层。它的解析目标是 **Document Information**：对文件身份、物理与逻辑结构，以及已提取内容智能的结构化描述。
+DeckOps 是面向云端工作流的完整文档运行时，通过统一的 SDK 能力面提供 Probe、Parse、Extract、Convert 和 Render。
 
-解析完成后，Document Information 可以进一步 Schema 化为 IR，供下游分析、转换或还原使用。DeckOps 实现可用后，再补充具体 IR 契约。
+它的核心抽象是统一的 **Document IR**。不同格式的 Parser 将 PPTX、PDF、Keynote、Markdown 等支持的输入转换成同一种中间表示；下游操作面向 IR 实现，不再分别处理每一种源格式组合。
+
+<Note>
+  可以从架构上把 Document IR 类比为 LLVM IR：多种源格式先降低到共享表示，再由多种下游操作消费。这里只是设计类比，不表示兼容 LLVM。
+</Note>
 
 <CardGroup cols={2}>
-  <Card title="Document Information" href="/zh/products/deckops/document-information">
-    查看文件身份、文档结构和内容智能三个目标层次。
+  <Card title="Document IR" href="/zh/products/deckops/document-ir">
+    理解 Parse → IR → Extract / Convert 模型。
   </Card>
   <Card title="DeckProbe 与 DeckOps" href="/zh/getting-started/deckprobe-vs-deckops">
-    对比目标式轻量嗅探与深度文档解析。
+    在独立 Probe 和完整文档运行时之间进行选择。
   </Card>
 </CardGroup>
 
-## 适用场景
+## 核心操作
 
-- 工作流需要实际文本、图片、表格、图表、公式、评论或其他文档对象。
-- 需要表达页面、幻灯片、工作表、章节、母版、版式或工作簿结构，而不只是计数。
-- 下游处理需要对象位置、样式、关系和格式专属行为。
-- 解析结果需要 Schema 化为 IR，或还原成其他支持的格式。
+| 操作 | 目标 |
+| --- | --- |
+| Probe | 在深度处理前嗅探文档身份、结构摘要、安全和质量信号 |
+| Parse | 将支持的源格式降低为统一 Document IR |
+| Extract | 返回页面语义结构和内容，例如 Title、Subtitle、Chart、Speaker notes 和 Footnotes |
+| Convert | 生成另一种支持的格式，例如 PPTX → PDF、Keynote → PPTX 或 Markdown → PPTX |
+| Render | 生成页面或幻灯片视觉画面，用于预览和下游处理 |
+
+## Extract 是结构化提取
+
+Extract 不只是把文字拼接出来。它基于 IR 保留页面边界、语义角色、层级和对象关系，使调用方能够区分 Title 与 Subtitle、Chart 与 Caption，以及 Speaker notes、Footnotes 和画布上的可见内容。
 
 ## 产品边界
 
-DeckOps 比 [DeckProbe](/zh/products/deckprobe/overview) 更深入：Probe 返回目标式文档事实及证据，Ops 构建包含实际内容的结构模型。
+只需要本地 Rust 或浏览器 SDK 获取目标式文件事实时，使用独立的 [DeckProbe](/zh/products/deckprobe/overview)；只需要云端渲染时，使用独立的 [DeckRender](/zh/products/deckrender/overview)。
 
-在产品模型中，DeckOps 仍然是单向操作。需要通过源文件感知模型应用变更并写回支持的源文件时，使用 [DeckUse](/zh/products/deckuse/overview)；结果目标是视觉画面而非结构化内容时，使用 [DeckRender](/zh/products/deckrender/overview)。
+一个云端工作流需要组合文档运行时，或需要共享 IR 支撑 Parse、Extract、Convert 和 Render 时，使用 DeckOps。需要通过源文件感知模型把变更写回支持的 Office 文件时，使用 [DeckUse](/zh/products/deckuse/overview)。
 
-<Note>
-  本站的 Document Information 描述当前产品设计方向。DeckOps 源码和契约可用前，准确字段名、IR Schema、支持格式和还原保证仍属于待确认内容。
-</Note>
+<Info>
+  DeckOps 的执行能力位于云端，通过 SDK 接入。具体包、认证、调用限制、支持格式矩阵和 IR Schema 将在实现契约可用后补充。
+</Info>

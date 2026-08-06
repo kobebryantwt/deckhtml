@@ -11,6 +11,9 @@ DeckProbe is the discovery and inspection layer of the Deckflow product family. 
 Give DeckProbe the facts you need—such as the verified format, slide count, sheet names, encryption state, or asset counts—and it selects the lowest-cost valid probe path that can satisfy the requested targets and confidence.
 
 <CardGroup cols={2}>
+  <Card title="Open Playground" href="https://deckflow.github.io/playground/">
+    Explore a visual document profile, page preview, and the next operations available after inspection.
+  </Card>
   <Card title="Quickstart" href="/products/deckprobe/quick-start">
     Install the native CLI and inspect your first document.
   </Card>
@@ -39,5 +42,5 @@ DeckProbe does not return a complete list of text blocks, shapes, table cells, s
 It also does not render visual previews or mutate source files. Use [DeckRender](/products/deckrender/overview) for rendering and [DeckUse](/products/deckuse/overview) for source-aware editing.
 
 <Info>
-  DeckProbe is open source. The implementation, live target registry, and complete CLI and SDK reference are maintained in the [deckflow/deckprobe repository](https://github.com/deckflow/deckprobe).
+  DeckProbe runs locally through the native Rust CLI or in the browser through the JavaScript SDK. The implementation, live target registry, and complete reference are maintained in the [deckflow/deckprobe repository](https://github.com/deckflow/deckprobe).
 </Info>

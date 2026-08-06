@@ -60,6 +60,7 @@
     { "source": "/reference/output-png", "destination": "/products/deckhtml/reference/output-png", "permanent": true },
     { "source": "/reference/report-schema", "destination": "/products/deckhtml/reference/report-schema", "permanent": true },
     { "source": "/reference/:path*", "destination": "/platform/api/:path*", "permanent": true },
+    { "source": "/products/deckops/document-information", "destination": "/products/deckops/document-ir", "permanent": true },
     { "source": "/platform/api/create-html2pptx-task", "destination": "/platform/api/submit-async-task", "permanent": true },
     { "source": "/platform/api/get-task-details", "destination": "/platform/api/query-task-status", "permanent": true },
     { "source": "/zh/docs/quick-start", "destination": "/zh/products/deckhtml/quick-start", "permanent": true },
@@ -75,7 +76,8 @@
     { "source": "/zh/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
     { "source": "/zh/products/deckhtml/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
     { "source": "/zh/skills/:path*", "destination": "/zh/products/deckhtml/skills/:path*", "permanent": true },
-    { "source": "/zh/reference/:path*", "destination": "/zh/platform/api/:path*", "permanent": true }
+    { "source": "/zh/reference/:path*", "destination": "/zh/platform/api/:path*", "permanent": true },
+    { "source": "/zh/products/deckops/document-information", "destination": "/zh/products/deckops/document-ir", "permanent": true }
   ],
   "colors": {
     "primary": "#0f766e",
@@ -103,6 +105,7 @@
                 "pages": [
                   "getting-started/overview",
                   "getting-started/product-model",
+                  "getting-started/runtime-architecture",
                   "getting-started/deckprobe-vs-deckops",
                   "getting-started/architecture"
                 ]
@@ -136,7 +139,7 @@
                 "group": "DeckOps",
                 "pages": [
                   "products/deckops/overview",
-                  "products/deckops/document-information"
+                  "products/deckops/document-ir"
                 ]
               }
             ]
@@ -264,6 +267,7 @@
                 "pages": [
                   "zh/getting-started/overview",
                   "zh/getting-started/product-model",
+                  "zh/getting-started/runtime-architecture",
                   "zh/getting-started/deckprobe-vs-deckops",
                   "zh/getting-started/architecture"
                 ]
@@ -297,7 +301,7 @@
                 "group": "DeckOps",
                 "pages": [
                   "zh/products/deckops/overview",
-                  "zh/products/deckops/document-information"
+                  "zh/products/deckops/document-ir"
                 ]
               }
             ]

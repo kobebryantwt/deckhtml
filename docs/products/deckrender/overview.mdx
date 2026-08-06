@@ -1,23 +1,26 @@
 ---
 title: DeckRender
 sidebarTitle: Overview
-description: "Understand where file rendering belongs in the Deckflow product family."
+description: "Render supported document formats into visual page or slide output through a cloud-backed SDK."
 ---
 
 # DeckRender
 
-DeckRender is the rendering layer. It turns supported source files into visual output that can be previewed, reviewed, compared, or consumed by downstream pipelines.
+DeckRender is the focused rendering component of the Deckflow document runtime. Developers integrate through its SDK, while rendering executes in the cloud.
 
 ## Use DeckRender when
 
-- The workflow needs pixels or page/slide previews rather than document metadata.
-- Visual fidelity must be checked without editing the source file.
-- A downstream process needs rendered assets.
+- A workflow needs page or slide previews rather than structured document content.
+- Visual fidelity must be checked without manipulating the source file.
+- Thumbnails, review images, or other rendered assets are required downstream.
+- The application needs rendering without the broader Parse, Extract, and Convert surface of DeckOps.
 
 ## Product boundary
 
-DeckRender renders files. Use [DeckProbe](/products/deckprobe/overview) to inspect a file before rendering, [DeckOps](/products/deckops/overview) for one-way parsing or conversion, and [DeckUse](/products/deckuse/overview) when the source file itself must be edited.
+Use [DeckProbe](/products/deckprobe/overview) for local or browser inspection without rendering. Use [DeckOps](/products/deckops/overview) when rendering belongs to a larger cloud workflow that also needs Probe, Parse into Document IR, Extract, or Convert.
+
+Use [DeckUse](/products/deckuse/overview) when the source Office file must be manipulated rather than rendered.
 
 <Note>
-  Detailed installation, supported-format, and API pages will be added when the DeckRender project address and contracts are available.
+  SDK packages, rendering options, supported formats, and output contracts will be added when the DeckRender project address is available.
 </Note>

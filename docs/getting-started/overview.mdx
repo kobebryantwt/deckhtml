@@ -1,7 +1,7 @@
 ---
 title: Deckflow Developer Center
 sidebarTitle: Overview
-description: "Choose the Deckflow product that matches inspection, rendering, document operations, source editing, or HTML-to-PPTX generation."
+description: "Choose the Deckflow product for probing, rendering, unified IR, semantic extraction, conversion, Office manipulation, or HTML-native deck creation."
 ---
 
 # Build document workflows with Deckflow
@@ -16,15 +16,19 @@ Deckflow is organized around five products. Choose a product by the document ope
     Render source files into visual output for previews and downstream use.
   </Card>
   <Card title="DeckOps" href="/products/deckops/overview">
-    Parse files into an IR and produce one-way derived formats.
+    Parse formats into one Document IR, then extract, convert, or render.
   </Card>
   <Card title="DeckUse" href="/products/deckuse/overview">
-    Read and modify supported source files through bidirectional operations.
+    Manipulate supported Office source files while keeping them editable.
   </Card>
   <Card title="DeckHTML" href="/products/deckhtml/overview">
-    Generate editable PPTX presentations from HTML.
+    Build presentation artifacts with an HTML-native deck engine.
   </Card>
 </CardGroup>
+
+<Card title="Runtime architecture" href="/getting-started/runtime-architecture">
+  See how the core document runtime, Office manipulation layer, and HTML-native deck engine fit together.
+</Card>
 
 ## Choose by intent
 
@@ -32,9 +36,9 @@ Deckflow is organized around five products. Choose a product by the document ope
 | --- | --- |
 | Identify a file or read metadata and structural facts | [DeckProbe](/products/deckprobe/overview) |
 | Produce page or slide visuals | [DeckRender](/products/deckrender/overview) |
-| Parse, expose an IR, convert, or reconstruct in one direction | [DeckOps](/products/deckops/overview) |
-| Modify or delete elements in a supported source document | [DeckUse](/products/deckuse/overview) |
-| Author a PPTX from HTML | [DeckHTML](/products/deckhtml/overview) |
+| Parse into Document IR, extract semantic structure, convert, or use the combined runtime | [DeckOps](/products/deckops/overview) |
+| Manipulate elements in a supported Office source file | [DeckUse](/products/deckuse/overview) |
+| Author a deck from HTML | [DeckHTML](/products/deckhtml/overview) |
 
 <Note>
   CLI, SDK, API, and MCP are integration interfaces, not product categories. Their documentation lives under the product or shared platform capability they expose.

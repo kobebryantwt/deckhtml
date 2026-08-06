@@ -11,16 +11,16 @@ The product names describe what happens to a document. Integration surfaces such
 | Product | Direction | Primary responsibility | Does not own |
 | --- | --- | --- | --- |
 | DeckProbe | Read-only | Target-driven facts with evidence, confidence, and measured probe cost | Element-level content extraction, rendering, conversion, or mutation |
-| DeckRender | Source to visual output | File rendering and previews | Source editing |
-| DeckOps | One-way | Parse Document Information, normalize it into an IR, and support reconstruction or derived formats | Writing changes back through a source-aware editing model |
-| DeckUse | Bidirectional | Read and modify supported source formats | HTML-first presentation authoring |
-| DeckHTML | HTML to PPTX | Generate presentation files from HTML | General-purpose inspection or editing of existing documents |
+| DeckRender | Source to visual output | Cloud rendering through an SDK surface | Parsing into IR or source editing |
+| DeckOps | Source to IR and derived results | Probe, Parse into Document IR, Extract, Convert, and Render in one cloud runtime | Writing changes back through a source-aware editing model |
+| DeckUse | Bidirectional | Manipulate supported Office source files | General document conversion or HTML-first authoring |
+| DeckHTML | HTML-native deck engine | Generate presentation artifacts from HTML through local and cloud paths | General-purpose inspection or manipulation of existing documents |
 
 ## Typical composition
 
 1. Use DeckProbe to request only the document facts needed for routing and policy decisions.
-2. Route the file to DeckRender, DeckOps, or DeckUse based on the desired operation; use DeckOps when actual content and structure must be parsed.
-3. Use DeckHTML separately when HTML is the authoring source for a PPTX.
+2. Use DeckRender for a focused render path, or DeckOps when the workflow needs a unified IR, semantic extraction, conversion, or the combined runtime.
+3. Use DeckUse to manipulate a supported Office source file, and DeckHTML when HTML is the native authoring source for a deck.
 
 <Warning>
   Do not infer a product contract from an interface name. For example, an MCP server may expose tools backed by more than one product. The capability and product boundary are authoritative; the transport is secondary.

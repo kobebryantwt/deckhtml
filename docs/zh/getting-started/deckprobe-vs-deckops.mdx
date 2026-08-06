@@ -1,39 +1,54 @@
 ---
 title: DeckProbe 与 DeckOps
 sidebarTitle: DeckProbe 与 DeckOps
-description: "在目标式文档嗅探与包含实际内容的深度解析之间进行选择。"
+description: "在独立的本地或浏览器嗅探与完整云端文档运行时之间进行选择。"
 ---
 
 # DeckProbe 与 DeckOps
 
-DeckProbe 和 DeckOps 可能返回部分相同的高层事实，但它们服务于文档工作流的不同阶段。
+DeckProbe 是聚焦文件嗅探的引擎；DeckOps 是完整文档运行时，除了 Probe 和 Render，还提供 Parse、Extract 和 Convert。
 
 | 维度 | DeckProbe | DeckOps |
 | --- | --- | --- |
-| 主要目标 | 发现、路由和策略判断 | 深度解析、分析、IR 构建和还原 |
-| 典型问题 | 这是什么文件、包含什么、数量是多少？ | 实际对象是什么、在哪里、如何组织？ |
-| 信息粒度 | 文档级 Target 和证据 | 文档、页面或幻灯片、元素级信息 |
-| 跨格式模型 | 通用 Target 加 Office 与格式扩展 | 格式专属解析统一成 Document Information，之后再形成 IR |
-| 结构 | 数量、名称、尺寸和有边界的格式事实 | 结构树、节点、层级、坐标和关系 |
-| 内容 | 已实现的信号与摘要统计 | 实际文本、资源、样式、表格单元格、图表数据、备注、评论和动态行为 |
-| 成本模型 | 在明确预算内选择最低成本有效路径 | 执行恢复内容与结构所需的深度工作 |
-| 输出 | 带 Target 证据和执行成本的 Schema v2 Report | Document Information，以及后续 Schema 化的 IR |
-| 源文件修改 | 不支持 | 不负责源文件感知回写，此类工作流使用 DeckUse |
+| 主要目标 | 快速、目标式文档嗅探 | 端到端文档理解与转换 |
+| 执行方式 | 本地原生 Rust 或 Browser JS SDK | 通过 SDK 调用云端执行能力 |
+| 典型问题 | 这是什么文件、包含什么、数量是多少？ | 如何把文档转换成共享 IR、结构化提取结果或另一种格式？ |
+| 信息粒度 | 带证据和实际成本的文档级 Target | 文档、页面或幻灯片、元素级 IR Node |
+| 解析模型 | 只执行请求 Target 所需的 Probe Path | 格式专属 Parser 直接把文档降低成统一 Document IR |
+| 提取结果 | 信号、数量、名称、尺寸和有边界的格式事实 | Title、Subtitle、Chart、Speaker notes、Footnotes 等页面语义结构 |
+| 格式转换 | 不负责转换 | 在支持格式矩阵范围内通过共享 IR 转换 |
+| 渲染 | 不负责 | 组合运行时内置 Render |
+| 源文件修改 | 不支持 | 不负责源文件感知回写；Manipulate 使用 DeckUse |
 
-## 推荐工作流
+## 选择 DeckProbe
 
-<Steps>
-  <Step title="先嗅探">
-    使用 DeckProbe 验证格式、检查安全和质量信号、估计文档形态，并判断是否适合继续深度处理。
-  </Step>
-  <Step title="需要内容时再解析">
-    当工作流需要页面树、实际对象、内容、样式或关系时，将文档交给 DeckOps。
-  </Step>
-  <Step title="Schema 化后继续处理">
-    将解析得到的 Document Information Schema 化为 DeckOps IR，再进行分析、转换或目标格式还原。
-  </Step>
-</Steps>
+应用需要本地或浏览器内嗅探、确定性证据、明确置信度和有边界的 I/O，并希望 Browser SDK 不上传文档字节时，使用 DeckProbe。
+
+可以打开 [Deck Playground](https://deckflow.github.io/playground/)，直观查看文档级 Profile、页面预览和后续操作入口。
+
+## 选择 DeckOps
+
+云端工作流需要以下一项或多项能力时，使用 DeckOps：
+
+- 跨异构格式的统一 Document IR。
+- 保留页面与语义角色的结构化 Extract，而不是纯文本。
+- 基于共享 Parser 和 Writer 的格式 Convert。
+- 把 Render 与 Probe、文档操作组合在同一运行时中。
+
+## 运行流程
+
+```mermaid
+flowchart LR
+  S["源文档"] --> P["Probe"]
+  P --> D{"需要深度结构或转换？"}
+  D -- "否" --> R1["使用 Probe 结果"]
+  D -- "是" --> PARSE["DeckOps Parse"]
+  PARSE --> IR["Document IR"]
+  IR --> E["Extract"]
+  IR --> C["Convert"]
+  IR --> R["Render"]
+```
 
 <Note>
-  DeckProbe 的 `deep` 级别仍然返回 Target 证据，不会变成 DeckOps 的元素级解析。“Deep”描述允许使用的 Probe Path 和预算，而不是两个产品共享同一种输出模型。
+  DeckProbe 的 `deep` 级别仍然返回 Target 证据，不会生成 DeckOps Document IR；“Deep”只表示 Target Planner 可使用更多 Probe Path 和预算。
 </Note>

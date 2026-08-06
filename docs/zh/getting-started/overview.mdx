@@ -1,7 +1,7 @@
 ---
 title: Deckflow 开发者中心
 sidebarTitle: 概览
-description: "根据文件嗅探、渲染、单向操作、源文件编辑或 HTML 生成 PPTX 等需求选择 Deckflow 产品。"
+description: "根据文件嗅探、渲染、统一 IR、结构化提取、格式转换、Office 操作或 HTML Deck 创作等需求选择 Deckflow 产品。"
 ---
 
 # 使用 Deckflow 构建文档工作流
@@ -16,15 +16,19 @@ Deckflow 现在围绕五个产品组织。先按所需的文档操作选择产�
     把源文件渲染成预览或下游流程所需的视觉产物。
   </Card>
   <Card title="DeckOps" href="/zh/products/deckops/overview">
-    将文件解析成 IR，并生成单向派生格式。
+    将不同格式解析成统一 Document IR，再进行 Extract、Convert 或 Render。
   </Card>
   <Card title="DeckUse" href="/zh/products/deckuse/overview">
-    通过双向操作读取和修改支持的源文件。
+    Manipulate 支持的 Office 源文件，并保持文件可继续编辑。
   </Card>
   <Card title="DeckHTML" href="/zh/products/deckhtml/overview">
-    基于 HTML 生成可编辑的 PPTX 演示文稿。
+    使用 HTML-native Deck Engine 生成演示文稿产物。
   </Card>
 </CardGroup>
+
+<Card title="运行时架构" href="/zh/getting-started/runtime-architecture">
+  了解核心文档运行时、Office Manipulate Layer 和 HTML-native Deck Engine 如何协作。
+</Card>
 
 ## 按意图选择
 
@@ -32,9 +36,9 @@ Deckflow 现在围绕五个产品组织。先按所需的文档操作选择产�
 | --- | --- |
 | 识别文件，读取元数据或结构事实 | [DeckProbe](/zh/products/deckprobe/overview) |
 | 生成页面或幻灯片视觉画面 | [DeckRender](/zh/products/deckrender/overview) |
-| 单向 parse、提供 IR、转换或还原 | [DeckOps](/zh/products/deckops/overview) |
-| 修改或删除支持的源文档元素 | [DeckUse](/zh/products/deckuse/overview) |
-| 从 HTML 创作 PPTX | [DeckHTML](/zh/products/deckhtml/overview) |
+| Parse 成 Document IR、Extract 语义结构、Convert 或使用组合运行时 | [DeckOps](/zh/products/deckops/overview) |
+| Manipulate 支持的 Office 源文件元素 | [DeckUse](/zh/products/deckuse/overview) |
+| 从 HTML 创作 Deck | [DeckHTML](/zh/products/deckhtml/overview) |
 
 <Note>
   CLI、SDK、API 和 MCP 是接入界面，不是产品分类。对应文档应位于它所暴露的产品或共享平台能力之下。

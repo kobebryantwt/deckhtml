@@ -1,27 +1,29 @@
 ---
 title: DeckUse
 sidebarTitle: 概览
-description: "通过双向文档操作读取并修改支持的源文件。"
+description: "通过源文件感知的文档模型 Manipulate 支持的 Office 文件。"
 ---
 
 # DeckUse
 
-DeckUse 是双向文档操作层，用于读取支持的源文件，并把变更写回该文件模型。
+DeckUse 是 Deckflow 技术栈中的 Manipulate Layer。当文档需要保持原始 Office 格式并继续编辑时，使用 DeckUse 操作源文件。
 
 ## 当前重点
 
-目前已描述的实现重点是 Office PPTX 文件，以及元素修改、删除等操作。
+目前实现重点是 Office PPTX，支持修改、删除已有演示文稿元素等 Element-level 操作。
 
 ## 适用场景
 
-- 原始文件仍然是权威数据源。
-- 工作流需要更新或移除已有元素。
-- 结果仍需保持为可继续编辑的源格式文档。
+- Office 文件仍然是权威数据源和最终可编辑产物。
+- 工作流需要更新或删除已有元素，而不是生成派生表示。
+- 修改需要遵循源格式结构和对象关系。
 
 ## 产品边界
 
-单向 parse、IR 和还原流程使用 [DeckOps](/zh/products/deckops/overview)。需要保持与源格式双向编辑关系时使用 DeckUse。
+将不同格式 Parse 成 Document IR、Extract 语义结构、Convert 格式，或通过组合运行时 Render 时，使用 [DeckOps](/zh/products/deckops/overview)。操作明确属于源文件感知的 Office Manipulate 时，使用 DeckUse。
+
+DeckUse 不替代 [DeckHTML](/zh/products/deckhtml/overview)；DeckHTML 以 HTML 作为 Deck 的原生创作源。
 
 <Note>
-  DeckUse 项目地址和契约提供后，再补充元素模型、修改保证和 API 页面。
+  DeckUse 项目契约可用后，再补充支持的 Office 格式、元素模型、修改保证和包信息。
 </Note>

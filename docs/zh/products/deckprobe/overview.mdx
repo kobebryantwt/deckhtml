@@ -11,6 +11,9 @@ DeckProbe 是 Deckflow 产品体系中的发现与嗅探层。它无需先构建
 调用方只需指定所需事实，例如已验证格式、幻灯片数量、工作表名称、加密状态或资源数量；DeckProbe 会在置信度和预算约束下，选择能够满足目标的最低成本有效探测路径。
 
 <CardGroup cols={2}>
+  <Card title="打开 Playground" href="https://deckflow.github.io/playground/">
+    直观查看文档 Profile、页面预览和嗅探后的下一步操作。
+  </Card>
   <Card title="快速开始" href="/zh/products/deckprobe/quick-start">
     安装原生 CLI，并嗅探第一个文档。
   </Card>
@@ -39,5 +42,5 @@ DeckProbe 不会返回用于复现文档的完整文本块、形状、表格单�
 DeckProbe 也不生成视觉预览或修改源文件。渲染使用 [DeckRender](/zh/products/deckrender/overview)，源文件感知编辑使用 [DeckUse](/zh/products/deckuse/overview)。
 
 <Info>
-  DeckProbe 已开源，实际实现、实时 Target 注册表以及完整 CLI 和 SDK 参考文档位于 [deckflow/deckprobe](https://github.com/deckflow/deckprobe)。
+  DeckProbe 可通过原生 Rust CLI 在本地运行，也可通过 JavaScript SDK 在浏览器内运行。实际实现、实时 Target 注册表和完整参考文档位于 [deckflow/deckprobe](https://github.com/deckflow/deckprobe)。
 </Info>

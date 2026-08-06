@@ -1,37 +1,48 @@
 ---
 title: DeckOps
 sidebarTitle: Overview
-description: "Deeply parse documents into structured information for analysis, IR construction, and one-way reconstruction workflows."
+description: "Parse heterogeneous document formats into one Document IR, then extract semantic structure, convert formats, or render outputs."
 ---
 
 # DeckOps
 
-DeckOps is the deep parsing and one-way document operations layer. Its parsing target is **Document Information**: a structured description of the file's identity, physical and logical structure, and extracted content intelligence.
+DeckOps is the full document runtime for cloud workflows. It brings probing, parsing, semantic extraction, format conversion, and rendering behind one SDK-facing capability surface.
 
-After parsing, that information can be normalized into a schema-based IR for downstream analysis, transformation, or reconstruction. The detailed IR contract will be documented after the DeckOps implementation is available.
+Its central abstraction is a unified **Document IR**. Format-specific parsers translate PPTX, PDF, Keynote, Markdown, and other supported inputs into the same intermediate representation. Downstream operations consume the IR instead of implementing every source-format pair independently.
+
+<Note>
+  Think of Document IR in the same architectural sense as LLVM IR: many source formats lower into a shared representation, and multiple downstream operations build on that representation. This is an analogy, not a claim of LLVM compatibility.
+</Note>
 
 <CardGroup cols={2}>
-  <Card title="Document Information" href="/products/deckops/document-information">
-    Review the intended identity, structure, and content-intelligence layers.
+  <Card title="Document IR" href="/products/deckops/document-ir">
+    Understand the Parse → IR → Extract / Convert model.
   </Card>
   <Card title="DeckProbe vs. DeckOps" href="/getting-started/deckprobe-vs-deckops">
-    Compare lightweight target probing with deep document parsing.
+    Decide between a standalone probe and the full document runtime.
   </Card>
 </CardGroup>
 
-## Use DeckOps when
+## Core operations
 
-- A workflow needs actual text, images, tables, charts, formulas, comments, or other document objects.
-- Page, slide, sheet, section, master, layout, or workbook structure must be represented rather than merely counted.
-- Object positions, styles, relationships, and format-specific behavior are needed for downstream processing.
-- Parsed information must be schema-normalized into an IR or reconstructed into another supported format.
+| Operation | Purpose |
+| --- | --- |
+| Probe | Inspect document identity, structure summaries, security, and quality signals before deeper work |
+| Parse | Lower a supported source format into the unified Document IR |
+| Extract | Return semantic page structure and content such as titles, subtitles, charts, speaker notes, and footnotes |
+| Convert | Generate another supported format, such as PPTX → PDF, Keynote → PPTX, or Markdown → PPTX |
+| Render | Produce visual page or slide output for preview and downstream processing |
+
+## Extract is structural
+
+Extract is not limited to concatenating text. It uses the IR to preserve page boundaries, semantic roles, hierarchy, and object relationships. A consumer can distinguish a title from a subtitle, a chart from its caption, and speaker notes or footnotes from visible slide content.
 
 ## Product boundary
 
-DeckOps is deeper than [DeckProbe](/products/deckprobe/overview): Probe returns targeted document facts and evidence, while Ops builds a content-bearing structural model.
+Use standalone [DeckProbe](/products/deckprobe/overview) when a local Rust binary or in-browser SDK only needs targeted file facts. Use standalone [DeckRender](/products/deckrender/overview) when the workflow only needs cloud rendering.
 
-DeckOps remains one-way in the product model. Use [DeckUse](/products/deckuse/overview) when changes must be applied through a source-aware model and written back to a supported source file. Use [DeckRender](/products/deckrender/overview) when the required result is visual output rather than structured content.
+Use DeckOps when one cloud workflow needs the combined runtime or a shared IR for Parse, Extract, Convert, and Render. Use [DeckUse](/products/deckuse/overview) when changes must be applied back to a supported Office source file through a source-aware manipulation model.
 
-<Note>
-  The Document Information model on this site describes the current product direction. Exact field names, IR schemas, supported formats, and reconstruction guarantees remain provisional until they can be verified against the DeckOps source and contracts.
-</Note>
+<Info>
+  DeckOps execution is cloud-based and accessed through its SDK surface. Concrete packages, authentication, quotas, supported-format matrices, and IR schemas will be documented when the implementation contracts are available.
+</Info>
