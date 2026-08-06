@@ -1,0 +1,84 @@
+---
+title: DeckProbe Quickstart
+sidebarTitle: Quickstart
+description: "Try DeckProbe in the browser or install, verify, and run the native CLI."
+---
+
+## Try it online
+
+<Card title="Open Deck Playground ↗" href="https://deckflow.github.io/playground/">
+  View a document profile and page preview directly in the browser.
+</Card>
+
+**[Launch Deck Playground](https://deckflow.github.io/playground/)**
+
+## Install a prebuilt release
+
+The installer selects the archive for the current operating system and CPU.
+
+<Tabs>
+  <Tab title="macOS">
+    ```bash
+    curl --proto '=https' --tlsv1.2 -LsSf \
+      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    ```
+  </Tab>
+  <Tab title="Linux">
+    ```bash
+    curl --proto '=https' --tlsv1.2 -LsSf \
+      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+    ```
+
+    Restart the shell if the installer updates the user `Path`.
+  </Tab>
+</Tabs>
+
+## Or install from source
+
+Source installation requires Rust 1.88 or newer and Git:
+
+```bash
+cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
+```
+
+## Verify the installation
+
+Confirm that the executable is available:
+
+```bash
+deckprobe --version
+```
+
+For a compact option list or the full built-in help:
+
+```bash
+deckprobe -h
+deckprobe --help
+```
+
+## Probe a document
+
+Run the default metadata-level probe:
+
+```bash
+deckprobe --pretty report.pdf
+```
+
+Request only the facts your workflow needs:
+
+```bash
+deckprobe --pretty -t format,slide_count deck.pptx
+```
+
+The command writes a Schema v2 JSON report containing the selected driver, target results, confidence, evidence paths, diagnostics, and measured execution cost.
+
+## Next steps
+
+- Read [Output Model](/deckprobe/output-model) before consuming reports in automation.
+- Read [CLI and Browser SDK](/deckprobe/interfaces) for target selectors, JSONL, browser inputs, and Worker usage.
+- See the repository's [installation guide](https://github.com/deckflow/deckprobe/blob/main/docs/INSTALLATION.md) for custom locations, upgrades, uninstallation, checksums, and provenance verification.

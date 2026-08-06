@@ -1,0 +1,45 @@
+---
+title: 概览
+sidebarTitle: 概览
+description: "了解如何在应用代码中通过 SDK 接入 DeckHTML 的转换能力。"
+---
+
+SDK 章节面向希望在服务端、内部工具或自动化流程里直接调用 DeckHTML 的团队。
+
+<Note>
+  当前已发布 npm 包已经提供可用的 Node 程序化接口，因此这一部分先围绕 Node SDK 的实际接入方式展开。
+</Note>
+
+## 当前可用的 SDK 文档
+
+<CardGroup cols={2}>
+  <Card title="Node SDK" href="/zh/deckhtml/sdk/node">
+    通过 JavaScript 或 TypeScript 调用 `convertHtmlToPptx()`，在代码里完成程序化转换。
+  </Card>
+  <Card title="Python SDK">
+    即将提供。
+  </Card>
+</CardGroup>
+
+## 什么时候应该用 SDK
+
+如果你的场景符合下面这些特征，就更适合走 SDK：
+
+- 转换流程本身就是后端应用逻辑的一部分
+- 你希望在 JavaScript 或 TypeScript 代码里直接调用 DeckHTML
+- 你更希望传入类型化参数，而不是拼接 shell 命令
+- 你需要在内存中直接拿到转换结果 `Buffer`
+
+## 建议接入顺序
+
+<Steps>
+  <Step title="先用 CLI 验证输入和结果">
+    先在终端里确认 HTML 输入、输出行为和基础参数都符合预期。
+  </Step>
+  <Step title="再迁移到 Node SDK">
+    把已经验证过的输入路径迁移到 `convertHtmlToPptx()` 这样的程序化调用方式。
+  </Step>
+  <Step title="接入你自己的存储或任务系统">
+    程序化接口返回的是内存里的转换结果，所以最终如何落盘、上传或继续分发，由你的应用自行控制。
+  </Step>
+</Steps>

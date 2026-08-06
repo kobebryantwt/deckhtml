@@ -1,0 +1,45 @@
+---
+title: Overview
+sidebarTitle: Overview
+description: "Use the DeckHTML package inside application code through the Node programmatic API."
+---
+
+The SDK section is for teams integrating DeckHTML into services, internal tools, and automation code.
+
+<Note>
+  The npm package already exposes a Node programmatic API. For now, that is the concrete SDK surface we can document reliably.
+</Note>
+
+## Available SDK documentation
+
+<CardGroup cols={2}>
+  <Card title="Node SDK" href="/deckhtml/sdk/node">
+    Use the `convertHtmlToPptx()` API from JavaScript or TypeScript.
+  </Card>
+  <Card title="Python SDK">
+    Coming soon.
+  </Card>
+</CardGroup>
+
+## When to use the SDK
+
+Choose the SDK layer when:
+
+- conversion is part of backend application logic
+- you want to call DeckHTML from JavaScript or TypeScript directly
+- you want typed options instead of shell flags
+- you need the conversion result as an in-memory `Buffer`
+
+## Suggested adoption path
+
+<Steps>
+  <Step title="Prototype with the CLI first">
+    Validate your HTML input and expected output behavior at the terminal.
+  </Step>
+  <Step title="Move to the Node SDK for code-level integration">
+    Use the published `convertHtmlToPptx()` function in services, workers, or internal tools.
+  </Step>
+  <Step title="Add your own file writing or storage layer">
+    The programmatic API returns conversion output in memory, so your application decides how to persist or upload it.
+  </Step>
+</Steps>

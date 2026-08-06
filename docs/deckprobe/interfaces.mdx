@@ -1,0 +1,198 @@
+---
+title: DeckProbe CLI and Browser SDK
+sidebarTitle: CLI and Browser SDK
+description: "Use DeckProbe through the native CLI, persistent JSONL, browser main thread, or browser Worker."
+---
+
+DeckProbe exposes the same target-driven Rust engine through native and WebAssembly interfaces. Choose an interface based on where document bytes live and how often the application probes files.
+
+| Interface | Best for | Execution model |
+| --- | --- | --- |
+| Native CLI, single-shot | Shell commands, CI, and one-off automation | Starts a process for one input |
+| Native CLI, persistent JSONL | Services, queues, and high-volume local batches | Reuses one process and handles one record per line |
+| Browser SDK, main thread | Small probes close to a user interaction | Runs WebAssembly on the UI thread |
+| Browser SDK, Worker | User-provided files and deep probes | Runs the same engine off the UI thread |
+
+## Native CLI
+
+Install and verify the CLI by following the [Quickstart](/deckprobe/quick-start).
+
+### Command forms
+
+```text
+deckprobe [OPTIONS] <INPUT>
+deckprobe --jsonl [OPTIONS]
+deckprobe <COMMAND> [OPTIONS]
+```
+
+Run `deckprobe -h` for a compact list or `deckprobe --help` for selectors, examples, and exit statuses.
+
+### Inspect local files
+
+Run the default Metadata-level probe:
+
+```bash
+deckprobe report.pdf
+```
+
+Request and pretty-print one target:
+
+```bash
+deckprobe -t slide_count --pretty deck.pptx
+```
+
+Request several targets in one pass. `-t` is repeatable and also accepts comma-separated values:
+
+```bash
+deckprobe -t format,title,page_count report.pdf
+deckprobe -t title -t page_count report.pdf
+```
+
+Short names are accepted after the filename extension selects a format. Reports retain stable canonical keys such as `powerpoint.slide_count` for machine consumers.
+
+### Read raw bytes from stdin
+
+Provide a logical filename with an extension so DeckProbe can route the bytes:
+
+```bash
+cat workbook.xlsx | deckprobe -n workbook.xlsx -
+```
+
+`--input-format` is an additional assertion; it does not replace the logical filename or force an unrelated parser.
+
+### Process multiple inputs with JSONL
+
+```bash
+printf '%s\n' \
+  '{"path":"report.pdf"}' \
+  '{"path":"deck.pptx"}' \
+  | deckprobe --jsonl -t @summary
+```
+
+Each non-empty input line can be a path string, a `{ "path": "…" }` record, or a named base64 payload. DeckProbe writes one compact Schema v2 result per line and continues after record-level errors.
+
+### Target selectors
+
+| Selector | Includes |
+| --- | --- |
+| `@header` | Low-cost identity targets |
+| `@default` | Driver defaults for the selected level |
+| `@summary` | Identity, common metadata, and primary structure |
+| `@security` | Encryption, macros, signatures, external relationships, and active content |
+| `@structure` | Format-owned counts, names, dimensions, and structure |
+| `@assets` | Images, media, previews, fonts, and embedded-object summaries |
+| `@quality` | Integrity, repair, extension, and conformance signals |
+| `@format` | Format-specific targets available at the selected level |
+| `@all` | Every target available at the selected level |
+
+Selectors and target names can be combined:
+
+```bash
+deckprobe -t @summary -t @security report.pdf
+deckprobe -t @header,title,page_count report.pdf
+```
+
+### Probe level and confidence
+
+`-l` / `--probe-level` selects `header`, `metadata`, or `deep`. Metadata is the default. `-c` / `--minimum-confidence` accepts `low`, `medium`, `high`, or `exact`; High is the default.
+
+Require an exact slide count while keeping other targets at the default confidence:
+
+```bash
+deckprobe -t slide_count,orientation \
+  -C slide_count=exact \
+  deck.pptx
+```
+
+### Output behavior
+
+- `--pretty` changes whitespace only.
+- `--view values` returns a compact target-to-value map.
+- `--strict` writes the report and exits with status `5` if any requested target remains unresolved.
+- `--telemetry` includes wall-clock `elapsed_ms`; it is omitted by default for deterministic output.
+- `-P` / `--plan` previews selected paths without executing non-header probe paths.
+
+### Resource budgets
+
+Override the selected level's defaults when processing untrusted inputs:
+
+```bash
+deckprobe -s \
+  -b 8388608 \
+  -x 16777216 \
+  -e 5000 \
+  -T 1000 \
+  -t format,has_macros \
+  upload.docm
+```
+
+| Option | Limit |
+| --- | --- |
+| `-b`, `--probe-size` | Physical bytes read |
+| `-x`, `--max-expanded-bytes` | Cumulative decompressed bytes |
+| `-e`, `--max-archive-entries` | ZIP/OPC entry count |
+| `-T`, `--timeout-ms` | Wall-clock probe budget |
+
+For every flag, exit status, format option, and generated man page, consult the source-aligned [CLI Reference](https://github.com/deckflow/deckprobe/blob/main/docs/CLI-REFERENCE.md).
+
+## Browser JavaScript SDK
+
+The `@deckflow/deckprobe` package runs the same engine in WebAssembly. It accepts `File`, `Blob`, `ArrayBuffer`, and `Uint8Array`; document bytes remain in the browser.
+
+### Install
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+### Main-thread probe
+
+`probe()` initializes WebAssembly lazily. Call `initDeckProbe()` during startup or idle time to prepare the first interaction:
+
+```ts
+import { initDeckProbe, probe } from "@deckflow/deckprobe";
+
+await initDeckProbe();
+
+const report = await probe(file, {
+  targets: ["@summary", "@security"],
+  level: "metadata",
+});
+```
+
+A browser `File` supplies its own name. For `Blob`, `ArrayBuffer`, or `Uint8Array`, pass a logical filename so the extension can select the format:
+
+```ts
+const bytes = await fetch("/documents/quarterly-deck").then((response) =>
+  response.arrayBuffer(),
+);
+
+const report = await probe(bytes, {
+  name: "quarterly-deck.pptx",
+  targets: ["powerpoint.slide_count"],
+});
+```
+
+### Worker probe
+
+Use the Worker entry for user-provided files, large inputs, or deep probes that should not occupy the UI thread:
+
+```ts
+import { createDeckProbeWorker } from "@deckflow/deckprobe/worker";
+
+const worker = createDeckProbeWorker();
+try {
+  const report = await worker.probe(file, {
+    targets: ["@summary"],
+    level: "deep",
+  });
+} finally {
+  worker.terminate();
+}
+```
+
+Reuse one Worker for a batch, then terminate it when the owning screen or job ends. `terminate()` cancels pending probes.
+
+### Capability discovery
+
+The main SDK entry also exports `formats()`, `targets(format)`, `schema()`, and `version()`. Use them to populate format/target selectors, validate responses against the bundled contract, and display the active engine version.

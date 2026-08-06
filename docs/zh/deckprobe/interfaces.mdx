@@ -1,0 +1,198 @@
+---
+title: DeckProbe CLI 与 Browser SDK
+sidebarTitle: CLI 与 Browser SDK
+description: "通过原生 CLI、常驻 JSONL、浏览器主线程或 Browser Worker 使用 DeckProbe。"
+---
+
+DeckProbe 通过原生和 WebAssembly 接口提供同一套目标驱动 Rust 引擎。应根据文档字节所在位置和探测频率选择接入方式。
+
+| 接口 | 适用场景 | 执行模型 |
+| --- | --- | --- |
+| 原生 CLI，单次执行 | Shell、CI 和一次性自动化 | 为一个输入启动一个进程 |
+| 原生 CLI，常驻 JSONL | 服务、队列和高吞吐本地批处理 | 复用一个进程，每行处理一条记录 |
+| Browser SDK，主线程 | 靠近用户交互的小型 Probe | 在 UI 线程运行 WebAssembly |
+| Browser SDK，Worker | 用户文件和 Deep Probe | 在 UI 线程之外运行同一引擎 |
+
+## 原生 CLI
+
+按照[快速开始](/zh/deckprobe/quick-start)安装并验证 CLI。
+
+### 命令形式
+
+```text
+deckprobe [OPTIONS] <INPUT>
+deckprobe --jsonl [OPTIONS]
+deckprobe <COMMAND> [OPTIONS]
+```
+
+运行 `deckprobe -h` 查看简要列表，或运行 `deckprobe --help` 查看 Selector、示例和退出状态。
+
+### 嗅探本地文件
+
+执行默认 Metadata-level Probe：
+
+```bash
+deckprobe report.pdf
+```
+
+请求一个 Target 并格式化输出：
+
+```bash
+deckprobe -t slide_count --pretty deck.pptx
+```
+
+一次请求多个 Target。`-t` 可以重复，也接受逗号分隔值：
+
+```bash
+deckprobe -t format,title,page_count report.pdf
+deckprobe -t title -t page_count report.pdf
+```
+
+扩展名选中格式后可以使用 Short Name；报告会保留 `powerpoint.slide_count` 这类稳定 Canonical Key，供程序消费。
+
+### 从 stdin 读取原始字节
+
+需要提供包含扩展名的逻辑文件名，供 DeckProbe 路由字节：
+
+```bash
+cat workbook.xlsx | deckprobe -n workbook.xlsx -
+```
+
+`--input-format` 只是附加断言，不能替代逻辑文件名，也不会强制使用不相关的 Parser。
+
+### 使用 JSONL 处理多个输入
+
+```bash
+printf '%s\n' \
+  '{"path":"report.pdf"}' \
+  '{"path":"deck.pptx"}' \
+  | deckprobe --jsonl -t @summary
+```
+
+每个非空输入行可以是路径字符串、`{ "path": "…" }` 记录或带名称的 Base64 Payload。DeckProbe 每行输出一个紧凑 Schema v2 结果，并在单条记录出错后继续处理。
+
+### Target Selector
+
+| Selector | 包含内容 |
+| --- | --- |
+| `@header` | 低成本身份 Target |
+| `@default` | 当前 Level 下的 Driver 默认 Target |
+| `@summary` | 身份、通用元数据和主要结构 |
+| `@security` | 加密、宏、签名、外部关系和活动内容 |
+| `@structure` | 格式专属数量、名称、尺寸和结构 |
+| `@assets` | 图片、媒体、预览图、字体和嵌入对象摘要 |
+| `@quality` | 完整性、修复、扩展名和 Conformance 信号 |
+| `@format` | 当前 Level 可用的格式专属 Target |
+| `@all` | 当前 Level 可用的全部 Target |
+
+Selector 和 Target Name 可以组合：
+
+```bash
+deckprobe -t @summary -t @security report.pdf
+deckprobe -t @header,title,page_count report.pdf
+```
+
+### Probe Level 与置信度
+
+`-l` / `--probe-level` 可选 `header`、`metadata` 或 `deep`，默认为 Metadata。`-c` / `--minimum-confidence` 可选 `low`、`medium`、`high` 或 `exact`，默认为 High。
+
+仅要求 Slide Count 达到 Exact，其他 Target 保持默认置信度：
+
+```bash
+deckprobe -t slide_count,orientation \
+  -C slide_count=exact \
+  deck.pptx
+```
+
+### 输出行为
+
+- `--pretty` 只改变空白格式。
+- `--view values` 返回紧凑的 Target-to-Value Map。
+- `--strict` 在任一请求 Target 未解析时仍输出报告，并以状态 `5` 退出。
+- `--telemetry` 增加墙钟时间 `elapsed_ms`；默认省略以保证确定性输出。
+- `-P` / `--plan` 只预览所选路径，不执行非 Header Probe Path。
+
+### 资源预算
+
+处理不可信输入时，可以覆盖当前 Level 的默认限制：
+
+```bash
+deckprobe -s \
+  -b 8388608 \
+  -x 16777216 \
+  -e 5000 \
+  -T 1000 \
+  -t format,has_macros \
+  upload.docm
+```
+
+| 选项 | 限制 |
+| --- | --- |
+| `-b`, `--probe-size` | 物理读取字节数 |
+| `-x`, `--max-expanded-bytes` | 累计解压字节数 |
+| `-e`, `--max-archive-entries` | ZIP/OPC 条目数 |
+| `-T`, `--timeout-ms` | 墙钟时间预算 |
+
+所有 Flag、退出状态、格式选项和 Man Page 生成方式可继续查阅与源码同步的 [CLI Reference](https://github.com/deckflow/deckprobe/blob/main/docs/CLI-REFERENCE.md)。
+
+## Browser JavaScript SDK
+
+`@deckflow/deckprobe` 包通过 WebAssembly 运行同一引擎，接受 `File`、`Blob`、`ArrayBuffer` 和 `Uint8Array`，文档字节始终留在浏览器中。
+
+### 安装
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+### 主线程 Probe
+
+`probe()` 会延迟初始化 WebAssembly。可以在应用启动或空闲时调用 `initDeckProbe()`，提前准备第一次交互：
+
+```ts
+import { initDeckProbe, probe } from "@deckflow/deckprobe";
+
+await initDeckProbe();
+
+const report = await probe(file, {
+  targets: ["@summary", "@security"],
+  level: "metadata",
+});
+```
+
+浏览器 `File` 自带文件名；`Blob`、`ArrayBuffer` 或 `Uint8Array` 需要传入逻辑文件名，让扩展名选择格式：
+
+```ts
+const bytes = await fetch("/documents/quarterly-deck").then((response) =>
+  response.arrayBuffer(),
+);
+
+const report = await probe(bytes, {
+  name: "quarterly-deck.pptx",
+  targets: ["powerpoint.slide_count"],
+});
+```
+
+### Worker Probe
+
+用户文件、大文件或不应占用 UI 线程的 Deep Probe 使用 Worker 入口：
+
+```ts
+import { createDeckProbeWorker } from "@deckflow/deckprobe/worker";
+
+const worker = createDeckProbeWorker();
+try {
+  const report = await worker.probe(file, {
+    targets: ["@summary"],
+    level: "deep",
+  });
+} finally {
+  worker.terminate();
+}
+```
+
+一批任务可以复用同一个 Worker，在所属页面或任务结束时终止。`terminate()` 会取消尚未完成的 Probe。
+
+### 能力发现
+
+主 SDK 入口还导出 `formats()`、`targets(format)`、`schema()` 和 `version()`。可用于生成格式与 Target Selector、按照内置契约校验结果，以及展示当前引擎版本。

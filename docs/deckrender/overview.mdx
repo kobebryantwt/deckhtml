@@ -1,0 +1,24 @@
+---
+title: DeckRender
+sidebarTitle: Overview
+description: "Render supported document formats into visual page or slide output through a cloud-backed SDK."
+---
+
+DeckRender is the focused rendering component of the Deckflow document runtime. Developers integrate through its SDK, while rendering executes in the cloud.
+
+## Use DeckRender when
+
+- A workflow needs page or slide previews rather than structured document content.
+- Visual fidelity must be checked without manipulating the source file.
+- Thumbnails, review images, or other rendered assets are required downstream.
+- The application needs rendering without the broader Parse, Extract, and Convert surface of DeckOps.
+
+## Product boundary
+
+Use [DeckProbe](/deckprobe/overview) for local or browser inspection without rendering. Use [DeckOps](/deckops/overview) when rendering belongs to a larger cloud workflow that also needs Probe, Parse into Document IR, Extract, or Convert.
+
+Use [DeckUse](/deckuse/overview) when the source Office file must be manipulated rather than rendered.
+
+<Note>
+  SDK packages, rendering options, supported formats, and output contracts will be added when the DeckRender project address is available.
+</Note>

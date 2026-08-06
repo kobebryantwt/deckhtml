@@ -1,0 +1,46 @@
+---
+title: DeckOps
+sidebarTitle: Overview
+description: "Parse heterogeneous document formats into one Document IR, then extract semantic structure, convert formats, or render outputs."
+---
+
+DeckOps is the full document runtime for cloud workflows. It brings probing, parsing, semantic extraction, format conversion, and rendering behind one SDK-facing capability surface.
+
+Its central abstraction is a unified **Document IR**. Format-specific parsers translate PPTX, PDF, Keynote, Markdown, and other supported inputs into the same intermediate representation. Downstream operations consume the IR instead of implementing every source-format pair independently.
+
+<Note>
+  Think of Document IR in the same architectural sense as LLVM IR: many source formats lower into a shared representation, and multiple downstream operations build on that representation. This is an analogy, not a claim of LLVM compatibility.
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Document IR" href="/deckops/document-ir">
+    Understand the Parse → IR → Extract / Convert model.
+  </Card>
+  <Card title="Choose a product" href="/product-guide">
+    Compare DeckOps with the other document components by task and output.
+  </Card>
+</CardGroup>
+
+## Core operations
+
+| Operation | Purpose |
+| --- | --- |
+| Probe | Inspect document identity, structure summaries, security, and quality signals before deeper work |
+| Parse | Lower a supported source format into the unified Document IR |
+| Extract | Return semantic page structure and content such as titles, subtitles, charts, speaker notes, and footnotes |
+| Convert | Generate another supported format, such as PPTX → PDF, Keynote → PPTX, or Markdown → PPTX |
+| Render | Produce visual page or slide output for preview and downstream processing |
+
+## Extract is structural
+
+Extract is not limited to concatenating text. It uses the IR to preserve page boundaries, semantic roles, hierarchy, and object relationships. A consumer can distinguish a title from a subtitle, a chart from its caption, and speaker notes or footnotes from visible slide content.
+
+## Product boundary
+
+Use standalone [DeckProbe](/deckprobe/overview) when a local Rust binary or in-browser SDK only needs targeted file facts. Use standalone [DeckRender](/deckrender/overview) when the workflow only needs cloud rendering.
+
+Use DeckOps when one cloud workflow needs the combined runtime or a shared IR for Parse, Extract, Convert, and Render. Use [DeckUse](/deckuse/overview) when changes must be applied back to a supported Office source file through a source-aware manipulation model.
+
+<Info>
+  DeckOps execution is cloud-based and accessed through its SDK surface. Concrete packages, authentication, quotas, supported-format matrices, and IR schemas will be documented when the implementation contracts are available.
+</Info>

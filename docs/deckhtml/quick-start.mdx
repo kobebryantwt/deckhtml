@@ -1,0 +1,79 @@
+---
+title: Quickstart
+sidebarTitle: Quickstart
+description: "Convert your first HTML file into a PPTX artifact with DeckHTML, then expand to other execution paths."
+---
+
+This is the shortest path from an HTML file to a generated deck artifact.
+
+<Note>
+  This page is intentionally CLI-first. Once you have a successful local conversion, you can map the same flow to SDK or MCP usage.
+</Note>
+
+## In five steps
+
+<Steps>
+  <Step title="Prepare an HTML slide">
+    Create an HTML file such as `index.html`. DeckHTML works best when each page represents a single slide or a clearly ordered set of slides.
+
+    ```html
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Hello DeckHTML</title>
+      </head>
+      <body>
+        <section>
+          <h1>Hello DeckHTML</h1>
+          <p>Convert this page into presentation output.</p>
+        </section>
+      </body>
+    </html>
+    ```
+  </Step>
+  <Step title="Run DeckHTML without installing globally">
+    Use the package directly with `npx`:
+
+    ```bash
+    npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+    ```
+  </Step>
+  <Step title="Or install it once">
+    If you prefer a reusable local command:
+
+    ```bash
+    npm install -g @deckflow/deckhtml
+    deckhtml index.html -o deck.pptx
+    ```
+  </Step>
+  <Step title="Check the generated PPTX output">
+    Successful local conversion writes the target PPTX and prints either the output path or structured JSON, depending on your output mode.
+
+    ```bash
+    deckhtml index.html -o deck.pptx
+    deckhtml index.html -o deck.pptx --json
+    ```
+  </Step>
+  <Step title="Choose the right execution mode">
+    Use [Local Mode](/deckhtml/guides/local-mode) when conversion should run on the same machine, or [Cloud Mode](/deckhtml/guides/cloud-mode) when you need remote execution or cloud-only font embedding.
+  </Step>
+</Steps>
+
+## What to read next
+
+<CardGroup cols={3}>
+  <Card title="Concepts" href="/product-guide">
+    Learn the mental model behind inputs, outputs, and conversion flow.
+  </Card>
+  <Card title="Configuration" href="/deckhtml/guides/configuration">
+    Review the settings that affect behavior across environments and output types.
+  </Card>
+  <Card title="CLI Examples" href="/deckhtml/cli/examples">
+    Explore richer end-to-end examples once the minimal path is working.
+  </Card>
+</CardGroup>
+
+<Tip>
+  If your first command succeeds, keep going with the same input and switch only one thing at a time: execution mode, output behavior, or integration surface.
+</Tip>

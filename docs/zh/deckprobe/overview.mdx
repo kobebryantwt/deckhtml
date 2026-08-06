@@ -1,0 +1,64 @@
+---
+title: DeckProbe
+sidebarTitle: 概览
+description: "无需渲染文档或启动对应桌面软件，即可嗅探不可信的 PDF、Microsoft Office 和现代 Apple iWork 文档。"
+---
+
+DeckProbe 是目标驱动的文档嗅探引擎，提供原生 Rust CLI 和 Browser JavaScript SDK。它无需渲染文档，也无需启动 Microsoft Office、Apple iWork 或其他桌面办公套件，即可检查不可信文件。
+
+支持范围包括 PDF；现代与旧版 Microsoft Word、Excel、PowerPoint 格式；以及现代 Apple Keynote、Numbers、Pages 文档。原生 CLI 运行时不依赖 Python、JVM、Microsoft Office 或外部 PDF 库；Browser SDK 通过 WebAssembly 在浏览器本地运行同一套引擎，不上传文档字节。
+
+DeckProbe 不会预先解包所有内容，而是根据请求的 Target 和置信度，只执行必要的 Probe Path。结果为确定性的 Schema v2 JSON，并包含 Target 级证据和实际 I/O 成本。
+
+<CardGroup cols={3}>
+  <Card title="快速开始" href="/zh/deckprobe/quick-start">
+    安装并验证 CLI，然后嗅探第一个文档。
+  </Card>
+  <Card title="输出模型" href="/zh/deckprobe/output-model">
+    了解完整报告、紧凑 Values、错误和 JSON Schema。
+  </Card>
+  <Card title="CLI 与 Browser SDK" href="/zh/deckprobe/interfaces">
+    通过原生命令、JSONL 或 WebAssembly 接入。
+  </Card>
+</CardGroup>
+
+<Card title="在线体验 Deck Playground ↗" href="https://deckflow.github.io/playground/">
+  在浏览器中直观查看文档 Profile 信息和页面预览。
+</Card>
+
+## 为什么使用 DeckProbe
+
+| 需求 | DeckProbe 的处理方式 |
+| --- | --- |
+| 聚焦嗅探 | 只执行格式、页数或幻灯片数量等 Target 所需的路径 |
+| 可预测的资源使用 | 限制物理读取量、解压量、归档条目数和运行时间 |
+| 适合自动化 | 成功、部分成功和失败均返回稳定 JSON |
+| 结果可验证 | 每个 Target 都记录状态、值、置信度、所选路径和证据来源 |
+| 更安全的格式路由 | 先按文件扩展名选择路径，再验证容器和内部主文档类型 |
+
+## 支持的格式
+
+| 格式族 | 文件类型 | 当前嗅探范围 |
+| --- | --- | --- |
+| PDF | `.pdf` | Header 与 Info 元数据、页面/对象数量、XRef 类型、签名、链接、附件、JavaScript、表单、标注和 XMP 存在性 |
+| Word | `.docx`, `.docm`, `.dotx`, `.dotm` | OOXML 元数据、保存的统计信息、段落/表格结构、安全信号、评论和图片资源 |
+| Excel | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xlsb` | 工作表、名称、可见性、共享字符串、表格、图表、数据透视表、安全信号和图片资源；`.xlsb` 仅支持身份识别 |
+| PowerPoint | `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm` | 幻灯片、隐藏页、母版、版式、备注、页面尺寸、图表、评论、图片、媒体和安全信号 |
+| 旧版 Office | `.doc`, `.dot`, `.xls`, `.xlt`, `.ppt`, `.pps`, `.pot` | 经过验证的 CFB Stream、SummaryInformation 元数据、宏、嵌入对象信号和核心统计 |
+| Keynote | `.key` | 现代 IWA 身份与完整性、画布、方向、隐藏页/备注/构建动画/切换页数，以及引用的表格模型 |
+| Numbers | `.numbers` | 现代 IWA 身份与完整性、有序工作表、表格尺寸、隐藏/筛选维度和持久化公式 |
+| Pages | `.pages` | 现代 IWA 身份与完整性、章节、页面几何、修订状态、正文结构、缓存分页和表格模型 |
+
+<Note>
+  Apple iWork 支持现代 ZIP/IWA 文档。旧版 XML iWork 包会被识别，但返回结构化 `UNSUPPORTED_FORMAT` 错误。
+</Note>
+
+## 能力边界
+
+DeckProbe 返回文档事实，不生成渲染画面，也不构建完整的可编辑对象模型。它不会执行 OCR、运行宏、访问外部链接或把文件发送到远程服务。
+
+需要页面和元素级 Document IR、语义提取或格式转换时，继续使用 [DeckOps](/zh/deckops/overview)；需要渲染时使用 [DeckRender](/zh/deckrender/overview)；需要修改支持的 Office 源文件时使用 [DeckUse](/zh/deckuse/overview)。
+
+<Info>
+  DeckProbe 是开源项目。可以前往 [DeckProbe GitHub 仓库](https://github.com/deckflow/deckprobe)查看源代码、Release 记录、Issue 和实现级参考文档。
+</Info>

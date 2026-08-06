@@ -1,0 +1,146 @@
+---
+title: DeckProbe 输出模型
+sidebarTitle: 输出模型
+description: "消费 DeckProbe Schema v2 完整报告、紧凑 Values Report 和结构化错误。"
+---
+
+DeckProbe 将结构化 JSON 写入标准输出。单文件 Probe 输出一个 JSON Value；JSONL 模式为每个非空输入行输出一个紧凑 JSON Value。
+
+Schema v2 定义了三种报告形态：
+
+- Target 成功或部分解析时的 **Full Probe Report**。
+- 不需要证据明细时使用的紧凑 **Values Report**。
+- 请求、输入、格式、预算或 Parser 失败时的结构化 **Error Report**。
+
+## Full Probe Report
+
+完整报告包含以下顶层字段：
+
+| 字段 | 含义 |
+| --- | --- |
+| `schema_version` | 契约版本，当前为 `2` |
+| `tool_version` | 生成报告的 DeckProbe 版本 |
+| `status` | 所有 Target 满足请求时为 `ok`，否则为 `partial` |
+| `input` | 展示名称、来源类型和物理文件大小 |
+| `driver` | 验证后的格式 Driver 和 Profile |
+| `results` | Canonical Target Key 到证据记录的映射 |
+| `execution` | Probe Level、执行路径、预估/实际成本和未解析 Target |
+| `diagnostics` | Planning 或 Probe 产生的结构化警告 |
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "ok",
+  "input": {
+    "display_name": "deck.pptx",
+    "source_kind": "local_file",
+    "file_size": 245760
+  },
+  "driver": {
+    "id": "powerpoint",
+    "profile": "pptx"
+  },
+  "results": {
+    "powerpoint.slide_count": {
+      "target": "powerpoint.slide_count",
+      "status": "resolved",
+      "value": 31,
+      "confidence": "exact",
+      "confidence_score": 1,
+      "path": "powerpoint.presentation_xml",
+      "source": "ppt/presentation.xml"
+    }
+  },
+  "execution": {
+    "probe_level": "metadata",
+    "paths": ["powerpoint.presentation_xml"],
+    "estimated_cost": 12,
+    "actual_cost": {
+      "physical_bytes_read": 4096,
+      "expanded_bytes": 16384,
+      "random_reads": 2
+    },
+    "unresolved_targets": []
+  },
+  "diagnostics": []
+}
+```
+
+<Note>
+  示例中的数值和成本仅用于说明；字段名和结构遵循 Schema v2 契约。
+</Note>
+
+## Target Evidence
+
+每个请求的 Target 都有明确状态：
+
+| 状态 | 含义 |
+| --- | --- |
+| `resolved` | Value 满足请求的置信度 |
+| `estimated` | 存在 Value，但置信度较低 |
+| `planned` | Plan-only 模式选择了路径，但没有执行 |
+| `unknown` | 格式受支持，但无法确定该值 |
+| `unsupported` | 检测到的格式或当前 Level 不支持该 Target |
+| `invalid` | Target 请求无效 |
+| `budget_exceeded` | 解析 Target 超出当前预算 |
+| `failed` | 所选 Parser Path 执行失败 |
+
+已解析证据包含 Target 定义的 `value`、分类与数值置信度、执行路径和证据来源。
+
+## 确定性执行成本
+
+`execution.actual_cost` 记录物理读取字节数、解压字节数和随机读取次数。默认不输出墙钟时间 `elapsed_ms`，因此相同输入与参数可以生成字节一致的 JSON；需要耗时数据时增加 `--telemetry`。
+
+## 紧凑 Values Report
+
+调用方只需要 Target Value 时使用 `--view values`：
+
+```bash
+deckprobe -t @summary --view values report.pdf
+```
+
+结果仍保留 Schema Version、Input、Driver、未解析 Target 和 Diagnostics，但会把完整证据记录替换为紧凑的 `values` Map。
+
+## Error Report
+
+语法和运行时错误使用同一种机器可读结构：
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "error",
+  "error": {
+    "code": "MALFORMED_INPUT",
+    "message": "malformed input: .docx package is missing required main part word/document.xml",
+    "exit_code": 4
+  }
+}
+```
+
+稳定错误码包括 `CLI_SYNTAX`、`INVALID_REQUEST`、`UNSUPPORTED_TARGET`、`SOURCE_IO`、`UNSUPPORTED_FORMAT`、`MALFORMED_INPUT`、`BUDGET_EXCEEDED` 和 `PARSER_FAILURE`。
+
+## JSON Schema
+
+版本化的 [deckprobe-report.schema.json](https://github.com/deckflow/deckprobe/blob/main/docs/deckprobe-report.schema.json) 定义 Full Report、Values Report、Evidence、Execution、Diagnostics 和 Error Report，可用于响应校验、生成类型或 Agent Tool Contract。
+
+打印当前已安装二进制内置的准确 Schema：
+
+```bash
+deckprobe schema --pretty
+```
+
+当应用需要按照所调用二进制的同一契约版本进行校验时，应优先使用该命令输出。
+
+## 查看当前支持能力
+
+DeckProbe 提供 Discovery Command，应用无需硬编码所有格式与 Target：
+
+| 命令 | 返回内容 |
+| --- | --- |
+| `deckprobe formats --pretty` | 支持的 Driver、Profile、扩展名和能力边界 |
+| `deckprobe targets --format pptx --pretty` | PPTX 的 Target ID、Alias、Value Type、Selector、最低 Level、Cost 和格式选项 |
+| `deckprobe schema --pretty` | 当前二进制内置的完整 Schema v2 JSON Schema |
+
+例如，UI 可以通过 `targets` 预先判断 PPTX 是否支持 `slide_count`、需要哪个 Level，以及应该按什么 Value Type 处理结果。

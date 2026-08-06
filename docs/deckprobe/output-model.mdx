@@ -1,0 +1,146 @@
+---
+title: DeckProbe Output Model
+sidebarTitle: Output Model
+description: "Consume DeckProbe Schema v2 full reports, compact values reports, and structured errors."
+---
+
+DeckProbe writes structured JSON to standard output. Single-input probes produce one JSON value; JSONL mode produces one compact JSON value for each non-empty input line.
+
+The contract has three report shapes under Schema v2:
+
+- A **full probe report** for successful or partial target evaluation.
+- A compact **values report** when evidence details are not required.
+- A structured **error report** for request, input, format, budget, or parser failures.
+
+## Full probe report
+
+A full report contains these top-level fields:
+
+| Field | Meaning |
+| --- | --- |
+| `schema_version` | Contract version; currently `2` |
+| `tool_version` | DeckProbe version that produced the report |
+| `status` | `ok` when every target satisfies the request, otherwise `partial` |
+| `input` | Display name, source kind, and physical file size |
+| `driver` | Verified format driver and profile |
+| `results` | Canonical target keys mapped to evidence records |
+| `execution` | Probe level, paths, estimated/actual cost, and unresolved targets |
+| `diagnostics` | Structured warnings from planning or probing |
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "ok",
+  "input": {
+    "display_name": "deck.pptx",
+    "source_kind": "local_file",
+    "file_size": 245760
+  },
+  "driver": {
+    "id": "powerpoint",
+    "profile": "pptx"
+  },
+  "results": {
+    "powerpoint.slide_count": {
+      "target": "powerpoint.slide_count",
+      "status": "resolved",
+      "value": 31,
+      "confidence": "exact",
+      "confidence_score": 1,
+      "path": "powerpoint.presentation_xml",
+      "source": "ppt/presentation.xml"
+    }
+  },
+  "execution": {
+    "probe_level": "metadata",
+    "paths": ["powerpoint.presentation_xml"],
+    "estimated_cost": 12,
+    "actual_cost": {
+      "physical_bytes_read": 4096,
+      "expanded_bytes": 16384,
+      "random_reads": 2
+    },
+    "unresolved_targets": []
+  },
+  "diagnostics": []
+}
+```
+
+<Note>
+  Values and costs above are illustrative. Field names and structure follow the Schema v2 contract.
+</Note>
+
+## Target evidence
+
+Every requested target has an explicit status:
+
+| Status | Meaning |
+| --- | --- |
+| `resolved` | A value satisfies the requested confidence |
+| `estimated` | A value exists but has lower confidence |
+| `planned` | Plan-only mode selected a path without executing it |
+| `unknown` | The format is supported but the value could not be determined |
+| `unsupported` | The target is not supported for the detected format or level |
+| `invalid` | The target request is invalid |
+| `budget_exceeded` | Resolving the target exceeded an active budget |
+| `failed` | The selected parser path failed |
+
+Resolved evidence includes the target-defined `value`, categorical and numeric confidence, executed path, and evidence source.
+
+## Deterministic execution cost
+
+`execution.actual_cost` records physical bytes read, expanded bytes, and random reads. Wall-clock `elapsed_ms` is omitted by default so identical input and options can produce byte-identical JSON. Add `--telemetry` when timing is required.
+
+## Compact values report
+
+Use `--view values` when a consumer only needs target values:
+
+```bash
+deckprobe -t @summary --view values report.pdf
+```
+
+The result retains schema version, input and driver identity, unresolved targets, and diagnostics, but replaces evidence records with a compact `values` map.
+
+## Error report
+
+Syntax and runtime failures use the same machine-readable error shape:
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "error",
+  "error": {
+    "code": "MALFORMED_INPUT",
+    "message": "malformed input: .docx package is missing required main part word/document.xml",
+    "exit_code": 4
+  }
+}
+```
+
+Stable error codes include `CLI_SYNTAX`, `INVALID_REQUEST`, `UNSUPPORTED_TARGET`, `SOURCE_IO`, `UNSUPPORTED_FORMAT`, `MALFORMED_INPUT`, `BUDGET_EXCEEDED`, and `PARSER_FAILURE`.
+
+## JSON Schema
+
+The versioned [deckprobe-report.schema.json](https://github.com/deckflow/deckprobe/blob/main/docs/deckprobe-report.schema.json) defines the full report, compact values report, evidence records, execution information, diagnostics, and error report. It can be used for response validation, generated types, or Agent tool contracts.
+
+To print the exact schema bundled with the installed binary:
+
+```bash
+deckprobe schema --pretty
+```
+
+This matters when an application must validate against the same contract version as the executable it invokes.
+
+## Inspect supported capabilities
+
+DeckProbe exposes discovery commands so applications do not need to hard-code every format and target:
+
+| Command | Returns |
+| --- | --- |
+| `deckprobe formats --pretty` | Supported drivers, profiles, extensions, and support boundaries |
+| `deckprobe targets --format pptx --pretty` | Target IDs, aliases, value types, selectors, minimum levels, costs, and format options for PPTX |
+| `deckprobe schema --pretty` | The exact bundled Schema v2 JSON Schema |
+
+For example, `targets` helps a UI discover whether `slide_count` is available for PPTX, which level it requires, and what value type to expect before submitting a probe.

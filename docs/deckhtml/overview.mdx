@@ -1,0 +1,26 @@
+---
+title: DeckHTML
+sidebarTitle: Overview
+description: "Generate editable PPTX presentations from HTML."
+---
+
+DeckHTML is the HTML-native deck engine in the Deckflow family. It is a specialized capability for the growing workflow in which HTML is the source of slide structure and visual design, and presentation artifacts are generated through local or cloud execution paths.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/deckhtml/quick-start">
+    Convert a local HTML page into a PPTX file.
+  </Card>
+  <Card title="CLI" href="/deckhtml/cli/overview">
+    Use DeckHTML from a terminal, script, or CI pipeline.
+  </Card>
+  <Card title="Node SDK" href="/deckhtml/sdk/overview">
+    Integrate HTML-to-PPTX generation into application code.
+  </Card>
+  <Card title="MCP" href="/platform/mcp/overview">
+    Expose Deckflow capabilities to compatible agent clients.
+  </Card>
+</CardGroup>
+
+## Product boundary
+
+DeckHTML starts from HTML and produces presentation artifacts. For existing document files, use [DeckProbe](/deckprobe/overview) to inspect, [DeckRender](/deckrender/overview) to render, [DeckOps](/deckops/overview) to Parse into IR, Extract, or Convert, and [DeckUse](/deckuse/overview) to Manipulate a supported Office source file.

@@ -1,0 +1,64 @@
+---
+title: DeckProbe
+sidebarTitle: Overview
+description: "Inspect untrusted PDF, Microsoft Office, and modern Apple iWork documents without rendering them or opening the corresponding desktop applications."
+---
+
+DeckProbe is a target-driven document inspection engine available as a native Rust CLI and a Browser JavaScript SDK. It inspects untrusted documents without rendering them and without starting Microsoft Office, Apple iWork, or another desktop office suite.
+
+It supports PDF; modern and legacy Microsoft Word, Excel, and PowerPoint formats; and modern Apple Keynote, Numbers, and Pages documents. The native CLI has no runtime dependency on Python, the JVM, Microsoft Office, or an external PDF library. The browser SDK runs the same engine locally through WebAssembly and does not upload document bytes.
+
+Instead of unpacking everything, DeckProbe executes only the probe paths needed for the requested targets and confidence level. Results are deterministic Schema v2 JSON with target-level evidence and measured I/O cost.
+
+<CardGroup cols={3}>
+  <Card title="Quickstart" href="/deckprobe/quick-start">
+    Install the CLI, verify it, and inspect a document.
+  </Card>
+  <Card title="Output Model" href="/deckprobe/output-model">
+    Understand full reports, compact values, errors, and JSON Schema.
+  </Card>
+  <Card title="CLI and Browser SDK" href="/deckprobe/interfaces">
+    Integrate through native commands, JSONL, or WebAssembly.
+  </Card>
+</CardGroup>
+
+<Card title="Try Deck Playground ↗" href="https://deckflow.github.io/playground/">
+  Open the visual playground to see document profile information and page previews in a browser.
+</Card>
+
+## Why DeckProbe
+
+| Requirement | DeckProbe behavior |
+| --- | --- |
+| Focused inspection | Runs only the paths needed for targets such as format, page count, or slide count |
+| Predictable resource use | Enforces physical-read, decompression, archive-entry, and wall-clock budgets |
+| Automation-ready output | Returns stable JSON for successful, partial, and failed probes |
+| Verifiable results | Records status, value, confidence, selected path, and evidence source per target |
+| Safer format routing | Selects by filename extension, then verifies the container and required internal document type |
+
+## Supported formats
+
+| Family | Profiles | Current inspection coverage |
+| --- | --- | --- |
+| PDF | `.pdf` | Header and Info metadata, page/object counts, xref type, signatures, links, attachments, JavaScript, forms, annotations, and XMP presence |
+| Word | `.docx`, `.docm`, `.dotx`, `.dotm` | OOXML metadata, saved statistics, paragraph/table structure, security signals, comments, and image assets |
+| Excel | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xlsb` | Worksheets, names, visibility, shared strings, tables, charts, pivots, security signals, and image assets; `.xlsb` is identity-only |
+| PowerPoint | `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm` | Slides, hidden slides, masters, layouts, notes, slide size, charts, comments, images, media, and security signals |
+| Legacy Office | `.doc`, `.dot`, `.xls`, `.xlt`, `.ppt`, `.pps`, `.pot` | Validated CFB streams, SummaryInformation metadata, macros, embedded-object signals, and core statistics |
+| Keynote | `.key` | Modern IWA identity and integrity, slide canvas, orientation, hidden/notes/build/transition counts, and referenced table models |
+| Numbers | `.numbers` | Modern IWA identity and integrity, ordered sheets, table dimensions, hidden/filtered dimensions, and persisted formulas |
+| Pages | `.pages` | Modern IWA identity and integrity, sections, page geometry, change tracking, body-text structure, cached pagination, and table models |
+
+<Note>
+  Apple iWork support covers modern ZIP/IWA documents. Legacy XML iWork packages are recognized but return a structured `UNSUPPORTED_FORMAT` error.
+</Note>
+
+## Scope
+
+DeckProbe returns document facts, not rendered output or a complete editable object model. It does not run OCR, execute macros, follow external links, or send files to a remote service.
+
+When a workflow needs page- and element-level Document IR, semantic extraction, or format conversion, continue with [DeckOps](/deckops/overview). For rendering, use [DeckRender](/deckrender/overview); for modifying supported Office source files, use [DeckUse](/deckuse/overview).
+
+<Info>
+  DeckProbe is an open-source project. Visit the [DeckProbe GitHub repository](https://github.com/deckflow/deckprobe) to review the source code, release history, issue tracker, and implementation-level reference documentation.
+</Info>

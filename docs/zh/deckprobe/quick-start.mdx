@@ -1,0 +1,84 @@
+---
+title: DeckProbe 快速开始
+sidebarTitle: 快速开始
+description: "在线体验 DeckProbe，或安装、验证并运行原生 CLI。"
+---
+
+## 在线体验
+
+<Card title="打开 Deck Playground ↗" href="https://deckflow.github.io/playground/">
+  直接在浏览器中查看文档 Profile 和页面预览。
+</Card>
+
+**[立即打开 Deck Playground](https://deckflow.github.io/playground/)**
+
+## 安装预编译版本
+
+安装器会自动选择与当前操作系统和 CPU 匹配的归档文件。
+
+<Tabs>
+  <Tab title="macOS">
+    ```bash
+    curl --proto '=https' --tlsv1.2 -LsSf \
+      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    ```
+  </Tab>
+  <Tab title="Linux">
+    ```bash
+    curl --proto '=https' --tlsv1.2 -LsSf \
+      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+    ```
+
+    如果安装器更新了用户 `Path`，请重启终端。
+  </Tab>
+</Tabs>
+
+## 或从源码安装
+
+源码安装需要 Rust 1.88 或更高版本以及 Git：
+
+```bash
+cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
+```
+
+## 验证安装
+
+确认命令已经可用：
+
+```bash
+deckprobe --version
+```
+
+查看简要选项或完整内置帮助：
+
+```bash
+deckprobe -h
+deckprobe --help
+```
+
+## 嗅探文档
+
+执行默认的 Metadata-level Probe：
+
+```bash
+deckprobe --pretty report.pdf
+```
+
+也可以只请求工作流需要的事实：
+
+```bash
+deckprobe --pretty -t format,slide_count deck.pptx
+```
+
+命令会输出 Schema v2 JSON Report，其中包含所选 Driver、Target 结果、置信度、证据路径、诊断和实际执行成本。
+
+## 下一步
+
+- 在自动化中消费报告前，阅读[输出模型](/zh/deckprobe/output-model)。
+- 需要了解 Target Selector、JSONL、浏览器输入和 Worker 时，阅读 [CLI 与 Browser SDK](/zh/deckprobe/interfaces)。
+- 自定义安装位置、升级、卸载、Checksum 和 Provenance 校验请参考仓库中的[安装指南](https://github.com/deckflow/deckprobe/blob/main/docs/INSTALLATION.md)。
