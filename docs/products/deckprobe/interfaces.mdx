@@ -1,0 +1,36 @@
+---
+title: DeckProbe Interfaces
+sidebarTitle: Interfaces
+description: "Choose the DeckProbe execution mode that fits a CLI, service, or browser workflow."
+---
+
+DeckProbe exposes the same target-driven inspection model through several execution modes.
+
+| Interface | Best for | Lifecycle |
+| --- | --- | --- |
+| Native CLI | Shell commands, CI, and one-off inspection | Starts a process for each invocation |
+| Persistent JSONL | Queues, servers, and high-volume local batches | Reuses one native process and handles one JSON record per line |
+| Browser SDK | Small probes close to a user interaction | Runs the WebAssembly engine on the main thread |
+| Browser Worker SDK | User-provided files and deep probes | Keeps document inspection off the UI thread |
+
+## Browser SDK
+
+Install the package:
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+Then initialize and probe a browser `File`:
+
+```ts
+import { initDeckProbe, probe } from "@deckflow/deckprobe";
+
+await initDeckProbe();
+const report = await probe(file, {
+  targets: ["@summary", "@security"],
+  level: "metadata",
+});
+```
+
+For the full CLI and SDK contracts, use the [DeckProbe repository](https://github.com/deckflow/deckprobe).

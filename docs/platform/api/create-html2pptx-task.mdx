@@ -1,0 +1,25 @@
+---
+title: Create html2pptx task
+sidebarTitle: Create html2pptx task
+description: Create a DeckHTML html2pptx conversion task.
+openapi: "/platform/api/default-module.openapi.json POST /tools/tasks"
+---
+
+Create a conversion task by uploading the input file and task parameters.
+
+<Note>
+  This endpoint is the starting point for asynchronous conversion workflows. Call it first, then use the returned task identifier to query execution progress.
+</Note>
+
+## What to send
+
+- `files`: the source HTML file to convert
+- `type`: the task type, for example `convertor.html2pptx`
+- `params`: optional JSON-serialized task parameters
+- `spaceId`: optional workspace or space identifier when your environment requires it
+
+## What to expect
+
+- A successful call returns a task identifier and initial status payload
+- Authentication must be sent through `Authorization: Bearer <APIKEY>`
+- The uploaded file is sent as `multipart/form-data`

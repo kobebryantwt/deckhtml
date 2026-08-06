@@ -1,0 +1,27 @@
+---
+title: 产品模型
+sidebarTitle: 产品模型
+description: "理解 Deckflow 五个产品的职责和边界。"
+---
+
+# 产品模型
+
+产品名描述对文档执行什么操作；CLI、SDK、API 和 MCP 等接入界面描述调用方如何使用这项能力。
+
+| 产品 | 方向 | 主要职责 | 不负责 |
+| --- | --- | --- | --- |
+| DeckProbe | 只读 | 目标驱动的格式与文档嗅探 | 渲染、转换或修改 |
+| DeckRender | 源文件到视觉产物 | 文件渲染与预览 | 编辑源文件 |
+| DeckOps | 单向 | Parse、IR、还原与派生格式 | 通过源文件感知模型回写变更 |
+| DeckUse | 双向 | 读取和修改支持的源格式 | HTML 优先的演示文稿创作 |
+| DeckHTML | HTML 到 PPTX | 从 HTML 生成演示文稿 | 通用已有文档嗅探或编辑 |
+
+## 典型组合
+
+1. 使用 DeckProbe 低成本识别输入并读取所需事实。
+2. 根据目标操作把文件路由到 DeckRender、DeckOps 或 DeckUse。
+3. 当 HTML 是 PPTX 的创作源时，单独使用 DeckHTML。
+
+<Warning>
+  不要从接入界面的名称推断产品契约。例如，一个 MCP Server 可能暴露多个产品支持的工具。应以能力与产品边界为准，传输方式是第二层概念。
+</Warning>

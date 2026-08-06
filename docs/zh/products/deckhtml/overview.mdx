@@ -1,0 +1,28 @@
+---
+title: DeckHTML
+sidebarTitle: 概览
+description: "基于 HTML 生成可编辑的 PPTX 演示文稿。"
+---
+
+# DeckHTML
+
+DeckHTML 基于 HTML 生成 PPTX，是 Deckflow 产品体系中以 HTML 作为幻灯片结构和视觉设计源的创作产品。
+
+<CardGroup cols={2}>
+  <Card title="快速开始" href="/zh/products/deckhtml/quick-start">
+    将本地 HTML 页面转换成 PPTX 文件。
+  </Card>
+  <Card title="CLI" href="/zh/products/deckhtml/cli/overview">
+    在终端、脚本或 CI 管线中使用 DeckHTML。
+  </Card>
+  <Card title="Node SDK" href="/zh/products/deckhtml/sdk/overview">
+    在应用代码中接入 HTML 到 PPTX 的生成能力。
+  </Card>
+  <Card title="MCP" href="/zh/platform/mcp/overview">
+    将 Deckflow 能力提供给兼容的智能体客户端。
+  </Card>
+</CardGroup>
+
+## 产品边界
+
+DeckHTML 从 HTML 生成 PPTX。处理已有文档时，嗅探使用 [DeckProbe](/zh/products/deckprobe/overview)，渲染使用 [DeckRender](/zh/products/deckrender/overview)，单向文档操作使用 [DeckOps](/zh/products/deckops/overview)，编辑源文件使用 [DeckUse](/zh/products/deckuse/overview)。

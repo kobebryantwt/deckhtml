@@ -1,0 +1,33 @@
+---
+title: DeckProbe
+sidebarTitle: Overview
+description: "Inspect PDF, Microsoft Office, and Apple iWork files without rendering them."
+---
+
+# DeckProbe
+
+DeckProbe is the inspection layer of the Deckflow product family. It identifies document formats and returns targeted facts such as page or slide counts, metadata, security signals, and format-specific properties without rendering the document or launching a desktop office suite.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/products/deckprobe/quick-start">
+    Install the native CLI and inspect your first document.
+  </Card>
+  <Card title="Interfaces" href="/products/deckprobe/interfaces">
+    Choose between the native CLI, persistent JSONL, and browser SDK modes.
+  </Card>
+</CardGroup>
+
+## When to use DeckProbe
+
+- Route an uploaded file before choosing a parser or renderer.
+- Read only the facts a workflow needs instead of unpacking the whole document.
+- Inspect untrusted files under explicit I/O, decompression, archive-entry, and time budgets.
+- Return deterministic JSON with confidence and evidence for automation or agent workflows.
+
+## Product boundary
+
+DeckProbe reads facts about a file. It does not render a visual preview, convert the file, or modify its source contents. Continue with [Product Model](/getting-started/product-model) to choose the next product in a workflow.
+
+<Info>
+  DeckProbe is open source. The implementation and complete reference are maintained in the [deckflow/deckprobe repository](https://github.com/deckflow/deckprobe).
+</Info>

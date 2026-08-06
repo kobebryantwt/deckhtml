@@ -1,12 +1,12 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "DeckHTML",
-  "description": "DeckHTML developer documentation for HTML-to-PPTX workflows, API integration, MCP tooling, SDK usage, and automation guides.",
+  "name": "Deckflow",
+  "description": "Developer documentation for DeckProbe, DeckRender, DeckOps, DeckUse, and DeckHTML.",
   "theme": "maple",
   "logo": {
     "light": "/logo/light.png",
     "dark": "/logo/dark.png",
-    "href": "/docs/quick-start"
+    "href": "/getting-started/overview"
   },
   "favicon": "/favicon.ico",
   "background": {
@@ -25,100 +25,57 @@
     "default": "light"
   },
   "contextual": {
-    "options": [
-      "copy",
-      "claude",
-      "cursor",
-      "vscode"
-    ]
+    "options": ["copy", "claude", "cursor", "vscode"]
   },
   "api": {
-    "openapi": "reference/default-module.openapi.json",
+    "openapi": "platform/api/default-module.openapi.json",
     "playground": {
       "display": "interactive"
     }
   },
   "redirects": [
-    {
-      "source": "/",
-      "destination": "/docs/quick-start",
-      "permanent": true
-    },
-    {
-      "source": "/quickstart",
-      "destination": "/docs/quick-start",
-      "permanent": true
-    },
-    {
-      "source": "/concepts",
-      "destination": "/docs/concepts",
-      "permanent": true
-    },
-    {
-      "source": "/architecture",
-      "destination": "/docs/architecture",
-      "permanent": true
-    },
-    {
-      "source": "/local-mode",
-      "destination": "/docs/local-mode",
-      "permanent": true
-    },
-    {
-      "source": "/cloud-mode",
-      "destination": "/docs/cloud-mode",
-      "permanent": true
-    },
-    {
-      "source": "/configuration",
-      "destination": "/docs/configuration",
-      "permanent": true
-    },
-    {
-      "source": "/faq",
-      "destination": "/docs/faq",
-      "permanent": true
-    },
-    {
-      "source": "/errors",
-      "destination": "/docs/errors",
-      "permanent": true
-    },
-    {
-      "source": "/cli/index",
-      "destination": "/cli/overview",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/index",
-      "destination": "/sdk/overview",
-      "permanent": true
-    },
-    {
-      "source": "/mcp/index",
-      "destination": "/mcp/overview",
-      "permanent": true
-    },
-    {
-      "source": "/skill/index",
-      "destination": "/skills/overview",
-      "permanent": true
-    },
-    {
-      "source": "/skill/deckhtml",
-      "destination": "/skills/deckhtml",
-      "permanent": true
-    },
-    {
-      "source": "/reference/create-html2pptx-task",
-      "destination": "/reference/submit-async-task",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get-task-details",
-      "destination": "/reference/query-task-status",
-      "permanent": true
-    }
+    { "source": "/", "destination": "/getting-started/overview", "permanent": true },
+    { "source": "/quickstart", "destination": "/products/deckhtml/quick-start", "permanent": true },
+    { "source": "/concepts", "destination": "/getting-started/product-model", "permanent": true },
+    { "source": "/architecture", "destination": "/getting-started/architecture", "permanent": true },
+    { "source": "/docs/quick-start", "destination": "/products/deckhtml/quick-start", "permanent": true },
+    { "source": "/docs/overview", "destination": "/getting-started/overview", "permanent": true },
+    { "source": "/docs/concepts", "destination": "/getting-started/product-model", "permanent": true },
+    { "source": "/docs/architecture", "destination": "/getting-started/architecture", "permanent": true },
+    { "source": "/docs/local-mode", "destination": "/products/deckhtml/guides/local-mode", "permanent": true },
+    { "source": "/docs/cloud-mode", "destination": "/products/deckhtml/guides/cloud-mode", "permanent": true },
+    { "source": "/docs/configuration", "destination": "/products/deckhtml/guides/configuration", "permanent": true },
+    { "source": "/docs/errors", "destination": "/products/deckhtml/guides/errors", "permanent": true },
+    { "source": "/docs/faq", "destination": "/products/deckhtml/guides/faq", "permanent": true },
+    { "source": "/cli/:path*", "destination": "/products/deckhtml/cli/:path*", "permanent": true },
+    { "source": "/sdk/:path*", "destination": "/products/deckhtml/sdk/:path*", "permanent": true },
+    { "source": "/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
+    { "source": "/products/deckhtml/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
+    { "source": "/skills/:path*", "destination": "/products/deckhtml/skills/:path*", "permanent": true },
+    { "source": "/skill/index", "destination": "/products/deckhtml/skills/overview", "permanent": true },
+    { "source": "/skill/deckhtml", "destination": "/products/deckhtml/skills/deckhtml", "permanent": true },
+    { "source": "/reference/input-html", "destination": "/products/deckhtml/reference/input-html", "permanent": true },
+    { "source": "/reference/output-pptx", "destination": "/products/deckhtml/reference/output-pptx", "permanent": true },
+    { "source": "/reference/output-pdf", "destination": "/products/deckhtml/reference/output-pdf", "permanent": true },
+    { "source": "/reference/output-png", "destination": "/products/deckhtml/reference/output-png", "permanent": true },
+    { "source": "/reference/report-schema", "destination": "/products/deckhtml/reference/report-schema", "permanent": true },
+    { "source": "/reference/:path*", "destination": "/platform/api/:path*", "permanent": true },
+    { "source": "/platform/api/create-html2pptx-task", "destination": "/platform/api/submit-async-task", "permanent": true },
+    { "source": "/platform/api/get-task-details", "destination": "/platform/api/query-task-status", "permanent": true },
+    { "source": "/zh/docs/quick-start", "destination": "/zh/products/deckhtml/quick-start", "permanent": true },
+    { "source": "/zh/docs/overview", "destination": "/zh/getting-started/overview", "permanent": true },
+    { "source": "/zh/docs/concepts", "destination": "/zh/getting-started/product-model", "permanent": true },
+    { "source": "/zh/docs/architecture", "destination": "/zh/getting-started/architecture", "permanent": true },
+    { "source": "/zh/docs/local-mode", "destination": "/zh/products/deckhtml/guides/local-mode", "permanent": true },
+    { "source": "/zh/docs/cloud-mode", "destination": "/zh/products/deckhtml/guides/cloud-mode", "permanent": true },
+    { "source": "/zh/docs/configuration", "destination": "/zh/products/deckhtml/guides/configuration", "permanent": true },
+    { "source": "/zh/docs/faq", "destination": "/zh/products/deckhtml/guides/faq", "permanent": true },
+    { "source": "/zh/cli/:path*", "destination": "/zh/products/deckhtml/cli/:path*", "permanent": true },
+    { "source": "/zh/sdk/:path*", "destination": "/zh/products/deckhtml/sdk/:path*", "permanent": true },
+    { "source": "/zh/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
+    { "source": "/zh/products/deckhtml/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
+    { "source": "/zh/skills/:path*", "destination": "/zh/products/deckhtml/skills/:path*", "permanent": true },
+    { "source": "/zh/reference/:path*", "destination": "/zh/platform/api/:path*", "permanent": true }
   ],
   "colors": {
     "primary": "#0f766e",
@@ -139,95 +96,142 @@
         },
         "tabs": [
           {
-            "tab": "Developer Guide",
+            "tab": "Overview",
             "groups": [
               {
-                "group": "Getting Started",
+                "group": "Start Here",
                 "pages": [
-                  "docs/quick-start",
-                  "docs/overview",
-                  "docs/concepts",
-                  "docs/architecture"
-                ]
-              },
-              {
-                "group": "Operations",
-                "pages": [
-                  "docs/local-mode",
-                  "docs/cloud-mode",
-                  "docs/configuration",
-                  "docs/faq"
+                  "getting-started/overview",
+                  "getting-started/product-model",
+                  "getting-started/architecture"
                 ]
               }
             ]
           },
           {
-            "tab": "API Reference",
+            "tab": "DeckProbe",
             "groups": [
               {
-                "group": "Overview",
+                "group": "DeckProbe",
                 "pages": [
-                  "reference/overview",
-                  "reference/authentication-and-task-model"
+                  "products/deckprobe/overview",
+                  "products/deckprobe/quick-start",
+                  "products/deckprobe/interfaces"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "DeckRender",
+            "groups": [
+              { "group": "DeckRender", "pages": ["products/deckrender/overview"] }
+            ]
+          },
+          {
+            "tab": "DeckOps",
+            "groups": [
+              { "group": "DeckOps", "pages": ["products/deckops/overview"] }
+            ]
+          },
+          {
+            "tab": "DeckUse",
+            "groups": [
+              { "group": "DeckUse", "pages": ["products/deckuse/overview"] }
+            ]
+          },
+          {
+            "tab": "DeckHTML",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "products/deckhtml/overview",
+                  "products/deckhtml/quick-start"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  "products/deckhtml/guides/local-mode",
+                  "products/deckhtml/guides/cloud-mode",
+                  "products/deckhtml/guides/configuration",
+                  "products/deckhtml/guides/errors",
+                  "products/deckhtml/guides/faq"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": [
+                  "products/deckhtml/cli/overview",
+                  "products/deckhtml/cli/output-modes",
+                  "products/deckhtml/cli/commands",
+                  "products/deckhtml/cli/features",
+                  "products/deckhtml/cli/examples"
+                ]
+              },
+              {
+                "group": "SDK",
+                "pages": [
+                  "products/deckhtml/sdk/overview",
+                  "products/deckhtml/sdk/node"
+                ]
+              },
+              {
+                "group": "Agent Skills",
+                "pages": [
+                  "products/deckhtml/skills/overview",
+                  "products/deckhtml/skills/deckhtml"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "products/deckhtml/reference/input-html",
+                  "products/deckhtml/reference/output-pptx",
+                  "products/deckhtml/reference/output-pdf",
+                  "products/deckhtml/reference/output-png",
+                  "products/deckhtml/reference/report-schema"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Platform",
+            "groups": [
+              {
+                "group": "MCP",
+                "pages": [
+                  "platform/mcp/overview",
+                  "platform/mcp/tools",
+                  "platform/mcp/codex",
+                  "platform/mcp/cursor",
+                  "platform/mcp/claude-code",
+                  "platform/mcp/trae",
+                  "platform/mcp/workbuddy"
+                ]
+              },
+              {
+                "group": "API Overview",
+                "pages": [
+                  "platform/api/overview",
+                  "platform/api/authentication-and-task-model"
                 ]
               },
               {
                 "group": "Core APIs",
                 "pages": [
-                  "reference/submit-async-task",
-                  "reference/query-task-status",
-                  "reference/download-task-result"
+                  "platform/api/submit-async-task",
+                  "platform/api/query-task-status",
+                  "platform/api/download-task-result"
                 ]
               },
               {
                 "group": "Scenario Guides",
                 "pages": [
-                  "reference/generation-scenarios",
-                  "reference/translation-scenarios",
-                  "reference/revamp-scenarios",
-                  "reference/tool-api-scenarios"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "MCP",
-            "groups": [
-              {
-                "group": "MCP",
-                "pages": [
-                  "mcp/overview",
-                  "mcp/tools",
-                  "mcp/codex",
-                  "mcp/cursor",
-                  "mcp/claude-code"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "CLI",
-            "groups": [
-              {
-                "group": "CLI",
-                "pages": [
-                  "cli/overview",
-                  "cli/output-modes",
-                  "cli/commands",
-                  "cli/features",
-                  "cli/examples"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "SDK",
-            "groups": [
-              {
-                "group": "SDK",
-                "pages": [
-                  "sdk/overview",
-                  "sdk/node"
+                  "platform/api/generation-scenarios",
+                  "platform/api/translation-scenarios",
+                  "platform/api/revamp-scenarios",
+                  "platform/api/tool-api-scenarios"
                 ]
               }
             ]
@@ -239,103 +243,137 @@
         "navbar": {
           "primary": {
             "type": "button",
-            "label": "Get Started",
+            "label": "开始使用",
             "href": "https://app.deckflow.com/?initent=sign-up"
           }
         },
         "tabs": [
           {
-            "tab": "开发指南",
+            "tab": "概览",
             "groups": [
               {
                 "group": "开始使用",
                 "pages": [
-                  "zh/docs/quick-start",
-                  "zh/docs/overview",
-                  "zh/docs/concepts",
-                  "zh/docs/architecture"
-                ]
-              },
-              {
-                "group": "使用方式",
-                "pages": [
-                  "zh/docs/local-mode",
-                  "zh/docs/cloud-mode",
-                  "zh/docs/configuration",
-                  "zh/docs/faq"
+                  "zh/getting-started/overview",
+                  "zh/getting-started/product-model",
+                  "zh/getting-started/architecture"
                 ]
               }
             ]
           },
           {
-            "tab": "API Reference",
+            "tab": "DeckProbe",
             "groups": [
               {
-                "group": "概览",
+                "group": "DeckProbe",
                 "pages": [
-                  "zh/reference/overview",
-                  "zh/reference/authentication-and-task-model"
+                  "zh/products/deckprobe/overview",
+                  "zh/products/deckprobe/quick-start",
+                  "zh/products/deckprobe/interfaces"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "DeckRender",
+            "groups": [
+              { "group": "DeckRender", "pages": ["zh/products/deckrender/overview"] }
+            ]
+          },
+          {
+            "tab": "DeckOps",
+            "groups": [
+              { "group": "DeckOps", "pages": ["zh/products/deckops/overview"] }
+            ]
+          },
+          {
+            "tab": "DeckUse",
+            "groups": [
+              { "group": "DeckUse", "pages": ["zh/products/deckuse/overview"] }
+            ]
+          },
+          {
+            "tab": "DeckHTML",
+            "groups": [
+              {
+                "group": "开始使用",
+                "pages": [
+                  "zh/products/deckhtml/overview",
+                  "zh/products/deckhtml/quick-start"
+                ]
+              },
+              {
+                "group": "使用指南",
+                "pages": [
+                  "zh/products/deckhtml/guides/local-mode",
+                  "zh/products/deckhtml/guides/cloud-mode",
+                  "zh/products/deckhtml/guides/configuration",
+                  "zh/products/deckhtml/guides/faq"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": [
+                  "zh/products/deckhtml/cli/overview",
+                  "zh/products/deckhtml/cli/output-modes",
+                  "zh/products/deckhtml/cli/commands",
+                  "zh/products/deckhtml/cli/features",
+                  "zh/products/deckhtml/cli/examples"
+                ]
+              },
+              {
+                "group": "SDK",
+                "pages": [
+                  "zh/products/deckhtml/sdk/overview",
+                  "zh/products/deckhtml/sdk/node"
+                ]
+              },
+              {
+                "group": "智能体 Skill",
+                "pages": [
+                  "zh/products/deckhtml/skills/overview",
+                  "zh/products/deckhtml/skills/deckhtml"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "平台",
+            "groups": [
+              {
+                "group": "MCP",
+                "pages": [
+                  "zh/platform/mcp/overview",
+                  "zh/platform/mcp/tools",
+                  "zh/platform/mcp/codex",
+                  "zh/platform/mcp/cursor",
+                  "zh/platform/mcp/claude-code",
+                  "zh/platform/mcp/trae",
+                  "zh/platform/mcp/workbuddy"
+                ]
+              },
+              {
+                "group": "API 概览",
+                "pages": [
+                  "zh/platform/api/overview",
+                  "zh/platform/api/authentication-and-task-model"
                 ]
               },
               {
                 "group": "核心接口",
                 "pages": [
-                  "zh/reference/submit-async-task",
-                  "zh/reference/query-task-status",
-                  "zh/reference/download-task-result"
+                  "zh/platform/api/submit-async-task",
+                  "zh/platform/api/query-task-status",
+                  "zh/platform/api/download-task-result"
                 ]
               },
               {
                 "group": "场景文档",
                 "pages": [
-                  "zh/reference/generation-scenarios",
-                  "zh/reference/translation-scenarios",
-                  "zh/reference/revamp-scenarios",
-                  "zh/reference/tool-api-scenarios"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "MCP",
-            "groups": [
-              {
-                "group": "MCP",
-                "pages": [
-                  "zh/mcp/overview",
-                  "zh/mcp/tools",
-                  "zh/mcp/codex",
-                  "zh/mcp/cursor",
-                  "zh/mcp/claude-code",
-                  "zh/mcp/trae",
-                  "zh/mcp/workbuddy"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "CLI",
-            "groups": [
-              {
-                "group": "CLI",
-                "pages": [
-                  "zh/cli/overview",
-                  "zh/cli/output-modes",
-                  "zh/cli/commands",
-                  "zh/cli/features",
-                  "zh/cli/examples"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "SDK",
-            "groups": [
-              {
-                "group": "SDK",
-                "pages": [
-                  "zh/sdk/overview",
-                  "zh/sdk/node"
+                  "zh/platform/api/generation-scenarios",
+                  "zh/platform/api/translation-scenarios",
+                  "zh/platform/api/revamp-scenarios",
+                  "zh/platform/api/tool-api-scenarios"
                 ]
               }
             ]

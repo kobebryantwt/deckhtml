@@ -1,0 +1,25 @@
+---
+title: Download Task Result
+sidebarTitle: Download Task Result
+description: "Download the completed task output through GET /tools/tasks/{id}/download."
+openapi: "/platform/api/default-module.openapi.json GET /tools/tasks/{id}/download"
+---
+
+Use this endpoint after a task has completed successfully and you want to retrieve the final artifact directly instead of reading `result.url` from the task payload.
+
+## When to use this endpoint
+
+- your integration wants a dedicated download call
+- you already know the task ID and do not want to parse the query response first
+- you are building a thin client that separates status polling from file retrieval
+
+## Recommended flow
+
+1. Submit the task with `POST /tools/tasks`
+2. Poll `GET /tools/tasks/{id}` until the task becomes `completed`
+3. Call `GET /tools/tasks/{id}/download` to retrieve the final file
+
+## Notes
+
+- Call this endpoint only after the task has completed successfully.
+- If you prefer, you can also download from the signed `result.url` returned by the query endpoint.

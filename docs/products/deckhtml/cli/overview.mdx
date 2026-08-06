@@ -1,0 +1,155 @@
+---
+title: Overview
+sidebarTitle: Overview
+description: "Convert HTML files, stdin, or URLs into presentation artifacts from your terminal."
+---
+
+The published `@deckflow/deckhtml` package gives you a command-line interface for HTML-to-presentation conversion. It accepts local files, multiple ordered HTML files, stdin, and hosted URLs. It supports local and cloud execution, human-readable output by default, and machine-readable JSON output for scripts and CI.
+
+<Note>
+  Use the CLI when you want the fastest path from HTML input to a generated artifact. It is the best starting point for local testing, shell automation, and CI pipelines.
+</Note>
+
+## Quick Start
+
+Run without installing:
+
+```bash
+npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+```
+
+Install globally:
+
+```bash
+npm install -g @deckflow/deckhtml
+deckhtml --version
+```
+
+## What the CLI supports
+
+<CardGroup cols={3}>
+  <Card title="Flexible inputs">
+    Convert a single HTML file, multiple ordered files, stdin, or a hosted URL.
+  </Card>
+  <Card title="Multiple outputs">
+    Generate `pptx` or `png` artifacts through the published CLI workflow.
+  </Card>
+  <Card title="Automation-friendly">
+    Use `--json`, `--quiet`, and cloud mode flags in scripts, CI, and agent workflows.
+  </Card>
+</CardGroup>
+
+## Execution modes
+
+The DeckHTML CLI supports three execution modes:
+
+| Mode | What it means | Auth required |
+| --- | --- | --- |
+| `local` | Always convert locally. | No |
+| `cloud` | Always convert in Deckflow Cloud. | Yes |
+| `auto` | Use cloud when credentials exist; otherwise fall back to local. | Only if cloud is selected |
+
+This is not just a documentation assumption. The published CLI implementation resolves mode exactly this way:
+
+- `--mode local` always stays local
+- `--mode cloud` throws if no credentials are available
+- `--mode auto` chooses cloud when credentials exist, otherwise local
+
+Execution mode also affects the processing path. Use local mode for straightforward same-machine conversion, and use cloud mode when you need hosted execution or cloud-only font embedding.
+
+## Authentication
+
+Authentication is only required for cloud execution and the cloud-only `--embed-fonts` flag. If you plan to stay in local mode, you can start converting immediately without configuring credentials.
+
+```bash
+deckhtml auth login
+deckhtml auth status
+deckhtml config set api-key <key>
+```
+
+There are two credential paths for cloud usage:
+
+- `deckhtml auth login`: opens a browser, lets you sign in manually, receives the callback on `localhost`, and then automatically stores `token` and `spaceId` in `~/.deckflow/credentials`
+- `deckhtml config set api-key <key>`: stores an API key in the same credentials file for non-browser environments or manual setup
+
+After a successful browser login, you do **not** need to run `deckhtml config set api-key` again just to make the CLI usable. The CLI can already continue with the stored login token.
+
+## CI, Docker, and agent environments
+
+In non-interactive environments such as CI pipelines, containers, and agent runtimes, browser login is usually unavailable and local credential files may be ephemeral. In those cases, use the environment variable instead of relying on saved credentials:
+
+```bash
+export DECKHTML_API_KEY=your-api-key
+```
+
+This is not a separate feature flag. It is simply the most reliable way to make the API key available in automated or disposable runtimes.
+
+Credential precedence is also worth knowing:
+
+- `DECKHTML_API_KEY` takes precedence over a stored `apiKey`
+- browser login stores `token` and `spaceId`, not an API key
+- both credential styles can coexist in the same file without one automatically deleting the other
+
+## First run
+
+Once your auth path is clear, convert a single local HTML file:
+
+```bash
+deckhtml index.html
+```
+
+By default, DeckHTML writes a PPTX next to the input file using the same base name:
+
+```text
+index.pptx
+```
+
+Write to a specific output path:
+
+```bash
+deckhtml index.html -o deck.pptx
+```
+
+Convert stdin:
+
+```bash
+cat index.html | deckhtml - -o deck.pptx
+```
+
+Convert a hosted page:
+
+```bash
+deckhtml https://example.com/deck.html -o deck.pptx
+```
+
+## What the package does beyond output formats
+
+At the user-facing CLI level, the package is still centered on one core job: converting HTML inputs into presentation artifacts.
+
+Beyond the output format itself, it also provides:
+
+- multiple input modes: file, stdin, ordered files, URL
+- local vs cloud execution control
+- the cloud-only `--embed-fonts` enhancement flag
+- report generation with `--report`
+- authentication and persistent config commands
+- machine-readable output for scripts with `--json`
+
+What it does **not** expose as separate end-user workflows in this package is a broader product surface like translation, generation, revamp, or document-processing APIs. Those belong to other Deckflow surfaces, not this CLI package.
+
+## Read next
+
+<CardGroup cols={4}>
+  <Card title="Output Modes" href="/products/deckhtml/cli/output-modes">
+    See how stdout, stderr, JSON mode, and error output behave.
+  </Card>
+  <Card title="Commands" href="/products/deckhtml/cli/commands">
+    Review the real published command surface and flags.
+  </Card>
+  <Card title="Features" href="/products/deckhtml/cli/features">
+    Learn what input sources, cloud features, and configuration options are available.
+  </Card>
+  <Card title="Examples" href="/products/deckhtml/cli/examples">
+    Browse ready-to-run examples for files, URLs, reports, and automation.
+  </Card>
+</CardGroup>

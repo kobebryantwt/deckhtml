@@ -1,0 +1,33 @@
+---
+title: DeckProbe 快速开始
+sidebarTitle: 快速开始
+description: "安装 DeckProbe，并从命令行嗅探一个文档。"
+---
+
+## 安装
+
+从源码安装需要 Rust 1.88 或更高版本：
+
+```bash
+cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
+```
+
+DeckProbe Release 也提供预编译安装器。不同平台的命令与校验方式请参阅[安装指南](https://github.com/deckflow/deckprobe/blob/main/docs/INSTALLATION.md)。
+
+## 嗅探文档
+
+执行默认元数据探测：
+
+```bash
+deckprobe --pretty report.pdf
+```
+
+也可以只请求工作流需要的目标：
+
+```bash
+deckprobe --pretty -t format,slide_count deck.pptx
+```
+
+结果为结构化 JSON，每个目标均包含解析状态、值、置信度和所选探测路径。
+
+将 DeckProbe 嵌入服务或浏览器前，请继续阅读[接入界面](/zh/products/deckprobe/interfaces)。

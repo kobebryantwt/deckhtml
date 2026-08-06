@@ -1,0 +1,37 @@
+---
+title: Documentation Architecture
+sidebarTitle: Documentation Architecture
+description: "Understand how the developer center separates products, interfaces, shared platform APIs, and references."
+---
+
+# Documentation architecture
+
+The developer center follows the product model instead of using CLI, SDK, or MCP as top-level business categories.
+
+```text
+docs/
+├── getting-started/          # Product selection and cross-product concepts
+├── products/
+│   ├── deckprobe/            # Overview, quickstart, product interfaces
+│   ├── deckrender/           # Rendering product documentation
+│   ├── deckops/              # One-way parse, IR, and reconstruction
+│   ├── deckuse/              # Bidirectional source-file operations
+│   └── deckhtml/             # HTML-to-PPTX product and its interfaces
+├── platform/
+│   ├── api/                  # Shared hosted task model and endpoints
+│   └── mcp/                  # Cross-product agent integration
+└── zh/                       # Chinese mirror of the same hierarchy
+```
+
+## Placement rules
+
+- Put a capability under the product that owns its behavior.
+- Put CLI, SDK, MCP, and product-specific API pages inside that product when they expose only that product.
+- Put only genuinely shared authentication, task lifecycle, and endpoint contracts under `platform/api`.
+- Put cross-product interfaces such as the current hosted MCP servers under `platform/`.
+- Mirror routes in `zh/` so language switching preserves the reader's location.
+- Keep old public URLs as redirects when moving published pages.
+
+## Growing an incomplete product area
+
+Every product begins with `overview.mdx`. Add `quick-start.mdx` only after an executable path is known, then introduce `guides/`, `reference/`, or interface directories when their contracts exist. This keeps placeholders honest while allowing the navigation to grow without another top-level reorganization.

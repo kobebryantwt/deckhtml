@@ -1,0 +1,23 @@
+---
+title: Get task details
+sidebarTitle: Get task details
+description: Query the details and current status of a DeckHTML task.
+openapi: "/platform/api/default-module.openapi.json GET /tools/tasks/{id}"
+---
+
+Retrieve the current task state, including task metadata and response stream options.
+
+<Note>
+  Use this endpoint after a task has been created. It is the primary way to inspect progress, poll for completion, or request streamed updates.
+</Note>
+
+## What to send
+
+- `id`: the task identifier returned by the create-task endpoint
+- `response-event-stream`: optional header when you want an SSE-style response
+
+## What to expect
+
+- A successful call returns the latest task status and any available result payload
+- Use repeated polling for simple integrations
+- Use the optional stream header when you need incremental updates from a long-running task

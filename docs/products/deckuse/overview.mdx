@@ -1,0 +1,27 @@
+---
+title: DeckUse
+sidebarTitle: Overview
+description: "Read and modify supported source files through bidirectional document operations."
+---
+
+# DeckUse
+
+DeckUse is the bidirectional document operations layer. It is designed for workflows that must inspect a supported source file and write changes back to that file model.
+
+## Current focus
+
+The currently described implementation focuses on Office PPTX files and element-level operations such as modification and deletion.
+
+## Use DeckUse when
+
+- The original file remains the system of record.
+- A workflow must update or remove existing elements.
+- The result must remain a source-format document that can continue through an editing workflow.
+
+## Product boundary
+
+Use [DeckOps](/products/deckops/overview) for one-way parse, IR, and reconstruction flows. Use DeckUse when the operation must preserve a bidirectional editing relationship with the source format.
+
+<Note>
+  Element models, mutation guarantees, and API pages will be added after the DeckUse project address and contracts are available.
+</Note>

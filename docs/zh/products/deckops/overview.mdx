@@ -1,0 +1,23 @@
+---
+title: DeckOps
+sidebarTitle: 概览
+description: "将文件解析成中间表示，并生成单向派生格式。"
+---
+
+# DeckOps
+
+DeckOps 是单向文档操作层，负责解析源文件、提供中间表示（IR），并还原或导出支持的下游文件格式。
+
+## 适用场景
+
+- 管线需要结构化文档数据，而不是视觉渲染结果。
+- 输入解析与输出生成之间需要稳定的 IR。
+- 转换或还原过程不需要保留与原始源文件的可编辑关系。
+
+## 产品边界
+
+DeckOps 刻意保持单向。变更需要写回支持的源文件时使用 [DeckUse](/zh/products/deckuse/overview)，只需要视觉产物时使用 [DeckRender](/zh/products/deckrender/overview)。
+
+<Note>
+  DeckOps 项目地址和契约提供后，再补充 IR Schema、支持格式和具体接入页面。
+</Note>

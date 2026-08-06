@@ -1,0 +1,55 @@
+---
+title: Deckflow Developer Center
+sidebarTitle: Overview
+description: "Choose the Deckflow product that matches inspection, rendering, document operations, source editing, or HTML-to-PPTX generation."
+---
+
+# Build document workflows with Deckflow
+
+Deckflow is organized around five products. Choose a product by the document operation you need; then choose its CLI, SDK, API, or MCP interface where available.
+
+<CardGroup cols={2}>
+  <Card title="DeckProbe" href="/products/deckprobe/overview">
+    Inspect a file and return targeted facts without rendering it.
+  </Card>
+  <Card title="DeckRender" href="/products/deckrender/overview">
+    Render source files into visual output for previews and downstream use.
+  </Card>
+  <Card title="DeckOps" href="/products/deckops/overview">
+    Parse files into an IR and produce one-way derived formats.
+  </Card>
+  <Card title="DeckUse" href="/products/deckuse/overview">
+    Read and modify supported source files through bidirectional operations.
+  </Card>
+  <Card title="DeckHTML" href="/products/deckhtml/overview">
+    Generate editable PPTX presentations from HTML.
+  </Card>
+</CardGroup>
+
+## Choose by intent
+
+| Intent | Product |
+| --- | --- |
+| Identify a file or read metadata and structural facts | [DeckProbe](/products/deckprobe/overview) |
+| Produce page or slide visuals | [DeckRender](/products/deckrender/overview) |
+| Parse, expose an IR, convert, or reconstruct in one direction | [DeckOps](/products/deckops/overview) |
+| Modify or delete elements in a supported source document | [DeckUse](/products/deckuse/overview) |
+| Author a PPTX from HTML | [DeckHTML](/products/deckhtml/overview) |
+
+<Note>
+  CLI, SDK, API, and MCP are integration interfaces, not product categories. Their documentation lives under the product or shared platform capability they expose.
+</Note>
+
+## Recommended path
+
+<Steps>
+  <Step title="Choose a product">
+    Read the [Product Model](/getting-started/product-model) if a workflow crosses more than one product.
+  </Step>
+  <Step title="Verify the product boundary">
+    Each product overview explains what belongs in that product and where adjacent operations belong.
+  </Step>
+  <Step title="Choose an interface">
+    Open the relevant CLI, SDK, API, or MCP page inside that product. Shared hosted task endpoints remain under [Platform API](/platform/api/overview).
+  </Step>
+</Steps>

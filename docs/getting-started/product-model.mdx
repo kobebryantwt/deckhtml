@@ -1,0 +1,27 @@
+---
+title: Product Model
+sidebarTitle: Product Model
+description: "Understand the responsibilities and boundaries of the five Deckflow products."
+---
+
+# Product model
+
+The product names describe what happens to a document. Integration surfaces such as CLI, SDK, API, and MCP describe how a caller reaches that capability.
+
+| Product | Direction | Primary responsibility | Does not own |
+| --- | --- | --- | --- |
+| DeckProbe | Read-only | Targeted format and document inspection | Rendering, conversion, or mutation |
+| DeckRender | Source to visual output | File rendering and previews | Source editing |
+| DeckOps | One-way | Parse, IR, reconstruction, and derived formats | Writing changes back through a source-aware editing model |
+| DeckUse | Bidirectional | Read and modify supported source formats | HTML-first presentation authoring |
+| DeckHTML | HTML to PPTX | Generate presentation files from HTML | General-purpose inspection or editing of existing documents |
+
+## Typical composition
+
+1. Use DeckProbe to identify and characterize an input cheaply.
+2. Route the file to DeckRender, DeckOps, or DeckUse based on the desired operation.
+3. Use DeckHTML separately when HTML is the authoring source for a PPTX.
+
+<Warning>
+  Do not infer a product contract from an interface name. For example, an MCP server may expose tools backed by more than one product. The capability and product boundary are authoritative; the transport is secondary.
+</Warning>

@@ -1,0 +1,25 @@
+---
+title: 下载任务结果
+sidebarTitle: 下载任务结果
+description: "通过 GET /tools/tasks/{id}/download 直接下载已完成任务的输出文件。"
+openapi: "/platform/api/default-module.openapi.json GET /tools/tasks/{id}/download"
+---
+
+当任务已经成功完成，而你希望直接通过单独接口拿到最终文件时，可以使用这个下载接口，而不只是读取查询接口返回的 `result.url`。
+
+## 什么时候用这个接口
+
+- 你的集成希望把“状态查询”和“文件下载”拆成两个独立调用
+- 你已经知道任务 ID，不想再额外解析一次查询结果
+- 你的客户端更适合通过专门的下载接口处理最终文件流
+
+## 推荐调用顺序
+
+1. 先通过 `POST /tools/tasks` 提交任务
+2. 再通过 `GET /tools/tasks/{id}` 轮询，直到任务进入 `completed`
+3. 最后调用 `GET /tools/tasks/{id}/download` 获取输出文件
+
+## 补充说明
+
+- 只有任务成功完成后，才应调用这个接口。
+- 如果你愿意，也可以直接使用查询接口返回的签名地址 `result.url` 下载结果。

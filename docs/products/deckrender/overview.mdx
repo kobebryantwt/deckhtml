@@ -1,0 +1,23 @@
+---
+title: DeckRender
+sidebarTitle: Overview
+description: "Understand where file rendering belongs in the Deckflow product family."
+---
+
+# DeckRender
+
+DeckRender is the rendering layer. It turns supported source files into visual output that can be previewed, reviewed, compared, or consumed by downstream pipelines.
+
+## Use DeckRender when
+
+- The workflow needs pixels or page/slide previews rather than document metadata.
+- Visual fidelity must be checked without editing the source file.
+- A downstream process needs rendered assets.
+
+## Product boundary
+
+DeckRender renders files. Use [DeckProbe](/products/deckprobe/overview) to inspect a file before rendering, [DeckOps](/products/deckops/overview) for one-way parsing or conversion, and [DeckUse](/products/deckuse/overview) when the source file itself must be edited.
+
+<Note>
+  Detailed installation, supported-format, and API pages will be added when the DeckRender project address and contracts are available.
+</Note>

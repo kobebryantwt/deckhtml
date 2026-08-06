@@ -1,0 +1,23 @@
+---
+title: DeckRender
+sidebarTitle: 概览
+description: "了解文件渲染在 Deckflow 产品体系中的位置。"
+---
+
+# DeckRender
+
+DeckRender 是文件渲染层，用于把支持的源文件转成可供预览、评审、对比或下游管线消费的视觉产物。
+
+## 适用场景
+
+- 工作流需要像素、页面或幻灯片预览，而不是文档元数据。
+- 需要在不编辑源文件的情况下检查视觉保真度。
+- 下游流程需要渲染后的资源。
+
+## 产品边界
+
+DeckRender 负责渲染。渲染前的文件嗅探使用 [DeckProbe](/zh/products/deckprobe/overview)，单向解析或转换使用 [DeckOps](/zh/products/deckops/overview)，需要修改源文件时使用 [DeckUse](/zh/products/deckuse/overview)。
+
+<Note>
+  DeckRender 项目地址和契约提供后，再补充安装、支持格式和 API 页面。
+</Note>

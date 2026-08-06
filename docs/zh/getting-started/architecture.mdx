@@ -1,0 +1,37 @@
+---
+title: 文档架构
+sidebarTitle: 文档架构
+description: "了解开发者中心如何划分产品、接入界面、共享平台 API 与参考资料。"
+---
+
+# 文档架构
+
+开发者中心按照产品模型组织，不再把 CLI、SDK 或 MCP 当成一级业务分类。
+
+```text
+docs/
+├── getting-started/          # 产品选择与跨产品概念
+├── products/
+│   ├── deckprobe/            # 概览、快速开始、产品接入界面
+│   ├── deckrender/           # 渲染产品文档
+│   ├── deckops/              # 单向 parse、IR 与还原
+│   ├── deckuse/              # 双向源文件操作
+│   └── deckhtml/             # HTML 到 PPTX 产品及其接入界面
+├── platform/
+│   ├── api/                  # 共享托管任务模型与端点
+│   └── mcp/                  # 跨产品智能体接入
+└── zh/                       # 结构一致的中文镜像
+```
+
+## 归档规则
+
+- 能力文档放在负责其行为的产品下。
+- CLI、SDK、MCP 和产品专属 API 只暴露单一产品时，放在产品目录内部。
+- 只有真正共享的认证、任务生命周期和端点契约放在 `platform/api`。
+- 当前托管 MCP Server 这类跨产品接入方式放在 `platform/` 下。
+- `zh/` 镜像相同路由，保证切换语言时仍停留在同一主题。
+- 已发布页面移动后保留旧 URL 重定向。
+
+## 扩展尚未补齐的产品
+
+每个产品从 `overview.mdx` 开始。只有在可执行路径明确后才增加 `quick-start.mdx`；契约存在后再增加 `guides/`、`reference/` 或接入界面目录。这样既不会用占位内容虚构能力，也无需再次调整一级结构。

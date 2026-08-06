@@ -1,0 +1,32 @@
+---
+title: DeckProbe 接入界面
+sidebarTitle: 接入界面
+description: "为命令行、服务或浏览器工作流选择合适的 DeckProbe 运行方式。"
+---
+
+DeckProbe 通过多种运行方式提供同一套目标驱动嗅探模型。
+
+| 接口 | 适用场景 | 生命周期 |
+| --- | --- | --- |
+| 原生 CLI | Shell、CI 和一次性检查 | 每次调用启动一个进程 |
+| 常驻 JSONL | 队列、服务和高吞吐本地批处理 | 复用一个原生进程，每行处理一条 JSON 记录 |
+| 浏览器 SDK | 靠近用户交互的小型探测 | 在主线程运行 WebAssembly 引擎 |
+| 浏览器 Worker SDK | 用户文件和深度探测 | 将文档检查移出 UI 线程 |
+
+## 浏览器 SDK
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+```ts
+import { initDeckProbe, probe } from "@deckflow/deckprobe";
+
+await initDeckProbe();
+const report = await probe(file, {
+  targets: ["@summary", "@security"],
+  level: "metadata",
+});
+```
+
+完整 CLI 与 SDK 契约请查看 [DeckProbe 仓库](https://github.com/deckflow/deckprobe)。

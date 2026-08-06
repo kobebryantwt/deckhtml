@@ -1,0 +1,81 @@
+---
+title: 概述
+sidebarTitle: 概述
+description: "将一个或多个 Deckflow MCP Server 接入常见智能体客户端，用于 HTML 转 PPTX、PPTX 处理和通用文件工具。"
+---
+
+Deckflow MCP 当前分别提供 3 个托管的 MCP Server。你可以按工作流只接入其中一部分，也可以把 3 个都接进客户端，获得完整的 Deckflow MCP 工具集。
+
+<Note>
+  如果你的核心目标是 HTML 转 PPTX 或预览图，使用 `html2pptx` 对应的 MCP Server 即可。如果还需要额外做 PPTX 拆分、合并、检查、嵌入字体，或执行 OCR、压缩、格式转换等能力，再分别接入 `pptx` 和 `tools` 对应的 MCP Server。
+</Note>
+
+## 可用的 Deckflow MCP Server
+
+| 端点 | 作用范围 | 工具 |
+| --- | --- | --- |
+| `https://mcp.deckflow.com/v1/html2pptx` | HTML→PPTX 生产线 | `html_to_pptx`, `html_to_image`, `markdown_to_image`, `build_html_player` |
+| `https://mcp.deckflow.com/v1/pptx` | PPTX 文件处理 | `split_pptx`, `merge_pptx`, `embed_pptx_fonts`, `inspect_pptx` |
+| `https://mcp.deckflow.com/v1/tools` | 通用文件小工具 | `convert_file`, `ocr_image`, `transform_image`, `compress_file` |
+
+## 将 Deckflow 添加到你的智能体
+
+<Steps>
+  <Step title="打开客户端的 MCP 配置入口">
+    在你的智能体客户端中找到 MCP、连接器或工具设置，并进入添加自定义服务器的入口。
+  </Step>
+  <Step title="选择你需要的 Server">
+    根据工作流选择 `html2pptx`、`pptx`、`tools` 中的一个或多个，对应接入你希望在客户端里暴露的能力。
+  </Step>
+  <Step title="把每个端点分别注册成 MCP Server">
+    推荐的服务名可以使用 `deckflow-html2pptx`、`deckflow-pptx`、`deckflow-tools`。
+  </Step>
+  <Step title="按客户端要求完成授权">
+    有些客户端会自动拉起浏览器授权；有些客户端则通过配置文件、连接器面板或 MCP 管理界面完成授权。
+  </Step>
+  <Step title="确认连接成功并开始调用工具">
+    配置完成后，先确认你添加的 Deckflow Server 已可用，再开始执行 HTML 转 PPTX、PPTX 处理或文件工具任务。
+  </Step>
+</Steps>
+
+<Tip>
+  不同客户端的菜单名称可能略有差异。下面的产品页会给出各自更具体的配置方式。
+</Tip>
+
+## 支持的产品
+
+当前文档已经提供以下接入指南：
+
+- [Codex](/zh/platform/mcp/codex)：通过 Codex 设置页或编辑 `~/.codex/config.toml` 接入一个或多个 Deckflow Server。
+- [Cursor](/zh/platform/mcp/cursor)：通过 Cursor 的 MCP 设置页或配置文件接入一个或多个 Deckflow Server。
+- [Claude Code](/zh/platform/mcp/claude-code)：通过 `claude mcp add`、`.mcp.json` 或 `~/.claude.json` 接入一个或多个 Deckflow Server。
+- [TRAE](/zh/platform/mcp/trae)：通过图形化 MCP 面板手动添加托管配置并完成授权。
+- [WorkBuddy](/zh/platform/mcp/workbuddy)：通过连接器界面配置托管 Deckflow Server，并确认工具列表。
+
+如果你的客户端支持自定义 MCP Server，通常也可以直接复用这 3 个 Deckflow 托管端点。
+
+## 你可以做什么
+
+连接完成后，Deckflow MCP 主要适合这些场景：
+
+- [把 HTML 转成可编辑 PPTX 或预览图](/zh/platform/mcp/tools)：通过 `html2pptx` server 完成 HTML 渲染和发布工作流。
+- [生成后继续处理 PPTX 文件](/zh/platform/mcp/tools)：通过 `pptx` server 拆分、合并、检查 PPTX，或嵌入字体。
+- [执行通用文件工具任务](/zh/platform/mcp/tools)：通过 `tools` server 做格式转换、OCR、图片处理和压缩。
+
+## 接入方式说明
+
+Deckflow MCP 文档现在统一以这 3 个托管端点为标准接入方式：
+
+```text
+https://mcp.deckflow.com/v1/html2pptx
+https://mcp.deckflow.com/v1/pptx
+https://mcp.deckflow.com/v1/tools
+```
+
+不同客户端通常会采用以下三种接入方式之一：
+
+- **图形界面添加**：在设置页里新增自定义 MCP Server，并在需要时完成浏览器授权。
+- **直接编辑配置文件**：手动把 Deckflow 写进 `config.toml`、`mcp.json` 或 `.mcp.json`。
+- **CLI 注册**：通过类似 `claude mcp add` 的命令快速完成配置。
+
+每个端点都应该作为单独的 MCP Server 注册。如果你想要完整能力，就把这 3 个都加进去。

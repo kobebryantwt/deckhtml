@@ -1,0 +1,33 @@
+---
+title: DeckProbe
+sidebarTitle: 概览
+description: "无需渲染即可嗅探 PDF、Microsoft Office 和 Apple iWork 文件。"
+---
+
+# DeckProbe
+
+DeckProbe 是 Deckflow 产品体系中的文件嗅探层。它无需渲染文档或启动桌面 Office 软件，即可识别文件格式，并按需返回页数、幻灯片数量、元数据、安全信号和格式特有属性。
+
+<CardGroup cols={2}>
+  <Card title="快速开始" href="/zh/products/deckprobe/quick-start">
+    安装原生 CLI，并嗅探第一个文档。
+  </Card>
+  <Card title="接入界面" href="/zh/products/deckprobe/interfaces">
+    在原生 CLI、常驻 JSONL 和浏览器 SDK 之间选择。
+  </Card>
+</CardGroup>
+
+## 适用场景
+
+- 上传文件后，先识别文件再选择解析器或渲染器。
+- 只读取工作流需要的事实，不完整解包整个文档。
+- 在明确的 I/O、解压、归档条目和时间预算内检查不可信文件。
+- 为自动化或智能体工作流返回带置信度与证据的确定性 JSON。
+
+## 产品边界
+
+DeckProbe 只读取文件事实，不负责生成视觉预览、转换文件或修改源内容。可继续阅读[产品模型](/zh/getting-started/product-model)选择后续产品。
+
+<Info>
+  DeckProbe 已开源，完整实现与参考文档位于 [deckflow/deckprobe](https://github.com/deckflow/deckprobe)。
+</Info>

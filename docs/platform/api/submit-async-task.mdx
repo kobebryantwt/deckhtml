@@ -1,0 +1,37 @@
+---
+title: Submit Async Task
+sidebarTitle: Submit Async Task
+description: "Submit any Deckflow business scenario through the shared POST /tools/tasks endpoint."
+openapi: "/platform/api/default-module.openapi.json POST /tools/tasks"
+---
+
+This is the single entrypoint for creating Deckflow jobs. Generation, translation, revamp, and tool workflows all reuse this endpoint and differentiate themselves through `type` and `params`.
+
+<Note>
+  Think of this endpoint as the universal task submitter. Scenario guides tell you which `type` and `params` combination to send for each workflow.
+</Note>
+
+## What changes per scenario
+
+| Scenario | `type` example | Typical `params` focus |
+|---|---|---|
+| Presentation generation | `generation` | Prompt text, page count, search, speed/model choices |
+| Translation | `translation` | Source and target language |
+| Revamp | `revamp` | Design direction and refresh instructions |
+| Converter tools | `convertor.html2pptx` | Tool-specific flags such as font embedding |
+
+## Common request pattern
+
+- Send `multipart/form-data`
+- Put uploaded binaries in `files`
+- Put scenario metadata in `type`
+- Put scenario options in `params` as a JSON string
+- Optionally include `name`, `notifyURL`, and `spaceId`
+
+## After submission
+
+The response gives you a task ID. Use it with the query endpoint until the task reaches a terminal state.
+
+<Card title="Query Task Status" href="/platform/api/query-task-status">
+  Poll the task endpoint to retrieve progress, result metadata, and the final download URL.
+</Card>
