@@ -1,66 +1,145 @@
 ---
 title: Getting Started
 sidebarTitle: Getting Started
-description: "Choose a Deckflow capability and follow the shortest path to your first result."
+description: "Review the minimum setup, invocation, and result for each Deckflow capability."
 ---
 
-Deckflow is organized by document task. Start from the result your application needs, then use the product-specific guide for installation, configuration, and integration details.
+Use this page to identify the shortest verified path to a first result. Product pages contain the complete options and contracts.
 
-## Choose your first result
+## DeckProbe
 
-| Use case | Product | First step |
-| --- | --- | --- |
-| Inspect format, metadata, structure, security, or asset facts | DeckProbe | [Run your first probe](/deckprobe/quick-start) |
-| Produce page images, thumbnails, or slide previews | DeckRender | [Understand DeckRender](/deckrender/overview) |
-| Parse into Document IR, extract semantic structure, or convert formats | DeckOps | [Understand DeckOps](/deckops/overview) |
-| Modify elements in a supported Office source file | DeckUse | [Understand DeckUse](/deckuse/overview) |
-| Generate presentation artifacts from HTML | DeckHTML | [Run your first generation](/deckhtml/quick-start) |
+Inspect a document locally and receive a Schema v2 JSON report.
 
-If more than one product appears to fit, compare their boundaries in [Choose a product](/product-guide).
+### Install
 
-## Follow the product guide
+<Tabs>
+  <Tab title="macOS and Linux">
+    ```bash
+    curl --proto '=https' --tlsv1.2 -LsSf \
+      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+    ```
+  </Tab>
+</Tabs>
 
-Each product area is organized around the following documentation pattern:
+### Use
 
-<CardGroup cols={2}>
-  <Card title="Overview">
-    Understand what the product does, its supported inputs, and when to use it.
+```bash
+deckprobe --pretty -t format,slide_count deck.pptx
+```
+
+### Result
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "ok",
+  "input": {
+    "display_name": "deck.pptx",
+    "source_kind": "local_file",
+    "file_size": 245760
+  },
+  "driver": {
+    "id": "powerpoint",
+    "profile": "pptx"
+  },
+  "results": {
+    "powerpoint.slide_count": {
+      "target": "powerpoint.slide_count",
+      "status": "resolved",
+      "value": 31,
+      "confidence": "exact",
+      "confidence_score": 1,
+      "path": "powerpoint.presentation_xml",
+      "source": "ppt/presentation.xml"
+    }
+  },
+  "execution": {
+    "probe_level": "metadata",
+    "paths": ["powerpoint.presentation_xml"],
+    "estimated_cost": 12,
+    "actual_cost": {
+      "physical_bytes_read": 4096,
+      "expanded_bytes": 16384,
+      "random_reads": 2
+    },
+    "unresolved_targets": []
+  },
+  "diagnostics": []
+}
+```
+
+Values and costs in this example are illustrative; the field names follow the Schema v2 contract. Continue with the [DeckProbe Quickstart](/deckprobe/quick-start) or [Output Model](/deckprobe/output-model).
+
+## DeckHTML
+
+Generate a PPTX file from an HTML source file.
+
+### Prepare
+
+Save the following as `index.html`:
+
+```html
+<!doctype html>
+<html>
+  <body>
+    <section>
+      <h1>Hello DeckHTML</h1>
+      <p>My first generated slide.</p>
+    </section>
+  </body>
+</html>
+```
+
+### Use
+
+Run the package directly without a global installation:
+
+```bash
+npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+```
+
+### Result
+
+The command writes `deck.pptx`. Add `--json` when the calling process needs structured command output:
+
+```bash
+npx -y @deckflow/deckhtml@latest index.html -o deck.pptx --json
+```
+
+Continue with the [DeckHTML Quickstart](/deckhtml/quick-start), [CLI](/deckhtml/cli/overview), or [Node.js SDK](/deckhtml/sdk/node).
+
+## DeckRender, DeckOps, and DeckUse
+
+These capabilities have defined inputs and results, but their package names and executable call contracts are not yet available in the current documentation. This page does not publish placeholder commands that could mislead an integration.
+
+<CardGroup cols={3}>
+  <Card title="DeckRender" href="/deckrender/overview">
+    **Input:** supported document
+
+    **Use:** cloud rendering through the product SDK
+
+    **Result:** page or slide visuals
   </Card>
-  <Card title="Quickstart">
-    Install or configure the required interface and produce a first result.
+  <Card title="DeckOps" href="/deckops/overview">
+    **Input:** supported document
+
+    **Use:** Probe, Parse, Extract, Convert, or Render in a cloud workflow
+
+    **Result:** Document IR, semantic extraction, converted files, or renders
   </Card>
-  <Card title="Guides">
-    Apply the product to specific workflows, inputs, and operating constraints.
-  </Card>
-  <Card title="CLI, SDK, or API">
-    Integrate through the interface provided by that product.
-  </Card>
-  <Card title="Output and reference">
-    Validate response contracts, schemas, options, and error behavior.
+  <Card title="DeckUse" href="/deckuse/overview">
+    **Input:** supported Office source file
+
+    **Use:** modify or delete existing elements
+
+    **Result:** updated editable Office file
   </Card>
 </CardGroup>
 
-## Available paths
-
-### DeckProbe
-
-DeckProbe provides a complete local onboarding path:
-
-- [Overview](/deckprobe/overview)
-- [Quickstart](/deckprobe/quick-start)
-- [CLI](/deckprobe/cli)
-- [Browser SDK](/deckprobe/browser-sdk)
-- [Output Model](/deckprobe/output-model)
-
-### DeckHTML
-
-DeckHTML provides dedicated documentation for local and cloud workflows, CLI usage, Node.js SDK usage, output formats, and configuration:
-
-- [Overview](/deckhtml/overview)
-- [Quickstart](/deckhtml/quick-start)
-- [Local mode](/deckhtml/guides/local-mode)
-- [Cloud mode](/deckhtml/guides/cloud-mode)
-- [CLI](/deckhtml/cli/overview)
-- [Node.js SDK](/deckhtml/sdk/node)
-
-For DeckRender, DeckOps, and DeckUse, begin with their product overview and follow the interfaces documented within that product area.
+If more than one capability appears to fit, compare the boundaries in [Choose a product](/product-guide).

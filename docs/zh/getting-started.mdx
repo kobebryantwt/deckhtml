@@ -1,66 +1,145 @@
 ---
 title: 开始使用
 sidebarTitle: 开始使用
-description: "根据目标选择 Deckflow 能力，并沿最短路径得到第一个结果。"
+description: "总览每项 Deckflow 能力的最小准备、调用方式和返回结果。"
 ---
 
-Deckflow 按文档任务组织产品。先确定应用需要得到什么结果，再进入对应产品文档完成安装、配置和接入。
+通过本页找到得到第一个结果的最短且经过确认的路径。完整参数和契约请继续查看对应产品文档。
 
-## 选择第一个目标
+## DeckProbe
 
-| 使用场景 | 产品 | 第一步 |
-| --- | --- | --- |
-| 获取格式、元数据、结构、安全或资源事实 | DeckProbe | [完成第一次嗅探](/zh/deckprobe/quick-start) |
-| 生成页面图片、缩略图或幻灯片预览 | DeckRender | [了解 DeckRender](/zh/deckrender/overview) |
-| 解析成 Document IR、提取语义结构或转换格式 | DeckOps | [了解 DeckOps](/zh/deckops/overview) |
-| 修改支持的 Office 源文件元素 | DeckUse | [了解 DeckUse](/zh/deckuse/overview) |
-| 从 HTML 生成演示文稿产物 | DeckHTML | [完成第一次生成](/zh/deckhtml/quick-start) |
+在本地嗅探文档，并得到 Schema v2 JSON 报告。
 
-如果多个产品看起来都适用，可以在[选择产品](/zh/product-guide)中比较它们的能力边界。
+### 安装
 
-## 按产品文档继续
+<Tabs>
+  <Tab title="macOS 与 Linux">
+    ```bash
+    curl --proto '=https' --tlsv1.2 -LsSf \
+      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+    ```
+  </Tab>
+</Tabs>
 
-每个产品区域都采用一致的文档组织方式：
+### 使用
 
-<CardGroup cols={2}>
-  <Card title="概览">
-    了解产品解决什么问题、支持哪些输入，以及何时使用。
+```bash
+deckprobe --pretty -t format,slide_count deck.pptx
+```
+
+### 结果
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "ok",
+  "input": {
+    "display_name": "deck.pptx",
+    "source_kind": "local_file",
+    "file_size": 245760
+  },
+  "driver": {
+    "id": "powerpoint",
+    "profile": "pptx"
+  },
+  "results": {
+    "powerpoint.slide_count": {
+      "target": "powerpoint.slide_count",
+      "status": "resolved",
+      "value": 31,
+      "confidence": "exact",
+      "confidence_score": 1,
+      "path": "powerpoint.presentation_xml",
+      "source": "ppt/presentation.xml"
+    }
+  },
+  "execution": {
+    "probe_level": "metadata",
+    "paths": ["powerpoint.presentation_xml"],
+    "estimated_cost": 12,
+    "actual_cost": {
+      "physical_bytes_read": 4096,
+      "expanded_bytes": 16384,
+      "random_reads": 2
+    },
+    "unresolved_targets": []
+  },
+  "diagnostics": []
+}
+```
+
+示例中的数值和成本仅用于说明，字段名遵循 Schema v2 契约。可以继续阅读 [DeckProbe 快速开始](/zh/deckprobe/quick-start)或[输出模型](/zh/deckprobe/output-model)。
+
+## DeckHTML
+
+从一个 HTML 源文件生成 PPTX。
+
+### 准备
+
+将以下内容保存为 `index.html`：
+
+```html
+<!doctype html>
+<html>
+  <body>
+    <section>
+      <h1>Hello DeckHTML</h1>
+      <p>My first generated slide.</p>
+    </section>
+  </body>
+</html>
+```
+
+### 使用
+
+无需全局安装，直接运行 npm 包：
+
+```bash
+npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+```
+
+### 结果
+
+命令会写入 `deck.pptx`。调用方需要结构化命令结果时增加 `--json`：
+
+```bash
+npx -y @deckflow/deckhtml@latest index.html -o deck.pptx --json
+```
+
+可以继续阅读 [DeckHTML 快速开始](/zh/deckhtml/quick-start)、[CLI](/zh/deckhtml/cli/overview)或 [Node.js SDK](/zh/deckhtml/sdk/node)。
+
+## DeckRender、DeckOps 与 DeckUse
+
+这些能力的输入和结果已经明确，但当前文档尚未提供对应的包名和可执行调用契约。本页不会放置可能误导开发者的占位命令。
+
+<CardGroup cols={3}>
+  <Card title="DeckRender" href="/zh/deckrender/overview">
+    **输入：**支持的文档
+
+    **使用：**通过产品 SDK 调用云端渲染
+
+    **结果：**页面或幻灯片画面
   </Card>
-  <Card title="快速开始">
-    安装或配置所需接入方式，并得到第一个结果。
+  <Card title="DeckOps" href="/zh/deckops/overview">
+    **输入：**支持的文档
+
+    **使用：**在云端工作流中执行 Probe、Parse、Extract、Convert 或 Render
+
+    **结果：**Document IR、语义提取结果、转换文件或渲染结果
   </Card>
-  <Card title="使用指南">
-    将产品应用到具体工作流、输入类型和运行约束。
-  </Card>
-  <Card title="CLI、SDK 或 API">
-    通过该产品实际提供的接入方式完成集成。
-  </Card>
-  <Card title="输出与参考">
-    确认响应契约、Schema、参数和错误行为。
+  <Card title="DeckUse" href="/zh/deckuse/overview">
+    **输入：**支持的 Office 源文件
+
+    **使用：**修改或删除已有元素
+
+    **结果：**更新后仍可编辑的 Office 文件
   </Card>
 </CardGroup>
 
-## 产品接入路径
-
-### DeckProbe
-
-DeckProbe 提供完整的本地接入路径：
-
-- [概览](/zh/deckprobe/overview)
-- [快速开始](/zh/deckprobe/quick-start)
-- [CLI](/zh/deckprobe/cli)
-- [Browser SDK](/zh/deckprobe/browser-sdk)
-- [输出模型](/zh/deckprobe/output-model)
-
-### DeckHTML
-
-DeckHTML 分别介绍本地与云端流程、CLI、Node.js SDK、输出格式和配置：
-
-- [概览](/zh/deckhtml/overview)
-- [快速开始](/zh/deckhtml/quick-start)
-- [本地模式](/zh/deckhtml/guides/local-mode)
-- [云端模式](/zh/deckhtml/guides/cloud-mode)
-- [CLI](/zh/deckhtml/cli/overview)
-- [Node.js SDK](/zh/deckhtml/sdk/node)
-
-DeckRender、DeckOps 和 DeckUse 可以从各自的产品概览进入，再按照对应产品区域中的接入方式继续。
+如果多个能力看起来都适用，可以在[选择产品](/zh/product-guide)中比较它们的边界。
