@@ -1,0 +1,59 @@
+---
+title: DeckOps CLI
+sidebarTitle: CLI
+description: "安装 DeckOps CLI、运行云端文档任务并自动下载任务结果。"
+---
+
+DeckOps 提供 npm CLI 和原生 Go CLI，两者都使用 `deckops` 命令，并提供相同的主要工作流。
+
+## 安装 Node.js CLI
+
+```bash
+npm install -g deckops
+deckops --version
+deckops --help
+```
+
+DeckOps 仓库的 Releases 还提供 macOS、Linux 和 Windows 原生二进制。
+
+## 配置或登录
+
+```bash
+deckops login
+deckops config show
+deckops config set-token <token>
+deckops config set-space <space-id>
+```
+
+## 常用命令
+
+```bash
+deckops convert slides.pptx --to pdf -o slides.pdf
+deckops extract slides.pptx --type text-shapes -o result.json
+deckops ocr scan.png --language en -o result.json
+deckops join intro.pptx body.pptx appendix.pptx -o merged.pptx
+```
+
+使用 `--no-wait` 可以在创建任务后立即返回，再单独查询和下载结果：
+
+```bash
+deckops convert slides.pptx --to pdf --no-wait --json
+deckops task get <task-id> --json
+deckops task get <task-id> -o ./result
+```
+
+## 命令分组
+
+| 命令 | 用途 |
+| --- | --- |
+| `compress` | 压缩支持的文档或媒体文件 |
+| `extract` | 提取 PPTX 字体或文本形状信息 |
+| `ocr` | 执行图片 OCR |
+| `convert` | 根据输入扩展名和 `--to` 选择转换任务 |
+| `join` | 按顺序合并 PPTX |
+| `create` | 执行内容生成任务 |
+| `translate` | 翻译支持的文档 |
+| `run` | 使用 `--param key=value` 运行明确的后端任务类型 |
+| `task` | 列出、查询、下载或删除任务 |
+
+使用 `--json` 获取机器可读输出。操作命令默认同步等待，并支持设置超时时间。

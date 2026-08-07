@@ -1,0 +1,66 @@
+---
+title: Quickstart
+sidebarTitle: Quickstart
+description: "Install the TypeScript SDK, parse a document, and retrieve a task result."
+---
+
+The TypeScript SDK is the shortest path to DeckOps from either Node.js or a browser application.
+
+<Steps>
+  <Step title="Install the SDK">
+    ```bash
+    npm install @deckops/sdk
+    ```
+  </Step>
+  <Step title="Create a client">
+    An API key is recommended for production. Omit it to use rate-limited guest mode.
+
+    ```ts
+    import { createDeck } from '@deckops/sdk';
+
+    const deck = createDeck({
+      apiKey: process.env.DECKOPS_API_KEY,
+    });
+    ```
+  </Step>
+  <Step title="Parse a document">
+    `parseDetailed()` uploads the file, selects a parser from its extension, waits for completion, downloads the structured result, and converts it to Markdown.
+
+    ```ts
+    const result = await deck.parseDetailed('./slides.pptx');
+
+    console.log(result.markdown);
+    console.log(result.taskId, result.type);
+    ```
+  </Step>
+  <Step title="Run a typed conversion task">
+    ```ts
+    const task = await deck.convertPptToPdf({
+      files: ['./slides.pptx'],
+      name: 'slides',
+    });
+
+    const completed = await deck.tasks.wait(task.id, {
+      onProgress: (next) => console.log(next.status),
+    });
+    const files = await deck.tasks.down<'convertor.ppt2pdf'>(completed.id);
+    ```
+  </Step>
+</Steps>
+
+## Choose the next page
+
+<CardGroup cols={2}>
+  <Card title="Parse documents" href="/deckops/parse">
+    Compare the Markdown facade with low-level structured results.
+  </Card>
+  <Card title="Task model" href="/deckops/task-model">
+    Build reliable upload, progress, retry, and download handling.
+  </Card>
+  <Card title="TypeScript SDK" href="/deckops/sdk/typescript">
+    Configure authentication, browser uploads, and typed task helpers.
+  </Card>
+  <Card title="Task type reference" href="/deckops/reference/task-types">
+    Find the implemented task name for each operation.
+  </Card>
+</CardGroup>

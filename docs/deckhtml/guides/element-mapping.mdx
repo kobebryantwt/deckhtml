@@ -1,0 +1,43 @@
+---
+title: Element Mapping and Editability
+sidebarTitle: Element Mapping
+description: "Understand how DeckHTML maps browser elements to editable, vector, raster, ignored, or unsupported output."
+---
+
+DeckHTML aims to preserve appearance without claiming that every browser feature has an editable PowerPoint equivalent.
+
+| Mapping | Meaning |
+| --- | --- |
+| `native` | Converted into a native PPTX text, image, table, media, or shape object |
+| `vector` | Rebuilt with supported vector geometry or OOXML enhancement |
+| `raster` | Captured as pixels because a stable editable mapping is unavailable |
+| `ignored` | Intentionally excluded before output generation |
+| `unsupported` | Detected but not converted successfully |
+
+## Common native or vector mappings
+
+- text and rich text runs
+- images and common object-fit behavior
+- HTML tables
+- rectangular, rounded, elliptical, line, and supported custom shapes
+- supported SVG paths, markers, and text
+- MathML converted to editable Office Math where conversion succeeds
+- supported gradients, borders, writing modes, and clipping geometry
+
+## Common raster fallbacks
+
+- Canvas-based charts
+- complex SVG diagrams or flowcharts
+- layered or hard-stop gradients that do not have a stable native mapping
+- URL backgrounds and some page backgrounds
+- formulas that cannot be converted to Office Math
+
+The generated deck may contain both editable and rasterized elements on the same slide.
+
+## Improving editability
+
+- Prefer semantic DOM elements over one full-slide canvas.
+- Keep text as text instead of converting it to SVG outlines or images.
+- Use stable, explicit sizes instead of layout that depends on document scrolling.
+- Generate a report and inspect every `raster` or `unsupported` record.
+- Use Node SDK strict mode when rasterization or missing identity must fail the build.

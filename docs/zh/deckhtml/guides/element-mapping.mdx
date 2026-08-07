@@ -1,0 +1,43 @@
+---
+title: 元素映射与可编辑性
+sidebarTitle: 元素映射
+description: "了解 DeckHTML 如何把浏览器元素映射为可编辑、矢量、栅格、忽略或不支持的输出。"
+---
+
+DeckHTML 会尽量保留视觉表现，但不会宣称所有浏览器能力都存在可编辑的 PowerPoint 等价实现。
+
+| 映射 | 含义 |
+| --- | --- |
+| `native` | 转换成原生 PPTX 文本、图片、表格、媒体或形状对象 |
+| `vector` | 使用支持的矢量几何或 OOXML 增强重建 |
+| `raster` | 没有稳定可编辑映射时转换成像素内容 |
+| `ignored` | 输出前被有意排除 |
+| `unsupported` | 已识别，但未能成功转换 |
+
+## 常见原生或矢量映射
+
+- 文本和 Rich Text Run
+- 图片和常见 `object-fit` 行为
+- HTML 表格
+- 矩形、圆角矩形、椭圆、线条及支持的自定义形状
+- 支持的 SVG Path、Marker 和文本
+- 转换成功时的 MathML 到可编辑 Office Math
+- 支持的渐变、边框、书写方向和裁剪几何
+
+## 常见栅格降级
+
+- 基于 Canvas 的图表
+- 复杂 SVG Diagram 或 Flowchart
+- 没有稳定原生映射的分层渐变或 Hard-stop 渐变
+- URL 背景图和部分页面背景
+- 无法转换为 Office Math 的公式
+
+同一页中可以同时存在可编辑和栅格化元素。
+
+## 提高可编辑性
+
+- 优先使用语义化 DOM，不要把整页放进一个 Canvas。
+- 保留文本节点，不要把文字转换成 SVG Outline 或图片。
+- 使用明确且稳定的尺寸，不要依赖文档滚动布局。
+- 生成报告并检查每个 `raster` 或 `unsupported` 记录。
+- 栅格化或缺少元素标识必须让构建失败时，使用 Node SDK Strict Mode。

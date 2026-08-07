@@ -1,0 +1,26 @@
+---
+title: PPTX 输出
+sidebarTitle: PPTX 输出
+description: "了解 DeckHTML PPTX 的可编辑映射、降级、字体、动画和验证方式。"
+---
+
+PPTX 输出会同时包含可编辑 Office 元素和视觉降级。DeckHTML 默认不会把整页压成一张图，但不存在稳定原生映射的单个元素可能被栅格化。
+
+## 建议检查
+
+- Slide 数量和尺寸
+- 文本内容、换行、字体和阅读顺序
+- 图片、表格、形状、SVG、公式和媒体
+- 元素动画和页面转场
+- 报告中的栅格化或不支持元素
+- 缺失字体和资源诊断
+
+## 字体
+
+Local 转换会根据目标平台映射 CSS Font Stack。Cloud 转换还可以通过 `--embed-fonts` 嵌入匹配的字体文件。
+
+## 输出安全
+
+CLI 默认拒绝覆盖已有文件，只有传入 `--force` 才会替换。Node API 只返回 Buffer，不会自动写入磁盘。
+
+可编辑性属于交付要求而不是偏好时，使用 Strict Mode 和逐元素报告。

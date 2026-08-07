@@ -1,33 +1,33 @@
 ---
-title: 云端模式
-sidebarTitle: 云端模式
-description: "使用 DeckHTML 云端模式完成远端转换、托管执行和云端专属字体嵌入工作流。"
+title: Cloud 模式
+sidebarTitle: Cloud 模式
+description: "上传 DeckHTML 输入，并通过 DeckOps 云端任务运行转换。"
 ---
 
-云端模式会把转换请求发送到远端服务，而不是在本机完整执行整个流程。
-
-## 什么时候用
-
-以下场景更适合云端模式：
-
-- 你需要使用云端专属的 `--embed-fonts` 字体嵌入能力
-- 你希望把转换纳入托管执行流程
-- 团队内部统一采用服务化转换路径
-
-## 认证方式
-
-云端执行需要凭证，你可以任选其中一种方式：
-
-- 通过 `deckhtml auth login` 完成交互式登录
-- 通过 `deckhtml config set api-key <key>` 写入 API Key
-- 在 CI、容器或自动化环境中提供 `DECKHTML_API_KEY`
-
-## 示例
+Cloud 模式会上传已经物化的 HTML 输入，创建 HTML 转换任务，等待任务完成，下载结果并写入指定输出路径。
 
 ```bash
-deckhtml index.html \
-  -o deck.pptx \
-  --mode cloud \
-  --embed-fonts \
-  --report
+deckhtml deck.html -o deck.pptx --mode cloud
+deckhtml deck.html -o deck.pptx --mode cloud --embed-fonts
 ```
+
+## 认证行为
+
+Cloud 模式支持稳定的访客 UUID。访客请求会被限频，并可能需要显式启动任务。生产环境建议登录或配置 API Key。
+
+```bash
+deckhtml auth login
+deckhtml auth status
+deckhtml config set api-key <key>
+```
+
+CI 环境使用 `DECKHTML_API_KEY`，无需交互式存储凭证。
+
+## 与 Local 模式的区别
+
+- 转换通过 DeckOps 任务远程执行。
+- PPTX 输出支持 `--embed-fonts`。
+- 异步任务完成后才下载结果文件。
+- 当前云端没有返回逐元素报告时，Report 会使用聚合转换统计。
+
+`auto` 只在已经配置凭证时选择 Cloud，否则选择 Local。

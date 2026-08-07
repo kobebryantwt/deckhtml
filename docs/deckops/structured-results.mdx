@@ -1,0 +1,39 @@
+---
+title: Structured Parse Results
+sidebarTitle: Structured Results
+description: "Compare the format-specific result contracts returned by DeckOps parse tasks."
+---
+
+Each parser preserves the structures that its source format can currently expose. The contracts are related by purpose, not by one common node schema.
+
+## PDF
+
+`pdf.parse` returns `textBlocks` and optional `images`. Text blocks include text, a zero-based page locator, optional bold or italic style, and an optional semantic role such as `heading`, `list-item`, or `caption`.
+
+## PPTX
+
+`pptx.parse` returns a presentation object model. It can retain slides, shapes, transforms, text bodies, tables, images, groups, layout and master relationships, and other PPTX-specific data. The Markdown converter uses geometry and shape relationships to reconstruct reading order.
+
+## DOCX
+
+`docx.parseTextAndImage` returns ordered document elements, including text, images, tables, charts, diagrams, groups, and structured document tags. Heading output depends on paragraph style information when the upstream parser provides it.
+
+## Keynote
+
+`keynote.parseTextAndImage` returns document dimensions and slides containing text, tables, and chart labels, plus images associated with page indexes. Images without a valid page index are retained in a fallback section by the Markdown converter.
+
+## Web pages
+
+`html.getByURL` can fetch source HTML or runtime HTML. The Markdown facade applies article extraction, converts the selected content to GitHub-flavored Markdown, resolves relative image URLs, and drops scripts, styles, and iframes.
+
+## Markdown is a projection
+
+Markdown is convenient but intentionally loses some source detail. Use the low-level result when the application needs:
+
+- slide or page geometry
+- shape hierarchy and grouping
+- rich text runs and style metadata
+- tables, charts, images, notes, layouts, or masters
+- a stable task ID for later result inspection
+
+Use `parseDetailed()` when you want Markdown now but still need the task ID and selected parser for later access.

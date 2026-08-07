@@ -1,104 +1,51 @@
 ---
-title: Commands
+title: Command Reference
 sidebarTitle: Commands
-description: "Reference the published DeckHTML CLI commands, flags, and subcommands."
+description: "Reference the implemented DeckHTML CLI inputs, flags, authentication, and configuration commands."
 ---
 
-> Reference the current command surface shipped with the DeckHTML CLI package.
+## Convert
 
-The primary command follows this pattern:
-
-```bash
-deckhtml [options] [command] [inputs...]
+```text
+deckhtml [global options] [inputs...]
 ```
 
-Run `deckhtml --help` for the current usage text and `deckhtml --version` for version information.
+| Flag | Behavior |
+| --- | --- |
+| `-o, --output <path>` | Output `.pptx` or `.png` path; extension selects format |
+| `--mode <mode>` | `auto`, `local`, or `cloud`; default `auto` |
+| `--width <pixels>` | Override viewport width; CLI derives 16:9 height |
+| `--platform <platform>` | `win`, `mac`, `ios`, `android`, or `linux` font mapping target |
+| `--embed-fonts` | Embed fonts; cloud only |
+| `--report` | Write a conversion report next to the output |
+| `--executable-path <path>` | Use a specific Chromium executable locally |
+| `--exclude <selector>` | Exclude matching runtime or navigation elements |
+| `--identity-attribute <name>` | Use a custom stable element identity attribute |
+| `--force` | Overwrite existing output |
+| `--no-animations` | Disable element entrance-animation export |
+| `--slide-transition <effects>` | Select one transition or a comma-separated cycle |
+| `--no-slide-transitions` | Disable slide transitions |
+| `--iframes <mode>` | `inspect`, `screenshot`, or `skip`; local only |
+| `--iframe-load-timeout-ms <ms>` | Set iframe load timeout |
+| `--json` | Print a machine-readable final envelope |
+| `--quiet` | Suppress nonessential output |
+| `-v, --verbose` | Print detailed logs to stderr |
+| `-V, --version` | Print version |
+| `-h, --help` | Print help |
 
-## Root command
+## Authentication
 
 ```bash
-deckhtml [inputs...]
+deckhtml auth login [--port <port>]
+deckhtml auth status
 ```
 
-Arguments:
-
-| Argument | Meaning |
-| --- | --- |
-| `inputs` | HTML file(s), a URL, or `-` for stdin |
-
-## Root options
-
-| Flag | Description | Default |
-| --- | --- | --- |
-| `-V, --version` | Show version. | Off |
-| `--json` | Machine-readable JSON on stdout. | `false` |
-| `-v, --verbose` | Detailed logs to stderr. | `false` |
-| `--quiet` | Only errors and final result. | `false` |
-| `-o, --output <path>` | Output path. Use a `.pptx` or `.png` extension. | Derived from input when possible |
-| `--mode <mode>` | Execution mode: `auto`, `local`, or `cloud`. | `auto` |
-| `--width <pixels>` | Playwright viewport width; height scales at `16:9`. | Package default |
-| `--platform <platform>` | Generic font mapping target: `win`, `mac`, `ios`, `android`, `linux`. | Current OS |
-| `--embed-fonts` | Embed fonts. Cloud only. | `false` |
-| `--report` | Generate a conversion report next to output. | `false` |
-| `-h, --help` | Show help. | Off |
-
-## Supported input forms
-
-| Input | Example | Description |
-| --- | --- | --- |
-| stdin | `cat index.html \| deckhtml - -o deck.pptx` | Read HTML from stdin. |
-| HTML file | `deckhtml index.html` | Convert one local HTML file. |
-| HTML files | `deckhtml page1.html page2.html page3.html` | Convert files in argument order. |
-| URL | `deckhtml https://example.com/deck.html -o deck.pptx` | Load and convert a hosted page. |
-
-## Current mode and output behavior
-
-DeckHTML resolves execution mode like this:
-
-| Mode | Behavior |
-| --- | --- |
-| `local` | Deterministic local execution with no cloud credential requirement |
-| `cloud` | Hosted execution with credentials |
-| `auto` | Resolves to `cloud` when credentials exist, otherwise `local` |
-
-Output behavior in the published `0.3.0` package is:
-
-- `pptx` and `png` are the documented output artifacts
-- output type is inferred from `-o` file extension, not from a `--format` flag
-- if `-o` is omitted, the CLI defaults to a derived `.pptx` path
-- when reading from stdin, `-o` is required
-
-## Subcommands
-
-### `deckhtml auth`
+## Configuration
 
 ```bash
-deckhtml auth [command]
+deckhtml config set api-key <key>
+deckhtml config set space-id <id>
+deckhtml config set webhook <url>
+deckhtml config set retention-hours <0-99>
+deckhtml config show
 ```
-
-| Command | Description |
-| --- | --- |
-| `deckhtml auth login` | Login via browser and save credentials. |
-| `deckhtml auth status` | Show authentication status. |
-
-`deckhtml auth login` also supports `--port <port>` to override the local callback port.
-
-### `deckhtml config`
-
-```bash
-deckhtml config [command]
-```
-
-| Command | Description |
-| --- | --- |
-| `deckhtml config set <key> <value>` | Set a configuration value. |
-| `deckhtml config show` | Show current configuration. |
-
-## Config keys documented by the package README
-
-| Key | Description | Default |
-| --- | --- | --- |
-| `api-key` | API key for cloud requests. | None |
-| `space-id` | Preferred Deckflow space for cloud runs. | None |
-| `webhook` | Default callback URL. | None |
-| `retention-hours` | Cloud file retention time in hours. | `3` |

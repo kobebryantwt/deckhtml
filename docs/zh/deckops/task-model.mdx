@@ -1,0 +1,64 @@
+---
+title: 任务模型
+sidebarTitle: 任务模型
+description: "了解 DeckOps 的文件上传、异步任务、状态更新和结果下载。"
+---
+
+大多数 DeckOps 操作都遵循同一套异步流程：
+
+```text
+输入 → 上传 → 创建 → pending/running → completed/failed → 下载
+```
+
+## 上传输入
+
+SDK 任务方法既可以接收已有 `fileIds`，也可以直接接收需要上传的文件。TypeScript 支持 Node.js 文件路径、`Uint8Array`、`ArrayBuffer`，以及浏览器中的 `Blob` 或 `File`。大文件会分片上传，可通过 `onProgress` 观察进度。
+
+```ts
+const task = await deck.convertPptToPdf({
+  files: ['./slides.pptx'],
+  upload: {
+    onProgress: (progress) => console.log(Math.round(progress * 100)),
+  },
+});
+```
+
+## 任务状态
+
+任务状态包括 `pending`、`running`、`completed` 和 `failed`。完成后的任务详情不保证内嵌最终结果，应通过 `tasks.down()` 获取。
+
+```ts
+const done = await deck.tasks.wait(task.id, {
+  timeout: 300,
+  useEventStream: true,
+  onProgress: (next) => console.log(next.status),
+});
+
+const result = await deck.tasks.down(done.id);
+```
+
+`wait()` 会先读取当前状态，再默认使用 Server-Sent Events，并支持轮询回退。应用需要可取消的持续更新时，可以使用 `subscribe()`。
+
+## 认证和工作空间
+
+每个请求都会携带稳定的 `X-Auth-UUID`，还可以配置：
+
+- `token`：作为 `X-Auth-Token` 发送
+- `apiKey`：作为 `Authorization: Bearer <apiKey>` 发送
+- `spaceId`：作为上传和任务的默认工作空间
+
+没有设置 `spaceId` 时，SDK 会通过当前用户接口解析。Token 和 API Key 都为空时可使用访客模式，但会受到服务端限制。
+
+## 通用任务 API
+
+常见操作优先使用类型化方法；运行时动态选择任务类型时使用 `tasks.create()`。
+
+```ts
+const task = await deck.tasks.create({
+  type: 'convertor.ppt2pdf',
+  files: ['./slides.pptx'],
+  params: {},
+});
+```
+
+任务 API 还提供 `list`、`get`、`start`、`delete`、`wait`、`subscribe` 和 `down`。

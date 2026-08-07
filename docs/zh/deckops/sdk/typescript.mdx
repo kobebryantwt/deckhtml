@@ -1,0 +1,45 @@
+---
+title: TypeScript SDK
+sidebarTitle: TypeScript
+description: "在 Node.js 或浏览器应用中使用 @deckops/sdk。"
+---
+
+```bash
+npm install @deckops/sdk
+```
+
+## 创建客户端
+
+```ts
+import { createDeck } from '@deckops/sdk';
+
+const deck = createDeck({
+  apiKey: process.env.DECKOPS_API_KEY,
+  spaceId: process.env.DECKOPS_SPACE_ID,
+});
+```
+
+客户端选项包括 `root`、`token`、`apiKey`、`spaceId`、显式或自定义存储的认证 UUID，以及处理 `401` 或 `402` 后恢复请求的回调。
+
+## Node.js 和浏览器文件
+
+Node.js 调用方可以传文件路径。Node.js 和浏览器都可以传二进制数据，浏览器应用还能直接传文件选择器返回的 `File`。
+
+```ts
+await deck.imageOcr({
+  files: [{ input: bytes, name: 'scan.png' }],
+  params: { language: 'en' },
+});
+```
+
+## 类型化和通用 API
+
+类型化方法会绑定具体任务类型，并推断其参数和结果；运行时动态选择任务时使用通用 API。
+
+```ts
+const task = await deck.convertPptToPdf({ files: ['./slides.pptx'] });
+const done = await deck.tasks.wait(task.id);
+const result = await deck.tasks.down<'convertor.ppt2pdf'>(done.id);
+```
+
+需要 Markdown 时使用 `parse()`；需要 Markdown 与任务信息时使用 `parseDetailed()`；需要结构化结果时使用底层 Parse 方法。

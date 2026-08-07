@@ -1,0 +1,43 @@
+---
+title: Document Operations
+sidebarTitle: Operations
+description: "Choose an implemented DeckOps operation for conversion, extraction, PPTX processing, media, or content workflows."
+---
+
+DeckOps groups a broad set of cloud document tasks behind the same upload and task lifecycle.
+
+## Conversion
+
+Implemented conversions include:
+
+- PPT or PPTX to images, PDF, or video
+- PPT to PPTX
+- DOC or DOCX to PDF
+- PDF to images
+- Keynote to images, HTML, or PDF
+- HTML to PNG or PPTX
+- Markdown to PNG
+
+The exact source and destination pair selects the backend task type. Use [Task Type Reference](/deckops/reference/task-types) rather than inferring unsupported pairs.
+
+## PPTX operations and extraction
+
+- Split a deck into slide files or join PPTX files in input order.
+- Inspect used and embedded fonts.
+- Extract page, shape, text, image, layout, master, and optional speaker-note information.
+- Embed selected fonts into a PPTX.
+
+## OCR, compression, and images
+
+- OCR images with a configured language.
+- Compress document or video files.
+- Convert images to WebP.
+- Resize images by maximum width or height.
+
+## Content workflows
+
+The current task catalog also includes document generation, translation, revamp, and HTML player creation. These operations use the same task API but return task-specific results.
+
+<Note>
+  Some operations read one source file while others use an ordered file list. `pptx.join`, `convertor.html2pptx`, `html.buildPlayer`, and `generation` are notable multi-source workflows.
+</Note>

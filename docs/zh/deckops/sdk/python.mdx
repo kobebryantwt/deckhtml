@@ -1,0 +1,34 @@
+---
+title: Python SDK
+sidebarTitle: Python
+description: "在 Python 中通过 deckops-sdk 同步执行任务、上传、解析和结果获取。"
+---
+
+```bash
+pip install deckops-sdk
+```
+
+```python
+import os
+from deckops import create_deck
+
+with create_deck(api_key=os.getenv("DECKOPS_API_KEY")) as deck:
+    task = deck.convert_ppt_to_pdf(files=["./slides.pptx"], name="slides")
+    done = deck.tasks.wait(task["id"])
+    result = deck.tasks.down(done["id"])
+```
+
+Python 客户端是同步接口，并持有自己的 HTTP 连接池。短生命周期客户端应使用 Context Manager 或主动调用 `close()`。
+
+## 解析为 Markdown
+
+```python
+with create_deck(api_key=os.getenv("DECKOPS_API_KEY")) as deck:
+    markdown = deck.parse("./slides.pptx")
+    detailed = deck.parse_detailed({
+        "file_id": "uploaded-file-id",
+        "name": "slides.pptx",
+    })
+```
+
+SDK 还提供底层上传和任务客户端、任务快捷方法、基于 SSE 的等待与轮询回退，以及结构化解析结果转换器。

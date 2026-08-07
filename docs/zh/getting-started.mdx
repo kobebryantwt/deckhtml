@@ -114,24 +114,37 @@ npx -y @deckflow/deckhtml@latest index.html -o deck.pptx --json
 
 可以继续阅读 [DeckHTML 快速开始](/zh/deckhtml/quick-start)、[CLI](/zh/deckhtml/cli/overview)或 [Node.js SDK](/zh/deckhtml/sdk/node)。
 
-## DeckRender、DeckOps 与 DeckUse
+## DeckOps
 
-这些能力的输入和结果已经明确，但当前文档尚未提供对应的包名和可执行调用契约。本页不会放置可能误导开发者的占位命令。
+安装 TypeScript SDK，将支持的文档解析为 Markdown：
 
-<CardGroup cols={3}>
+```bash
+npm install @deckops/sdk
+```
+
+```ts
+import { createDeck } from '@deckops/sdk';
+
+const deck = createDeck({ apiKey: process.env.DECKOPS_API_KEY });
+const result = await deck.parseDetailed('./slides.pptx');
+
+console.log(result.markdown);
+console.log(result.taskId, result.type);
+```
+
+继续阅读 [DeckOps 快速开始](/zh/deckops/quick-start)、[任务模型](/zh/deckops/task-model)或[结构化解析结果](/zh/deckops/structured-results)。
+
+## DeckRender 与 DeckUse
+
+当前帮助中心还没有这两项能力的具体包名和可执行调用契约，因此这里只说明预期输入和结果。
+
+<CardGroup cols={2}>
   <Card title="DeckRender" href="/zh/deckrender/overview">
     **输入：**支持的文档
 
     **使用：**通过产品 SDK 调用云端渲染
 
     **结果：**页面或幻灯片画面
-  </Card>
-  <Card title="DeckOps" href="/zh/deckops/overview">
-    **输入：**支持的文档
-
-    **使用：**在云端工作流中执行 Probe、Parse、Extract、Convert 或 Render
-
-    **结果：**Document IR、语义提取结果、转换文件或渲染结果
   </Card>
   <Card title="DeckUse" href="/zh/deckuse/overview">
     **输入：**支持的 Office 源文件

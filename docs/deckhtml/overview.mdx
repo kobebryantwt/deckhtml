@@ -1,26 +1,47 @@
 ---
 title: DeckHTML
 sidebarTitle: Overview
-description: "Generate editable PPTX presentations from HTML."
+description: "Convert HTML or SVG into PPTX and PNG while preserving editable presentation elements where possible."
 ---
 
-DeckHTML is the HTML-native deck engine in the Deckflow family. It is a specialized capability for the growing workflow in which HTML is the source of slide structure and visual design, and presentation artifacts are generated through local or cloud execution paths.
+DeckHTML turns browser-rendered HTML or SVG into presentation artifacts. It uses the page's computed layout, then maps each element to a native, vector, raster, ignored, or unsupported presentation representation.
+
+```mermaid
+flowchart LR
+  H["HTML or SVG"] --> B["Browser layout"]
+  B --> I["Inspect slides and elements"]
+  I --> M["Map native, vector, or raster output"]
+  M --> O["PPTX or PNG"]
+  M --> R["Report and diagnostics"]
+```
 
 <CardGroup cols={2}>
   <Card title="Quickstart" href="/deckhtml/quick-start">
-    Convert a local HTML page into a PPTX file.
+    Convert one HTML deck locally and inspect the output.
+  </Card>
+  <Card title="Author HTML" href="/deckhtml/reference/input-html">
+    Structure slide hosts, sizes, identities, fonts, and assets for reliable conversion.
   </Card>
   <Card title="CLI" href="/deckhtml/cli/overview">
-    Use DeckHTML from a terminal, script, or CI pipeline.
+    Convert files, stdin, URLs, or ordered inputs from a terminal or CI job.
   </Card>
   <Card title="Node SDK" href="/deckhtml/sdk/overview">
-    Integrate HTML-to-PPTX generation into application code.
-  </Card>
-  <Card title="MCP" href="/platform/mcp/overview">
-    Expose Deckflow capabilities to compatible agent clients.
+    Control conversion, strictness, resources, and browser execution in code.
   </Card>
 </CardGroup>
 
+## What DeckHTML preserves
+
+DeckHTML keeps text, images, tables, many shapes, supported SVG geometry, and MathML equations editable when a stable PPTX mapping exists. Canvas charts, complex SVG, layered backgrounds, and other unsupported effects may be rasterized to preserve appearance.
+
+The conversion report makes this boundary visible per element. It should be part of automated quality checks when editability matters.
+
+## Execution modes
+
+- **Local** runs Playwright and the converter on your machine. It supports PPTX and PNG without cloud credentials.
+- **Cloud** uploads the input and runs a DeckOps conversion task. Font embedding is available only in this mode.
+- **Auto** selects cloud when credentials are configured and local otherwise.
+
 ## Product boundary
 
-DeckHTML starts from HTML and produces presentation artifacts. For existing document files, use [DeckProbe](/deckprobe/overview) to inspect, [DeckRender](/deckrender/overview) to render, [DeckOps](/deckops/overview) to Parse into IR, Extract, or Convert, and [DeckUse](/deckuse/overview) to Manipulate a supported Office source file.
+DeckHTML starts from HTML or SVG. Use [DeckProbe](/deckprobe/overview) to inspect existing documents, [DeckOps](/deckops/overview) for cloud parsing and document operations, and [DeckUse](/deckuse/overview) when changes must be written back to a supported Office source file.

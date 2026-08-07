@@ -9,17 +9,17 @@ The five products solve different document tasks. Choose by the result your appl
 | --- | --- | --- | --- |
 | DeckProbe | Fast inspection, upload checks, routing, and policy decisions | Native Rust locally or Browser JS SDK | Target evidence with confidence and measured cost |
 | DeckRender | Focused document rendering | Cloud rendering through an SDK | Page or slide visuals |
-| DeckOps | Full document understanding and transformation | Cloud execution through an SDK | Document IR, semantic extraction, converted files, or renders |
+| DeckOps | Cloud parsing, extraction, conversion, and document operations | Cloud tasks through CLI or SDK | Format-specific structured results, Markdown, or generated files |
 | DeckUse | Source-aware Office file manipulation | Local library workflow | Updated Office source file |
-| DeckHTML | HTML-native deck authoring | Local and cloud paths | Presentation artifacts generated from HTML |
+| DeckHTML | HTML- and SVG-native deck authoring | Local and cloud paths | PPTX or PNG generated from browser layout |
 
 ## DeckProbe or DeckOps?
 
 This is the most common boundary:
 
 - Choose **DeckProbe** when document-level facts are the final result: verified format, metadata, counts, security signals, confidence, and probe cost.
-- Choose **DeckOps** when the application needs page and element structure, a unified Document IR, semantic Extract, format Convert, or combined Render.
-- DeckProbe's `deep` level still returns target evidence; it does not produce the DeckOps Document IR.
+- Choose **DeckOps** when the application needs page and element structure, format-specific parse results, Markdown projection, extraction, or format conversion.
+- DeckProbe's `deep` level still returns target evidence; it does not return DeckOps parse results.
 
 ## DeckRender or DeckOps?
 
@@ -28,9 +28,9 @@ This is the most common boundary:
 
 ## DeckOps or DeckUse?
 
-- Choose **DeckOps** to normalize different formats into an IR and create derived results.
+- Choose **DeckOps** to parse supported formats or create derived cloud results.
 - Choose **DeckUse** when a supported Office file remains the editable artifact and existing elements must be modified or deleted.
 
 ## When to use DeckHTML
 
-Choose DeckHTML when HTML is the source of slide structure and visual design. It is a specialized authoring path rather than a general parser for existing office documents.
+Choose DeckHTML when HTML or SVG is the source of slide structure and visual design. It converts browser layout into PPTX or PNG and reports where elements remain editable or require raster fallback.

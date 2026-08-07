@@ -1,31 +1,33 @@
 ---
-title: Errors
-sidebarTitle: Errors
-description: "Troubleshoot common DeckHTML errors across input handling, conversion execution, and output generation."
+title: Troubleshooting
+sidebarTitle: Troubleshooting
+description: "Diagnose DeckHTML input, browser, mapping, resource, font, and output failures."
 ---
 
-This page provides a first-pass error model for documentation consumers.
+## Only one slide was detected
 
-## Common failure categories
+Use repeated `.slide-container` hosts, ensure each host is close to viewport size, or pass one HTML file per slide. Generate a report to confirm `slideCount`.
 
-- Input resolution errors: missing file, unreadable path, invalid URL, or empty stdin.
-- Conversion execution errors: runtime failures during local or cloud processing.
-- Authentication errors: missing or invalid credentials for cloud mode.
-- Output write errors: target path is invalid, unwritable, or inconsistent with the selected format.
+## Content is clipped or positioned incorrectly
 
-## Troubleshooting approach
+Match the declared deck size, slide host size, and browser viewport. Add `meta[name="deck-size"]` or pass `--width` when auto-detection does not reflect the authored canvas.
 
-1. Re-run with the smallest possible input.
-2. Confirm whether the issue reproduces in local mode, cloud mode, or both.
-3. Use `--json` to capture structured output in scripts.
-4. Generate a report when a failed run needs deeper inspection.
+## Fonts differ from the browser
 
-## Recommended escalation data
+Ensure font files load before conversion, use an explicit CSS font stack, select the target `--platform`, and inspect missing-font diagnostics. Use cloud `--embed-fonts` when the output must carry supported font binaries.
 
-When filing an issue or asking for support, include:
+## An element is an image instead of editable
 
-- Input source type: file, stdin, or URL
-- Output format
-- Execution mode
-- Exact command
-- Whether the error reproduces consistently
+Check its `mapping_mode` and raster reason in the report. Canvas charts, complex SVG, some gradients, URL backgrounds, and formula fallbacks are expected raster candidates.
+
+## Chromium cannot start
+
+Install a compatible Chromium or pass `--executable-path`. In containers, make sure the process has the libraries and permissions Chromium requires.
+
+## Remote or iframe content is missing
+
+Review resource and iframe diagnostics. Confirm network access, choose the intended iframe mode, and increase `--iframe-load-timeout-ms` when the child document is slow.
+
+## CI produced an ambiguous result
+
+Use `--json --report`, check the process exit code, verify every reported artifact path, and fail the job on disallowed report mappings or diagnostic rule IDs.

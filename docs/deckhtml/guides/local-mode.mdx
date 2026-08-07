@@ -1,34 +1,30 @@
 ---
 title: Local Mode
 sidebarTitle: Local Mode
-description: "Run DeckHTML conversions locally for fast iteration, CI automation, and controlled execution environments."
+description: "Run DeckHTML on the current machine with Playwright and no cloud credentials."
 ---
 
-Local mode runs conversion on the invoking machine.
-
-## When to use it
-
-Choose local mode when:
-
-- You want a simple local developer workflow.
-- Your inputs are already on disk.
-- You do not need the cloud-only `--embed-fonts` flag.
-- You prefer local file access and local artifact generation.
-
-## Typical flow
+Local mode loads the input with Playwright, inspects the browser layout, and generates PPTX or PNG on the current machine.
 
 ```bash
-deckhtml index.html -o deck.pptx --mode local
+deckhtml deck.html -o deck.pptx --mode local
+deckhtml deck.html -o frames.png --mode local
 ```
 
-In many cases, local mode is the default or the most predictable starting point.
+Use local mode for fast iteration, controlled data handling, CI jobs with Chromium, and application workflows that need the Node conversion API.
 
-## Best practices
+## Local capabilities
 
-- Keep input assets available locally.
-- Use JSON output for scripts and CI jobs.
-- Generate a report when you need post-run inspection.
+- HTML or SVG to PPTX
+- HTML or SVG to one or more PNG images
+- multi-file and multi-slide inputs
+- editable element mapping and raster fallbacks
+- animations and slide transitions for PPTX
+- iframe inspection, screenshot, or omission
+- per-element report and structured diagnostics
 
-```bash
-deckhtml index.html -o deck.pptx --mode local --report --json
-```
+## Requirements
+
+Local execution needs a usable Chromium installation. Set `--executable-path` or `DECKHTML_CHROMIUM_EXECUTABLE_PATH` when automatic discovery cannot find it.
+
+Local mode does not support `--embed-fonts`. It can map CSS font stacks to the selected target platform, but embedding the font binaries is a cloud operation.

@@ -1,0 +1,52 @@
+---
+title: 解析文档
+sidebarTitle: 解析文档
+description: "将支持的文档格式解析为结构化结果或归一化 Markdown。"
+---
+
+DeckOps 提供两个层级的解析接口：
+
+| 接口 | 返回结果 | 适用场景 |
+| --- | --- | --- |
+| `deck.parse()` | Markdown 字符串 | 搜索、摘要、索引或大模型输入只需要便于消费的文本表示 |
+| 底层 Parse 任务 | 格式专属结构化对象 | 应用需要页面、形状、几何、表格、图片、备注或样式数据 |
+
+## 支持的解析路由
+
+| 输入 | 任务类型 |
+| --- | --- |
+| `.pdf` | `pdf.parse` |
+| `.pptx` | `pptx.parse` |
+| `.docx` | `docx.parseTextAndImage` |
+| `.key` | `keynote.parseTextAndImage` |
+| HTTP 或 HTTPS URL | `html.getByURL` |
+
+## Markdown 门面
+
+```ts
+const markdown = await deck.parse('./report.pdf');
+
+const detailed = await deck.parseDetailed({
+  file: './slides.pptx',
+  wait: { timeout: 300 },
+});
+
+console.log(detailed.markdown);
+console.log(detailed.taskId, detailed.type);
+```
+
+对于已经上传的文件，传入 `{ fileId, name }`。二进制或 Blob 输入需要提供 `name`，让 SDK 可以选择 Parser。
+
+## 结构化结果
+
+```ts
+const task = await deck.pptxParse({ files: ['./slides.pptx'] });
+const done = await deck.tasks.wait(task.id);
+const result = await deck.tasks.down<'pptx.parse'>(done.id);
+```
+
+这里拿到的是 PPTX 对象模型，而不是 Markdown 投影。不同格式的契约和保真边界请参考[结构化解析结果](/zh/deckops/structured-results)。
+
+<Warning>
+  当前公开实现没有提供跨格式共享的一套 Document IR Schema。不要假设 PDF 结果中的字段也存在于 PPTX、DOCX 或 Keynote 结果中。
+</Warning>

@@ -114,24 +114,37 @@ npx -y @deckflow/deckhtml@latest index.html -o deck.pptx --json
 
 Continue with the [DeckHTML Quickstart](/deckhtml/quick-start), [CLI](/deckhtml/cli/overview), or [Node.js SDK](/deckhtml/sdk/node).
 
-## DeckRender, DeckOps, and DeckUse
+## DeckOps
 
-These capabilities have defined inputs and results, but their package names and executable call contracts are not yet available in the current documentation. This page does not publish placeholder commands that could mislead an integration.
+Install the TypeScript SDK and parse a supported document into Markdown:
 
-<CardGroup cols={3}>
+```bash
+npm install @deckops/sdk
+```
+
+```ts
+import { createDeck } from '@deckops/sdk';
+
+const deck = createDeck({ apiKey: process.env.DECKOPS_API_KEY });
+const result = await deck.parseDetailed('./slides.pptx');
+
+console.log(result.markdown);
+console.log(result.taskId, result.type);
+```
+
+Continue with the [DeckOps Quickstart](/deckops/quick-start), [Task Model](/deckops/task-model), or [Structured Results](/deckops/structured-results).
+
+## DeckRender and DeckUse
+
+Concrete package and executable contracts for these two capabilities are not yet available in this documentation, so this page only identifies their expected input and result.
+
+<CardGroup cols={2}>
   <Card title="DeckRender" href="/deckrender/overview">
     **Input:** supported document
 
     **Use:** cloud rendering through the product SDK
 
     **Result:** page or slide visuals
-  </Card>
-  <Card title="DeckOps" href="/deckops/overview">
-    **Input:** supported document
-
-    **Use:** Probe, Parse, Extract, Convert, or Render in a cloud workflow
-
-    **Result:** Document IR, semantic extraction, converted files, or renders
   </Card>
   <Card title="DeckUse" href="/deckuse/overview">
     **Input:** supported Office source file

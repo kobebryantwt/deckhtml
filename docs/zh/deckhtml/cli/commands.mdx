@@ -1,104 +1,51 @@
 ---
 title: 命令参考
 sidebarTitle: 命令参考
-description: "查看 DeckHTML CLI 当前提供的命令、参数和子命令。"
+description: "查看已实现的 DeckHTML CLI 输入、参数、认证和配置命令。"
 ---
 
-> 这里整理的是 DeckHTML CLI 当前对外暴露的命令界面。
+## 转换
 
-主命令遵循下面这个模式：
-
-```bash
-deckhtml [options] [command] [inputs...]
+```text
+deckhtml [global options] [inputs...]
 ```
 
-可以通过 `deckhtml --help` 查看当前帮助文本，通过 `deckhtml --version` 查看版本信息。
+| 参数 | 行为 |
+| --- | --- |
+| `-o, --output <path>` | 输出 `.pptx` 或 `.png`；扩展名决定格式 |
+| `--mode <mode>` | `auto`、`local` 或 `cloud`，默认 `auto` |
+| `--width <pixels>` | 覆盖 Viewport 宽度，CLI 按 16:9 计算高度 |
+| `--platform <platform>` | 字体映射目标：`win`、`mac`、`ios`、`android` 或 `linux` |
+| `--embed-fonts` | 嵌入字体，仅 Cloud |
+| `--report` | 在输出文件旁写入转换报告 |
+| `--executable-path <path>` | Local 模式使用指定 Chromium |
+| `--exclude <selector>` | 排除匹配的运行时或导航元素 |
+| `--identity-attribute <name>` | 自定义稳定元素标识属性 |
+| `--force` | 覆盖已有输出 |
+| `--no-animations` | 关闭元素入场动画导出 |
+| `--slide-transition <effects>` | 选择单个页面转场或逗号分隔循环列表 |
+| `--no-slide-transitions` | 关闭页面转场 |
+| `--iframes <mode>` | `inspect`、`screenshot` 或 `skip`，仅 Local |
+| `--iframe-load-timeout-ms <ms>` | 设置 iframe 加载超时 |
+| `--json` | 输出机器可读的最终 Envelope |
+| `--quiet` | 隐藏非必要输出 |
+| `-v, --verbose` | 把详细日志写入 stderr |
+| `-V, --version` | 输出版本 |
+| `-h, --help` | 输出帮助 |
 
-## 根命令
+## 认证
 
 ```bash
-deckhtml [inputs...]
+deckhtml auth login [--port <port>]
+deckhtml auth status
 ```
 
-参数：
-
-| 参数 | 含义 |
-| --- | --- |
-| `inputs` | HTML 文件、URL，或 `-` 表示从 stdin 读取 |
-
-## 根级参数
-
-| 参数 | 说明 | 默认值 |
-| --- | --- | --- |
-| `-V, --version` | 显示版本 | 关闭 |
-| `--json` | 在 stdout 输出机器可读 JSON | `false` |
-| `-v, --verbose` | 在 stderr 输出详细日志 | `false` |
-| `--quiet` | 只输出错误和最终结果 | `false` |
-| `-o, --output <path>` | 输出路径，使用 `.pptx` 或 `.png` 扩展名 | 尽可能从输入自动推导 |
-| `--mode <mode>` | 执行模式：`auto`、`local`、`cloud` | `auto` |
-| `--width <pixels>` | Playwright 视口宽度，高度按 `16:9` 推导 | 包默认值 |
-| `--platform <platform>` | 通用字体映射目标：`win`、`mac`、`ios`、`android`、`linux` | 当前系统 |
-| `--embed-fonts` | 嵌入字体，仅云端 | `false` |
-| `--report` | 在输出旁边生成转换报告 | `false` |
-| `-h, --help` | 显示帮助 | 关闭 |
-
-## 支持的输入形式
-
-| 输入形式 | 示例 | 说明 |
-| --- | --- | --- |
-| stdin | `cat index.html \| deckhtml - -o deck.pptx` | 从 stdin 读取 HTML |
-| HTML 文件 | `deckhtml index.html` | 转换单个本地 HTML 文件 |
-| 多个 HTML 文件 | `deckhtml page1.html page2.html page3.html` | 按参数顺序组合多个页面 |
-| URL | `deckhtml https://example.com/deck.html -o deck.pptx` | 加载并转换托管页面 |
-
-## 当前模式与输出行为
-
-DeckHTML 的执行模式解析如下：
-
-| 模式 | 行为 |
-| --- | --- |
-| `local` | 确定走本地执行，不依赖云端凭证 |
-| `cloud` | 确定走托管执行，并需要凭证 |
-| `auto` | 有凭证时走 `cloud`，否则回退到 `local` |
-
-已发布 `0.3.0` 包的输出行为可以概括为：
-
-- 文档层面当前支持的产物是 `pptx` 和 `png`
-- 输出类型通过 `-o` 的扩展名推断，而不是通过 `--format` 指定
-- 如果省略 `-o`，CLI 会自动推导一个 `.pptx` 输出路径
-- 如果输入来自 stdin，则必须显式提供 `-o`
-
-## 子命令
-
-### `deckhtml auth`
+## 配置
 
 ```bash
-deckhtml auth [command]
+deckhtml config set api-key <key>
+deckhtml config set space-id <id>
+deckhtml config set webhook <url>
+deckhtml config set retention-hours <0-99>
+deckhtml config show
 ```
-
-| 子命令 | 说明 |
-| --- | --- |
-| `deckhtml auth login` | 通过浏览器登录并保存凭证 |
-| `deckhtml auth status` | 查看当前认证状态 |
-
-`deckhtml auth login` 还支持 `--port <port>`，用于覆盖本地回调端口。
-
-### `deckhtml config`
-
-```bash
-deckhtml config [command]
-```
-
-| 子命令 | 说明 |
-| --- | --- |
-| `deckhtml config set <key> <value>` | 写入一个配置项 |
-| `deckhtml config show` | 查看当前配置 |
-
-## README 中提到的配置键
-
-| 键名 | 说明 | 默认值 |
-| --- | --- | --- |
-| `api-key` | 云端请求使用的 API Key | 无 |
-| `space-id` | 云端执行时优先使用的 Deckflow Space | 无 |
-| `webhook` | 默认回调地址 | 无 |
-| `retention-hours` | 云端文件保留时长（小时） | `3` |

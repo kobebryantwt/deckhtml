@@ -1,20 +1,33 @@
 ---
-title: Report Schema Reference
-sidebarTitle: Report Schema Reference
-description: "Inspect the DeckHTML report schema used to describe conversion results, diagnostics, and generated artifacts."
+title: Reports and Diagnostics
+sidebarTitle: Reports and Diagnostics
+description: "Use DeckHTML conversion reports and stable diagnostic rule IDs in quality checks."
 ---
 
-DeckHTML can emit a report alongside the generated artifact so automation and support workflows have more context than a single exit code.
+`--report` writes `<output>.report.json`. The current implementation has two report levels.
 
-## What a report should capture
+## Per-element local report
 
-- Input sources
-- Selected output format
-- Execution mode
-- Success or failure status
-- Output paths or generated artifacts
-- Error details when conversion fails
+Local PPTX conversion can return:
 
-## Current documentation status
+- `schema_version`
+- engine name and version
+- conversion status
+- slides and ordered element records
+- stable `element_id`, kind, geometry, and object reference
+- `mapping_mode`: `native`, `vector`, `raster`, `ignored`, or `unsupported`
+- summary counts and structured diagnostics
 
-The report schema files in this repository are present as placeholders today. This page establishes the public purpose of the report and gives Mintlify readers a stable destination until the exact schema is documented.
+This report answers which source elements remained editable and where simplification occurred.
+
+## Aggregate report
+
+When no per-element report is available, such as the current cloud fallback, the CLI writes aggregate information including input, output, mode, format, slide count, element counts, fonts, rasterization statistics, viewport, platform, and duration.
+
+Do not assume the two shapes are identical. Check `schema_version` for the per-element contract or `version` for the aggregate contract.
+
+## Diagnostics
+
+Diagnostics contain a stable `rule_id`, severity, optional slide and element IDs, message, and recovery guidance. Rule families cover identity, unsupported kinds or styles, resources, browser failures, missing fonts, raster fallback, geometry, OOXML verification, animations, and iframes.
+
+Applications should branch on `rule_id`, not localized message text.

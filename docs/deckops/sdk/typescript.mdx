@@ -1,0 +1,45 @@
+---
+title: TypeScript SDK
+sidebarTitle: TypeScript
+description: "Use @deckops/sdk from Node.js or a browser application."
+---
+
+```bash
+npm install @deckops/sdk
+```
+
+## Create a client
+
+```ts
+import { createDeck } from '@deckops/sdk';
+
+const deck = createDeck({
+  apiKey: process.env.DECKOPS_API_KEY,
+  spaceId: process.env.DECKOPS_SPACE_ID,
+});
+```
+
+Client options include `root`, `token`, `apiKey`, `spaceId`, an explicit or custom-stored authentication UUID, and callbacks for `401` or `402` recovery.
+
+## Node.js and browser files
+
+Node.js callers can pass file paths. Both Node.js and browsers can pass binary data, and browser applications can pass a selected `File` directly.
+
+```ts
+await deck.imageOcr({
+  files: [{ input: bytes, name: 'scan.png' }],
+  params: { language: 'en' },
+});
+```
+
+## Typed and generic APIs
+
+Typed helpers bind a method to one task type and infer its parameters and result. The generic API is useful when task types are selected dynamically.
+
+```ts
+const task = await deck.convertPptToPdf({ files: ['./slides.pptx'] });
+const done = await deck.tasks.wait(task.id);
+const result = await deck.tasks.down<'convertor.ppt2pdf'>(done.id);
+```
+
+Use `parse()` for Markdown, `parseDetailed()` for Markdown plus task metadata, or low-level parse helpers for structured results.

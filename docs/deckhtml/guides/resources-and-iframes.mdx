@@ -1,0 +1,35 @@
+---
+title: Resources and Iframes
+sidebarTitle: Resources and Iframes
+description: "Control local and remote resources, browser execution, and iframe conversion behavior."
+---
+
+HTML conversion executes page content in a browser. Treat resource access and iframe behavior as part of the input contract.
+
+## Local and remote resources
+
+The CLI enables local subresources for local input so relative images, CSS, and fonts can be loaded. The Node API additionally exposes an explicit resource policy for local paths and remote network requests, and returns resource diagnostics.
+
+Use strict mode when missing, escaped, or remote resources must fail conversion instead of degrading silently.
+
+## Iframes
+
+Local conversion supports three iframe modes:
+
+| Mode | Behavior |
+| --- | --- |
+| `inspect` | Open the iframe document separately, extract editable elements, and use a screenshot if inspection fails |
+| `screenshot` | Always rasterize the iframe |
+| `skip` | Omit iframe content |
+
+```bash
+deckhtml deck.html -o deck.pptx \
+  --iframes inspect \
+  --iframe-load-timeout-ms 12000
+```
+
+Nested, parent-coupled, or unavailable frames may produce structured iframe diagnostics. Use `screenshot` when visual preservation is more important than editability.
+
+## Browser control
+
+The CLI accepts `--executable-path` for a specific Chromium binary. The Node API can inject an executable path, persistent profile, browser, or browser context, which is useful in containers and hosts that already manage Playwright.

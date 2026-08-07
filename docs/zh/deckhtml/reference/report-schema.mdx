@@ -1,0 +1,33 @@
+---
+title: 报告与诊断
+sidebarTitle: 报告与诊断
+description: "在质量检查中使用 DeckHTML 转换报告和稳定的 Diagnostic Rule ID。"
+---
+
+`--report` 会写入 `<output>.report.json`。当前实现存在两个报告层级。
+
+## Local 逐元素报告
+
+Local PPTX 转换可以返回：
+
+- `schema_version`
+- Engine 名称和版本
+- 转换状态
+- Slide 和有序元素记录
+- 稳定的 `element_id`、Kind、Geometry 和对象引用
+- `mapping_mode`：`native`、`vector`、`raster`、`ignored` 或 `unsupported`
+- 汇总计数和结构化 Diagnostics
+
+这个报告可以回答哪些源元素保持可编辑，以及哪些位置发生了简化。
+
+## 聚合报告
+
+没有逐元素报告时，例如当前 Cloud 回退路径，CLI 会写入聚合信息，包括输入、输出、模式、格式、Slide 数、元素计数、字体、栅格化统计、Viewport、平台和耗时。
+
+不要假设两种报告结构完全相同。逐元素契约检查 `schema_version`，聚合契约检查 `version`。
+
+## Diagnostics
+
+Diagnostic 包含稳定的 `rule_id`、Severity、可选 Slide 与 Element ID、消息和恢复建议。规则覆盖元素标识、不支持的 Kind 或 Style、资源、浏览器故障、缺失字体、栅格降级、几何、OOXML 校验、动画和 iframe。
+
+应用应根据 `rule_id` 分支，而不是依赖本地化消息文本。

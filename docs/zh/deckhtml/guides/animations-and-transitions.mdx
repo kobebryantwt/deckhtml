@@ -1,0 +1,43 @@
+---
+title: 动画与页面转场
+sidebarTitle: 动画与转场
+description: "将支持的 HTML 入场动画和页面转场映射为 PPTX Timing。"
+---
+
+DeckHTML 会区分元素入场动画和幻灯片之间的页面转场。
+
+## 元素动画
+
+PPTX 默认启用动画转换。DeckHTML 可以捕获：
+
+- `data-animation` 以及可选的 Duration、Delay 和 Trigger 属性
+- 支持的 CSS `@keyframes`
+- 由 Class 触发的 Opacity 或 Transform Transition
+- 全局 anime.js 调用
+
+支持的效果会归一化到稳定的 PPTX 子集，例如 Appear、Fade、Fly、Zoom、Spin 和 Wipe。超出支持范围的动画会保留最终视觉状态，并产生 `DECKHTML_ANIMATION_UNMAPPED` 诊断。
+
+```html
+<h1
+  data-element-id="title"
+  data-animation="fade"
+  data-animation-duration="600"
+  data-animation-trigger="after"
+>
+  Product update
+</h1>
+```
+
+使用 `--no-animations` 或 `animations: false` 可以关闭入场动画导出。
+
+## 页面转场
+
+页面转场默认开启，每页会选择一个随机目录效果。可以固定一个效果、按逗号分隔的列表循环，也可以关闭。
+
+```bash
+deckhtml deck.html -o deck.pptx --slide-transition fade
+deckhtml deck.html -o deck.pptx --slide-transition fade,push,wipe
+deckhtml deck.html -o deck.pptx --no-slide-transitions
+```
+
+应用代码需要可复现的随机选择时，可以通过 Node API 的转场对象传入 `seed`。

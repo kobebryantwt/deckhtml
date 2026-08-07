@@ -1,0 +1,59 @@
+---
+title: DeckOps CLI
+sidebarTitle: CLI
+description: "Install DeckOps CLI, run cloud document tasks, and automate task result downloads."
+---
+
+DeckOps provides an npm CLI and a native Go CLI. Both use the `deckops` command and expose the same main workflow.
+
+## Install the Node.js CLI
+
+```bash
+npm install -g deckops
+deckops --version
+deckops --help
+```
+
+Native binaries for macOS, Linux, and Windows are also published from the DeckOps repository releases.
+
+## Configure or sign in
+
+```bash
+deckops login
+deckops config show
+deckops config set-token <token>
+deckops config set-space <space-id>
+```
+
+## Common commands
+
+```bash
+deckops convert slides.pptx --to pdf -o slides.pdf
+deckops extract slides.pptx --type text-shapes -o result.json
+deckops ocr scan.png --language en -o result.json
+deckops join intro.pptx body.pptx appendix.pptx -o merged.pptx
+```
+
+Use `--no-wait` to return after task creation, then inspect the task separately:
+
+```bash
+deckops convert slides.pptx --to pdf --no-wait --json
+deckops task get <task-id> --json
+deckops task get <task-id> -o ./result
+```
+
+## Command groups
+
+| Command | Purpose |
+| --- | --- |
+| `compress` | Compress supported document or media files |
+| `extract` | Extract PPTX fonts or text-shape information |
+| `ocr` | Run image OCR |
+| `convert` | Select a conversion from input extension and `--to` |
+| `join` | Join PPTX files in order |
+| `create` | Run a content generation task |
+| `translate` | Translate a supported document |
+| `run` | Run an explicit backend task type with `--param key=value` |
+| `task` | List, inspect, download, or delete tasks |
+
+Add `--json` for machine-readable output. Operation commands support a timeout and synchronous waiting by default.

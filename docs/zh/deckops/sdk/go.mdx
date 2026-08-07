@@ -1,0 +1,40 @@
+---
+title: Go SDK
+sidebarTitle: Go
+description: "使用 DeckOps Go SDK 执行任务、上传、解析和结果获取。"
+---
+
+```bash
+go get github.com/deckops/deckops/sdks/go
+```
+
+```go
+package main
+
+import (
+  "context"
+  "os"
+
+  deckops "github.com/deckops/deckops/sdks/go"
+)
+
+func main() {
+  ctx := context.Background()
+  deck, err := deckops.New(ctx, deckops.ClientOptions{
+    APIKey: os.Getenv("DECKOPS_API_KEY"),
+  })
+  if err != nil { panic(err) }
+
+  task, err := deck.ConvertPptToPDF(ctx, deckops.TaskShortcutParams{
+    Files: []deckops.TaskUploadInput{{
+      Input: deckops.UploadInput{Path: "./slides.pptx"},
+    }},
+  })
+  if err != nil { panic(err) }
+
+  _, err = deck.Tasks.Wait(ctx, task.ID, deckops.WaitForTaskOptions{})
+  if err != nil { panic(err) }
+}
+```
+
+Go SDK 提供任务快捷方法、路径/字节/Reader 上传、访客 UUID 持久化、SSE 或轮询等待、Parse 路由，以及结构化结果到 Markdown 的转换器。

@@ -1,0 +1,29 @@
+---
+title: Task Type Reference
+sidebarTitle: Task Types
+description: "Map DeckOps operations to their implemented backend task type names."
+---
+
+Use these identifiers with the generic task API or `deckops run`.
+
+| Category | Task types |
+| --- | --- |
+| File and image | `file.compress`, `video.compress`, `image.ocr`, `image.convertWebp`, `image.resize` |
+| PPTX | `pptx.split`, `pptx.join`, `pptx.getFontInfo`, `pptx.getTextShapes`, `pptx.embedFonts` |
+| Presentation conversion | `convertor.ppt2image`, `convertor.ppt2pptx`, `convertor.ppt2pdf`, `convertor.ppt2video` |
+| Document conversion | `convertor.doc2pdf`, `convertor.pdf2image` |
+| Keynote conversion | `convertor.keynote2image`, `convertor.keynote2html`, `convertor.keynote2pdf` |
+| HTML and Markdown | `convertor.html2png`, `convertor.markdown2png`, `convertor.html2pptx`, `html.buildPlayer` |
+| Parse | `pdf.parse`, `pptx.parse`, `docx.parseTextAndImage`, `keynote.parseTextAndImage`, `html.getByURL` |
+| Content workflows | `generation`, `translation`, `revamp` |
+
+## Result behavior
+
+- File-producing tasks usually return a file tuple or a list of file tuples containing path, byte size, hash, and sometimes page bounds.
+- `convertor.html2pptx` returns the target file plus fonts used during conversion.
+- Parse tasks return format-specific structured objects.
+- Generation and revamp downloads can select `html`, `pptx`, or `image` output.
+
+<Warning>
+  Parameter and result shapes differ by task type. Use the SDK's `DeckTaskTypeParams` and `DeckTaskTypeResult` types rather than sending the same parameter object to every task.
+</Warning>

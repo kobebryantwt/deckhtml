@@ -1,18 +1,19 @@
 ---
-title: PNG Output Reference
-sidebarTitle: PNG Output Reference
-description: "Render DeckHTML slides as PNG frames for previews, thumbnails, and automation pipelines."
+title: PNG Output
+sidebarTitle: PNG Output
+description: "Render each detected DeckHTML slide to a PNG image."
 ---
 
-Use `png` when you need slide frames as images.
-
-## Example
+Select PNG output through the `-o` extension:
 
 ```bash
-deckhtml index.html --format png -o ./frames
+deckhtml deck.html -o frames.png --mode local
 ```
 
-## Notes
+A one-slide input writes the requested path. A multi-slide input writes numbered PNG files and reports all output paths.
 
-- PNG output is useful for previews, thumbnails, or visual diff workflows.
-- Make sure your chosen output path aligns with how image sequences are stored in your environment.
+PNG is useful for previews, thumbnails, visual review, and downstream image workflows. It preserves rendered appearance but does not retain editable slide objects.
+
+PNG conversion does not use PPTX-specific animation, transition, or font-embedding behavior. It renders the visible state of each detected slide at the selected viewport.
+
+Use the Node `convertHtmlToPng()` API when image buffers should remain in memory.

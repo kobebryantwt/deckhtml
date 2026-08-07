@@ -1,0 +1,66 @@
+---
+title: 快速开始
+sidebarTitle: 快速开始
+description: "安装 TypeScript SDK，解析文档并获取任务结果。"
+---
+
+TypeScript SDK 是在 Node.js 或浏览器应用中接入 DeckOps 的最短路径。
+
+<Steps>
+  <Step title="安装 SDK">
+    ```bash
+    npm install @deckops/sdk
+    ```
+  </Step>
+  <Step title="创建客户端">
+    生产环境建议使用 API Key；省略凭证时将使用受限的访客模式。
+
+    ```ts
+    import { createDeck } from '@deckops/sdk';
+
+    const deck = createDeck({
+      apiKey: process.env.DECKOPS_API_KEY,
+    });
+    ```
+  </Step>
+  <Step title="解析文档">
+    `parseDetailed()` 会上传文件、根据扩展名选择 Parser、等待任务完成、下载结构化结果并转换成 Markdown。
+
+    ```ts
+    const result = await deck.parseDetailed('./slides.pptx');
+
+    console.log(result.markdown);
+    console.log(result.taskId, result.type);
+    ```
+  </Step>
+  <Step title="执行类型化转换任务">
+    ```ts
+    const task = await deck.convertPptToPdf({
+      files: ['./slides.pptx'],
+      name: 'slides',
+    });
+
+    const completed = await deck.tasks.wait(task.id, {
+      onProgress: (next) => console.log(next.status),
+    });
+    const files = await deck.tasks.down<'convertor.ppt2pdf'>(completed.id);
+    ```
+  </Step>
+</Steps>
+
+## 接下来阅读
+
+<CardGroup cols={2}>
+  <Card title="解析文档" href="/zh/deckops/parse">
+    比较 Markdown 门面和底层结构化结果。
+  </Card>
+  <Card title="任务模型" href="/zh/deckops/task-model">
+    建立可靠的上传、进度、重试和下载流程。
+  </Card>
+  <Card title="TypeScript SDK" href="/zh/deckops/sdk/typescript">
+    配置认证、浏览器上传和类型化任务方法。
+  </Card>
+  <Card title="任务类型参考" href="/zh/deckops/reference/task-types">
+    查询每种操作实际使用的任务名称。
+  </Card>
+</CardGroup>

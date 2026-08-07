@@ -1,27 +1,58 @@
 ---
-title: Input HTML Reference
-sidebarTitle: Input HTML Reference
-description: "Understand the HTML input contract DeckHTML expects before rendering presentation-ready outputs."
+title: HTML Input Contract
+sidebarTitle: HTML Input
+description: "Author HTML and SVG inputs that DeckHTML can segment, lay out, and convert reliably."
 ---
 
-This page defines the role of HTML inputs in the DeckHTML workflow.
+DeckHTML accepts a local HTML or SVG file, multiple ordered files, HTML from stdin, or HTTP/HTTPS URLs. URLs and local paths cannot be mixed in one CLI invocation.
 
-## Supported sources
+## Slide structure
 
-- Local file paths
-- Standard input streams
-- Hosted URLs
+For a multi-slide HTML document, use a repeated slide host such as `.slide-container`, `.slide-wrap`, `.slide`, `section[class*="slide"]`, or `[data-slide]`. At least two qualified hosts are required for automatic multi-slide detection.
 
-## Authoring guidance
+```html
+<main>
+  <section class="slide-container" data-slide-id="title">...</section>
+  <section class="slide-container" data-slide-id="metrics">...</section>
+</main>
+```
 
-- Keep each input page presentation-oriented.
-- For multi-slide decks, provide files in the intended order.
-- Ensure referenced assets are reachable in the execution mode you selected.
+Alternatively, pass one HTML file per slide. DeckHTML preserves command-line order.
 
-## Validation goals
+```bash
+deckhtml 01-title.html 02-metrics.html 03-summary.html -o deck.pptx
+```
 
-Before conversion, verify:
+## Size and viewport
 
-- The HTML is complete and readable
-- Assets resolve correctly
-- The selected output format matches the intended downstream workflow
+DeckHTML can detect size from a `meta[name="deck-size"]` declaration, supported CSS size variables, viewport metadata, fixed slide hosts, or an SVG `viewBox`. Otherwise it falls back to `1280 × 720`. Use `--width` to override width; height is derived at 16:9 by the CLI.
+
+The slide host and browser viewport should use the same aspect ratio. Fixed-size slide layouts are more predictable than scrolling document layouts.
+
+## Stable identity
+
+Use `data-slide-id` and `data-element-id` when downstream reports or strict checks must refer to stable source elements.
+
+```html
+<section class="slide-container" data-slide-id="results">
+  <h2 data-element-id="results-title">Results</h2>
+</section>
+```
+
+The Node API can customize the identity attribute; the CLI exposes `--identity-attribute`.
+
+## Excluding runtime UI
+
+Navigation, progress bars, and controls should not become slide content. Select them with `--exclude` or `excludeSelector`.
+
+```bash
+deckhtml deck.html -o deck.pptx --exclude '.controls, .progress'
+```
+
+## Assets and runtime state
+
+- Keep relative assets beside the HTML when using local mode.
+- Ensure fonts are loaded and visible content is present at conversion time.
+- Do not depend on hover-only state for critical content.
+- Use DOM text and shapes when editability matters; screenshot-like canvas content is normally rasterized.
+- URL inputs download the returned HTML before conversion; they do not preserve an interactive browser session.

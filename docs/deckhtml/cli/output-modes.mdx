@@ -1,131 +1,46 @@
 ---
-title: Output Modes
-sidebarTitle: Output Modes
-description: "Choose between human-readable output, machine-readable JSON, and the available artifact behaviors for DeckHTML CLI runs."
+title: Output and Automation
+sidebarTitle: Output and Automation
+description: "Consume DeckHTML output safely from scripts and CI pipelines."
 ---
 
-> Pick the right output behavior for terminal use, automation, CI, and agent workflows.
+## Human-readable output
 
-DeckHTML separates results and diagnostics:
+On success, the default mode writes progress to stderr and prints generated artifact paths to stdout. Multi-page PNG conversion prints each output path.
 
-- stdout is for the final result
-- stderr is for progress, logs, and errors
+DeckHTML refuses to overwrite an existing local artifact. Pass `--force` only when replacement is intended.
 
-## Default output
+## JSON output
 
-By default, DeckHTML prints the final result on stdout.
-
-```bash
-deckhtml index.html -o deck.pptx
-```
-
-```text
-deck.pptx
-```
-
-If you omit `-o`, the CLI derives the output path from the input name when possible:
+`--json` keeps the final success envelope on stdout so scripts can parse it.
 
 ```bash
-deckhtml index.html
-```
-
-```text
-index.pptx
-```
-
-## Artifact formats
-
-The published CLI infers artifact type from the `-o` extension:
-
-```bash
-deckhtml index.html -o deck.pptx
-deckhtml index.html -o frames.png
-```
-
-Documented artifact types:
-
-- `pptx`
-- `png`
-
-Execution mode also affects artifact behavior:
-
-- local and cloud execution can expose different processing paths
-- use local mode for the simplest same-machine flow
-- use cloud mode when you need hosted execution or cloud-only font embedding
-
-## `--json`
-
-Use `--json` when another program needs to parse the result:
-
-```bash
-deckhtml index.html -o deck.pptx --json
+deckhtml deck.html -o deck.pptx --mode local --json
 ```
 
 ```json
 {
   "ok": true,
-  "input": ["index.html"],
+  "input": ["deck.html"],
   "output": "deck.pptx",
   "format": "pptx",
-  "mode": "local"
+  "mode": "local",
+  "slideCount": 3
 }
 ```
 
-With `--json`, stdout should contain only JSON. Logs and diagnostics remain on stderr.
+The envelope can also contain `outputs`, `stats`, `simplified`, and `report` depending on format and flags.
 
-## `--quiet` and `--verbose`
+## Logging
 
-Use `--quiet` to suppress non-essential logs:
+- `--quiet` suppresses nonessential progress and notices.
+- `--verbose` writes additional execution details to stderr.
+- `--quiet` and `--verbose` cannot be combined.
 
-```bash
-deckhtml index.html -o deck.pptx --quiet
-```
+## Reports
 
-Use `--verbose` for detailed logs:
+`--report` writes `<output>.report.json`. Local PPTX conversion provides per-element mappings and diagnostics. Cloud conversion may provide an aggregate report instead. See [Reports and Diagnostics](/deckhtml/reference/report-schema).
 
-```bash
-deckhtml index.html -o deck.pptx --verbose
-```
+## Exit behavior
 
-These flags conflict:
-
-```bash
-deckhtml index.html --quiet --verbose
-```
-
-Representative stderr:
-
-```text
-Error: --quiet conflicts with --verbose
-```
-
-## Errors and exit behavior
-
-Errors are written to stderr. When `--json` is active, you should still expect diagnostic information to stay off stdout.
-
-Representative JSON-shaped error payload:
-
-```json
-{
-  "error": {
-    "code": "usage_error",
-    "message": "--quiet conflicts with --verbose"
-  }
-}
-```
-
-Representative error categories used in the docs:
-
-| Code | Meaning |
-| --- | --- |
-| `usage_error` | Invalid flags, missing input, or conflicting options. |
-| `auth_error` | Cloud mode requires a valid API key. |
-| `render_error` | The page could not be loaded or rendered. |
-| `conversion_error` | Conversion failed after rendering. |
-
-## Stdout vs stderr
-
-| Stream | Content |
-| --- | --- |
-| stdout | Final output path or JSON result. |
-| stderr | Progress, warnings, verbose logs, and errors. |
+Successful conversion exits `0`. Usage, input, browser, conversion, upload, or output failures exit nonzero and are written as human-readable or structured errors according to output mode. Treat the exit status as authoritative; do not infer success only from a partially created file.

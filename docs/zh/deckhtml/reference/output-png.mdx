@@ -1,0 +1,19 @@
+---
+title: PNG 输出
+sidebarTitle: PNG 输出
+description: "将每个检测到的 DeckHTML Slide 渲染成 PNG 图片。"
+---
+
+通过 `-o` 扩展名选择 PNG：
+
+```bash
+deckhtml deck.html -o frames.png --mode local
+```
+
+单页输入写入指定路径；多页输入写入带序号的多个 PNG，并返回所有输出路径。
+
+PNG 适合预览、缩略图、视觉审核和后续图片工作流。它会保留渲染效果，但不会保留可编辑幻灯片对象。
+
+PNG 转换不使用 PPTX 专属的动画、页面转场或字体嵌入行为，而是按所选 Viewport 渲染每个检测到的 Slide 当前可见状态。
+
+需要在内存中获取图片 Buffer 时，使用 Node `convertHtmlToPng()` API。

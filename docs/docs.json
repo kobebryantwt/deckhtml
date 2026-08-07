@@ -47,7 +47,8 @@
     { "source": "/getting-started/runtime-architecture", "destination": "/product-guide", "permanent": true },
     { "source": "/getting-started/architecture", "destination": "/product-guide", "permanent": true },
     { "source": "/deckprobe/interfaces", "destination": "/deckprobe/cli", "permanent": true },
-    { "source": "/products/deckops/document-information", "destination": "/deckops/document-ir", "permanent": true },
+    { "source": "/products/deckops/document-information", "destination": "/deckops/structured-results", "permanent": true },
+    { "source": "/deckops/document-ir", "destination": "/deckops/structured-results", "permanent": true },
     { "source": "/products/deckhtml/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
     { "source": "/products/:path*", "destination": "/:path*", "permanent": true },
     { "source": "/docs/quick-start", "destination": "/deckhtml/quick-start", "permanent": true },
@@ -56,18 +57,25 @@
     { "source": "/docs/architecture", "destination": "/product-guide", "permanent": true },
     { "source": "/docs/local-mode", "destination": "/deckhtml/guides/local-mode", "permanent": true },
     { "source": "/docs/cloud-mode", "destination": "/deckhtml/guides/cloud-mode", "permanent": true },
-    { "source": "/docs/configuration", "destination": "/deckhtml/guides/configuration", "permanent": true },
+    { "source": "/docs/configuration", "destination": "/deckhtml/cli/commands", "permanent": true },
     { "source": "/docs/errors", "destination": "/deckhtml/guides/errors", "permanent": true },
-    { "source": "/docs/faq", "destination": "/deckhtml/guides/faq", "permanent": true },
+    { "source": "/docs/faq", "destination": "/deckhtml/overview", "permanent": true },
     { "source": "/cli/:path*", "destination": "/deckhtml/cli/:path*", "permanent": true },
     { "source": "/sdk/:path*", "destination": "/deckhtml/sdk/:path*", "permanent": true },
     { "source": "/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
-    { "source": "/skills/:path*", "destination": "/deckhtml/skills/:path*", "permanent": true },
-    { "source": "/skill/index", "destination": "/deckhtml/skills/overview", "permanent": true },
-    { "source": "/skill/deckhtml", "destination": "/deckhtml/skills/deckhtml", "permanent": true },
+    { "source": "/skills/:path*", "destination": "/deckhtml/quick-start", "permanent": true },
+    { "source": "/skill/index", "destination": "/deckhtml/quick-start", "permanent": true },
+    { "source": "/skill/deckhtml", "destination": "/deckhtml/quick-start", "permanent": true },
+    { "source": "/deckhtml/skills/:path*", "destination": "/deckhtml/quick-start", "permanent": true },
+    { "source": "/deckhtml/sdk/python", "destination": "/deckhtml/sdk/overview", "permanent": true },
+    { "source": "/deckhtml/cli/features", "destination": "/deckhtml/cli/overview", "permanent": true },
+    { "source": "/deckhtml/cli/examples", "destination": "/deckhtml/cli/overview", "permanent": true },
+    { "source": "/deckhtml/guides/configuration", "destination": "/deckhtml/cli/commands", "permanent": true },
+    { "source": "/deckhtml/guides/faq", "destination": "/deckhtml/overview", "permanent": true },
     { "source": "/reference/input-html", "destination": "/deckhtml/reference/input-html", "permanent": true },
     { "source": "/reference/output-pptx", "destination": "/deckhtml/reference/output-pptx", "permanent": true },
-    { "source": "/reference/output-pdf", "destination": "/deckhtml/reference/output-pdf", "permanent": true },
+    { "source": "/reference/output-pdf", "destination": "/deckhtml/reference/output-pptx", "permanent": true },
+    { "source": "/deckhtml/reference/output-pdf", "destination": "/deckhtml/reference/output-pptx", "permanent": true },
     { "source": "/reference/output-png", "destination": "/deckhtml/reference/output-png", "permanent": true },
     { "source": "/reference/report-schema", "destination": "/deckhtml/reference/report-schema", "permanent": true },
     { "source": "/reference/:path*", "destination": "/platform/api/:path*", "permanent": true },
@@ -81,7 +89,8 @@
     { "source": "/zh/getting-started/runtime-architecture", "destination": "/zh/product-guide", "permanent": true },
     { "source": "/zh/getting-started/architecture", "destination": "/zh/product-guide", "permanent": true },
     { "source": "/zh/deckprobe/interfaces", "destination": "/zh/deckprobe/cli", "permanent": true },
-    { "source": "/zh/products/deckops/document-information", "destination": "/zh/deckops/document-ir", "permanent": true },
+    { "source": "/zh/products/deckops/document-information", "destination": "/zh/deckops/structured-results", "permanent": true },
+    { "source": "/zh/deckops/document-ir", "destination": "/zh/deckops/structured-results", "permanent": true },
     { "source": "/zh/products/deckhtml/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
     { "source": "/zh/products/:path*", "destination": "/zh/:path*", "permanent": true },
     { "source": "/zh/docs/quick-start", "destination": "/zh/deckhtml/quick-start", "permanent": true },
@@ -90,14 +99,20 @@
     { "source": "/zh/docs/architecture", "destination": "/zh/product-guide", "permanent": true },
     { "source": "/zh/docs/local-mode", "destination": "/zh/deckhtml/guides/local-mode", "permanent": true },
     { "source": "/zh/docs/cloud-mode", "destination": "/zh/deckhtml/guides/cloud-mode", "permanent": true },
-    { "source": "/zh/docs/configuration", "destination": "/zh/deckhtml/guides/configuration", "permanent": true },
-    { "source": "/zh/docs/faq", "destination": "/zh/deckhtml/guides/faq", "permanent": true },
+    { "source": "/zh/docs/configuration", "destination": "/zh/deckhtml/cli/commands", "permanent": true },
+    { "source": "/zh/docs/faq", "destination": "/zh/deckhtml/overview", "permanent": true },
     { "source": "/zh/cli/:path*", "destination": "/zh/deckhtml/cli/:path*", "permanent": true },
     { "source": "/zh/sdk/:path*", "destination": "/zh/deckhtml/sdk/:path*", "permanent": true },
     { "source": "/zh/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
-    { "source": "/zh/skills/:path*", "destination": "/zh/deckhtml/skills/:path*", "permanent": true },
+    { "source": "/zh/skills/:path*", "destination": "/zh/deckhtml/quick-start", "permanent": true },
+    { "source": "/zh/deckhtml/skills/:path*", "destination": "/zh/deckhtml/quick-start", "permanent": true },
+    { "source": "/zh/deckhtml/cli/features", "destination": "/zh/deckhtml/cli/overview", "permanent": true },
+    { "source": "/zh/deckhtml/cli/examples", "destination": "/zh/deckhtml/cli/overview", "permanent": true },
+    { "source": "/zh/deckhtml/guides/configuration", "destination": "/zh/deckhtml/cli/commands", "permanent": true },
+    { "source": "/zh/deckhtml/guides/faq", "destination": "/zh/deckhtml/overview", "permanent": true },
+    { "source": "/zh/deckhtml/reference/output-pdf", "destination": "/zh/deckhtml/reference/output-pptx", "permanent": true },
     { "source": "/zh/reference/:path*", "destination": "/zh/platform/api/:path*", "permanent": true },
-    { "source": "/zh/deckops/document-information", "destination": "/zh/deckops/document-ir", "permanent": true }
+    { "source": "/zh/deckops/document-information", "destination": "/zh/deckops/structured-results", "permanent": true }
   ],
   "colors": {
     "primary": "#0f766e",
@@ -173,11 +188,36 @@
             "tab": "DeckOps",
             "groups": [
               {
-                "group": "DeckOps",
+                "group": "Get Started",
                 "pages": [
                   "deckops/overview",
-                  "deckops/document-ir"
+                  "deckops/quick-start",
+                  "deckops/task-model"
                 ]
+              },
+              {
+                "group": "Capabilities",
+                "pages": [
+                  "deckops/parse",
+                  "deckops/structured-results",
+                  "deckops/operations"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": ["deckops/cli"]
+              },
+              {
+                "group": "SDK",
+                "pages": [
+                  "deckops/sdk/typescript",
+                  "deckops/sdk/python",
+                  "deckops/sdk/go"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": ["deckops/reference/task-types"]
               }
             ]
           },
@@ -198,13 +238,19 @@
                 ]
               },
               {
-                "group": "Guides",
+                "group": "Author HTML",
+                "pages": [
+                  "deckhtml/reference/input-html",
+                  "deckhtml/guides/element-mapping",
+                  "deckhtml/guides/animations-and-transitions",
+                  "deckhtml/guides/resources-and-iframes"
+                ]
+              },
+              {
+                "group": "Execution Modes",
                 "pages": [
                   "deckhtml/guides/local-mode",
-                  "deckhtml/guides/cloud-mode",
-                  "deckhtml/guides/configuration",
-                  "deckhtml/guides/errors",
-                  "deckhtml/guides/faq"
+                  "deckhtml/guides/cloud-mode"
                 ]
               },
               {
@@ -212,9 +258,7 @@
                 "pages": [
                   "deckhtml/cli/overview",
                   "deckhtml/cli/output-modes",
-                  "deckhtml/cli/commands",
-                  "deckhtml/cli/features",
-                  "deckhtml/cli/examples"
+                  "deckhtml/cli/commands"
                 ]
               },
               {
@@ -225,20 +269,12 @@
                 ]
               },
               {
-                "group": "Agent Skills",
-                "pages": [
-                  "deckhtml/skills/overview",
-                  "deckhtml/skills/deckhtml"
-                ]
-              },
-              {
                 "group": "Reference",
                 "pages": [
-                  "deckhtml/reference/input-html",
                   "deckhtml/reference/output-pptx",
-                  "deckhtml/reference/output-pdf",
                   "deckhtml/reference/output-png",
-                  "deckhtml/reference/report-schema"
+                  "deckhtml/reference/report-schema",
+                  "deckhtml/guides/errors"
                 ]
               }
             ]
@@ -352,11 +388,36 @@
             "tab": "DeckOps",
             "groups": [
               {
-                "group": "DeckOps",
+                "group": "开始使用",
                 "pages": [
                   "zh/deckops/overview",
-                  "zh/deckops/document-ir"
+                  "zh/deckops/quick-start",
+                  "zh/deckops/task-model"
                 ]
+              },
+              {
+                "group": "核心能力",
+                "pages": [
+                  "zh/deckops/parse",
+                  "zh/deckops/structured-results",
+                  "zh/deckops/operations"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": ["zh/deckops/cli"]
+              },
+              {
+                "group": "SDK",
+                "pages": [
+                  "zh/deckops/sdk/typescript",
+                  "zh/deckops/sdk/python",
+                  "zh/deckops/sdk/go"
+                ]
+              },
+              {
+                "group": "参考",
+                "pages": ["zh/deckops/reference/task-types"]
               }
             ]
           },
@@ -377,12 +438,19 @@
                 ]
               },
               {
-                "group": "使用指南",
+                "group": "编写 HTML",
+                "pages": [
+                  "zh/deckhtml/reference/input-html",
+                  "zh/deckhtml/guides/element-mapping",
+                  "zh/deckhtml/guides/animations-and-transitions",
+                  "zh/deckhtml/guides/resources-and-iframes"
+                ]
+              },
+              {
+                "group": "执行模式",
                 "pages": [
                   "zh/deckhtml/guides/local-mode",
-                  "zh/deckhtml/guides/cloud-mode",
-                  "zh/deckhtml/guides/configuration",
-                  "zh/deckhtml/guides/faq"
+                  "zh/deckhtml/guides/cloud-mode"
                 ]
               },
               {
@@ -390,9 +458,7 @@
                 "pages": [
                   "zh/deckhtml/cli/overview",
                   "zh/deckhtml/cli/output-modes",
-                  "zh/deckhtml/cli/commands",
-                  "zh/deckhtml/cli/features",
-                  "zh/deckhtml/cli/examples"
+                  "zh/deckhtml/cli/commands"
                 ]
               },
               {
@@ -403,10 +469,12 @@
                 ]
               },
               {
-                "group": "智能体 Skill",
+                "group": "参考",
                 "pages": [
-                  "zh/deckhtml/skills/overview",
-                  "zh/deckhtml/skills/deckhtml"
+                  "zh/deckhtml/reference/output-pptx",
+                  "zh/deckhtml/reference/output-png",
+                  "zh/deckhtml/reference/report-schema",
+                  "zh/deckhtml/guides/errors"
                 ]
               }
             ]

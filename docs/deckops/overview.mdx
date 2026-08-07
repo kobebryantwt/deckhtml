@@ -1,46 +1,57 @@
 ---
 title: DeckOps
 sidebarTitle: Overview
-description: "Parse heterogeneous document formats into one Document IR, then extract semantic structure, convert formats, or render outputs."
+description: "Run parsing, extraction, conversion, and other document-processing tasks through one cloud task API."
 ---
 
-DeckOps is the full document runtime for cloud workflows. It brings probing, parsing, semantic extraction, format conversion, and rendering behind one SDK-facing capability surface.
+DeckOps is Deckflow's cloud document-processing runtime. It combines file upload, asynchronous task execution, structured parsing, extraction, conversion, and result delivery behind CLI and SDK interfaces.
 
-Its central abstraction is a unified **Document IR**. Format-specific parsers translate PPTX, PDF, Keynote, Markdown, and other supported inputs into the same intermediate representation. Downstream operations consume the IR instead of implementing every source-format pair independently.
-
-<Note>
-  Think of Document IR in the same architectural sense as LLVM IR: many source formats lower into a shared representation, and multiple downstream operations build on that representation. This is an analogy, not a claim of LLVM compatibility.
-</Note>
+```mermaid
+flowchart LR
+  I["File or URL"] --> U["Upload or route input"]
+  U --> T["Create task"]
+  T --> W["Wait, poll, or subscribe"]
+  W --> R["Download artifact or structured result"]
+```
 
 <CardGroup cols={2}>
-  <Card title="Document IR" href="/deckops/document-ir">
-    Understand the Parse → IR → Extract / Convert model.
+  <Card title="Quickstart" href="/deckops/quick-start">
+    Parse a document and inspect the first result.
   </Card>
-  <Card title="Choose a product" href="/product-guide">
-    Compare DeckOps with the other document components by task and output.
+  <Card title="Task model" href="/deckops/task-model">
+    Understand uploads, asynchronous execution, progress, and downloads.
+  </Card>
+  <Card title="Parse documents" href="/deckops/parse">
+    Get Markdown or retain each format's structured parse result.
+  </Card>
+  <Card title="Operations" href="/deckops/operations">
+    Explore conversion, PPTX, OCR, compression, and content tasks.
   </Card>
 </CardGroup>
 
-## Core operations
+## Capability groups
 
-| Operation | Purpose |
+| Area | What it provides |
 | --- | --- |
-| Probe | Inspect document identity, structure summaries, security, and quality signals before deeper work |
-| Parse | Lower a supported source format into the unified Document IR |
-| Extract | Return semantic page structure and content such as titles, subtitles, charts, speaker notes, and footnotes |
-| Convert | Generate another supported format, such as PPTX → PDF, Keynote → PPTX, or Markdown → PPTX |
-| Render | Produce visual page or slide output for preview and downstream processing |
+| Parse | Parse PDF, PPTX, DOCX, and Keynote files, or extract readable content from a web URL |
+| Extract | Inspect PPTX fonts, text shapes, layout data, images, and speaker notes; run image OCR |
+| Convert | Convert presentation and document formats into PDF, images, video, HTML, or PPTX where supported |
+| Operate | Compress files, split or join PPTX files, embed fonts, and resize or transcode images |
+| Content workflows | Create, translate, or revamp document content through cloud tasks |
 
-## Extract is structural
+## Structured results, not one public IR
 
-Extract is not limited to concatenating text. It uses the IR to preserve page boundaries, semantic roles, hierarchy, and object relationships. A consumer can distinguish a title from a subtitle, a chart from its caption, and speaker notes or footnotes from visible slide content.
+The current SDK exposes a different structured result contract for each parsed format. `deck.parse()` provides a normalized Markdown convenience result, while low-level parse tasks retain format-specific detail such as PPTX geometry, DOCX element types, PDF semantic roles, or Keynote slide structure.
 
-## Product boundary
+Use [Structured Results](/deckops/structured-results) before building against a parse response.
 
-Use standalone [DeckProbe](/deckprobe/overview) when a local Rust binary or in-browser SDK only needs targeted file facts. Use standalone [DeckRender](/deckrender/overview) when the workflow only needs cloud rendering.
+## Available integrations
 
-Use DeckOps when one cloud workflow needs the combined runtime or a shared IR for Parse, Extract, Convert, and Render. Use [DeckUse](/deckuse/overview) when changes must be applied back to a supported Office source file through a source-aware manipulation model.
+- TypeScript SDK for Node.js and browsers: `@deckops/sdk`
+- Python SDK: `deckops-sdk`
+- Go SDK: `github.com/deckops/deckops/sdks/go`
+- Node.js CLI from npm and a native Go CLI from GitHub Releases
 
 <Info>
-  DeckOps execution is cloud-based and accessed through its SDK surface. Concrete packages, authentication, quotas, supported-format matrices, and IR schemas will be documented when the implementation contracts are available.
+  DeckOps executes document tasks in the cloud. Clients may run with a stable guest UUID, a user token, or an API key; server-side limits depend on the selected authentication mode.
 </Info>

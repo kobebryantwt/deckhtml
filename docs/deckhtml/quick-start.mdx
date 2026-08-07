@@ -1,79 +1,79 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: "Convert your first HTML file into a PPTX artifact with DeckHTML, then expand to other execution paths."
+description: "Create a slide-sized HTML file and convert it to PPTX with DeckHTML."
 ---
 
-This is the shortest path from an HTML file to a generated deck artifact.
-
-<Note>
-  This page is intentionally CLI-first. Once you have a successful local conversion, you can map the same flow to SDK or MCP usage.
-</Note>
-
-## In five steps
-
 <Steps>
-  <Step title="Prepare an HTML slide">
-    Create an HTML file such as `index.html`. DeckHTML works best when each page represents a single slide or a clearly ordered set of slides.
+  <Step title="Create a slide">
+    Save the following as `deck.html`. Declaring the deck size lets DeckHTML use the intended viewport.
 
     ```html
     <!doctype html>
     <html>
       <head>
         <meta charset="utf-8" />
-        <title>Hello DeckHTML</title>
+        <meta name="deck-size" content="1280x720" />
+        <style>
+          * { box-sizing: border-box; }
+          body { margin: 0; font-family: Arial, sans-serif; }
+          .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 72px;
+            background: #f7fafc;
+          }
+        </style>
       </head>
       <body>
-        <section>
-          <h1>Hello DeckHTML</h1>
-          <p>Convert this page into presentation output.</p>
+        <section class="slide-container" data-slide-id="intro">
+          <h1 data-element-id="title">Hello DeckHTML</h1>
+          <p data-element-id="summary">HTML layout, presentation output.</p>
         </section>
       </body>
     </html>
     ```
   </Step>
-  <Step title="Run DeckHTML without installing globally">
-    Use the package directly with `npx`:
-
+  <Step title="Convert locally">
     ```bash
-    npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+    npx -y @deckflow/deckhtml@latest deck.html \
+      -o deck.pptx \
+      --mode local \
+      --json
     ```
   </Step>
-  <Step title="Or install it once">
-    If you prefer a reusable local command:
+  <Step title="Check the result">
+    A successful command exits with code `0`, writes `deck.pptx`, and prints a JSON envelope similar to:
 
-    ```bash
-    npm install -g @deckflow/deckhtml
-    deckhtml index.html -o deck.pptx
+    ```json
+    {
+      "ok": true,
+      "input": ["deck.html"],
+      "output": "deck.pptx",
+      "format": "pptx",
+      "mode": "local",
+      "slideCount": 1
+    }
     ```
   </Step>
-  <Step title="Check the generated PPTX output">
-    Successful local conversion writes the target PPTX and prints either the output path or structured JSON, depending on your output mode.
-
+  <Step title="Generate a conversion report">
     ```bash
-    deckhtml index.html -o deck.pptx
-    deckhtml index.html -o deck.pptx --json
+    npx -y @deckflow/deckhtml@latest deck.html \
+      -o deck.pptx \
+      --mode local \
+      --report \
+      --force
     ```
-  </Step>
-  <Step title="Choose the right execution mode">
-    Use [Local Mode](/deckhtml/guides/local-mode) when conversion should run on the same machine, or [Cloud Mode](/deckhtml/guides/cloud-mode) when you need remote execution or cloud-only font embedding.
+
+    Review `deck.pptx.report.json` for native, vector, raster, ignored, and unsupported mappings.
   </Step>
 </Steps>
 
-## What to read next
-
-<CardGroup cols={3}>
-  <Card title="Concepts" href="/product-guide">
-    Learn the mental model behind inputs, outputs, and conversion flow.
+<CardGroup cols={2}>
+  <Card title="HTML input contract" href="/deckhtml/reference/input-html">
+    Add multiple slides, assets, fonts, and stable element identities.
   </Card>
-  <Card title="Configuration" href="/deckhtml/guides/configuration">
-    Review the settings that affect behavior across environments and output types.
-  </Card>
-  <Card title="CLI Examples" href="/deckhtml/cli/examples">
-    Explore richer end-to-end examples once the minimal path is working.
+  <Card title="Element mapping" href="/deckhtml/guides/element-mapping">
+    Understand which content stays editable and which content may be rasterized.
   </Card>
 </CardGroup>
-
-<Tip>
-  If your first command succeeds, keep going with the same input and switch only one thing at a time: execution mode, output behavior, or integration surface.
-</Tip>

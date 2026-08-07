@@ -1,0 +1,43 @@
+---
+title: Animations and Transitions
+sidebarTitle: Animations
+description: "Map supported HTML entrance animations and slide transitions into PPTX timing."
+---
+
+DeckHTML distinguishes element entrance animations from slide-to-slide transitions.
+
+## Element animations
+
+Animation conversion is enabled by default for PPTX. DeckHTML can capture:
+
+- `data-animation` declarations with optional duration, delay, and trigger attributes
+- supported CSS `@keyframes`
+- class-gated opacity or transform transitions
+- intercepted global anime.js calls
+
+Supported effects are normalized to a stable PPTX subset such as appear, fade, fly, zoom, spin, and wipe. An animation outside the supported subset keeps its final visual state and produces an `DECKHTML_ANIMATION_UNMAPPED` diagnostic.
+
+```html
+<h1
+  data-element-id="title"
+  data-animation="fade"
+  data-animation-duration="600"
+  data-animation-trigger="after"
+>
+  Product update
+</h1>
+```
+
+Disable entrance-animation export with `--no-animations` or `animations: false`.
+
+## Slide transitions
+
+Transitions are enabled by default and use a random catalog effect per slide. Select one effect, cycle through a comma-separated list, or disable transitions.
+
+```bash
+deckhtml deck.html -o deck.pptx --slide-transition fade
+deckhtml deck.html -o deck.pptx --slide-transition fade,push,wipe
+deckhtml deck.html -o deck.pptx --no-slide-transitions
+```
+
+For deterministic random selection in application code, pass a transition object with a `seed` through the Node API.

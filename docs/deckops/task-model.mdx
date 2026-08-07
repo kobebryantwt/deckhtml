@@ -1,0 +1,64 @@
+---
+title: Task Model
+sidebarTitle: Task Model
+description: "Understand DeckOps file uploads, asynchronous tasks, status updates, and result downloads."
+---
+
+Most DeckOps operations use the same asynchronous workflow.
+
+```text
+input → upload → create → pending/running → completed/failed → download
+```
+
+## Upload inputs
+
+SDK task helpers accept either existing `fileIds` or files to upload. TypeScript accepts Node.js paths, `Uint8Array`, `ArrayBuffer`, and browser `Blob` or `File` values. Large files are uploaded in parts, and upload progress can be observed through `onProgress`.
+
+```ts
+const task = await deck.convertPptToPdf({
+  files: ['./slides.pptx'],
+  upload: {
+    onProgress: (progress) => console.log(Math.round(progress * 100)),
+  },
+});
+```
+
+## Task states
+
+Tasks move through `pending`, `running`, `completed`, or `failed`. A completed task does not necessarily contain its result in the task detail response. Retrieve results through `tasks.down()`.
+
+```ts
+const done = await deck.tasks.wait(task.id, {
+  timeout: 300,
+  useEventStream: true,
+  onProgress: (next) => console.log(next.status),
+});
+
+const result = await deck.tasks.down(done.id);
+```
+
+`wait()` checks current state first, then uses Server-Sent Events by default and can fall back to polling. Use `subscribe()` when your application needs a cancellable stream of updates.
+
+## Authentication and workspace resolution
+
+Every request includes a stable `X-Auth-UUID`. You can additionally use:
+
+- `token`, sent as `X-Auth-Token`
+- `apiKey`, sent as `Authorization: Bearer <apiKey>`
+- `spaceId`, used as the default workspace for uploads and tasks
+
+When `spaceId` is omitted, the SDK resolves it from the current user endpoint. Guest mode works without a token or API key but is subject to server limits.
+
+## Generic task API
+
+Use typed helpers for common operations and `tasks.create()` when the task type is selected dynamically.
+
+```ts
+const task = await deck.tasks.create({
+  type: 'convertor.ppt2pdf',
+  files: ['./slides.pptx'],
+  params: {},
+});
+```
+
+The task API also provides `list`, `get`, `start`, `delete`, `wait`, `subscribe`, and `down`.

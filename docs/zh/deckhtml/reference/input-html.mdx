@@ -1,0 +1,58 @@
+---
+title: HTML 输入契约
+sidebarTitle: HTML 输入
+description: "编写可以被 DeckHTML 稳定分页、布局和转换的 HTML 与 SVG 输入。"
+---
+
+DeckHTML 接受本地 HTML 或 SVG、多个有序文件、stdin 中的 HTML，以及 HTTP/HTTPS URL。同一次 CLI 调用不能混合 URL 与本地路径。
+
+## 幻灯片结构
+
+一个 HTML 中包含多页时，使用重复的 `.slide-container`、`.slide-wrap`、`.slide`、`section[class*="slide"]` 或 `[data-slide]` 容器。自动多页检测至少需要两个符合条件的容器。
+
+```html
+<main>
+  <section class="slide-container" data-slide-id="title">...</section>
+  <section class="slide-container" data-slide-id="metrics">...</section>
+</main>
+```
+
+也可以每页使用一个 HTML 文件，DeckHTML 会保留命令行中的输入顺序。
+
+```bash
+deckhtml 01-title.html 02-metrics.html 03-summary.html -o deck.pptx
+```
+
+## 尺寸和 Viewport
+
+DeckHTML 可以从 `meta[name="deck-size"]`、支持的 CSS 尺寸变量、Viewport Meta、固定尺寸 Slide 容器或 SVG `viewBox` 检测尺寸，否则回退为 `1280 × 720`。使用 `--width` 可以覆盖宽度，CLI 会按 16:9 计算高度。
+
+Slide 容器与浏览器 Viewport 应保持相同宽高比。固定尺寸的幻灯片布局比依赖文档滚动的布局更可预测。
+
+## 稳定标识
+
+下游报告或严格检查需要稳定关联源元素时，使用 `data-slide-id` 和 `data-element-id`。
+
+```html
+<section class="slide-container" data-slide-id="results">
+  <h2 data-element-id="results-title">Results</h2>
+</section>
+```
+
+Node API 可以自定义标识属性；CLI 对应 `--identity-attribute`。
+
+## 排除运行时界面
+
+导航、进度条和控制器不应进入幻灯片，可通过 `--exclude` 或 `excludeSelector` 排除。
+
+```bash
+deckhtml deck.html -o deck.pptx --exclude '.controls, .progress'
+```
+
+## 资源和运行时状态
+
+- Local 模式下，把相对资源放在 HTML 附近。
+- 转换时确保字体已加载、可见内容已经进入 DOM。
+- 不要把关键内容只放在 Hover 状态。
+- 在意可编辑性时优先使用 DOM 文本和形状；Canvas 通常会被栅格化。
+- URL 输入会先下载响应 HTML，不会保留已有的交互式浏览器会话。

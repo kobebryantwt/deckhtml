@@ -1,131 +1,54 @@
 ---
-title: 概述
-sidebarTitle: 概述
-description: "通过 CLI 在终端中将 HTML 文件、stdin 或 URL 转换为演示文稿产物。"
+title: CLI 概览
+sidebarTitle: 概览
+description: "在终端、脚本、CI 或智能体工作流中转换 DeckHTML 输入。"
 ---
 
-已发布的 `@deckflow/deckhtml` 包目前提供的是一个 HTML 转演示文稿的命令行工具。它支持本地 HTML 文件、多个有序 HTML 文件、标准输入和托管 URL，并提供本地执行、云端执行以及面向脚本的 JSON 输出。
-
-<Note>
-  如果你想先跑通 HTML 到演示文稿的最短路径，CLI 依然是最合适的入口，尤其适合本地验证、Shell 自动化和 CI。
-</Note>
-
-## 快速开始
-
-无需安装，直接运行：
-
-```bash
-npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
-```
-
-全局安装：
+## 安装并验证
 
 ```bash
 npm install -g @deckflow/deckhtml
 deckhtml --version
+deckhtml --help
 ```
 
-## 执行模式
-
-当前已发布包支持三种模式：
-
-| 模式 | 含义 | 是否需要认证 |
-| --- | --- | --- |
-| `local` | 始终本地转换 | 否 |
-| `cloud` | 始终走 Deckflow Cloud | 是 |
-| `auto` | 有凭证时走云端，否则回退到本地 | 仅当实际走云端时需要 |
-
-这不是文档推断，而是已发布 CLI 的真实行为：
-
-- `--mode local` 一定走本地
-- `--mode cloud` 没有凭证时会直接报错
-- `--mode auto` 会自动判断是否已有凭证
-
-不同执行模式下，处理路径也会有所区别。一般来说，本地模式适合最直接的同机转换；如果你需要托管执行或云端字体嵌入，就使用云端模式。
-
-## 认证
-
-只有云端模式和云端专属的 `--embed-fonts` 参数才需要认证。如果你只想先在本地转换成 PPTX 或 PNG，可以不配置认证直接开始使用。
+也可以不全局安装，直接运行指定版本或最新版：
 
 ```bash
-deckhtml auth login
-deckhtml auth status
-deckhtml config set api-key <key>
+npx -y @deckflow/deckhtml@latest deck.html -o deck.pptx
 ```
 
-云端认证目前有两条路径：
-
-- `deckhtml auth login`：CLI 会自动打开浏览器，你手工完成登录或确认后，浏览器回跳到本机 `localhost` 回调地址，CLI 再自动把 `token` 和 `spaceId` 写入 `~/.deckflow/credentials`
-- `deckhtml config set api-key <key>`：手工把 API Key 写入同一个凭证文件，适合无浏览器环境或手动配置场景
-
-因此，如果你已经通过浏览器完成了 `deckhtml auth login`，通常**不需要**再额外执行一次 `deckhtml config set api-key`。CLI 会直接使用已经保存好的登录令牌继续访问云端能力。
-
-## CI、Docker 与 Agent 环境
-
-在 CI、Docker、Agent 这类非交互环境里，浏览器登录通常不可用，本地凭证文件也未必稳定存在。此时更推荐直接通过环境变量传入 API Key：
+## 输入形式
 
 ```bash
-export DECKHTML_API_KEY=your-api-key
-```
-
-这不是额外功能，而是自动化环境中最可靠的认证方式。
-
-另外还要注意一下凭证优先级：
-
-- `DECKHTML_API_KEY` 环境变量优先级高于本地保存的 `apiKey`
-- 浏览器登录落地的是 `token` 和 `spaceId`，不是 API Key
-- 两种凭证样式可以共存在同一个文件中，不会自动互相删除
-
-## 首次转换
-
-先从一个本地 HTML 文件开始：
-
-```bash
-deckhtml index.html
-```
-
-默认会在同目录输出同名 PPTX：
-
-```text
-index.pptx
-```
-
-指定输出路径：
-
-```bash
-deckhtml index.html -o deck.pptx
-```
-
-从 stdin 转换：
-
-```bash
-cat index.html | deckhtml - -o deck.pptx
-```
-
-转换托管页面：
-
-```bash
+deckhtml deck.html -o deck.pptx
+deckhtml 01.html 02.html 03.html -o deck.pptx
+cat deck.html | deckhtml - -o deck.pptx
 deckhtml https://example.com/deck.html -o deck.pptx
 ```
 
-## 除了输出格式，这个包还提供什么
+stdin 必须指定 `--output`。一次调用可以使用本地文件或 URL，但不能混合两者。
 
-从终端用户视角看，这个包的核心仍然是把 HTML 输入转换成演示文稿产物，而不是一个覆盖全部 Deckflow 能力的总入口。
+## 输出格式
 
-除输出本身外，它还提供：
+DeckHTML 根据 `-o` 推断格式：
 
-- 多种输入方式：文件、stdin、多个有序文件、URL
-- 本地与云端执行模式切换
-- 云端专属的 `--embed-fonts` 字体嵌入能力
-- `--report` 转换报告
-- 认证与持久化配置命令
-- `--json` 机器可读输出
+```bash
+deckhtml deck.html -o deck.pptx
+deckhtml deck.html -o frames.png
+```
 
-它**没有**在这个包里额外暴露翻译、生成、revamp 或更广义的文档处理工作流；这些属于其他 Deckflow 产品面，不是当前这个 CLI 包本身提供的能力。
+省略 `-o` 时默认生成 PPTX。
 
-## 继续阅读
+## 自动化推荐参数
 
-- [输出模式](/zh/deckhtml/cli/output-modes)
-- [命令参考](/zh/deckhtml/cli/commands)
-- [功能特性](/zh/deckhtml/cli/features)
-- [使用示例](/zh/deckhtml/cli/examples)
+```bash
+deckhtml deck.html \
+  -o deck.pptx \
+  --mode local \
+  --json \
+  --report \
+  --force
+```
+
+stdout、stderr、JSON、覆盖文件和报告行为请参考[输出与自动化](/zh/deckhtml/cli/output-modes)。

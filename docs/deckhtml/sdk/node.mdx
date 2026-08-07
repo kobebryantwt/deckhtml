@@ -1,99 +1,62 @@
 ---
-title: Node SDK
-sidebarTitle: Node SDK
-description: "Use the Node programmatic API from @deckflow/deckhtml inside JavaScript and TypeScript code."
+title: Node API
+sidebarTitle: Node API
+description: "Convert HTML to PPTX or PNG programmatically and inspect conversion diagnostics."
 ---
 
-Use the Node SDK when your conversion workflow lives in JavaScript or TypeScript services, workers, or internal tools.
-
-## Install
-
-```bash
-npm install @deckflow/deckhtml playwright pptxgenjs
-```
-
-The package declares `playwright` and `pptxgenjs` as peer runtime dependencies. In practice, your application environment needs both available at runtime because the converter stack imports them directly.
-
-## Import the published API
-
-The package exports `convertHtmlToPptx()` from its main entry:
+## PPTX conversion
 
 ```ts
-import { convertHtmlToPptx } from '@deckflow/deckhtml';
-```
-
-## Basic example
-
-```ts
-import { promises as fs } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import { convertHtmlToPptx } from '@deckflow/deckhtml';
 
 const result = await convertHtmlToPptx({
-  input: 'index.html'
-});
-
-await fs.writeFile('deck.pptx', result.data);
-console.log(result.slideCount);
-```
-
-## Multiple input files
-
-```ts
-import { promises as fs } from 'node:fs';
-import { convertHtmlToPptx } from '@deckflow/deckhtml';
-
-const result = await convertHtmlToPptx({
-  inputs: ['title.html', 'agenda.html', 'summary.html']
-});
-
-await fs.writeFile('deck.pptx', result.data);
-```
-
-## Useful `ConversionOptions`
-
-The type definitions expose these commonly useful options:
-
-| Option | Type | Meaning |
-| --- | --- | --- |
-| `input` | `string` | Single HTML or SVG input file. |
-| `inputs` | `string[]` | Multiple HTML or SVG files, processed in order into one PPTX. |
-| `slideSelector` | `string` | Override the selector used to split slides inside one document. |
-| `splitByHeight` | `boolean` | Split one input vertically into multiple slides. |
-| `autoDetectSlides` | `boolean` | Auto-detect multi-slide containers in one HTML file. |
-| `viewportWidth` | `number` | Browser viewport width in pixels. |
-| `viewportHeight` | `number` | Browser viewport height in pixels. |
-| `allowLocalResources` | `boolean` | Allow loading `file://` subresources in Playwright. |
-| `platform` | `PlatformTarget` | Generic font mapping target: `win`, `mac`, `ios`, `android`, `linux`. |
-| `quiet` | `boolean` | Suppress non-essential console output. |
-
-## Example with viewport and platform control
-
-```ts
-import { promises as fs } from 'node:fs';
-import { convertHtmlToPptx } from '@deckflow/deckhtml';
-
-const result = await convertHtmlToPptx({
-  input: 'slides.html',
-  viewportWidth: 1440,
-  viewportHeight: 810,
+  input: 'deck.html',
+  allowLocalResources: true,
   platform: 'win',
-  quiet: true
+  quiet: true,
 });
 
-await fs.writeFile('deck.pptx', result.data);
+await writeFile('deck.pptx', result.data);
+console.log(result.slideCount, result.report, result.diagnostics);
 ```
 
-## Return type
+Pass `inputs: ['01.html', '02.html']` for ordered files. The function returns a PPTX `Buffer`, slide count, used fonts, statistics, resource and identity diagnostics, and a per-element conversion report when available.
 
-The `ConversionResult` includes:
+## PNG conversion
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `data` | `Buffer` | Final PPTX binary data. |
-| `slideCount` | `number \| undefined` | Slide count when available. |
-| `usedFonts` | `string[] \| undefined` | Resolved fonts used during conversion. |
-| `stats` | `ConversionStats \| undefined` | Element and font statistics collected during conversion. |
+```ts
+import { convertHtmlToPng } from '@deckflow/deckhtml';
 
-## Practical note
+const result = await convertHtmlToPng({
+  input: 'deck.html',
+  viewportWidth: 1280,
+  viewportHeight: 720,
+});
+```
 
-The Node SDK is currently focused on PPTX generation through `convertHtmlToPptx()`. The CLI remains the documented surface for broader shell-oriented workflows, authentication flows, and cloud flags.
+The PNG result contains one image buffer per detected slide.
+
+## Strict conversion
+
+Adding `strict` opts into strict gates. Omitted flags inside the object use their strictest behavior unless explicitly relaxed.
+
+```ts
+await convertHtmlToPptx({
+  input: 'deck.html',
+  strict: {
+    requireElementIdentity: true,
+    allowRaster: false,
+    allowUnsupported: false,
+    allowRemoteResources: false,
+    failOnMissingFonts: true,
+    allowUnmappedAnimations: false,
+  },
+});
+```
+
+Strict failures throw a `ConversionError` containing a primary diagnostic and the collected diagnostic list.
+
+## Advanced options
+
+The API also controls slide selectors, excluded selectors, identity attributes, auto-detection, viewport, resource policy, target font platform, animations, slide transitions, iframe mode, iframe timeout, and caller-provided Playwright browser execution.

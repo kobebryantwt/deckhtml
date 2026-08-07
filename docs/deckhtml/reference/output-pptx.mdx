@@ -1,18 +1,26 @@
 ---
-title: PPTX Output Reference
-sidebarTitle: PPTX Output Reference
-description: "Generate editable PPTX decks from HTML inputs with DeckHTML conversion workflows."
+title: PPTX Output
+sidebarTitle: PPTX Output
+description: "Understand DeckHTML PPTX artifacts, editable mappings, fallbacks, fonts, animations, and verification."
 ---
 
-`pptx` is the default DeckHTML output format.
+PPTX output combines editable Office elements with visual fallbacks. DeckHTML does not flatten an entire slide by default, but individual elements can be rasterized when no stable native mapping exists.
 
-## Use it when
+## What to verify
 
-- You need an editable PowerPoint artifact
-- A downstream team will refine slides manually
-- You want a deck file instead of a fixed-layout export
+- slide count and slide size
+- text content, wrapping, font selection, and reading order
+- images, tables, shapes, SVG, formulas, and media
+- element animations and slide transitions
+- rasterized or unsupported elements in the report
+- missing font and resource diagnostics
 
-## Operational notes
+## Fonts
 
-- The output path can be inferred from the input basename or set explicitly with `-o`.
-- JSON output is helpful when the deck path needs to be captured by automation.
+Local conversion maps CSS font stacks for the selected target platform. Cloud conversion can additionally embed matching font binaries with `--embed-fonts`.
+
+## Output safety
+
+The CLI refuses to replace an existing file unless `--force` is passed. The Node API returns a buffer and never writes to disk automatically.
+
+Use strict mode and per-element reports when editability is a delivery requirement rather than a preference.

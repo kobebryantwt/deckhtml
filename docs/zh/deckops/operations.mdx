@@ -1,0 +1,43 @@
+---
+title: 文档操作
+sidebarTitle: 文档操作
+description: "根据转换、提取、PPTX、媒体和内容工作流选择已实现的 DeckOps 操作。"
+---
+
+DeckOps 通过同一套上传和任务生命周期提供多类云端文档操作。
+
+## 格式转换
+
+当前已实现的转换包括：
+
+- PPT 或 PPTX 转图片、PDF 或视频
+- PPT 转 PPTX
+- DOC 或 DOCX 转 PDF
+- PDF 转图片
+- Keynote 转图片、HTML 或 PDF
+- HTML 转 PNG 或 PPTX
+- Markdown 转 PNG
+
+具体源格式与目标格式组合会选择不同的后端任务类型。请查询[任务类型参考](/zh/deckops/reference/task-types)，不要根据相近格式推断未实现的组合。
+
+## PPTX 操作和提取
+
+- 将演示文稿拆分为幻灯片文件，或按输入顺序合并 PPTX。
+- 检查使用字体和嵌入字体。
+- 提取页面、形状、文本、图片、Layout、Master，以及可选的 Speaker Notes。
+- 把指定字体嵌入 PPTX。
+
+## OCR、压缩和图片
+
+- 按指定语言识别图片文字。
+- 压缩文档或视频文件。
+- 将图片转换成 WebP。
+- 按最大宽度或高度缩放图片。
+
+## 内容工作流
+
+当前任务目录还包括文档生成、翻译、改版和 HTML Player。这些操作使用相同任务 API，但返回各自的任务结果。
+
+<Note>
+  部分操作只读取一个源文件，部分操作会消费有序文件列表。`pptx.join`、`convertor.html2pptx`、`html.buildPlayer` 和 `generation` 是典型的多输入工作流。
+</Note>

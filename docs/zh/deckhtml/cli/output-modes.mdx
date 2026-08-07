@@ -1,131 +1,46 @@
 ---
-title: 输出模式
-sidebarTitle: 输出模式
-description: "了解 DeckHTML CLI 在终端、自动化和 CI 场景下的人类可读输出、JSON 输出以及产物行为。"
+title: 输出与自动化
+sidebarTitle: 输出与自动化
+description: "在脚本和 CI 中安全消费 DeckHTML 输出。"
 ---
-
-> 当你在终端、脚本、CI 或智能体环境中使用 DeckHTML 时，输出行为本身就是接口的一部分。
-
-DeckHTML 会把“最终结果”和“过程信息”分开：
-
-- stdout：用于输出最终结果
-- stderr：用于输出进度、日志、警告和错误
 
 ## 默认输出
 
-默认情况下，DeckHTML 会在 stdout 打印最终结果：
+命令成功后，默认把进度写入 stderr，把生成产物路径写入 stdout。多页 PNG 会输出每个文件路径。
+
+DeckHTML 默认拒绝覆盖已有的本地产物，只有明确需要替换时才传 `--force`。
+
+## JSON 输出
+
+`--json` 会让最终成功 Envelope 保持在 stdout，便于脚本解析。
 
 ```bash
-deckhtml index.html -o deck.pptx
-```
-
-```text
-deck.pptx
-```
-
-如果省略 `-o`，CLI 会尽量根据输入名称自动推导输出路径：
-
-```bash
-deckhtml index.html
-```
-
-```text
-index.pptx
-```
-
-## 产物格式
-
-当前已发布 CLI 通过 `-o` 的扩展名推断产物类型：
-
-```bash
-deckhtml index.html -o deck.pptx
-deckhtml index.html -o frames.png
-```
-
-当前文档层面支持的产物类型有：
-
-- `pptx`
-- `png`
-
-执行模式也会影响具体产物行为：
-
-- 本地与云端可能采用不同的处理路径
-- 最简单的同机转换优先使用本地模式
-- 需要托管执行或云端字体嵌入时使用云端模式
-
-## `--json`
-
-当另一个程序需要解析结果时，使用 `--json`：
-
-```bash
-deckhtml index.html -o deck.pptx --json
+deckhtml deck.html -o deck.pptx --mode local --json
 ```
 
 ```json
 {
   "ok": true,
-  "input": ["index.html"],
+  "input": ["deck.html"],
   "output": "deck.pptx",
   "format": "pptx",
-  "mode": "local"
+  "mode": "local",
+  "slideCount": 3
 }
 ```
 
-启用 `--json` 后，stdout 应只包含 JSON；日志和诊断信息仍然会输出到 stderr。
+根据格式和参数，Envelope 还可能包含 `outputs`、`stats`、`simplified` 和 `report`。
 
-## `--quiet` 与 `--verbose`
+## 日志
 
-使用 `--quiet` 抑制非必要日志：
+- `--quiet` 隐藏非必要进度和提示。
+- `--verbose` 把更多执行详情写入 stderr。
+- `--quiet` 和 `--verbose` 不能同时使用。
 
-```bash
-deckhtml index.html -o deck.pptx --quiet
-```
+## 报告
 
-使用 `--verbose` 输出更详细日志：
+`--report` 写入 `<output>.report.json`。Local PPTX 提供逐元素映射和诊断；Cloud 转换可能返回聚合报告。详见[报告与诊断](/zh/deckhtml/reference/report-schema)。
 
-```bash
-deckhtml index.html -o deck.pptx --verbose
-```
+## 退出行为
 
-这两个参数不能同时使用：
-
-```bash
-deckhtml index.html --quiet --verbose
-```
-
-代表性的 stderr 错误：
-
-```text
-Error: --quiet conflicts with --verbose
-```
-
-## 错误与退出行为
-
-错误信息会写入 stderr。即使在 `--json` 模式下，也应默认认为诊断信息不会写入 stdout。
-
-一个典型的 JSON 形态错误可能像这样：
-
-```json
-{
-  "error": {
-    "code": "usage_error",
-    "message": "--quiet conflicts with --verbose"
-  }
-}
-```
-
-文档里常见的错误类别包括：
-
-| Code | 含义 |
-| --- | --- |
-| `usage_error` | 参数非法、输入缺失或参数冲突 |
-| `auth_error` | 云端模式缺少有效凭证 |
-| `render_error` | 页面无法加载或渲染 |
-| `conversion_error` | 渲染后转换失败 |
-
-## stdout 与 stderr 的边界
-
-| 流 | 内容 |
-| --- | --- |
-| stdout | 最终输出路径或 JSON 结果 |
-| stderr | 进度、警告、详细日志和错误 |
+成功转换退出 `0`。用法、输入、浏览器、转换、上传或输出失败会返回非零退出码，并根据输出模式写入文本或结构化错误。以退出码为准，不要仅通过部分生成的文件判断成功。

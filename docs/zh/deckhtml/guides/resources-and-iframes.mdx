@@ -1,0 +1,35 @@
+---
+title: 资源与 iframe
+sidebarTitle: 资源与 iframe
+description: "控制本地和远程资源、浏览器执行及 iframe 转换行为。"
+---
+
+HTML 转换会在浏览器中执行页面内容，因此资源访问和 iframe 行为也是输入契约的一部分。
+
+## 本地和远程资源
+
+CLI 在 Local 模式下允许加载本地子资源，因此相对图片、CSS 和字体可以正常读取。Node API 还提供显式 Resource Policy，用于限制本地路径与远程网络请求，并返回资源诊断。
+
+缺少资源、路径逃逸或远程资源必须让转换失败时，使用 Strict Mode。
+
+## iframe
+
+Local 转换支持三种 iframe 模式：
+
+| 模式 | 行为 |
+| --- | --- |
+| `inspect` | 单独打开 iframe 文档并提取可编辑元素，检查失败时回退截图 |
+| `screenshot` | 始终栅格化 iframe |
+| `skip` | 忽略 iframe 内容 |
+
+```bash
+deckhtml deck.html -o deck.pptx \
+  --iframes inspect \
+  --iframe-load-timeout-ms 12000
+```
+
+嵌套、依赖父页面或无法访问的 Frame 可能产生结构化 iframe 诊断。视觉保留比可编辑性更重要时可使用 `screenshot`。
+
+## 浏览器控制
+
+CLI 接受 `--executable-path` 指定 Chromium。Node API 可以注入 Executable Path、持久化 Profile、Browser 或 Browser Context，适合容器和已经统一管理 Playwright 的宿主。

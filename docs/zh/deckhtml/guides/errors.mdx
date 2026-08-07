@@ -1,0 +1,33 @@
+---
+title: 故障排查
+sidebarTitle: 故障排查
+description: "排查 DeckHTML 输入、浏览器、映射、资源、字体和输出问题。"
+---
+
+## 只检测到一页
+
+使用重复的 `.slide-container`，确保每个容器接近 Viewport 尺寸；也可以每页传一个 HTML 文件。通过报告确认 `slideCount`。
+
+## 内容被裁切或位置不正确
+
+让声明的 Deck 尺寸、Slide 容器尺寸和浏览器 Viewport 保持一致。自动检测没有得到设计画布时，增加 `meta[name="deck-size"]` 或传 `--width`。
+
+## 字体与浏览器不同
+
+确保字体在转换前加载完成，使用明确的 CSS Font Stack，选择目标 `--platform`，并检查缺失字体诊断。输出必须携带支持的字体文件时，使用 Cloud `--embed-fonts`。
+
+## 元素变成图片而不是可编辑对象
+
+在报告中检查它的 `mapping_mode` 和 Raster Reason。Canvas 图表、复杂 SVG、部分渐变、URL 背景和公式回退本身就是常见栅格候选。
+
+## Chromium 无法启动
+
+安装兼容 Chromium 或传 `--executable-path`。容器中还要确保进程具备 Chromium 所需的系统库和权限。
+
+## 远程资源或 iframe 缺失
+
+检查 Resource 与 iframe Diagnostics，确认网络访问，选择正确的 iframe 模式；子文档加载较慢时增加 `--iframe-load-timeout-ms`。
+
+## CI 结果不明确
+
+使用 `--json --report`，检查进程退出码，验证每个产物路径，并根据不允许的映射类型或 Diagnostic Rule ID 让任务失败。

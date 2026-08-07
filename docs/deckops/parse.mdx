@@ -1,0 +1,52 @@
+---
+title: Parse Documents
+sidebarTitle: Parse Documents
+description: "Parse supported document formats into structured results or normalized Markdown."
+---
+
+DeckOps offers two parse levels:
+
+| Interface | Result | Use it when |
+| --- | --- | --- |
+| `deck.parse()` | Markdown string | Search, summarization, indexing, or language-model input needs a convenient text representation |
+| Low-level parse task | Format-specific structured object | Your application needs pages, shapes, geometry, tables, images, notes, or style metadata |
+
+## Supported parse routes
+
+| Input | Task type |
+| --- | --- |
+| `.pdf` | `pdf.parse` |
+| `.pptx` | `pptx.parse` |
+| `.docx` | `docx.parseTextAndImage` |
+| `.key` | `keynote.parseTextAndImage` |
+| HTTP or HTTPS URL | `html.getByURL` |
+
+## Markdown facade
+
+```ts
+const markdown = await deck.parse('./report.pdf');
+
+const detailed = await deck.parseDetailed({
+  file: './slides.pptx',
+  wait: { timeout: 300 },
+});
+
+console.log(detailed.markdown);
+console.log(detailed.taskId, detailed.type);
+```
+
+For an existing upload, pass `{ fileId, name }`. Binary and Blob inputs need a `name` so the SDK can select the parser.
+
+## Structured result
+
+```ts
+const task = await deck.pptxParse({ files: ['./slides.pptx'] });
+const done = await deck.tasks.wait(task.id);
+const result = await deck.tasks.down<'pptx.parse'>(done.id);
+```
+
+The result is the PPTX object model rather than the Markdown projection. See [Structured Results](/deckops/structured-results) for format-specific contracts and fidelity boundaries.
+
+<Warning>
+  The public implementation does not expose one shared Document IR schema across all formats. Do not assume that fields from a PDF result also exist in PPTX, DOCX, or Keynote results.
+</Warning>
