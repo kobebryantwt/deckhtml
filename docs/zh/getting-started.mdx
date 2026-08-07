@@ -134,18 +134,35 @@ console.log(result.taskId, result.type);
 
 继续阅读 [DeckOps 快速开始](/zh/deckops/quick-start)、[任务模型](/zh/deckops/task-model)或[结构化解析结果](/zh/deckops/structured-results)。
 
-## DeckRender 与 DeckUse
+## DeckRender
 
-当前帮助中心还没有这两项能力的具体包名和可执行调用契约，因此这里只说明预期输入和结果。
+无需全局安装，直接运行软件包并把全部幻灯片渲染为 PNG：
 
-<CardGroup cols={2}>
-  <Card title="DeckRender" href="/zh/deckrender/overview">
-    **输入：**支持的文档
+```bash
+npx -y @deckflow/deckrender@latest presentation.pptx
+```
 
-    **使用：**通过产品 SDK 调用云端渲染
+多页图片会生成连续编号的目录：
 
-    **结果：**页面或幻灯片画面
-  </Card>
+```text
+presentation/
+├── 001.png
+├── 002.png
+└── 003.png
+```
+
+可以通过输出路径选择其他产物，自动化调用时添加 `--json`：
+
+```bash
+npx -y @deckflow/deckrender@latest presentation.pptx -o presentation.pdf
+npx -y @deckflow/deckrender@latest presentation.pptx --json
+```
+
+继续阅读 [DeckRender 快速开始](/zh/deckrender/quick-start)、[支持的格式](/zh/deckrender/formats)或 [Node.js SDK](/zh/deckrender/sdk/node)。
+
+## DeckUse
+
+<CardGroup cols={1}>
   <Card title="DeckUse" href="/zh/deckuse/overview">
     **输入：**支持的 Office 源文件
 

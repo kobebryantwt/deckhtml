@@ -1,0 +1,64 @@
+---
+title: 快速开始
+sidebarTitle: 快速开始
+description: "安装 DeckRender、验证 CLI，并把文档渲染为页面图片。"
+---
+
+DeckRender 需要 Node.js 18 或更高版本。可以直接运行，无需全局安装；也可以一次安装后持续使用命令。
+
+<Steps>
+  <Step title="运行或安装 DeckRender">
+    <Tabs>
+      <Tab title="使用 npx 直接运行">
+        ```bash
+        npx -y @deckflow/deckrender@latest --version
+        ```
+      </Tab>
+      <Tab title="全局安装">
+        ```bash
+        npm install -g @deckflow/deckrender
+        deckrender --version
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="渲染全部幻灯片">
+    ```bash
+    deckrender presentation.pptx
+    ```
+
+    未指定 `--output` 时，多页图片会写入源文件旁的同名目录：
+
+    ```text
+    presentation/
+    ├── 001.png
+    ├── 002.png
+    └── 003.png
+    ```
+  </Step>
+  <Step title="生成其他结果">
+    ```bash
+    deckrender presentation.pptx -o presentation.pdf
+    deckrender presentation.pptx --pages 1-3 --image-format webp -o preview/
+    deckrender page.html -o screenshot.png
+    ```
+  </Step>
+  <Step title="读取机器可解析结果">
+    ```bash
+    deckrender presentation.pptx --json | jq -r '.outputs[].file'
+    ```
+
+    `--json` 把结果写入 stdout，进度与警告保留在 stderr，因此可以安全地通过管道处理。
+  </Step>
+</Steps>
+
+首次渲染不要求凭证。访客请求存在额度限制；应用需要认证访问或持久化默认参数时，请继续阅读[认证与配置](/zh/deckrender/configuration)。
+
+<CardGroup cols={2}>
+  <Card title="支持的格式" href="/zh/deckrender/formats">
+    确认目标输入输出组合已经实现。
+  </Card>
+  <Card title="CLI 输出规则" href="/zh/deckrender/cli/overview">
+    配置文件、目录、ZIP、标准输出、尺寸和页面范围。
+  </Card>
+</CardGroup>

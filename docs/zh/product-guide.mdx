@@ -8,7 +8,7 @@ sidebarTitle: 选择产品
 | 产品 | 适合场景 | 执行方式 | 主要结果 |
 | --- | --- | --- | --- |
 | DeckProbe | 快速嗅探、上传检查、路由和策略判断 | 本地原生 Rust 或 Browser JS SDK | 带置信度和实际成本的 Target 证据 |
-| DeckRender | 专注文档渲染 | 通过 SDK 调用云端渲染 | 页面或幻灯片画面 |
+| DeckRender | 稳定、可预测的文档渲染 | 本地完成输入路由，按路径采用本地、透传或云端执行 | 图片、PDF 或视频 |
 | DeckOps | 云端解析、提取、转换和文档操作 | 通过 CLI 或 SDK 执行云端任务 | 格式专属结构化结果、Markdown 或生成文件 |
 | DeckUse | 源文件感知的 Office 文件操作 | 本地库工作流 | 更新后的 Office 源文件 |
 | DeckHTML | HTML 与 SVG 驱动的 Deck 创作 | 本地与云端路径 | 根据浏览器布局生成 PPTX 或 PNG |
@@ -23,8 +23,8 @@ sidebarTitle: 选择产品
 
 ## DeckRender 还是 DeckOps？
 
-- 只需要渲染后的页面或幻灯片时，选择 **DeckRender**。
-- Render 属于更大的流程，并且还需要 Probe、Parse、Extract 或 Convert 时，选择 **DeckOps**。
+- 应用需要可直接使用的渲染文件、稳定的产物命名、页面筛选、尺寸控制，或希望通过统一 CLI/Node.js API 完成源格式到视觉产物的路由时，选择 **DeckRender**。
+- 应用需要直接使用底层任务平台，或者流程还包含 Probe、结构化 Parse、语义 Extract 及 DeckRender 视觉目标以外的 Convert 时，选择 **DeckOps**。
 
 ## DeckOps 还是 DeckUse？
 

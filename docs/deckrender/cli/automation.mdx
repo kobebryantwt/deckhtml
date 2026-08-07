@@ -1,0 +1,82 @@
+---
+title: Automation and Errors
+sidebarTitle: Automation and Errors
+description: "Integrate the DeckRender CLI with scripts using JSON output, stable streams, and exit codes."
+---
+
+DeckRender keeps result data on stdout and progress, warnings, and errors on stderr. This allows callers to parse stdout without filtering terminal messages.
+
+```bash
+result=$(deckrender deck.pptx --json)
+first_file=$(printf '%s' "$result" | jq -r '.outputs[0].file')
+```
+
+Use `--quiet` to suppress progress and warnings. Under `--json`, warnings remain structured messages on stderr; they never enter the success document on stdout.
+
+## Success envelope
+
+```json
+{
+  "ok": true,
+  "input": "deck.pptx",
+  "format": "image",
+  "engine": "cloud",
+  "route": ["convertor.ppt2image"],
+  "pages": 3,
+  "outputs": [
+    {
+      "page": 1,
+      "file": "deck/001.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 184320
+    }
+  ],
+  "durationMs": 8123
+}
+```
+
+`pages` is the total page count before `--pages` filtering. `outputs` contains only the artifacts written by this invocation. A `caveat` field appears when the selected route has a known fidelity trade-off.
+
+## Failure envelope
+
+With `--json`, failures are written to stderr:
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "unsupported_option",
+    "message": "--width is not supported for .key input.",
+    "hint": "The selected route does not expose a resolution parameter."
+  }
+}
+```
+
+Backend failures may also include `requestId`; include it when reporting a service issue.
+
+## Exit codes
+
+| Exit | Meaning | Error codes |
+| --- | --- | --- |
+| `0` | Success | — |
+| `1` | Rendering or artifact conversion failed | `render_error`, `conversion_error` |
+| `2` | The invocation, format pair, or option cannot run | `usage_error`, `unsupported_format`, `unsupported_option`, `not_implemented` |
+| `3` | Credentials were required or rejected | `auth_error` |
+
+In CI or JSON mode DeckRender does not open an interactive login window after a `401`. Configure an API key or token before running the command.
+
+```bash
+export DECKFLOW_API_KEY='...'
+deckrender deck.pptx --json --quiet
+```
+
+## Raw artifact streaming
+
+For a single artifact, `-o -` writes bytes only:
+
+```bash
+deckrender page.html -o - > page.png
+```
+
+It cannot be combined with `--json`, and it fails if the route yields multiple frames.

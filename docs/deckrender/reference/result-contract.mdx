@@ -1,0 +1,58 @@
+---
+title: Result Contract
+sidebarTitle: Result Contract
+description: "Understand DeckRender success results, artifact entries, route metadata, and typed failures."
+---
+
+The CLI `--json` mode and Node.js API return the same `RenderResult` shape after artifacts are written.
+
+```ts
+interface RenderResult {
+  ok: true;
+  input: string;
+  format: 'image' | 'pdf' | 'video';
+  engine: string;
+  route: RenderStepTask[];
+  pages: number;
+  outputs: RenderOutputEntry[];
+  durationMs: number;
+  caveat?: string;
+}
+
+interface RenderOutputEntry {
+  page: number;
+  file: string;
+  width?: number;
+  height?: number;
+  bytes?: number;
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `input` | Original display path, URL, or `-` |
+| `format` | Requested output family |
+| `engine` | Executor used, such as `cloud`, `local`, or `passthrough` |
+| `route` | Ordered execution steps, including `local:iwork-preview` or `passthrough` for those routes |
+| `pages` | Total pages produced before page filtering |
+| `outputs` | Files or stream entries actually written after filtering |
+| `durationMs` | End-to-end time including input resolution and artifact writing |
+| `caveat` | Known fidelity limitation for the chosen route, when applicable |
+
+The render plan and `route` are execution metadata. They do not contain parsed pages, elements, text, or Document IR.
+
+## Errors
+
+The Node.js API throws `DeckRenderError`, which exposes `code`, `message`, optional `hint`, and optional backend `requestId`.
+
+| Code | Meaning |
+| --- | --- |
+| `usage_error` | Invalid or conflicting invocation |
+| `unsupported_format` | No route for the source and target pair |
+| `unsupported_option` | The route exists but cannot apply an explicit option |
+| `not_implemented` | The installed version recognizes but has not implemented the route |
+| `auth_error` | Credential is required, invalid, or rejected |
+| `render_error` | Rendering failed |
+| `conversion_error` | An artifact could not be retrieved or written |
+
+Use `deckrender formats --json` at runtime when software needs to discover the installed version's supported routes.

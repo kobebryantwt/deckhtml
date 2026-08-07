@@ -1,0 +1,65 @@
+---
+title: 认证与配置
+sidebarTitle: 认证与配置
+description: "配置访客或认证渲染，以及持久化的 CLI 默认参数。"
+---
+
+DeckRender 可以不带凭证、以有限额的访客模式提交云端渲染。需要认证使用时，可以登录或配置 API Key。
+
+```bash
+deckrender auth login
+deckrender auth status
+deckrender config list
+```
+
+`auth status` 会验证当前生效的凭证；`config list` 会显示脱敏后的值以及每个字段最终采用的来源。
+
+## 凭证优先级
+
+每个字段独立按以下顺序解析：
+
+1. SDK Renderer 显式选项。
+2. 环境变量。
+3. `~/.deckflow/credentials`。
+4. 只读的 `~/.deckops/config.json`。
+5. 内置默认值。
+
+| 字段 | 环境变量，按优先级排列 |
+| --- | --- |
+| API Key | `DECKRENDER_API_KEY`、`DECKFLOW_API_KEY`、`DECKHTML_API_KEY` |
+| Token | `DECKRENDER_TOKEN`、`DECKFLOW_TOKEN` |
+| Space | `DECKRENDER_SPACE_ID`、`DECKFLOW_SPACE_ID` |
+| API 地址 | `DECKRENDER_API_BASE`、`DECKFLOW_API_BASE` |
+
+默认 API 根地址为 `https://app.deckflow.com/v1`。共享凭证保存在 `~/.deckflow/credentials`；DeckRender 写入时会保留其他 Deckflow 工具添加的未知字段。
+
+## 持久化 CLI 默认值
+
+渲染默认值单独保存在 `~/.deckrender/config.json`：
+
+```bash
+deckrender config set profile web
+deckrender config set image-format webp
+deckrender config set width 2560
+deckrender config unset width
+deckrender config path
+```
+
+支持的键包括 `profile`、`format`、`image-format`、`quality`、`width`、`scale` 和 `timeout`。优先级为：
+
+```text
+profile 默认值 < ~/.deckrender/config.json < 显式 CLI 参数
+```
+
+Profile 或持久化默认值无法用于所选路径时，会被丢弃并给出警告；显式输入的不兼容选项仍然会报错。
+
+## CI 与隔离环境
+
+```bash
+export DECKFLOW_API_KEY='...'
+export DECKFLOW_CONFIG_DIR=/tmp/deckflow-ci
+export DECKRENDER_CONFIG_DIR=/tmp/deckrender-ci
+deckrender deck.pptx --json --quiet
+```
+
+非交互式调用和 JSON 模式在认证失败后不会打开浏览器登录流程。

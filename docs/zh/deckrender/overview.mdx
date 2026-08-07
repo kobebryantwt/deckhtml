@@ -1,24 +1,56 @@
 ---
 title: DeckRender
 sidebarTitle: 概览
-description: "通过云端渲染 SDK，把支持的文档格式生成页面或幻灯片视觉画面。"
+description: "通过统一的 CLI 和 Node.js API，将文档渲染为图片、PDF 或视频。"
 ---
 
-DeckRender 是 Deckflow Document Runtime 中专注渲染的组件。开发者通过 SDK 接入，实际渲染在云端执行。
+DeckRender 用于把文档生成视觉产物。传入本地文件、URL 或标准输入，并指定图片、PDF 或视频；DeckRender 会选择可用的渲染路径、执行任务并按稳定规则写出文件。
 
-## 适用场景
+<CardGroup cols={3}>
+  <Card title="输入" icon="file-import">
+    本地文件、在线 HTML 或 Markdown，以及明确指定源格式的标准输入。
+  </Card>
+  <Card title="输出" icon="images">
+    PNG、JPEG、WebP 页面图片，以及支持格式对应的 PDF 或 MP4 视频。
+  </Card>
+  <Card title="接入方式" icon="terminal">
+    `deckrender` CLI 与 `@deckflow/deckrender` Node.js API 由同一包提供。
+  </Card>
+</CardGroup>
 
-- 工作流需要页面或幻灯片预览，而不是结构化文档内容。
-- 需要在不 Manipulate 源文件的情况下检查视觉保真度。
-- 下游流程需要缩略图、评审图片或其他渲染资源。
-- 应用只需要 Render，不需要 DeckOps 更完整的 Parse、Extract 和 Convert 能力面。
+## DeckRender 负责什么
 
-## 产品边界
+- 读取并识别输入。
+- 选择直连、多步派生、本地或透传渲染路径。
+- 按路径能力应用尺寸、图片编码和页面筛选参数。
+- 写出单个产物、连续编号的页面图片或 ZIP 压缩包。
+- 返回包含执行引擎、路由、页数、文件和耗时的稳定结果。
 
-无需渲染、只需在本地或浏览器中嗅探文件时，使用 [DeckProbe](/zh/deckprobe/overview)。Render 属于更大的云端流程，并且还需要 Probe、Parse 成 Document IR、Extract 或 Convert 时，使用 [DeckOps](/zh/deckops/overview)。
+DeckRender 不会把文档内容解析成中间表示，不负责提取文本或语义结构，也不修改源文件元素。它生成的 Render Plan 只描述执行过程，并不是文档内容模型。
 
-需要 Manipulate Office 源文件而不是生成画面时，使用 [DeckUse](/zh/deckuse/overview)。
+## 执行方式
 
-<Note>
-  DeckRender 项目地址可用后，再补充 SDK 包、渲染选项、支持格式和输出契约。
-</Note>
+多数路径通过 Deckflow 云端任务执行。PDF 透传以及 Pages、Numbers 文档中的内嵌预览读取在本地完成。认证并非必需：CLI 可以使用有限额的访客模式，也可以登录或配置 API Key 后使用认证访问。
+
+<Warning>
+  Pages 和 Numbers 的输出来自 iWork 写入文档的内嵌预览，仅包含第一页，并沿用文档中保存的预览分辨率。
+</Warning>
+
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="快速开始" href="/zh/deckrender/quick-start">
+    安装软件包并渲染第一个文档。
+  </Card>
+  <Card title="支持的格式" href="/zh/deckrender/formats">
+    查看已经实现的输入输出组合及路径限制。
+  </Card>
+  <Card title="CLI" href="/zh/deckrender/cli/overview">
+    了解输入、输出命名、页面范围、预设和自动化调用。
+  </Card>
+  <Card title="Node.js SDK" href="/zh/deckrender/sdk/node">
+    在应用中渲染文档，并监听进度和警告。
+  </Card>
+</CardGroup>
+
+查看源码与版本发布，请访问 [DeckRender 开源仓库](https://github.com/deckflow/deckrender)。

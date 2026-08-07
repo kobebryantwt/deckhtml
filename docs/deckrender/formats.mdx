@@ -1,0 +1,54 @@
+---
+title: Supported Formats
+sidebarTitle: Supported Formats
+description: "Find implemented DeckRender input and output combinations and understand route-specific behavior."
+---
+
+DeckRender uses a source-to-target route table. A recognized source format does not imply that every target is available.
+
+| Input | Image | PDF | Video |
+| --- | --- | --- | --- |
+| PowerPoint `.pptx`, `.ppt` | PNG/JPEG/WebP | Yes | MP4 |
+| PDF `.pdf` | PNG/JPEG/WebP | Passthrough | — |
+| Keynote `.key` | PNG/WebP | Yes | — |
+| Word `.docx`, `.doc` | PNG/JPEG/WebP | Yes | — |
+| HTML `.html`, `.htm`, URL | PNG/WebP | Yes | MP4 |
+| Markdown `.md`, `.markdown` | PNG/WebP | — | — |
+| Pages `.pages` | Embedded JPEG preview | Local PDF wrapper | — |
+| Numbers `.numbers` | Embedded JPEG preview | Local PDF wrapper | — |
+
+Run the command for the matrix implemented by the installed version:
+
+```bash
+deckrender formats
+deckrender formats --json
+```
+
+The JSON form includes whether a route is direct, derived, local, or passthrough, its task chain, and any fidelity caveat.
+
+## Important route behavior
+
+<AccordionGroup>
+  <Accordion title="HTML to PDF or video">
+    These are derived routes. DeckRender first rebuilds the HTML as PPTX, then exports that PPTX to PDF or video. The result follows the slide model rather than being a native print or live-page capture. The caveat is returned in the result.
+  </Accordion>
+  <Accordion title="Word to image">
+    Word input is converted to PDF first, then the PDF is rendered into page images. The result reports both tasks in `route`.
+  </Accordion>
+  <Accordion title="Pages and Numbers">
+    These local routes extract the document's embedded `preview.jpg`. Only the first page is available and DeckRender cannot increase its stored resolution. PDF output wraps that JPEG in a PDF; it does not perform a full iWork render.
+  </Accordion>
+  <Accordion title="PDF to PDF">
+    A local PDF file is copied through the artifact writer without a cloud task. URL or stdin input cannot use this passthrough route.
+  </Accordion>
+</AccordionGroup>
+
+## Image controls vary by route
+
+- PowerPoint image output accepts 1080, 1920, or 2560 for the long edge. Other requested widths snap to the nearest tier with a warning.
+- PDF image output accepts an arbitrary long-edge resolution.
+- HTML and Markdown image output accept scale and an explicit width.
+- Keynote and embedded iWork preview routes do not expose resolution controls.
+- WebP is produced by a trailing image conversion step when the base route does not emit it directly.
+
+An explicitly supplied option that the selected route cannot honor returns `unsupported_option`. A default inherited from a profile or config file is dropped with a warning instead.

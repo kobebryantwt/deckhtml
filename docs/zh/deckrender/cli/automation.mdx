@@ -1,0 +1,82 @@
+---
+title: 自动化与错误处理
+sidebarTitle: 自动化与错误处理
+description: "使用 JSON 输出、稳定的数据流和退出码，把 DeckRender CLI 接入脚本。"
+---
+
+DeckRender 把结果数据写入 stdout，把进度、警告和错误写入 stderr。调用方无需过滤终端信息即可解析 stdout。
+
+```bash
+result=$(deckrender deck.pptx --json)
+first_file=$(printf '%s' "$result" | jq -r '.outputs[0].file')
+```
+
+使用 `--quiet` 可以隐藏进度和警告。启用 `--json` 时，警告仍以结构化消息写入 stderr，不会混入 stdout 的成功结果。
+
+## 成功结果
+
+```json
+{
+  "ok": true,
+  "input": "deck.pptx",
+  "format": "image",
+  "engine": "cloud",
+  "route": ["convertor.ppt2image"],
+  "pages": 3,
+  "outputs": [
+    {
+      "page": 1,
+      "file": "deck/001.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 184320
+    }
+  ],
+  "durationMs": 8123
+}
+```
+
+`pages` 表示执行 `--pages` 筛选前的总页数，`outputs` 只包含本次实际写出的产物。所选路径存在已知保真限制时，结果还会包含 `caveat`。
+
+## 失败结果
+
+启用 `--json` 时，失败信息写入 stderr：
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "unsupported_option",
+    "message": "--width is not supported for .key input.",
+    "hint": "The selected route does not expose a resolution parameter."
+  }
+}
+```
+
+云端失败还可能包含 `requestId`，反馈服务问题时请一并提供。
+
+## 退出码
+
+| 退出码 | 含义 | 错误码 |
+| --- | --- | --- |
+| `0` | 成功 | — |
+| `1` | 渲染或产物转换失败 | `render_error`、`conversion_error` |
+| `2` | 调用、格式组合或选项无法执行 | `usage_error`、`unsupported_format`、`unsupported_option`、`not_implemented` |
+| `3` | 需要凭证或凭证被拒绝 | `auth_error` |
+
+在 CI 或 JSON 模式下，收到 `401` 后不会打开交互式登录窗口，请在运行前配置 API Key 或 Token。
+
+```bash
+export DECKFLOW_API_KEY='...'
+deckrender deck.pptx --json --quiet
+```
+
+## 输出原始产物
+
+只有一个产物时，`-o -` 只写出二进制内容：
+
+```bash
+deckrender page.html -o - > page.png
+```
+
+它不能与 `--json` 组合；路径产生多个页面时也会失败。

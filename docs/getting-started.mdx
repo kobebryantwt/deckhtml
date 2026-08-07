@@ -134,18 +134,35 @@ console.log(result.taskId, result.type);
 
 Continue with the [DeckOps Quickstart](/deckops/quick-start), [Task Model](/deckops/task-model), or [Structured Results](/deckops/structured-results).
 
-## DeckRender and DeckUse
+## DeckRender
 
-Concrete package and executable contracts for these two capabilities are not yet available in this documentation, so this page only identifies their expected input and result.
+Run the package without a global installation and render every slide to PNG:
 
-<CardGroup cols={2}>
-  <Card title="DeckRender" href="/deckrender/overview">
-    **Input:** supported document
+```bash
+npx -y @deckflow/deckrender@latest presentation.pptx
+```
 
-    **Use:** cloud rendering through the product SDK
+For a multi-page image render, the result is a numbered directory:
 
-    **Result:** page or slide visuals
-  </Card>
+```text
+presentation/
+├── 001.png
+├── 002.png
+└── 003.png
+```
+
+Choose a different artifact from the output path, or add `--json` for an automation-safe result:
+
+```bash
+npx -y @deckflow/deckrender@latest presentation.pptx -o presentation.pdf
+npx -y @deckflow/deckrender@latest presentation.pptx --json
+```
+
+Continue with the [DeckRender Quickstart](/deckrender/quick-start), [Supported Formats](/deckrender/formats), or [Node.js SDK](/deckrender/sdk/node).
+
+## DeckUse
+
+<CardGroup cols={1}>
   <Card title="DeckUse" href="/deckuse/overview">
     **Input:** supported Office source file
 

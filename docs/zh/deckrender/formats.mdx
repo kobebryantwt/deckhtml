@@ -1,0 +1,54 @@
+---
+title: 支持的格式
+sidebarTitle: 支持的格式
+description: "查看 DeckRender 已实现的输入输出组合，并了解不同渲染路径的行为。"
+---
+
+DeckRender 按“源格式到目标格式”的路由表执行。能够识别某种源格式，不代表它支持所有目标产物。
+
+| 输入 | 图片 | PDF | 视频 |
+| --- | --- | --- | --- |
+| PowerPoint `.pptx`、`.ppt` | PNG/JPEG/WebP | 支持 | MP4 |
+| PDF `.pdf` | PNG/JPEG/WebP | 透传 | — |
+| Keynote `.key` | PNG/WebP | 支持 | — |
+| Word `.docx`、`.doc` | PNG/JPEG/WebP | 支持 | — |
+| HTML `.html`、`.htm`、URL | PNG/WebP | 支持 | MP4 |
+| Markdown `.md`、`.markdown` | PNG/WebP | — | — |
+| Pages `.pages` | 内嵌 JPEG 预览 | 本地封装为 PDF | — |
+| Numbers `.numbers` | 内嵌 JPEG 预览 | 本地封装为 PDF | — |
+
+使用以下命令查看当前安装版本实际实现的矩阵：
+
+```bash
+deckrender formats
+deckrender formats --json
+```
+
+JSON 结果还会说明路由属于直连、派生、本地还是透传，并列出任务链和已知保真限制。
+
+## 重要的路径行为
+
+<AccordionGroup>
+  <Accordion title="HTML 转 PDF 或视频">
+    这是多步派生路径。DeckRender 会先把 HTML 重建为 PPTX，再把 PPTX 导出为 PDF 或视频。结果遵循幻灯片模型，并非原生打印或在线页面录制；对应限制会出现在结果中。
+  </Accordion>
+  <Accordion title="Word 转图片">
+    Word 输入先转换为 PDF，再把 PDF 渲染为页面图片。结果中的 `route` 会包含两个任务。
+  </Accordion>
+  <Accordion title="Pages 与 Numbers">
+    这两条本地路径读取文档内嵌的 `preview.jpg`，只能得到第一页，也无法提高预览图在文件中保存的分辨率。PDF 输出只是把该 JPEG 封装为 PDF，并不是完整的 iWork 渲染。
+  </Accordion>
+  <Accordion title="PDF 转 PDF">
+    本地 PDF 文件会经产物写出器直接复制，不创建云端任务。URL 或标准输入不能使用该透传路径。
+  </Accordion>
+</AccordionGroup>
+
+## 不同路径支持的图片参数不同
+
+- PowerPoint 图片的长边只支持 1080、1920 或 2560；其他宽度会取最接近档位并给出警告。
+- PDF 图片支持任意长边分辨率。
+- HTML 与 Markdown 图片支持缩放倍数和显式宽度。
+- Keynote 与 iWork 内嵌预览路径不提供分辨率控制。
+- 基础路径不能直接输出 WebP 时，会追加图片转换步骤。
+
+显式传入路径无法执行的选项时，命令返回 `unsupported_option`。来自 profile 或配置文件的默认值无法执行时，只会被丢弃并给出警告。

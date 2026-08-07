@@ -1,0 +1,58 @@
+---
+title: 结果契约
+sidebarTitle: 结果契约
+description: "理解 DeckRender 的成功结果、产物条目、路由信息和类型化错误。"
+---
+
+CLI 的 `--json` 模式与 Node.js API 会在产物写出后返回相同结构的 `RenderResult`。
+
+```ts
+interface RenderResult {
+  ok: true;
+  input: string;
+  format: 'image' | 'pdf' | 'video';
+  engine: string;
+  route: RenderStepTask[];
+  pages: number;
+  outputs: RenderOutputEntry[];
+  durationMs: number;
+  caveat?: string;
+}
+
+interface RenderOutputEntry {
+  page: number;
+  file: string;
+  width?: number;
+  height?: number;
+  bytes?: number;
+}
+```
+
+| 字段 | 含义 |
+| --- | --- |
+| `input` | 原始展示路径、URL 或 `-` |
+| `format` | 请求的输出类型 |
+| `engine` | 实际执行器，如 `cloud`、`local` 或 `passthrough` |
+| `route` | 按顺序执行的步骤；本地或透传路径分别包含 `local:iwork-preview` 或 `passthrough` |
+| `pages` | 页面筛选前生成的总页数 |
+| `outputs` | 页面筛选后实际写出的文件或流条目 |
+| `durationMs` | 包含输入读取和产物写出的端到端耗时 |
+| `caveat` | 所选路径存在的已知保真限制，如适用 |
+
+Render Plan 和 `route` 都属于执行元数据，不包含解析后的页面、元素、文本或 Document IR。
+
+## 错误
+
+Node.js API 会抛出 `DeckRenderError`，其中包含 `code`、`message`、可选的 `hint`，以及可选的云端 `requestId`。
+
+| 错误码 | 含义 |
+| --- | --- |
+| `usage_error` | 调用无效或参数冲突 |
+| `unsupported_format` | 源格式与目标格式之间没有路由 |
+| `unsupported_option` | 路由存在，但无法应用某个显式选项 |
+| `not_implemented` | 当前安装版本能够识别但尚未实现该路由 |
+| `auth_error` | 需要凭证，或凭证无效、被拒绝 |
+| `render_error` | 渲染失败 |
+| `conversion_error` | 无法获取或写出产物 |
+
+程序需要动态发现当前安装版本支持的路径时，请调用 `deckrender formats --json`。

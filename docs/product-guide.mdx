@@ -8,7 +8,7 @@ The five products solve different document tasks. Choose by the result your appl
 | Product | Best for | Execution | Primary result |
 | --- | --- | --- | --- |
 | DeckProbe | Fast inspection, upload checks, routing, and policy decisions | Native Rust locally or Browser JS SDK | Target evidence with confidence and measured cost |
-| DeckRender | Focused document rendering | Cloud rendering through an SDK | Page or slide visuals |
+| DeckRender | Predictable document rendering | Local input routing with local, passthrough, or cloud execution | Images, PDF, or video |
 | DeckOps | Cloud parsing, extraction, conversion, and document operations | Cloud tasks through CLI or SDK | Format-specific structured results, Markdown, or generated files |
 | DeckUse | Source-aware Office file manipulation | Local library workflow | Updated Office source file |
 | DeckHTML | HTML- and SVG-native deck authoring | Local and cloud paths | PPTX or PNG generated from browser layout |
@@ -23,8 +23,8 @@ This is the most common boundary:
 
 ## DeckRender or DeckOps?
 
-- Choose **DeckRender** when rendered pages or slides are the only required output.
-- Choose **DeckOps** when rendering is part of a broader flow that also needs probing, parsing, extraction, or conversion.
+- Choose **DeckRender** when the application needs a render-ready file result, stable artifact naming, page selection, sizing, or a source-to-output render route through one CLI or Node.js API.
+- Choose **DeckOps** when the application needs the underlying task platform or a broader flow that also includes probing, parsing into structured results, semantic extraction, or conversion beyond DeckRender's visual targets.
 
 ## DeckOps or DeckUse?
 

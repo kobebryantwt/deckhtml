@@ -1,0 +1,64 @@
+---
+title: Quickstart
+sidebarTitle: Quickstart
+description: "Install DeckRender, verify the CLI, and render a document into page images."
+---
+
+DeckRender requires Node.js 18 or later. You can run it without a global installation or install the command once.
+
+<Steps>
+  <Step title="Run or install DeckRender">
+    <Tabs>
+      <Tab title="Run with npx">
+        ```bash
+        npx -y @deckflow/deckrender@latest --version
+        ```
+      </Tab>
+      <Tab title="Install globally">
+        ```bash
+        npm install -g @deckflow/deckrender
+        deckrender --version
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Render every slide">
+    ```bash
+    deckrender presentation.pptx
+    ```
+
+    With no `--output`, a multi-page image render creates a directory beside the input:
+
+    ```text
+    presentation/
+    ├── 001.png
+    ├── 002.png
+    └── 003.png
+    ```
+  </Step>
+  <Step title="Choose another result">
+    ```bash
+    deckrender presentation.pptx -o presentation.pdf
+    deckrender presentation.pptx --pages 1-3 --image-format webp -o preview/
+    deckrender page.html -o screenshot.png
+    ```
+  </Step>
+  <Step title="Read a machine result">
+    ```bash
+    deckrender presentation.pptx --json | jq -r '.outputs[].file'
+    ```
+
+    `--json` writes the result to stdout. Progress and warnings stay on stderr, so the output can be piped safely.
+  </Step>
+</Steps>
+
+No credential is required for the first render. Guest requests are quota-limited; use [authentication and configuration](/deckrender/configuration) when an application needs authenticated access or persistent defaults.
+
+<CardGroup cols={2}>
+  <Card title="Supported formats" href="/deckrender/formats">
+    Verify that the requested source and output pair has an implemented route.
+  </Card>
+  <Card title="CLI output rules" href="/deckrender/cli/overview">
+    Control files, directories, ZIP archives, stdout, sizing, and page ranges.
+  </Card>
+</CardGroup>

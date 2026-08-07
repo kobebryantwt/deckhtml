@@ -1,24 +1,56 @@
 ---
 title: DeckRender
 sidebarTitle: Overview
-description: "Render supported document formats into visual page or slide output through a cloud-backed SDK."
+description: "Render documents into images, PDF, or video through one CLI and Node.js API."
 ---
 
-DeckRender is the focused rendering component of the Deckflow document runtime. Developers integrate through its SDK, while rendering executes in the cloud.
+DeckRender turns a document into visual artifacts. Give it a local file, URL, or stdin input and request images, a PDF, or a video; DeckRender selects a supported route, runs it, and writes predictable output files.
 
-## Use DeckRender when
+<CardGroup cols={3}>
+  <Card title="Inputs" icon="file-import">
+    Files, hosted HTML or Markdown, and stdin with an explicit source format.
+  </Card>
+  <Card title="Outputs" icon="images">
+    PNG, JPEG, or WebP frames; PDF documents; or MP4 video where supported.
+  </Card>
+  <Card title="Interfaces" icon="terminal">
+    The `deckrender` CLI and the `@deckflow/deckrender` Node.js API ship together.
+  </Card>
+</CardGroup>
 
-- A workflow needs page or slide previews rather than structured document content.
-- Visual fidelity must be checked without manipulating the source file.
-- Thumbnails, review images, or other rendered assets are required downstream.
-- The application needs rendering without the broader Parse, Extract, and Convert surface of DeckOps.
+## What DeckRender does
 
-## Product boundary
+- Resolves and classifies the input.
+- Selects a direct, multi-step, local, or passthrough rendering route.
+- Applies route-compatible sizing, image encoding, and page selection.
+- Writes one artifact, numbered frames, or a ZIP archive.
+- Returns a stable result describing the engine, route, pages, files, and duration.
 
-Use [DeckProbe](/deckprobe/overview) for local or browser inspection without rendering. Use [DeckOps](/deckops/overview) when rendering belongs to a larger cloud workflow that also needs Probe, Parse into Document IR, Extract, or Convert.
+DeckRender does not parse document content into an intermediate representation, extract text or semantic structure, or edit source elements. Its render plan describes execution only; it is not a model of the document.
 
-Use [DeckUse](/deckuse/overview) when the source Office file must be manipulated rather than rendered.
+## Execution model
 
-<Note>
-  SDK packages, rendering options, supported formats, and output contracts will be added when the DeckRender project address is available.
-</Note>
+Most routes execute through Deckflow cloud tasks. PDF passthrough and the embedded preview available in Pages and Numbers documents run locally. Authentication is optional: the CLI can use rate-limited guest mode, while login or an API key provides authenticated access.
+
+<Warning>
+  Pages and Numbers output is generated from the preview embedded by iWork. It contains only the first page and uses the resolution stored in the document.
+</Warning>
+
+## Choose the next step
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/deckrender/quick-start">
+    Install the package and render your first document.
+  </Card>
+  <Card title="Supported formats" href="/deckrender/formats">
+    Check the implemented source-to-output combinations and route caveats.
+  </Card>
+  <Card title="CLI" href="/deckrender/cli/overview">
+    Learn input forms, output naming, page ranges, profiles, and automation.
+  </Card>
+  <Card title="Node.js SDK" href="/deckrender/sdk/node">
+    Render programmatically and observe progress and warnings.
+  </Card>
+</CardGroup>
+
+For source code and releases, see the [open-source DeckRender repository](https://github.com/deckflow/deckrender).

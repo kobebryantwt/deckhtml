@@ -1,0 +1,90 @@
+---
+title: CLI
+sidebarTitle: Overview
+description: "Use DeckRender with files, URLs, stdin, page ranges, output paths, and render presets."
+---
+
+```bash
+deckrender <input> [options]
+deckrender <command> [options]
+```
+
+Each invocation renders one file path, HTTP(S) URL, or stdin stream.
+
+## Input forms
+
+```bash
+deckrender deck.pptx
+deckrender https://example.com/page.html -o page.png
+cat page.html | deckrender - --from html -o page.png
+```
+
+Stdin has no filename, so `--from` is required. A URL defaults to HTML unless `--from` says otherwise. DeckRender fetches URL content locally and inserts a base URL when needed so relative page assets can resolve during rendering.
+
+## Common render options
+
+| Option | Purpose |
+| --- | --- |
+| `-o, --output <path>` | File, directory, `.zip`, or `-` for raw stdout bytes |
+| `--format <format>` | `image`, `pdf`, or `video`; otherwise inferred from `-o` or defaults to image |
+| `--image-format <format>` | `png`, `jpg`, or `webp` |
+| `--from <format>` | Override the source format; required for stdin |
+| `--pages <ranges>` | Keep 1-based pages such as `1-5` or `1,3,5-7` |
+| `--page <n>` | Keep one page; conflicts with `--pages` |
+| `--width <px>` | Target long edge when the route supports it |
+| `--scale <n>` | Multiply the route's default long edge |
+| `--quality <level>` | `low`, `medium`, or `high` image preset |
+| `--profile <name>` | `web`, `presentation`, `print`, or `thumbnail` |
+| `--embed-fonts` | Embed fonts on routes that pass through HTML to PPTX |
+| `--timeout <seconds>` | Cloud task wait timeout; default `300` |
+| `--json` | Emit a machine-readable result on stdout |
+| `--quiet` | Suppress progress and warnings |
+| `-v, --verbose` | Emit detailed diagnostics to stderr |
+
+`--quiet` and `--verbose` conflict. Explicit options unsupported by the selected route fail rather than being silently ignored.
+
+## Output path rules
+
+| Situation | Written result |
+| --- | --- |
+| No `-o`, multiple images | `<input-name>/001.png`, `002.png`, … |
+| No `-o`, one artifact | Beside the input with the target extension |
+| Extensionless path or directory | Numbered artifacts inside the directory |
+| File path and one artifact | Exactly that file |
+| `out.png` and multiple images | `out-001.png`, `out-002.png`, … |
+| `.zip` path | Numbered artifacts packed into the archive |
+| `-o -` and one artifact | Raw artifact bytes on stdout |
+
+Multiple artifacts cannot be streamed directly to stdout. Use a directory, a ZIP file, or narrow the result with `--pages`. Raw stdout and `--json` cannot be combined.
+
+Page ranges are 1-based and inclusive. They filter the artifacts after the source has been rendered, so they reduce downloaded and written files but do not reduce the cloud render's page count or compute. For WebP output, filtering happens before the per-frame WebP conversion.
+
+## Profiles
+
+Profiles are named flag defaults, not different rendering engines. Explicit flags win.
+
+| Profile | Defaults |
+| --- | --- |
+| `web` | Images, WebP, 1920 px, medium quality |
+| `presentation` | Images, PNG, 1920 px, high quality |
+| `print` | PDF |
+| `thumbnail` | First page, JPEG, 640 px, low quality |
+
+```bash
+deckrender deck.pptx --profile web -o frames/
+deckrender report.pdf --profile thumbnail -o cover.jpg
+```
+
+## Utility commands
+
+```bash
+deckrender formats
+deckrender auth login
+deckrender auth status
+deckrender auth logout
+deckrender config list
+deckrender config set profile web
+deckrender config unset profile
+```
+
+Continue with [automation and errors](/deckrender/cli/automation) for stable stdout/stderr behavior, JSON failures, and exit codes.

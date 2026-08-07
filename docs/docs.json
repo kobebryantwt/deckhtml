@@ -181,7 +181,11 @@
           {
             "tab": "DeckRender",
             "groups": [
-              { "group": "DeckRender", "pages": ["deckrender/overview"] }
+              { "group": "Get Started", "pages": ["deckrender/overview", "deckrender/quick-start", "deckrender/formats"] },
+              { "group": "CLI", "pages": ["deckrender/cli/overview", "deckrender/cli/automation"] },
+              { "group": "SDK", "pages": ["deckrender/sdk/node"] },
+              { "group": "Configuration", "pages": ["deckrender/configuration"] },
+              { "group": "Reference", "pages": ["deckrender/reference/result-contract"] }
             ]
           },
           {
@@ -381,7 +385,11 @@
           {
             "tab": "DeckRender",
             "groups": [
-              { "group": "DeckRender", "pages": ["zh/deckrender/overview"] }
+              { "group": "开始使用", "pages": ["zh/deckrender/overview", "zh/deckrender/quick-start", "zh/deckrender/formats"] },
+              { "group": "CLI", "pages": ["zh/deckrender/cli/overview", "zh/deckrender/cli/automation"] },
+              { "group": "SDK", "pages": ["zh/deckrender/sdk/node"] },
+              { "group": "配置", "pages": ["zh/deckrender/configuration"] },
+              { "group": "参考", "pages": ["zh/deckrender/reference/result-contract"] }
             ]
           },
           {

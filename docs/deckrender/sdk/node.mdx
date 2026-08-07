@@ -1,0 +1,102 @@
+---
+title: Node.js SDK
+sidebarTitle: Node.js SDK
+description: "Render documents from Node.js with the @deckflow/deckrender package."
+---
+
+The CLI and programmatic API are distributed in the same package and require Node.js 18 or later.
+
+```bash
+npm install @deckflow/deckrender
+```
+
+## One-shot render
+
+```ts
+import { render } from '@deckflow/deckrender';
+
+const result = await render({
+  input: './deck.pptx',
+  format: 'image',
+  imageFormat: 'webp',
+  pages: '1-5',
+  width: 1920,
+  out: './frames/',
+  apiKey: process.env.DECKFLOW_API_KEY,
+});
+
+console.log(result.route);
+console.log(result.outputs);
+```
+
+`render()` resolves the input, builds and executes a route, writes the artifacts, and returns a `RenderResult`. Omit credentials to use guest mode.
+
+## Reusable renderer
+
+```ts
+import { createRenderer } from '@deckflow/deckrender';
+
+const renderer = createRenderer({
+  apiKey: process.env.DECKFLOW_API_KEY,
+  onWarning: (message) => console.warn(message),
+});
+
+const result = await renderer.render({
+  input: './report.pdf',
+  format: 'image',
+  pages: '1,3,5-7',
+  out: './report-pages/',
+  onProgress: ({ phase, message, ratio }) => {
+    console.log({ phase, message, ratio });
+  },
+});
+```
+
+Use `createRenderer()` to reuse credentials, warning handling, or a custom execution backend across calls.
+
+## Render options
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `input` | `string` | File path, HTTP(S) URL, or `-` for stdin |
+| `from` | `SourceFormat` | Explicit input type; required for stdin |
+| `format` | `'image' \| 'pdf' \| 'video'` | Defaults to `image` |
+| `imageFormat` | `'png' \| 'jpg' \| 'webp'` | Image encoding |
+| `out` | `string` | File, directory, ZIP, or `-` |
+| `pages` | `string` | 1-based selection such as `1-5` or `1,3,7-9` |
+| `width` | `number` | Target long edge for compatible routes |
+| `scale` | `number` | Route-relative scale |
+| `quality` | `'low' \| 'medium' \| 'high'` | Image preset |
+| `embedFonts` | `boolean` | Applies to HTML routes passing through PPTX |
+| `timeout` | `number` | Cloud task wait timeout in seconds |
+| `onProgress` | `(event) => void` | Resolve, plan, upload, task, wait, download, and write events |
+
+The SDK does not apply CLI profiles or the CLI render-default config automatically. Pass render options explicitly; the exported `PROFILES` and `layerOptions` helpers are available if an application wants the same behavior.
+
+## Renderer configuration
+
+`createRenderer()` accepts `apiKey`, `token`, `spaceId`, and `apiBase`, plus:
+
+- `client`: an existing `@deckops/sdk` client.
+- `engine`: a custom implementation of the exported `RenderEngine` interface.
+- `onWarning`: route caveats and non-fatal option adjustments.
+- `onUnauthorized`: a caller-provided reauthentication hook after `401`.
+- `onPaymentRequired`: a caller-provided hook after `402`.
+
+Local and passthrough routes continue to run locally even when a custom cloud client is supplied.
+
+## Handle typed errors
+
+```ts
+import { DeckRenderError, render } from '@deckflow/deckrender';
+
+try {
+  await render({ input: './deck.key', format: 'image', width: 1920 });
+} catch (error) {
+  if (error instanceof DeckRenderError) {
+    console.error(error.code, error.message, error.hint);
+  }
+}
+```
+
+See the [result contract](/deckrender/reference/result-contract) for every returned field.
