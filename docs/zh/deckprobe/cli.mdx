@@ -1,10 +1,10 @@
 ---
 title: DeckProbe CLI
-sidebarTitle: CLI
-description: "安装 DeckProbe CLI，并通过本地文件、stdin、JSONL 批处理和自动化工作流使用文档嗅探能力。"
+sidebarTitle: 概览
+description: "安装 DeckProbe CLI，完成第一次嗅探，并进入生产接入所需的后续指南。"
 ---
 
-DeckProbe 原生 CLI 在本地运行目标驱动的 Rust 引擎，适合 Shell、CI、一次性自动化、服务和高吞吐批处理，不依赖 Python、JVM、Microsoft Office 或外部 PDF 库。
+DeckProbe CLI 在本地运行目标驱动的 Rust 引擎，适合 Shell、CI、服务和批处理工作流，不依赖 Python、JVM、Microsoft Office 或外部 PDF 库。
 
 ## 安装
 
@@ -31,128 +31,66 @@ DeckProbe 原生 CLI 在本地运行目标驱动的 Rust 引擎，适合 Shell�
   </Tab>
 </Tabs>
 
-验证已安装的可执行文件：
+验证可执行文件并查看内置帮助：
 
 ```bash
 deckprobe --version
 deckprobe --help
 ```
 
-## 命令形式
+## 完成第一次嗅探
 
-```text
-deckprobe [OPTIONS] <INPUT>
-deckprobe --jsonl [OPTIONS]
-deckprobe <COMMAND> [OPTIONS]
-```
-
-运行 `deckprobe -h` 查看简要列表，或运行 `deckprobe --help` 查看 Selector、示例和退出状态。
-
-## 嗅探本地文件
-
-执行默认 Metadata-level Probe：
+使用默认的 Metadata-level Profile 嗅探本地文档：
 
 ```bash
 deckprobe report.pdf
 ```
 
-请求一个 Target 并格式化输出：
+只请求应用需要的 Target，并格式化 JSON 方便阅读：
 
 ```bash
-deckprobe -t slide_count --pretty deck.pptx
+deckprobe -t format,slide_count --pretty deck.pptx
 ```
 
-一次请求多个 Target。`-t` 可以重复，也接受逗号分隔值：
+DeckProbe 向标准输出写入一个 Schema v2 JSON Report。成功解析的 Target 包含 Value、Confidence、所选 Path 和 Evidence Source；报告还会记录实际执行成本与 Diagnostics。
+
+## 常见任务
 
 ```bash
-deckprobe -t format,title,page_count report.pdf
-deckprobe -t title -t page_count report.pdf
+# 嗅探身份、通用元数据和主要结构
+deckprobe -t @summary report.pdf
+
+# 嗅探安全相关信号
+deckprobe -t @security upload.docm
+
+# 返回紧凑 Values，而不是完整 Evidence Record
+deckprobe -t @summary --view values report.pdf
+
+# 预览所选 Path，不执行非 Header Probe Path
+deckprobe --plan --pretty report.pdf
+
+# 请求的 Target 未解析时返回非零状态
+deckprobe --strict -t format,page_count report.pdf
 ```
 
-扩展名选中格式后可以使用 Short Name；报告会保留 `powerpoint.slide_count` 这类稳定 Canonical Key，供程序消费。
+## 按接入任务继续
 
-## 从 stdin 读取原始字节
+<CardGroup cols={2}>
+  <Card title="输入与 Target" href="/zh/deckprobe/cli/inputs-and-targets">
+    使用本地文件、stdin 或 JSONL；选择 Required/Optional Target；配置 Level、Confidence、Format Option 和预算。
+  </Card>
+  <Card title="自动化与输出" href="/zh/deckprobe/cli/automation-and-output">
+    消费 Full、Values 和 Error Report；处理 JSONL、Strict Mode、Exit Status、确定性输出和 CI 工作流。
+  </Card>
+  <Card title="命令参考" href="/zh/deckprobe/cli/command-reference">
+    查看全部公开命令、全局参数、Alias、取值、Discovery、Completion 和 Man Page 命令。
+  </Card>
+  <Card title="输出模型" href="/zh/deckprobe/output-model">
+    阅读完整的 Schema v2 契约和 Target Evidence 模型。
+  </Card>
+</CardGroup>
 
-需要提供包含扩展名的逻辑文件名，供 DeckProbe 路由字节：
-
-```bash
-cat workbook.xlsx | deckprobe -n workbook.xlsx -
-```
-
-`--input-format` 只是附加断言，不能替代逻辑文件名，也不会强制使用不相关的 Parser。
-
-## 使用 JSONL 处理多个输入
-
-```bash
-printf '%s\n' \
-  '{"path":"report.pdf"}' \
-  '{"path":"deck.pptx"}' \
-  | deckprobe --jsonl -t @summary
-```
-
-每个非空输入行可以是路径字符串、`{ "path": "…" }` 记录或带名称的 Base64 Payload。DeckProbe 每行输出一个紧凑 Schema v2 结果，并在单条记录出错后继续处理。
-
-## Target Selector
-
-| Selector | 包含内容 |
-| --- | --- |
-| `@header` | 低成本身份 Target |
-| `@default` | 当前 Level 下的 Driver 默认 Target |
-| `@summary` | 身份、通用元数据和主要结构 |
-| `@security` | 加密、宏、签名、外部关系和活动内容 |
-| `@structure` | 格式专属数量、名称、尺寸和结构 |
-| `@assets` | 图片、媒体、预览图、字体和嵌入对象摘要 |
-| `@quality` | 完整性、修复、扩展名和 Conformance 信号 |
-| `@format` | 当前 Level 可用的格式专属 Target |
-| `@all` | 当前 Level 可用的全部 Target |
-
-Selector 和 Target Name 可以组合：
-
-```bash
-deckprobe -t @summary -t @security report.pdf
-deckprobe -t @header,title,page_count report.pdf
-```
-
-## Probe Level 与置信度
-
-`-l` / `--probe-level` 可选 `header`、`metadata` 或 `deep`，默认为 Metadata。`-c` / `--minimum-confidence` 可选 `low`、`medium`、`high` 或 `exact`，默认为 High。
-
-仅要求 Slide Count 达到 Exact，其他 Target 保持默认置信度：
-
-```bash
-deckprobe -t slide_count,orientation \
-  -C slide_count=exact \
-  deck.pptx
-```
-
-## 输出行为
-
-- `--pretty` 只改变空白格式。
-- `--view values` 返回紧凑的 Target-to-Value Map。
-- `--strict` 在任一请求 Target 未解析时仍输出报告，并以状态 `5` 退出。
-- `--telemetry` 增加墙钟时间 `elapsed_ms`；默认省略以保证确定性输出。
-- `-P` / `--plan` 只预览所选路径，不执行非 Header Probe Path。
-
-## 资源预算
-
-处理不可信输入时，可以覆盖当前 Level 的默认限制：
-
-```bash
-deckprobe -s \
-  -b 8388608 \
-  -x 16777216 \
-  -e 5000 \
-  -T 1000 \
-  -t format,has_macros \
-  upload.docm
-```
-
-| 选项 | 限制 |
-| --- | --- |
-| `-b`, `--probe-size` | 物理读取字节数 |
-| `-x`, `--max-expanded-bytes` | 累计解压字节数 |
-| `-e`, `--max-archive-entries` | ZIP/OPC 条目数 |
-| `-T`, `--timeout-ms` | 墙钟时间预算 |
-
-所有 Flag、退出状态、格式选项和 Man Page 生成方式可继续查阅与源码同步的 [CLI Reference](https://github.com/deckflow/deckprobe/blob/main/docs/CLI-REFERENCE.md)。
+<Tip>
+  使用 `deckprobe targets --format FORMAT --pretty` 和 `deckprobe schema --pretty` 查询当前安装版本内置的能力与报告契约，避免硬编码会持续变化的列表。
+</Tip>
 

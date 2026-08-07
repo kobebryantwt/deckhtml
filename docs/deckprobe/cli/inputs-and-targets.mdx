@@ -1,0 +1,184 @@
+---
+title: Inputs and Targets
+sidebarTitle: Inputs and Targets
+description: "Control DeckProbe CLI input modes, format routing, required and optional targets, probe level, confidence, driver options, and resource budgets."
+---
+
+DeckProbe routes every input through the same engine. The logical filename extension selects a format path, then the driver verifies the container and internal document type before executing the paths required by the requested targets.
+
+## Input modes
+
+### Local file
+
+Pass a regular file as the positional input:
+
+```bash
+deckprobe report.pdf
+```
+
+The report uses `source_kind: "local_file"` and preserves the basename as `display_name`.
+
+### Raw stdin
+
+Use positional `-` and provide a logical filename through `-n` / `--stdin-name`:
+
+```bash
+cat workbook.xlsx | deckprobe -n workbook.xlsx -
+```
+
+The logical name must contain the extension used for routing. The report uses `source_kind: "stdin"`. Stdin is buffered at the CLI boundary and rejected when it exceeds the active physical-byte budget.
+
+### JSONL multi-input
+
+Use `--jsonl` to keep one process running and read one descriptor per non-empty line:
+
+```jsonl
+"/absolute/or/relative/report.pdf"
+{"path":"report.pdf"}
+{"name":"upload.pdf","data_base64":"JVBERi0xLjcK"}
+```
+
+A path record may use `name` to override its display and routing name. A byte record requires both `name` and `data_base64`; `base64` is accepted as an alias.
+
+```bash
+printf '%s\n' \
+  '{"path":"report.pdf"}' \
+  '{"path":"deck.pptx","name":"quarterly.pptx"}' \
+  | deckprobe --jsonl -t @summary
+```
+
+Global Target, Confidence, Format Option, Budget, Strict, Plan, and View options apply to every record. `--pretty` conflicts with JSONL because every output must remain on one line. Record-level errors are emitted in place, later records continue, and the process exits with the highest record Exit Status.
+
+## Format routing and assertions
+
+DeckProbe uses the normalized filename extension to choose a driver, then verifies the signature and required internal type. Renaming a PPTX file to DOCX does not force the Word driver; it returns `MALFORMED_INPUT`.
+
+`-f` / `--input-format` adds an assertion and never bypasses extension or signature verification:
+
+```bash
+deckprobe --input-format pdf report.pdf
+deckprobe --input-format powerpoint deck.pptx
+deckprobe --input-format iwork deck.key
+```
+
+Use `deckprobe formats --pretty` to inspect accepted profiles, extensions, owning drivers, and current support boundaries.
+
+## Required targets
+
+Pass Target names or Selector presets through repeatable `-t` / `--targets`. Values may also be comma-separated; the default is `@default`.
+
+```bash
+deckprobe -t title -t page_count report.pdf
+deckprobe -t title,page_count report.pdf
+deckprobe -t @summary -t @security upload.docm
+```
+
+Short Target aliases are accepted when unambiguous after format detection. Reports retain stable Canonical Target Keys such as `powerpoint.slide_count` for machine consumers.
+
+| Selector | Expands to |
+| --- | --- |
+| `@header` | Header-level identity targets |
+| `@default` | Driver defaults for the active Probe Level |
+| `@summary` | Identity, common metadata, and primary format structure |
+| `@security` | Encryption, macro, signature, external, and active-content signals |
+| `@structure` | Format-owned counts, names, dimensions, and structure |
+| `@assets` | Asset, preview, image, media, font, and embedded-object targets |
+| `@quality` | Integrity, repair, extension, and conformance targets |
+| `@format` | Format-specific targets available at the active level |
+| `@all` | Every target available at the active level |
+
+`@summary` does not force a full-file path for a statistic. For example, request PDF page count through `@structure` or `page_count` when that value requires a higher-cost path.
+
+## Optional targets
+
+Use repeatable `-o` / `--optional-targets` for values that should be returned only when an already-selected path produces them at the requested confidence:
+
+```bash
+deckprobe -t page_count -o object_count report.pdf
+```
+
+Optional Targets never select an additional path and do not make the report `partial` when absent. By default, DeckProbe may collect zero-additional-path Optional Targets as Piggyback Targets. Disable that collection with `-N` / `--no-piggyback`:
+
+```bash
+deckprobe -t page_count -o object_count --no-piggyback report.pdf
+```
+
+## Probe level and confidence
+
+`-l` / `--probe-level` controls both the resource profile and which paths are eligible:
+
+| Level | Intended use | Accepted values |
+| --- | --- | --- |
+| Header | Container identity and header properties | `header`, `h`, `l0`, `0` |
+| Metadata | Bounded metadata and common structural counts; default | `metadata`, `m`, `l1`, `1` |
+| Deep | Higher-cost paths required by deep targets | `deep`, `d`, `l2`, `2` |
+
+`-c` / `--minimum-confidence` accepts `low`, `medium`, `high`, or `exact`, with `l/m/h/x` shorthands. The default is `high`.
+
+Override one Target with repeatable `-C` / `--target-confidence TARGET=CONFIDENCE`:
+
+```bash
+deckprobe -t slide_count,orientation \
+  -C slide_count=exact \
+  deck.pptx
+```
+
+A valid Target may still be unavailable at the selected Level or Confidence. If other requested targets can run, it appears in `execution.unresolved_targets`; if no requested Target has an eligible path, the command exits with status `1`.
+
+## Format options
+
+Pass driver settings through repeatable `-O` / `--format-option KEY=VALUE`; `--option` is an alias:
+
+```bash
+deckprobe \
+  -O repair_xref=safe \
+  -O max_objects=50000 \
+  report.pdf
+```
+
+After driver detection, an unambiguous local key may omit its namespace. When an option is repeated, the last value wins. Unknown keys and values are rejected by the selected driver.
+
+Do not hard-code the option list. Query allowed keys, values, defaults, and related Target schemas from the installed binary:
+
+```bash
+deckprobe targets --format pdf --pretty
+```
+
+## Resource budgets
+
+The Probe Level supplies default limits. Override individual bounds when processing untrusted input:
+
+```bash
+deckprobe \
+  --probe-size 8388608 \
+  --max-expanded-bytes 16777216 \
+  --max-archive-entries 5000 \
+  --timeout-ms 1000 \
+  -t format,has_macros \
+  upload.docm
+```
+
+| Option | Limit |
+| --- | --- |
+| `-b`, `--probe-size BYTES` | Physical bytes read by Probe Paths; `--probesize` is an alias |
+| `-x`, `--max-expanded-bytes BYTES` | Cumulative decompressed bytes |
+| `-e`, `--max-archive-entries COUNT` | ZIP/OPC entry count |
+| `-T`, `--timeout-ms MILLISECONDS` | Cooperative wall-clock probe budget |
+
+A budget violation exits with status `4`. When DeckProbe can produce a report, successfully consumed resources remain available under `execution.actual_cost`. Applications that require a hard process deadline should enforce one around the CLI in addition to DeckProbe's cooperative budget.
+
+## Discover available targets
+
+Use the running binary as the authority for supported Target IDs, aliases, value types, Selector membership, minimum levels, costs, JSON Schema fragments, and Format Options:
+
+```bash
+deckprobe targets --format pdf --pretty
+deckprobe targets --format docx --pretty
+deckprobe targets --format xlsx --pretty
+deckprobe targets --format pptx --pretty
+deckprobe targets --format key --pretty
+deckprobe targets --format numbers --pretty
+deckprobe targets --format pages --pretty
+```
+
+Continue with [Automation and Output](/deckprobe/cli/automation-and-output) to consume reports and Exit Status safely.

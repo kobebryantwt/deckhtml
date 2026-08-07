@@ -141,9 +141,17 @@
                 ]
               },
               {
-                "group": "Interfaces",
+                "group": "CLI",
                 "pages": [
                   "deckprobe/cli",
+                  "deckprobe/cli/inputs-and-targets",
+                  "deckprobe/cli/automation-and-output",
+                  "deckprobe/cli/command-reference"
+                ]
+              },
+              {
+                "group": "SDK",
+                "pages": [
                   "deckprobe/browser-sdk"
                 ]
               },
@@ -312,9 +320,17 @@
                 ]
               },
               {
-                "group": "接入方式",
+                "group": "CLI",
                 "pages": [
                   "zh/deckprobe/cli",
+                  "zh/deckprobe/cli/inputs-and-targets",
+                  "zh/deckprobe/cli/automation-and-output",
+                  "zh/deckprobe/cli/command-reference"
+                ]
+              },
+              {
+                "group": "SDK",
+                "pages": [
                   "zh/deckprobe/browser-sdk"
                 ]
               },

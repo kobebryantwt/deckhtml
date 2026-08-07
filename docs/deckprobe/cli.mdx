@@ -1,10 +1,10 @@
 ---
 title: DeckProbe CLI
-sidebarTitle: CLI
-description: "Install DeckProbe CLI and use it for local files, stdin, JSONL batches, and automated workflows."
+sidebarTitle: Overview
+description: "Install DeckProbe CLI, run a first probe, and choose the next guide for production integration."
 ---
 
-The native DeckProbe CLI runs the target-driven Rust engine locally. It fits shell commands, CI jobs, one-off automation, services, and high-volume batches without requiring Python, a JVM, Microsoft Office, or an external PDF library.
+DeckProbe CLI runs the target-driven Rust engine locally. It fits shell commands, CI, services, and batch workflows without requiring Python, a JVM, Microsoft Office, or an external PDF library.
 
 ## Install
 
@@ -31,128 +31,66 @@ The native DeckProbe CLI runs the target-driven Rust engine locally. It fits she
   </Tab>
 </Tabs>
 
-Verify the installed executable:
+Verify the executable and inspect the built-in help:
 
 ```bash
 deckprobe --version
 deckprobe --help
 ```
 
-## Command forms
+## Run a first probe
 
-```text
-deckprobe [OPTIONS] <INPUT>
-deckprobe --jsonl [OPTIONS]
-deckprobe <COMMAND> [OPTIONS]
-```
-
-Run `deckprobe -h` for a compact list or `deckprobe --help` for selectors, examples, and exit statuses.
-
-## Inspect local files
-
-Run the default Metadata-level probe:
+Inspect a local document with the default Metadata-level profile:
 
 ```bash
 deckprobe report.pdf
 ```
 
-Request and pretty-print one target:
+Request only the targets your application needs and format the JSON for reading:
 
 ```bash
-deckprobe -t slide_count --pretty deck.pptx
+deckprobe -t format,slide_count --pretty deck.pptx
 ```
 
-Request several targets in one pass. `-t` is repeatable and also accepts comma-separated values:
+DeckProbe writes one Schema v2 JSON report to standard output. A successful target contains its value, confidence, selected path, and evidence source; the report also records actual execution cost and diagnostics.
+
+## Common tasks
 
 ```bash
-deckprobe -t format,title,page_count report.pdf
-deckprobe -t title -t page_count report.pdf
+# Inspect identity, common metadata, and primary structure
+deckprobe -t @summary report.pdf
+
+# Inspect security-related signals
+deckprobe -t @security upload.docm
+
+# Return compact values instead of full evidence records
+deckprobe -t @summary --view values report.pdf
+
+# Preview selected paths without executing non-header probe paths
+deckprobe --plan --pretty report.pdf
+
+# Treat unresolved requested targets as a non-zero exit status
+deckprobe --strict -t format,page_count report.pdf
 ```
 
-Short names are accepted after the filename extension selects a format. Reports retain stable canonical keys such as `powerpoint.slide_count` for machine consumers.
+## Continue by integration task
 
-## Read raw bytes from stdin
+<CardGroup cols={2}>
+  <Card title="Inputs and Targets" href="/deckprobe/cli/inputs-and-targets">
+    Use local files, stdin, or JSONL; select required and optional targets; configure level, confidence, format options, and budgets.
+  </Card>
+  <Card title="Automation and Output" href="/deckprobe/cli/automation-and-output">
+    Consume full, values, and error reports; handle JSONL, strict mode, exit statuses, deterministic output, and CI workflows.
+  </Card>
+  <Card title="Command Reference" href="/deckprobe/cli/command-reference">
+    Review every public command, global option, alias, value, Discovery Command, Completion command, and Man Page command.
+  </Card>
+  <Card title="Output Model" href="/deckprobe/output-model">
+    Read the complete Schema v2 contract and Target Evidence model.
+  </Card>
+</CardGroup>
 
-Provide a logical filename with an extension so DeckProbe can route the bytes:
-
-```bash
-cat workbook.xlsx | deckprobe -n workbook.xlsx -
-```
-
-`--input-format` is an additional assertion; it does not replace the logical filename or force an unrelated parser.
-
-## Process multiple inputs with JSONL
-
-```bash
-printf '%s\n' \
-  '{"path":"report.pdf"}' \
-  '{"path":"deck.pptx"}' \
-  | deckprobe --jsonl -t @summary
-```
-
-Each non-empty input line can be a path string, a `{ "path": "…" }` record, or a named base64 payload. DeckProbe writes one compact Schema v2 result per line and continues after record-level errors.
-
-## Target selectors
-
-| Selector | Includes |
-| --- | --- |
-| `@header` | Low-cost identity targets |
-| `@default` | Driver defaults for the selected level |
-| `@summary` | Identity, common metadata, and primary structure |
-| `@security` | Encryption, macros, signatures, external relationships, and active content |
-| `@structure` | Format-owned counts, names, dimensions, and structure |
-| `@assets` | Images, media, previews, fonts, and embedded-object summaries |
-| `@quality` | Integrity, repair, extension, and conformance signals |
-| `@format` | Format-specific targets available at the selected level |
-| `@all` | Every target available at the selected level |
-
-Selectors and target names can be combined:
-
-```bash
-deckprobe -t @summary -t @security report.pdf
-deckprobe -t @header,title,page_count report.pdf
-```
-
-## Probe level and confidence
-
-`-l` / `--probe-level` selects `header`, `metadata`, or `deep`. Metadata is the default. `-c` / `--minimum-confidence` accepts `low`, `medium`, `high`, or `exact`; High is the default.
-
-Require an exact slide count while keeping other targets at the default confidence:
-
-```bash
-deckprobe -t slide_count,orientation \
-  -C slide_count=exact \
-  deck.pptx
-```
-
-## Output behavior
-
-- `--pretty` changes whitespace only.
-- `--view values` returns a compact target-to-value map.
-- `--strict` writes the report and exits with status `5` if any requested target remains unresolved.
-- `--telemetry` includes wall-clock `elapsed_ms`; it is omitted by default for deterministic output.
-- `-P` / `--plan` previews selected paths without executing non-header probe paths.
-
-## Resource budgets
-
-Override the selected level's defaults when processing untrusted inputs:
-
-```bash
-deckprobe -s \
-  -b 8388608 \
-  -x 16777216 \
-  -e 5000 \
-  -T 1000 \
-  -t format,has_macros \
-  upload.docm
-```
-
-| Option | Limit |
-| --- | --- |
-| `-b`, `--probe-size` | Physical bytes read |
-| `-x`, `--max-expanded-bytes` | Cumulative decompressed bytes |
-| `-e`, `--max-archive-entries` | ZIP/OPC entry count |
-| `-T`, `--timeout-ms` | Wall-clock probe budget |
-
-For every flag, exit status, format option, and generated man page, consult the source-aligned [CLI Reference](https://github.com/deckflow/deckprobe/blob/main/docs/CLI-REFERENCE.md).
+<Tip>
+  Use `deckprobe targets --format FORMAT --pretty` and `deckprobe schema --pretty` to discover the capabilities and report contract bundled with the installed version instead of hard-coding a moving list.
+</Tip>
 

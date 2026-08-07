@@ -1,0 +1,184 @@
+---
+title: 输入与 Target
+sidebarTitle: 输入与 Target
+description: "配置 DeckProbe CLI 输入模式、格式路由、Required/Optional Target、Probe Level、Confidence、Driver Option 和资源预算。"
+---
+
+DeckProbe 将所有输入路由到同一套引擎。逻辑文件名扩展名先选择格式路径，Driver 再验证容器与内部文档类型，最后只执行请求 Target 所需的 Probe Path。
+
+## 输入模式
+
+### 本地文件
+
+将普通文件作为位置参数传入：
+
+```bash
+deckprobe report.pdf
+```
+
+报告使用 `source_kind: "local_file"`，并将文件 basename 保留为 `display_name`。
+
+### 原始 stdin
+
+使用位置参数 `-`，并通过 `-n` / `--stdin-name` 提供逻辑文件名：
+
+```bash
+cat workbook.xlsx | deckprobe -n workbook.xlsx -
+```
+
+逻辑名称必须包含用于路由的扩展名。报告使用 `source_kind: "stdin"`。CLI 会在边界处缓冲 stdin，并在超过当前物理字节预算时立即拒绝。
+
+### JSONL 多输入
+
+使用 `--jsonl` 复用一个进程，并从每个非空行读取一条输入描述：
+
+```jsonl
+"/absolute/or/relative/report.pdf"
+{"path":"report.pdf"}
+{"name":"upload.pdf","data_base64":"JVBERi0xLjcK"}
+```
+
+Path Record 可以通过 `name` 覆盖展示名与路由名。Byte Record 必须同时包含 `name` 和 `data_base64`；也可以使用 `base64` Alias。
+
+```bash
+printf '%s\n' \
+  '{"path":"report.pdf"}' \
+  '{"path":"deck.pptx","name":"quarterly.pptx"}' \
+  | deckprobe --jsonl -t @summary
+```
+
+全局 Target、Confidence、Format Option、Budget、Strict、Plan 和 View 参数应用于每条记录。`--pretty` 与 JSONL 冲突，因为每个输出必须保持单行。单条记录出错时会原位输出 Error，后续记录继续处理，最终进程返回所有记录中最高的 Exit Status。
+
+## 格式路由与断言
+
+DeckProbe 使用规范化文件扩展名选择 Driver，然后验证签名与必需的内部类型。把 PPTX 重命名成 DOCX 不会强制使用 Word Driver，而会返回 `MALFORMED_INPUT`。
+
+`-f` / `--input-format` 只增加格式断言，不会绕过扩展名或签名验证：
+
+```bash
+deckprobe --input-format pdf report.pdf
+deckprobe --input-format powerpoint deck.pptx
+deckprobe --input-format iwork deck.key
+```
+
+运行 `deckprobe formats --pretty` 可以查看可用 Profile、扩展名、所属 Driver 和当前支持边界。
+
+## Required Target
+
+通过可重复的 `-t` / `--targets` 传入 Target Name 或 Selector Preset，也可以使用逗号分隔；默认值为 `@default`。
+
+```bash
+deckprobe -t title -t page_count report.pdf
+deckprobe -t title,page_count report.pdf
+deckprobe -t @summary -t @security upload.docm
+```
+
+格式检测完成后，名称不歧义的 Short Target Alias 可以直接使用。报告仍会保留 `powerpoint.slide_count` 这类稳定 Canonical Target Key，供程序消费。
+
+| Selector | 展开内容 |
+| --- | --- |
+| `@header` | Header-level 身份 Target |
+| `@default` | 当前 Probe Level 下的 Driver 默认 Target |
+| `@summary` | 身份、通用元数据和主要格式结构 |
+| `@security` | 加密、宏、签名、外部关系和活动内容信号 |
+| `@structure` | 格式专属数量、名称、尺寸和结构 |
+| `@assets` | 资源、预览、图片、媒体、字体和嵌入对象 Target |
+| `@quality` | 完整性、修复、扩展名和 Conformance Target |
+| `@format` | 当前 Level 可用的格式专属 Target |
+| `@all` | 当前 Level 可用的全部 Target |
+
+`@summary` 不会为了某项统计强制选择 Full-file Path。例如，当 PDF Page Count 需要更高成本路径时，应显式请求 `@structure` 或 `page_count`。
+
+## Optional Target
+
+使用可重复的 `-o` / `--optional-targets` 请求“只有在已选路径顺便产生时才返回”的值：
+
+```bash
+deckprobe -t page_count -o object_count report.pdf
+```
+
+Optional Target 不会增加新路径，缺失时也不会让报告变为 `partial`。默认情况下，DeckProbe 可以把零额外路径产生的 Optional Target 作为 Piggyback Target 收集；使用 `-N` / `--no-piggyback` 禁用：
+
+```bash
+deckprobe -t page_count -o object_count --no-piggyback report.pdf
+```
+
+## Probe Level 与 Confidence
+
+`-l` / `--probe-level` 同时控制资源 Profile 和可选 Probe Path：
+
+| Level | 适用场景 | 接受值 |
+| --- | --- | --- |
+| Header | 容器身份和 Header 属性 | `header`、`h`、`l0`、`0` |
+| Metadata | 有界元数据与常用结构数量；默认值 | `metadata`、`m`、`l1`、`1` |
+| Deep | Deep Target 所需的更高成本路径 | `deep`、`d`、`l2`、`2` |
+
+`-c` / `--minimum-confidence` 可选 `low`、`medium`、`high` 或 `exact`，支持 `l/m/h/x` 缩写，默认值为 `high`。
+
+通过可重复的 `-C` / `--target-confidence TARGET=CONFIDENCE` 覆盖单个 Target：
+
+```bash
+deckprobe -t slide_count,orientation \
+  -C slide_count=exact \
+  deck.pptx
+```
+
+有效 Target 在当前 Level 或 Confidence 下仍可能不可用。如果其他 Target 可以执行，它会出现在 `execution.unresolved_targets`；如果所有请求 Target 都没有可用路径，命令以状态 `1` 退出。
+
+## Format Option
+
+通过可重复的 `-O` / `--format-option KEY=VALUE` 传入 Driver 配置；`--option` 是 Alias：
+
+```bash
+deckprobe \
+  -O repair_xref=safe \
+  -O max_objects=50000 \
+  report.pdf
+```
+
+完成 Driver Detection 后，不歧义的 Local Key 可以省略 Namespace。同一选项重复时，最后一个值生效；所选 Driver 会拒绝未知 Key 和 Value。
+
+不要硬编码 Option 列表。通过已安装的二进制查询可用 Key、Value、默认值和关联 Target Schema：
+
+```bash
+deckprobe targets --format pdf --pretty
+```
+
+## 资源预算
+
+Probe Level 会提供默认限制。处理不可信输入时可以覆盖单项边界：
+
+```bash
+deckprobe \
+  --probe-size 8388608 \
+  --max-expanded-bytes 16777216 \
+  --max-archive-entries 5000 \
+  --timeout-ms 1000 \
+  -t format,has_macros \
+  upload.docm
+```
+
+| 参数 | 限制 |
+| --- | --- |
+| `-b`, `--probe-size BYTES` | Probe Path 读取的物理字节数；`--probesize` 是 Alias |
+| `-x`, `--max-expanded-bytes BYTES` | 累计解压字节数 |
+| `-e`, `--max-archive-entries COUNT` | ZIP/OPC Entry 数量 |
+| `-T`, `--timeout-ms MILLISECONDS` | 协作式墙钟时间预算 |
+
+超出预算时以状态 `4` 退出。DeckProbe 能够生成报告时，已经消耗的资源仍会记录在 `execution.actual_cost`。需要硬性进程截止时间的应用还应在 CLI 外层增加进程级 Timeout。
+
+## 查询可用 Target
+
+以当前运行的二进制为准，查询 Target ID、Alias、Value Type、Selector Membership、最低 Level、Cost、JSON Schema Fragment 和 Format Option：
+
+```bash
+deckprobe targets --format pdf --pretty
+deckprobe targets --format docx --pretty
+deckprobe targets --format xlsx --pretty
+deckprobe targets --format pptx --pretty
+deckprobe targets --format key --pretty
+deckprobe targets --format numbers --pretty
+deckprobe targets --format pages --pretty
+```
+
+继续阅读[自动化与输出](/zh/deckprobe/cli/automation-and-output)，了解如何安全消费 Report 和 Exit Status。

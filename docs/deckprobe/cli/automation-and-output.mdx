@@ -1,0 +1,163 @@
+---
+title: Automation and Output
+sidebarTitle: Automation and Output
+description: "Consume DeckProbe CLI JSON safely in scripts, CI, services, and JSONL pipelines."
+---
+
+DeckProbe is designed for machine consumption: successful probes, partial results, and runtime failures all use structured JSON. Production integrations must evaluate both the process Exit Status and the JSON `status` field.
+
+## Standard output contract
+
+| Invocation | Standard output |
+| --- | --- |
+| Single input | Exactly one JSON value |
+| Discovery Command | Exactly one JSON value |
+| Failed probe or invalid runtime request | Exactly one structured Error Report |
+| JSONL mode | One compact JSON value for each non-empty input line |
+| `--help` and `--version` | Human-readable text |
+
+Do not parse Pretty output differently: `--pretty` changes whitespace only. The default `--view full` retains complete Target Evidence; `--view values` returns a compact Target-to-Value envelope.
+
+## Report shapes
+
+### Full report
+
+A Full Report uses these top-level fields:
+
+```text
+schema_version  tool_version  status  input  driver  results  execution  diagnostics
+```
+
+- `status` is `ok` when every requested Target satisfies the request, otherwise `partial`.
+- `results` is keyed by Canonical Target Name and includes status, confidence, selected path, source, and resolved value.
+- `execution` records selected paths, estimated/actual cost, unresolved Targets, and Piggyback Targets.
+- `diagnostics` contains structured planning and probing warnings.
+
+### Values report
+
+Use a Values Report when the calling application needs values but not evidence details:
+
+```bash
+deckprobe -t @summary --view values report.pdf
+```
+
+The result retains the Schema Version, input and driver identity, unresolved Targets, and Diagnostics, while replacing evidence records with a compact `values` map.
+
+### Error report
+
+Runtime failures use a stable shape on standard output:
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "error",
+  "error": {
+    "code": "MALFORMED_INPUT",
+    "message": "malformed input: .docx package is missing required main part word/document.xml",
+    "exit_code": 4
+  }
+}
+```
+
+See [Output Model](/deckprobe/output-model) for the complete Schema v2 contract and stable Error Codes.
+
+## Exit status
+
+| Status | Meaning | Output behavior |
+| ---: | --- | --- |
+| `0` | Success; unresolved Targets are allowed unless Strict Mode is active | Report is written |
+| `1` | Invalid request or unsupported Target, including a missing input | Error Report |
+| `2` | Command-line syntax error or source I/O error | Error Report |
+| `3` | Unsupported or unrecognized input format | Error Report |
+| `4` | Malformed input or Probe Budget exceeded | Error Report or report with consumed cost when available |
+| `5` | A requested Target is unresolved while `--strict` is active | Complete Probe Report is still written |
+| `6` | Internal parser or report-serialization failure | Error Report when serialization remains available |
+
+Status `5` is intentionally different from “no output.” The application must retain and inspect the report to see which Targets were unresolved.
+
+## Strict Mode in scripts
+
+The following Bash pattern preserves the JSON report before branching on the process status:
+
+```bash
+set +e
+report=$(deckprobe --strict -t format,page_count report.pdf)
+code=$?
+set -e
+
+printf '%s\n' "$report" > deckprobe-report.json
+
+case "$code" in
+  0)
+    echo "All requested targets resolved"
+    ;;
+  5)
+    echo "Report produced, but at least one target is unresolved" >&2
+    ;;
+  *)
+    echo "DeckProbe failed with exit status $code" >&2
+    exit "$code"
+    ;;
+esac
+```
+
+If `jq` is available, check the report status and selected values without depending on Pretty formatting:
+
+```bash
+deckprobe -t format,page_count report.pdf \
+  | jq -e '.status == "ok" and .results["pdf.page_count"].status == "resolved"'
+```
+
+## JSONL services and batches
+
+JSONL mode applies global options to every record, emits one compact result per line, and continues after record-level failures:
+
+```bash
+printf '%s\n' \
+  '{"path":"report.pdf"}' \
+  '{"path":"missing.pdf"}' \
+  '{"name":"upload.pdf","data_base64":"JVBERi0xLjcK"}' \
+  | deckprobe --jsonl -t @summary > results.jsonl
+```
+
+Important behaviors:
+
+- Empty input lines are ignored.
+- Output order matches input order.
+- Record errors occupy their normal output line; later records continue.
+- `--pretty` cannot be combined with `--jsonl`.
+- The final process status is the highest Exit Status produced by any record.
+- Target, Confidence, Format Option, Budget, Strict, Plan, and View settings are shared by the batch.
+
+## Deterministic reports and telemetry
+
+Default reports omit wall-clock `elapsed_ms`, allowing the same input and options to produce byte-identical JSON when all other measured values are unchanged. `execution.actual_cost` still records physical bytes, expanded bytes, and random reads.
+
+Enable timing only when required:
+
+```bash
+deckprobe --telemetry -t @summary report.pdf
+```
+
+Because timing is non-deterministic, avoid `--telemetry` when reports are compared byte-for-byte, cached by content, or used as golden fixtures.
+
+## Plan before execution
+
+Use `-P` / `--plan` to inspect selected paths without running non-header Probe Paths:
+
+```bash
+deckprobe --plan --pretty -t @summary,@security upload.docm
+```
+
+Plan-only Target results use `planned` status. This is useful for explaining path selection or estimating work, but it is not a substitute for the final Probe Report.
+
+## Version-aligned validation
+
+Print the exact JSON Schema bundled with the executable used by the application:
+
+```bash
+deckprobe schema --pretty > deckprobe-report.schema.json
+```
+
+Use that schema for response validation and generated types when the integration must remain aligned with the installed binary. Continue with [Command Reference](/deckprobe/cli/command-reference) for all public commands and options.

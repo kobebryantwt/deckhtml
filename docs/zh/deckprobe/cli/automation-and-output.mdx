@@ -1,0 +1,163 @@
+---
+title: 自动化与输出
+sidebarTitle: 自动化与输出
+description: "在脚本、CI、服务和 JSONL Pipeline 中安全消费 DeckProbe CLI JSON。"
+---
+
+DeckProbe 面向机器消费设计：成功 Probe、Partial Result 和运行时失败都使用结构化 JSON。生产接入必须同时判断进程 Exit Status 和 JSON `status` 字段。
+
+## 标准输出契约
+
+| 调用方式 | 标准输出 |
+| --- | --- |
+| 单文件输入 | 准确输出一个 JSON Value |
+| Discovery Command | 准确输出一个 JSON Value |
+| Probe 失败或无效运行时请求 | 准确输出一个结构化 Error Report |
+| JSONL 模式 | 每个非空输入行对应一个紧凑 JSON Value |
+| `--help` 和 `--version` | 面向人的文本 |
+
+不要根据 Pretty 格式编写不同的解析逻辑：`--pretty` 只改变空白。默认的 `--view full` 保留完整 Target Evidence；`--view values` 返回紧凑 Target-to-Value Envelope。
+
+## 报告形态
+
+### Full Report
+
+Full Report 包含以下顶层字段：
+
+```text
+schema_version  tool_version  status  input  driver  results  execution  diagnostics
+```
+
+- 所有请求 Target 都满足要求时，`status` 为 `ok`，否则为 `partial`。
+- `results` 以 Canonical Target Name 为 Key，包含 Status、Confidence、所选 Path、Source 和已解析 Value。
+- `execution` 记录所选 Path、预估/实际成本、未解析 Target 和 Piggyback Target。
+- `diagnostics` 包含 Planning 与 Probe 产生的结构化警告。
+
+### Values Report
+
+应用只需要 Value、不需要 Evidence Detail 时使用 Values Report：
+
+```bash
+deckprobe -t @summary --view values report.pdf
+```
+
+结果仍保留 Schema Version、Input/Driver Identity、未解析 Target 和 Diagnostics，但会把 Evidence Record 替换为紧凑 `values` Map。
+
+### Error Report
+
+运行时失败会向标准输出写入稳定结构：
+
+```json
+{
+  "schema_version": 2,
+  "tool_version": "2.2.0",
+  "status": "error",
+  "error": {
+    "code": "MALFORMED_INPUT",
+    "message": "malformed input: .docx package is missing required main part word/document.xml",
+    "exit_code": 4
+  }
+}
+```
+
+完整 Schema v2 契约和稳定 Error Code 请查看[输出模型](/zh/deckprobe/output-model)。
+
+## Exit Status
+
+| 状态 | 含义 | 输出行为 |
+| ---: | --- | --- |
+| `0` | 成功；未启用 Strict Mode 时允许存在未解析 Target | 输出 Report |
+| `1` | 无效请求或不支持的 Target，包括缺少 Input | 输出 Error Report |
+| `2` | CLI 语法错误或 Source I/O 错误 | 输出 Error Report |
+| `3` | 不支持或无法识别的输入格式 | 输出 Error Report |
+| `4` | Malformed Input 或超出 Probe Budget | 输出 Error Report；可生成报告时保留已消耗成本 |
+| `5` | 启用 `--strict` 时存在未解析的请求 Target | 仍然输出完整 Probe Report |
+| `6` | 内部 Parser 或 Report Serialization 失败 | Serialization 仍可用时输出 Error Report |
+
+状态 `5` 不表示“没有输出”。应用必须保留并检查报告，确认哪些 Target 未解析。
+
+## 在脚本中使用 Strict Mode
+
+以下 Bash 模式会先保存 JSON Report，再根据进程状态分支：
+
+```bash
+set +e
+report=$(deckprobe --strict -t format,page_count report.pdf)
+code=$?
+set -e
+
+printf '%s\n' "$report" > deckprobe-report.json
+
+case "$code" in
+  0)
+    echo "All requested targets resolved"
+    ;;
+  5)
+    echo "Report produced, but at least one target is unresolved" >&2
+    ;;
+  *)
+    echo "DeckProbe failed with exit status $code" >&2
+    exit "$code"
+    ;;
+esac
+```
+
+环境中存在 `jq` 时，可以直接判断 Report Status 和指定 Value，不要依赖 Pretty 格式：
+
+```bash
+deckprobe -t format,page_count report.pdf \
+  | jq -e '.status == "ok" and .results["pdf.page_count"].status == "resolved"'
+```
+
+## JSONL 服务与批处理
+
+JSONL 模式将全局参数应用于每条记录，每行输出一个紧凑结果，并在单条记录失败后继续：
+
+```bash
+printf '%s\n' \
+  '{"path":"report.pdf"}' \
+  '{"path":"missing.pdf"}' \
+  '{"name":"upload.pdf","data_base64":"JVBERi0xLjcK"}' \
+  | deckprobe --jsonl -t @summary > results.jsonl
+```
+
+需要注意：
+
+- 空输入行会被忽略。
+- 输出顺序与输入顺序一致。
+- Record Error 占用对应输出行，后续记录继续处理。
+- `--pretty` 不能与 `--jsonl` 组合。
+- 最终进程状态是所有 Record 中最高的 Exit Status。
+- Target、Confidence、Format Option、Budget、Strict、Plan 和 View 参数由整个 Batch 共享。
+
+## 确定性报告与 Telemetry
+
+默认报告省略墙钟时间 `elapsed_ms`。在其他测量值也不变时，相同输入和参数可以生成字节一致的 JSON。`execution.actual_cost` 仍会记录物理字节数、解压字节数和随机读取次数。
+
+只在需要耗时数据时启用：
+
+```bash
+deckprobe --telemetry -t @summary report.pdf
+```
+
+Timing 是非确定性数据，因此按字节比较报告、按内容缓存结果或维护 Golden Fixture 时不要启用 `--telemetry`。
+
+## 执行前查看 Plan
+
+使用 `-P` / `--plan` 查看所选 Path，但不运行非 Header Probe Path：
+
+```bash
+deckprobe --plan --pretty -t @summary,@security upload.docm
+```
+
+Plan-only Target Result 使用 `planned` 状态。它适合解释 Path Selection 或预估工作量，但不能代替最终 Probe Report。
+
+## 按当前版本校验
+
+输出应用实际调用的二进制内置的准确 JSON Schema：
+
+```bash
+deckprobe schema --pretty > deckprobe-report.schema.json
+```
+
+当接入必须与已安装二进制保持一致时，应使用这个 Schema 校验响应或生成类型。全部公开命令和参数请继续查看[命令参考](/zh/deckprobe/cli/command-reference)。

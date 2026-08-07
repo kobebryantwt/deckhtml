@@ -1,0 +1,209 @@
+---
+title: Command Reference
+sidebarTitle: Command Reference
+description: "Reference every public DeckProbe CLI command, option, alias, value, exit status, completion target, and generated Man Page."
+---
+
+This page lists the complete public CLI surface exposed by the current command model. Use `deckprobe --help` and each subcommand's `--help` for the exact contract bundled with the installed version.
+
+## Synopsis
+
+```text
+deckprobe [OPTIONS] <INPUT>
+deckprobe --jsonl [OPTIONS]
+deckprobe <COMMAND> [OPTIONS]
+```
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `deckprobe [OPTIONS] <INPUT>` | Probe one local file or raw stdin input |
+| `deckprobe --jsonl [OPTIONS]` | Read one path or byte descriptor per stdin line and emit one compact report per line |
+| `deckprobe formats` | List supported Format Profiles, owning Drivers, extensions, and support boundaries |
+| `deckprobe targets [FORMAT]` | List Target and Format Option schemas for one Profile |
+| `deckprobe schema` | Print the Schema v2 JSON Schema bundled with the binary |
+| `deckprobe completion <SHELL>` | Generate Shell Completion from the live command model |
+| `deckprobe generate man` | Generate the main Roff Man Page, or a complete Man Page directory |
+| `deckprobe help [COMMAND]` | Print the main help or the help for one subcommand |
+| `deckprobe --help` | Print complete human-readable help |
+| `deckprobe --version` | Print the installed DeckProbe version |
+
+Each Discovery Command has its own help:
+
+```bash
+deckprobe formats --help
+deckprobe targets --help
+deckprobe schema --help
+deckprobe completion --help
+deckprobe generate --help
+```
+
+## Input interpretation options
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `<INPUT>` | None | Local file, or `-` for one raw stdin document; conflicts with `--jsonl` |
+| `-n`, `--stdin-name NAME` | None | Logical filename with extension for raw stdin; requires positional `-` and conflicts with `--jsonl` |
+| `--jsonl` | Off | Read one JSON string or input record per stdin line; conflicts with `<INPUT>`, `--stdin-name`, and `--pretty` |
+| `-f`, `--input-format FORMAT` | None | Assert the detected Driver or Profile; does not force a parser |
+| `-O`, `--format-option KEY=VALUE` | None | Repeatable Driver option; `--option` is a visible alias |
+
+## Target selection options
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `-t`, `--targets SELECTOR` | `@default` | Required Target or Selector; repeatable and comma-separated |
+| `-o`, `--optional-targets SELECTOR` | None | Optional Target returned only when selected paths already produce it; repeatable and comma-separated |
+| `-c`, `--minimum-confidence CONFIDENCE` | `high` | Required minimum confidence; `--confidence` is an alias |
+| `-C`, `--target-confidence TARGET=CONFIDENCE` | None | Per-Target confidence override; repeatable and comma-separated |
+| `-N`, `--no-piggyback` | Off | Disable zero-additional-path collection for Optional Targets |
+
+### Selectors
+
+```text
+@header  @default  @summary  @security  @structure
+@assets  @quality  @format   @all
+```
+
+### Confidence values
+
+| Value | Shorthand |
+| --- | --- |
+| `low` | `l` |
+| `medium` | `m` |
+| `high` | `h` |
+| `exact` | `x` |
+
+## Probe level and resource options
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `-l`, `--probe-level LEVEL` | `metadata` | Select budget and eligible-path Profile; `--level` is an alias |
+| `-b`, `--probe-size BYTES` | Level Profile | Maximum physical bytes read; `--probesize` is an alias |
+| `-x`, `--max-expanded-bytes BYTES` | Level Profile | Maximum cumulative decompressed bytes |
+| `-e`, `--max-archive-entries COUNT` | Level Profile | Maximum ZIP/OPC Entry count |
+| `-T`, `--timeout-ms MILLISECONDS` | Level Profile | Cooperative wall-clock Probe Budget |
+
+Probe Level values:
+
+| Level | Accepted values |
+| --- | --- |
+| Header | `header`, `h`, `l0`, `0` |
+| Metadata | `metadata`, `m`, `l1`, `1` |
+| Deep | `deep`, `d`, `l2`, `2` |
+
+## Output and execution options
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `-s`, `--strict` | Off | Exit `5` when any requested Target is unresolved; still write the complete report |
+| `-p`, `--pretty` | Off | Pretty-print Probe and Discovery JSON; conflicts with `--jsonl` |
+| `-P`, `--plan-only` | Off | Print the plan without running non-header paths; `--plan` is a visible alias |
+| `--telemetry` | Off | Include non-deterministic wall-clock `elapsed_ms` in the cost object |
+| `--view VIEW` | `full` | Select `full` Evidence Report or compact `values` envelope |
+| `-h`, `--help` | — | Print help; use `--help` for complete details |
+| `-V`, `--version` | — | Print version |
+
+## `formats`
+
+```bash
+deckprobe formats
+deckprobe formats --pretty
+```
+
+Returns supported Profile names, extensions, owning Drivers, and implementation boundaries as JSON. `--pretty` is global, so both placements work:
+
+```bash
+deckprobe --pretty formats
+deckprobe formats --pretty
+```
+
+## `targets`
+
+Pass the Profile positionally or through `-f` / `--format`:
+
+```bash
+deckprobe targets pdf --pretty
+deckprobe targets --format pptx --pretty
+```
+
+The two format forms conflict with each other. Accepted names include:
+
+```text
+pdf
+word / docx / docm
+excel / xlsx / xlsm
+powerpoint / pptx / pptm
+keynote / key
+numbers
+pages
+legacy / doc / xls / ppt
+```
+
+The result includes Target IDs and aliases, compatibility Value Types, JSON Schema fragments, Selector membership and expansion, minimum Levels, Cost Classes, and supported Format Options.
+
+## `schema`
+
+```bash
+deckprobe schema
+deckprobe schema --pretty
+```
+
+Prints the exact versioned report schema compiled into the running binary.
+
+## `completion`
+
+Generate completion source from the live command model:
+
+```bash
+deckprobe completion bash > deckprobe.bash
+deckprobe completion zsh > _deckprobe
+deckprobe completion fish > deckprobe.fish
+deckprobe completion powershell > deckprobe.ps1
+deckprobe completion elvish > deckprobe.elv
+```
+
+Supported values are `bash`, `elvish`, `fish`, `powershell`, and `zsh`. Run `deckprobe completion --help` to confirm the values supported by the installed binary.
+
+## `generate man`
+
+Write the main Man Page to standard output:
+
+```bash
+deckprobe generate man > deckprobe.1
+man ./deckprobe.1
+```
+
+Use `-d` / `--output-dir DIRECTORY` to create a main page and one page for every subcommand:
+
+```bash
+deckprobe generate man --output-dir ./man
+man -M ./man deckprobe
+man -M ./man deckprobe-targets
+```
+
+The directory contains:
+
+```text
+deckprobe.1
+deckprobe-formats.1
+deckprobe-targets.1
+deckprobe-generate.1
+deckprobe-schema.1
+deckprobe-completion.1
+```
+
+## Exit status
+
+| Status | Meaning |
+| ---: | --- |
+| `0` | Success; unresolved Targets are allowed unless `--strict` is active |
+| `1` | Invalid request or unsupported Target, including a missing input |
+| `2` | Command-line syntax error or source I/O error |
+| `3` | Unsupported or unrecognized input format |
+| `4` | Malformed input or Probe Budget exceeded |
+| `5` | Unresolved requested Target with `--strict`; a complete report is still written |
+| `6` | Internal parser or report-serialization failure |
+
+For integration behavior and examples, see [Automation and Output](/deckprobe/cli/automation-and-output). The repository's [CLI Reference](https://github.com/deckflow/deckprobe/blob/main/docs/CLI-REFERENCE.md) remains the source-aligned specification.
