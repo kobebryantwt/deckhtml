@@ -1,0 +1,59 @@
+---
+title: Authentication
+sidebarTitle: Authentication
+description: "Use DeckRender in guest mode, sign in through the browser, configure an API key, and diagnose credential selection."
+---
+
+DeckRender does not require credentials before the first cloud render. Guest tasks are rate-limited and are explicitly started by DeckRender. Authenticate for production quotas or a private workspace.
+
+## Browser login
+
+```bash
+deckrender auth login
+deckrender auth status
+```
+
+Login opens the Deckflow authorization page and stores the returned token in `~/.deckflow/credentials`. `auth status` validates the effective credential against the backend and shows its source.
+
+## API key
+
+```bash
+deckrender config set api-key YOUR_API_KEY
+deckrender auth status
+```
+
+For CI or containers, use an environment variable instead of writing a credential file:
+
+```bash
+export DECKFLOW_API_KEY='YOUR_API_KEY'
+deckrender hello.html -o hello.png --json --quiet
+```
+
+`DECKRENDER_API_KEY` has higher priority than `DECKFLOW_API_KEY`; `DECKHTML_API_KEY` is also recognized for compatibility.
+
+## Credential resolution
+
+Each field resolves independently:
+
+1. Explicit Node.js renderer option.
+2. DeckRender or Deckflow environment variable.
+3. `~/.deckflow/credentials`.
+4. `~/.deckops/config.json`, read only.
+5. Built-in API base default.
+
+Run `deckrender config list` to see masked effective values and their sources.
+
+## Logout and fallback credentials
+
+```bash
+deckrender auth logout
+deckrender config list
+```
+
+Logout removes credentials stored in the shared Deckflow file. An environment variable or token in the DeckOps config can still authenticate subsequent calls; confirm the effective source with `config list`.
+
+<Warning>
+  JSON, CI, and other non-interactive calls do not open a browser after `401`. Configure an API key or token before starting the job.
+</Warning>
+
+Render defaults such as format, profile, width, and timeout are covered separately in [Configuration](/deckrender/configuration).

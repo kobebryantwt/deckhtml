@@ -1,0 +1,66 @@
+---
+title: Node.js API
+sidebarTitle: Node.js API（源码）
+description: "通过 @deckflow/deckprobe WebAssembly 软件包，在 Node.js 中嗅探本地文件或字节数组。"
+---
+
+Node.js API 需要 Node.js 20 或更高版本，使用与原生 CLI 相同的 Rust 引擎和 Schema v2 契约。
+
+<Warning>
+  当前版本仅可作为源码契约参考：`@deckflow/deckprobe@2.3.0` 发布时缺少所需的 `dist/` 和 `wasm/` 文件，因此 Node.js 导入会失败。修正后的产物发布前请使用原生或 npm CLI。
+</Warning>
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+## 嗅探文件
+
+```ts
+import { probeFile } from '@deckflow/deckprobe';
+
+const report = await probeFile('./slides.pptx', {
+  targets: ['document.format', 'powerpoint.slide_count'],
+  level: 'metadata',
+});
+
+if (report.status === 'error') {
+  throw new Error(`${report.error.code}: ${report.error.message}`);
+}
+
+console.log(report.results['powerpoint.slide_count']?.value);
+```
+
+`probeFile()` 会报告 `source_kind: "local_file"`。它会先把整个文件读入内存，再把字节传给 WebAssembly；大文件或大批量处理建议使用惰性读取的原生 CLI。
+
+## 嗅探字节
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { probe } from '@deckflow/deckprobe';
+
+const bytes = await readFile('./report.pdf');
+const report = await probe(bytes, {
+  name: 'report.pdf',
+  targets: ['document.format', 'pdf.page_count'],
+});
+```
+
+支持 `Buffer`、`Uint8Array` 和 `ArrayBuffer`。字节输入必须提供带扩展名的逻辑文件名，DeckProbe 才能选择并验证正确 Driver。
+
+## 查询能力
+
+```ts
+import { formats, schema, targets, version } from '@deckflow/deckprobe';
+
+console.log(await version());
+console.log(await formats());
+console.log(await targets('pdf'));
+console.log(await schema());
+```
+
+以上四个查询 API 都是异步方法。
+
+<Note>
+  Node.js 处理仍在本地完成，不需要 Deckflow 凭证。自定义运行时打包时，也可以使用软件包导出的绝对路径 `deckProbeWasmPath`。
+</Note>

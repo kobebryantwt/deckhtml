@@ -1,27 +1,63 @@
 ---
 title: DeckUse
 sidebarTitle: 概览
-description: "通过源文件感知的文档模型 Manipulate 支持的 Office 文件。"
+description: "通过 Selector 和 Workspace 工作流，在本地检查、修改现有 PPTX，并生成仍可编辑的 PPTX。"
 ---
 
-DeckUse 是 Deckflow 技术栈中的 Manipulate Layer。当文档需要保持原始 Office 格式并继续编辑时，使用 DeckUse 操作源文件。
+DeckUse 用于对现有 PowerPoint 演示文稿进行聚焦、文件原生的修改。它把 PPTX 打开为临时或持久化 Workspace，根据 Selector 定位幻灯片和 Shape，更新支持的属性，再把 Workspace 打包为另一个可编辑 PPTX。
 
-## 当前重点
+| 项目 | 当前契约 |
+| --- | --- |
+| 输入 | 一个 `.pptx` 文件或已初始化的 DeckUse Workspace |
+| 输出 | 修改后的 `.pptx`；读取命令会输出结构信息 |
+| 执行位置 | 本地 Node.js 进程；不上传文件、不需要认证 |
+| 接入方式 | 已验证的 `deckuse` CLI；Node.js API 已有源码，但 `0.2.0` ESM 构建存在运行时导入问题 |
+| 运行环境 | Node.js 18 或更高版本；Workspace 打包需要 `zip` 与 `unzip` 命令 |
 
-目前实现重点是 Office PPTX，支持修改、删除已有演示文稿元素等 Element-level 操作。
+## DeckUse 适合什么
 
-## 适用场景
+- 列出幻灯片并查看页面结构。
+- 通过页面、Shape、文本或规范 ID Path Selector 读取文本。
+- 设置段落文本，或在全局、指定页面中替换文本。
+- 使用归一化的 `left`、`top` 坐标移动已有 Shape。
+- 在一个 Workspace 中完成多次修改，再统一提交输出文件。
 
-- Office 文件仍然是权威数据源和最终可编辑产物。
-- 工作流需要更新或删除已有元素，而不是生成派生表示。
-- 修改需要遵循源格式结构和对象关系。
+```text
+input.pptx → 打开或初始化 Workspace → 选择已有内容 → 修改 → Commit → updated.pptx
+```
 
-## 产品边界
+<Warning>
+  当前版本只支持 PPTX。它没有添加或删除幻灯片、元素的命令，也不能编辑 DOCX、XLSX 或 Keynote。请保留原始文件，并使用 PowerPoint 或其他兼容软件检查输出。
+</Warning>
 
-将不同格式 Parse 成 Document IR、Extract 语义结构、Convert 格式，或通过组合运行时 Render 时，使用 [DeckOps](/zh/deckops/overview)。操作明确属于源文件感知的 Office Manipulate 时，使用 DeckUse。
+## 两种工作模式
 
-DeckUse 不替代 [DeckHTML](/zh/deckhtml/overview)；DeckHTML 以 HTML 作为 Deck 的原生创作源。
+<CardGroup cols={2}>
+  <Card title="直接文件模式" href="/zh/deckuse/quick-start">
+    读取命令直接传入 `.pptx`；写命令同时传入 `-o updated.pptx`。DeckUse 会自动创建并删除临时 Workspace。
+  </Card>
+  <Card title="持久化 Workspace" href="/zh/deckuse/workspace">
+    初始化 `.deck` 目录，完成多次修改、检查状态，最后统一 Commit。
+  </Card>
+</CardGroup>
 
-<Note>
-  DeckUse 项目契约可用后，再补充支持的 Office 格式、元素模型、修改保证和包信息。
-</Note>
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="快速开始" href="/zh/deckuse/quick-start">
+    检查并替换 PPTX 中的文本，再验证生成文件。
+  </Card>
+  <Card title="CLI" href="/zh/deckuse/cli">
+    查看全部已实现命令及其输出行为。
+  </Card>
+  <Card title="Selectors" href="/zh/deckuse/selectors">
+    定位幻灯片、文本、Shape 和规范段落 ID。
+  </Card>
+  <Card title="Node.js API 状态" href="/zh/deckuse/sdk">
+    查看源码导出和当前已发布 ESM 入口阻塞。
+  </Card>
+</CardGroup>
+
+需要解析、提取或生成云端派生结果时，使用 [DeckOps](/zh/deckops/overview)。HTML 是新 Deck 的创作源时，使用 [DeckHTML](/zh/deckhtml/overview)。
+
+DeckUse 是开源项目。版本与实现细节请查看 [DeckUse 仓库](https://github.com/deckflow/deckuse)。

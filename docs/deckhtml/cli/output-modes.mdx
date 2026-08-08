@@ -6,23 +6,23 @@ description: "Consume DeckHTML output safely from scripts and CI pipelines."
 
 ## Human-readable output
 
-On success, the default mode writes progress to stderr and prints generated artifact paths to stdout. Multi-page PNG conversion prints each output path.
+The default mode is intended for humans and may print progress, font notices, and artifact paths. Do not parse it as a stable stdout protocol. Multi-page PNG conversion prints each output path.
 
 DeckHTML refuses to overwrite an existing local artifact. Pass `--force` only when replacement is intended.
 
 ## JSON output
 
-`--json` keeps the final success envelope on stdout so scripts can parse it.
+Use `--json --quiet` together for machine-readable stdout. In the current CLI, `--json` without `--quiet` can still write human-readable conversion logs to stdout before the final envelope.
 
 ```bash
-deckhtml deck.html -o deck.pptx --mode local --json
+deckhtml deck.html -o deck.pptx --mode local --json --quiet
 ```
 
 ```json
 {
   "ok": true,
-  "input": ["deck.html"],
-  "output": "deck.pptx",
+  "input": ["/absolute/path/deck.html"],
+  "output": "/absolute/path/deck.pptx",
   "format": "pptx",
   "mode": "local",
   "slideCount": 3

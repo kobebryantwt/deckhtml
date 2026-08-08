@@ -1,0 +1,49 @@
+---
+title: Authentication
+sidebarTitle: Authentication
+description: "Configure guest, browser-login, or API-key access for DeckHTML cloud mode."
+---
+
+Local mode and the Node.js API require no Deckflow credentials. Cloud mode uploads the input to Deckflow and supports guest, user-token, or API-key execution.
+
+| Mode | Setup | Use |
+| --- | --- | --- |
+| Local | None | Private local conversion and development |
+| Cloud guest | None | Rate-limited evaluation; the CLI starts the guest task |
+| Browser login | `deckhtml auth login` | Interactive development with a user token |
+| API key | `DECKHTML_API_KEY` or CLI config | Production services and CI |
+
+## Browser login
+
+```bash
+deckhtml auth login
+deckhtml auth status
+```
+
+The login flow stores token and space information in `~/.deckflow/credentials` (or `DECKHTML_CONFIG_DIR/credentials`). `auth status` reports whether values are present; it does not validate them against the server.
+
+## API key
+
+Prefer an environment secret in CI:
+
+```bash
+export DECKHTML_API_KEY="your-api-key"
+deckhtml deck.html -o deck.pptx --mode cloud
+```
+
+For a developer workstation, the CLI can persist it:
+
+```bash
+deckhtml config set api-key "your-api-key"
+deckhtml auth status
+```
+
+The environment variable takes precedence over the persisted API key. Do not commit the credentials file or place an API key in browser code.
+
+## Guest mode
+
+Explicit `--mode cloud` works without configured credentials. The CLI supplies a guest identity and starts the rate-limited task. Use authenticated execution when you need stable production limits or workspace ownership.
+
+<Info>
+  `--embed-fonts` is available only in cloud mode. Its use uploads both the HTML input and required font resources.
+</Info>

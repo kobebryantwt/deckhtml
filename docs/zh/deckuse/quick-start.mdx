@@ -1,0 +1,82 @@
+---
+title: 快速开始
+sidebarTitle: 快速开始
+description: "安装 DeckUse、检查 PPTX、替换文本，并验证修改后的演示文稿。"
+---
+
+可以把已有 PPTX 复制为 `input.pptx`，也可以生成下面的可复现样例。样例包含 `Revenue 2025`，后续每条命令都有已知匹配。
+
+<Steps>
+  <Step title="检查前置条件">
+    DeckUse 需要 Node.js 18 或更高版本，以及 `zip`、`unzip` 命令行工具。
+
+    ```bash
+    node --version
+    zip -v
+    unzip -v
+    ```
+
+    Windows 需要安装 `zip.exe`、`unzip.exe` 并加入 `Path`；PowerShell 自带的压缩 Cmdlet 不能替代当前 CLI 所调用的命令名。
+  </Step>
+  <Step title="安装并验证 CLI">
+    ```bash
+    npm install -g deckuse
+    deckuse --help
+    ```
+  </Step>
+  <Step title="准备一个已知 PPTX">
+    如果还没有 `input.pptx`，把以下内容保存为 `sample.html`：
+
+    ```html
+    <!doctype html>
+    <html><body><section class="slide-container"><h1>Revenue 2025</h1></section></body></html>
+    ```
+
+    然后通过 DeckHTML 在本地生成测试文件：
+
+    ```bash
+    npx -y @deckflow/deckhtml@latest sample.html \
+      -o input.pptx --mode local --quiet
+    ```
+
+    DeckHTML 需要本地 Chromium、Chrome 或 Edge 可执行文件；浏览器发现失败时请查看其[快速开始](/zh/deckhtml/quick-start)。
+  </Step>
+  <Step title="检查页面与文本">
+    ```bash
+    deckuse list slides input.pptx
+    deckuse get text input.pptx 'slide:1/text'
+    ```
+
+    `get text` 会输出匹配到的段落，以及可复用的规范 Selector，例如 `slide:1/#22/p:0`。下一步请从该输出中选择一个实际存在的完整文本。
+  </Step>
+  <Step title="生成修改后的 PPTX">
+    替换上一步输出中实际存在的值。生成的样例包含 `2025`；使用自己的文件时请替换为其中的真实文本。直接修改 `.pptx` 时必须传入 `-o`，以免覆盖源文件。
+
+    ```bash
+    deckuse replace input.pptx '2025' '2026' -o updated.pptx
+    ```
+
+    确认命令报告至少一次替换。零匹配时仍可能生成输出文件，但文本没有变化。
+  </Step>
+  <Step title="验证结果">
+    ```bash
+    test -f updated.pptx
+    deckuse get text updated.pptx "text[contains('2026')]"
+    ```
+
+    PowerShell 中请把 `test -f updated.pptx` 替换为 `if (!(Test-Path updated.pptx)) { exit 1 }`。
+
+    交付前，请在 PowerPoint 或其他兼容软件中打开 `updated.pptx`，检查视觉布局。
+  </Step>
+</Steps>
+
+需要执行多次修改时，请使用[持久化 Workspace](/zh/deckuse/workspace)，让 PPTX 只解包和打包一次。
+
+<CardGroup cols={2}>
+  <Card title="命令参考" href="/zh/deckuse/cli">
+    设置文本、替换文本、移动 Shape、检查状态并提交 Workspace。
+  </Card>
+  <Card title="Selector 语法" href="/zh/deckuse/selectors">
+    从宽泛文本匹配逐步定位到稳定的 ID Path Selector。
+  </Card>
+</CardGroup>

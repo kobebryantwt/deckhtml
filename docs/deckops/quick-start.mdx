@@ -1,66 +1,77 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: "Install the TypeScript SDK, parse a document, and retrieve a task result."
+description: "Install the published TypeScript SDK and complete a guest cloud task."
 ---
 
-The TypeScript SDK is the shortest path to DeckOps from either Node.js or a browser application.
+This path creates a known HTML input, uploads it to Deckflow cloud, explicitly starts a guest task, and verifies the returned PNG metadata. It works with the currently published `@deckops/sdk@0.7.3` and requires Node.js 18 or later.
 
 <Steps>
-  <Step title="Install the SDK">
+  <Step title="Prepare the project">
     ```bash
+    mkdir deckops-quickstart && cd deckops-quickstart
+    npm init -y
     npm install @deckops/sdk
     ```
   </Step>
-  <Step title="Create a client">
-    An API key is recommended for production. Omit it to use rate-limited guest mode.
+  <Step title="Create an input">
+    Save this as `sample.html`:
 
-    ```ts
+    ```html
+    <!doctype html>
+    <html><body><h1>Hello DeckOps</h1></body></html>
+    ```
+  </Step>
+  <Step title="Create the script">
+    Save this as `run.mjs`:
+
+    ```js
     import { createDeck } from '@deckops/sdk';
 
-    const deck = createDeck({
-      apiKey: process.env.DECKOPS_API_KEY,
-    });
-    ```
-  </Step>
-  <Step title="Parse a document">
-    `parseDetailed()` uploads the file, selects a parser from its extension, waits for completion, downloads the structured result, and converts it to Markdown.
+    const deck = createDeck();
+    const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
 
-    ```ts
-    const result = await deck.parseDetailed('./slides.pptx');
-
-    console.log(result.markdown);
-    console.log(result.taskId, result.type);
-    ```
-  </Step>
-  <Step title="Run a typed conversion task">
-    ```ts
-    const task = await deck.convertPptToPdf({
-      files: ['./slides.pptx'],
-      name: 'slides',
-    });
-
+    // Guest tasks remain pending until explicitly started.
+    await deck.tasks.start(task.id);
     const completed = await deck.tasks.wait(task.id, {
-      onProgress: (next) => console.log(next.status),
+      timeout: 120,
+      onProgress: (next) => console.error(next.status),
     });
-    const files = await deck.tasks.down<'convertor.ppt2pdf'>(completed.id);
+    const result = await deck.tasks.down(completed.id);
+
+    console.log(JSON.stringify({
+      taskId: completed.id,
+      type: completed.type,
+      status: completed.status,
+      result,
+    }, null, 2));
+    ```
+  </Step>
+  <Step title="Run and verify">
+    ```bash
+    node run.mjs
+    ```
+
+    A successful response has a non-empty task ID, `convertor.html2png`, `completed`, and a result tuple containing the PNG download URL, byte size, and hash:
+
+    ```json
+    {
+      "taskId": "<task-id>",
+      "type": "convertor.html2png",
+      "status": "completed",
+      "result": ["<download-url>", 8063, "<hash>"]
+    }
     ```
   </Step>
 </Steps>
 
-## Choose the next page
+Guest execution is rate-limited. Configure an API key or user token for production; authenticated tasks start automatically. See [Authentication](/deckops/authentication).
+
+<Warning>
+  The repository contains a newer Parse facade and typed Parse tasks, but the currently published `@deckops/sdk@0.7.3` artifact does not expose them. The Parse pages describe the source implementation and must not be treated as an installable npm contract until a corrected package is published.
+</Warning>
 
 <CardGroup cols={2}>
-  <Card title="Parse documents" href="/deckops/parse">
-    Compare the Markdown facade with low-level structured results.
-  </Card>
-  <Card title="Task model" href="/deckops/task-model">
-    Build reliable upload, progress, retry, and download handling.
-  </Card>
-  <Card title="TypeScript SDK" href="/deckops/sdk/typescript">
-    Configure authentication, browser uploads, and typed task helpers.
-  </Card>
-  <Card title="Task type reference" href="/deckops/reference/task-types">
-    Find the implemented task name for each operation.
-  </Card>
+  <Card title="Task model" href="/deckops/task-model">Add progress, timeout, failure, and download handling.</Card>
+  <Card title="Operations" href="/deckops/operations">Find task helpers that are available in your installed SDK.</Card>
 </CardGroup>

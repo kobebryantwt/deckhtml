@@ -1,47 +1,61 @@
 ---
 title: DeckHTML
 sidebarTitle: Overview
-description: "Convert HTML or SVG into PPTX and PNG while preserving editable presentation elements where possible."
+description: "Convert HTML or SVG into PPTX and PNG, preserving editable presentation elements where possible."
 ---
 
-DeckHTML turns browser-rendered HTML or SVG into presentation artifacts. It uses the page's computed layout, then maps each element to a native, vector, raster, ignored, or unsupported presentation representation.
+DeckHTML turns browser-laid-out HTML into PPTX or PNG. It maps text, images, tables, shapes, supported SVG, and equations to native or vector presentation elements where possible, and rasterizes content when visual fidelity is safer than editability.
+
+| | DeckHTML |
+| --- | --- |
+| Best for | HTML-native slide authoring and automated presentation generation |
+| Inputs | Local HTML or SVG, HTML from stdin, multiple ordered files, or an HTML URL |
+| Outputs | PPTX or PNG |
+| Runs | Locally with Chromium, or in Deckflow cloud |
+| Interfaces | CLI and local Node.js API |
+| Authentication | None for local mode; guest, login, or API key for cloud mode |
 
 ```mermaid
 flowchart LR
-  H["HTML or SVG"] --> B["Browser layout"]
-  B --> I["Inspect slides and elements"]
-  I --> M["Map native, vector, or raster output"]
-  M --> O["PPTX or PNG"]
-  M --> R["Report and diagnostics"]
+  H["HTML or SVG"] --> B["Chromium layout"]
+  B --> M["Native, vector, or raster mapping"]
+  M --> P["PPTX or PNG"]
+  M --> R["Diagnostics and report"]
 ```
 
-<CardGroup cols={2}>
-  <Card title="Quickstart" href="/deckhtml/quick-start">
-    Convert one HTML deck locally and inspect the output.
-  </Card>
-  <Card title="Author HTML" href="/deckhtml/reference/input-html">
-    Structure slide hosts, sizes, identities, fonts, and assets for reliable conversion.
-  </Card>
-  <Card title="CLI" href="/deckhtml/cli/overview">
-    Convert files, stdin, URLs, or ordered inputs from a terminal or CI job.
-  </Card>
-  <Card title="Node SDK" href="/deckhtml/sdk/overview">
-    Control conversion, strictness, resources, and browser execution in code.
-  </Card>
-</CardGroup>
+## When to use DeckHTML
 
-## What DeckHTML preserves
+- Generate presentations from templates, application data, or AI-authored HTML.
+- Keep supported text, shapes, tables, images, SVG geometry, and equations editable in PowerPoint.
+- Convert several local HTML/SVG files into ordered slides.
+- Produce PNG previews from the same source.
+- Inspect per-element conversion decisions in automated quality checks.
 
-DeckHTML keeps text, images, tables, many shapes, supported SVG geometry, and MathML equations editable when a stable PPTX mapping exists. Canvas charts, complex SVG, layered backgrounds, and other unsupported effects may be rasterized to preserve appearance.
-
-The conversion report makes this boundary visible per element. It should be part of automated quality checks when editability matters.
+DeckHTML is not a promise of lossless browser-to-PowerPoint conversion. Canvas, complex SVG, filters, layered effects, iframes, and unsupported CSS may be rasterized, ignored, or reported as unsupported.
 
 ## Execution modes
 
-- **Local** runs Playwright and the converter on your machine. It supports PPTX and PNG without cloud credentials.
-- **Cloud** uploads the input and runs a DeckOps conversion task. Font embedding is available only in this mode.
-- **Auto** selects cloud when credentials are configured and local otherwise.
+| Mode | Data boundary | Credentials | Notes |
+| --- | --- | --- | --- |
+| Local | Remains on your machine | None | Requires a compatible Chromium/Chrome/Edge executable |
+| Cloud | Input is uploaded to Deckflow | Guest, login, or API key | Font embedding is cloud-only |
+| Auto | Selects cloud when credentials exist, otherwise local | Depends on selected mode | Be explicit in production workflows |
 
-## Product boundary
+The Node.js API is local-only and returns buffers rather than writing files. The CLI can run locally or submit a DeckOps cloud task.
 
-DeckHTML starts from HTML or SVG. Use [DeckProbe](/deckprobe/overview) to inspect existing documents, [DeckOps](/deckops/overview) for cloud parsing and document operations, and [DeckUse](/deckuse/overview) when changes must be written back to a supported Office source file.
+## A first conversion
+
+```bash
+deckhtml deck.html -o deck.pptx --mode local --json
+```
+
+On success, the command exits with code `0`, writes the PPTX, and reports its resolved input/output paths and slide count. Follow the [Quickstart](/deckhtml/quick-start) to create a known input and verify the result.
+
+## Continue
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/deckhtml/quick-start">Install, check Chromium, and build one PPTX.</Card>
+  <Card title="Input contract" href="/deckhtml/reference/input-html">Author slides, sizes, identities, fonts, and resources.</Card>
+  <Card title="Element mapping" href="/deckhtml/guides/element-mapping">Understand editability and raster fallback.</Card>
+  <Card title="Authentication" href="/deckhtml/authentication">Configure cloud guest, login, or API-key use.</Card>
+</CardGroup>

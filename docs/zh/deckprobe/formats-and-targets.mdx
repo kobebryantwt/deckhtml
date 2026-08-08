@@ -1,0 +1,38 @@
+---
+title: 格式与 Target
+sidebarTitle: 格式与 Target
+description: "查看 DeckProbe 支持的文档类型、实现例外、Probe Level 和 Target 发现方式。"
+---
+
+DeckProbe 根据逻辑文件名选择 Driver，再检查容器和必需的内部文档类型，不会直接相信 Profile。
+
+| 类型 | Profiles | 当前事实覆盖 |
+| --- | --- | --- |
+| PDF | `.pdf` | Header、Info 元数据、页面/对象数量、xref 类型、签名、链接、附件、JavaScript、表单、批注、XMP |
+| Word OOXML | `.docx`、`.docm`、`.dotx`、`.dotm` | 元数据、保存统计、段落/表格结构、安全信号、评论、图片资源 |
+| Excel OOXML | `.xlsx`、`.xlsm`、`.xltx`、`.xltm`、`.xlsb` | 工作表、名称、可见性、共享字符串、表格、图表、Pivot、安全信号、图片资源 |
+| PowerPoint OOXML | `.pptx`、`.pptm`、`.ppsx`、`.ppsm`、`.potx`、`.potm` | 幻灯片、隐藏页、Master、Layout、备注、尺寸、图表、评论、图片、媒体、安全信号 |
+| 旧版 Office | `.doc`、`.dot`、`.xls`、`.xlt`、`.ppt`、`.pps`、`.pot` | CFB Stream、SummaryInformation、宏、嵌入对象信号、核心统计 |
+| 现代 iWork | `.key`、`.numbers`、`.pages` | IWA 身份/完整性，以及文件中存在的结构、数量、几何、公式、表格、备注、Build 或 Transition |
+
+`.xlsb` 当前只提供 Identity 级别覆盖。旧版 XML iWork 包可以被识别，但会返回结构化 `UNSUPPORTED_FORMAT` 错误。
+
+## 查询已安装版本
+
+```bash
+deckprobe formats --pretty
+deckprobe targets pdf --pretty
+deckprobe schema --pretty
+```
+
+`formats` 返回 Driver、Profile 和支持状态。`targets` 返回 Target 定义、别名、值类型、最低 Level、Selector、成本等级，以及是否适用于当前 Profile。
+
+## Probe Levels
+
+| Level | 适合场景 |
+| --- | --- |
+| `header` | 容器身份和低成本路由事实 |
+| `metadata` | 通用元数据、保存统计和主要结构 |
+| `deep` | 格式专属结构、安全、资源、完整性和高成本 Path |
+
+只请求应用真正需要的 Target。更高 Level 只会扩大可用 Path，不会把 DeckProbe 变成完整内容 Parser。

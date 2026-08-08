@@ -1,27 +1,63 @@
 ---
 title: DeckUse
 sidebarTitle: Overview
-description: "Manipulate supported Office source files through a source-aware document model."
+description: "Inspect and update existing PPTX files locally with selectors, a workspace workflow, and an editable PPTX result."
 ---
 
-DeckUse is the Manipulate layer of the Deckflow stack. It operates on supported Office source files when the document must remain editable in its original format.
+DeckUse performs focused, file-native changes to an existing PowerPoint presentation. It opens a PPTX as a temporary or persistent workspace, resolves selectors against slides and shapes, updates supported properties, and packages the workspace as another editable PPTX.
 
-## Current focus
+| Item | Current contract |
+| --- | --- |
+| Input | One `.pptx` file or initialized DeckUse workspace |
+| Output | Updated `.pptx` file; read commands print structural information |
+| Execution | Local Node.js process; no file upload and no authentication |
+| Interfaces | Verified `deckuse` CLI; Node.js API source exists but the `0.2.0` ESM build has a runtime import issue |
+| Runtime | Node.js 18 or later; `zip` and `unzip` commands for workspace packaging |
 
-The current implementation focus is Office PPTX. It supports element-level operations such as modifying and deleting existing presentation objects.
+## Use DeckUse for
 
-## Use DeckUse when
+- Listing slides and inspecting slide structure.
+- Reading text through slide, shape, text, or canonical ID-path selectors.
+- Setting paragraph text or replacing text globally or on one slide.
+- Moving selected slide shapes using normalized `left` and `top` positions.
+- Keeping a workspace for several changes before committing one output file.
 
-- The Office file remains the system of record and final editable artifact.
-- A workflow must update or remove existing elements rather than generate a derived representation.
-- Changes need to respect source-format structures and relationships.
+```text
+input.pptx → open or initialize workspace → select existing content → change → commit → updated.pptx
+```
 
-## Product boundary
+<Warning>
+  The current release is PPTX-only. It does not expose commands to add or delete slides or elements, and it does not edit DOCX, XLSX, or Keynote files. Preserve the original file and verify the output in PowerPoint or another compatible application.
+</Warning>
 
-Use [DeckOps](/deckops/overview) to Parse heterogeneous formats into Document IR, Extract semantic structure, Convert formats, or Render through the combined runtime. Use DeckUse when the operation is explicitly a source-aware Office manipulation.
+## Two working modes
 
-DeckUse does not replace [DeckHTML](/deckhtml/overview), which starts from HTML as the native authoring source for a deck.
+<CardGroup cols={2}>
+  <Card title="Direct file mode" href="/deckuse/quick-start">
+    Pass a `.pptx` to a read command, or pass `-o updated.pptx` to a write command. DeckUse creates and removes a temporary workspace automatically.
+  </Card>
+  <Card title="Persistent workspace" href="/deckuse/workspace">
+    Initialize a `.deck` directory, make several changes, inspect status, then commit once.
+  </Card>
+</CardGroup>
 
-<Note>
-  Supported Office formats, element models, mutation guarantees, and package details will be added when the DeckUse project contracts are available.
-</Note>
+## Choose the next step
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/deckuse/quick-start">
+    Inspect and replace text in a PPTX, then verify the generated file.
+  </Card>
+  <Card title="CLI" href="/deckuse/cli">
+    Review every implemented command and its output behavior.
+  </Card>
+  <Card title="Selectors" href="/deckuse/selectors">
+    Target slides, text, shapes, and canonical paragraph IDs.
+  </Card>
+  <Card title="Node.js API status" href="/deckuse/sdk">
+    Review source exports and the current published ESM blocker.
+  </Card>
+</CardGroup>
+
+Use [DeckOps](/deckops/overview) for parsing, extraction, or derived cloud results. Use [DeckHTML](/deckhtml/overview) when HTML is the authoring source for a new deck.
+
+DeckUse is open source. See the [DeckUse repository](https://github.com/deckflow/deckuse) for releases and implementation details.

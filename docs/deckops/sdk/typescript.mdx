@@ -43,3 +43,7 @@ const result = await deck.tasks.down<'convertor.ppt2pdf'>(done.id);
 ```
 
 Use `parse()` for Markdown, `parseDetailed()` for Markdown plus task metadata, or low-level parse helpers for structured results.
+
+<Warning>
+  Some published `0.7.3` artifacts predate the Parse facade even though the repository package version is unchanged. Check `typeof deck.parseDetailed === 'function'` before using it. If it is absent, use the low-level `pdf.parse`, `pptx.parse`, `docx.parseTextAndImage`, or `keynote.parseTextAndImage` task flow shown in the [Quickstart](/deckops/quick-start), or upgrade after a newer artifact is published.
+</Warning>

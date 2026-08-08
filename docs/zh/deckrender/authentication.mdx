@@ -1,0 +1,59 @@
+---
+title: 认证
+sidebarTitle: 认证
+description: "使用 DeckRender 访客模式、浏览器登录、API Key，并诊断凭证选择。"
+---
+
+DeckRender 不要求首次云端渲染前配置凭证。访客任务存在限频，并由 DeckRender 显式启动。生产额度或私有 Workspace 建议使用认证模式。
+
+## 浏览器登录
+
+```bash
+deckrender auth login
+deckrender auth status
+```
+
+登录会打开 Deckflow 授权页面，并把返回的 Token 保存到 `~/.deckflow/credentials`。`auth status` 会向服务端验证当前有效凭证，并显示凭证来源。
+
+## API Key
+
+```bash
+deckrender config set api-key YOUR_API_KEY
+deckrender auth status
+```
+
+CI 或容器中建议使用环境变量，不写入凭证文件：
+
+```bash
+export DECKFLOW_API_KEY='YOUR_API_KEY'
+deckrender hello.html -o hello.png --json --quiet
+```
+
+`DECKRENDER_API_KEY` 的优先级高于 `DECKFLOW_API_KEY`；为兼容已有环境，也会读取 `DECKHTML_API_KEY`。
+
+## 凭证解析
+
+每个字段独立按以下顺序解析：
+
+1. Node.js Renderer 显式选项。
+2. DeckRender 或 Deckflow 环境变量。
+3. `~/.deckflow/credentials`。
+4. 只读的 `~/.deckops/config.json`。
+5. 内置 API 地址默认值。
+
+运行 `deckrender config list` 可以查看脱敏后的有效值和来源。
+
+## 退出登录与回退凭证
+
+```bash
+deckrender auth logout
+deckrender config list
+```
+
+退出登录只会删除 Deckflow 共享文件中的凭证。环境变量或 DeckOps 配置中的 Token 仍然可能让后续调用处于认证状态，请通过 `config list` 确认最终来源。
+
+<Warning>
+  JSON、CI 和其他非交互式调用收到 `401` 后不会打开浏览器。请在任务开始前配置 API Key 或 Token。
+</Warning>
+
+格式、Profile、宽度和超时等渲染默认值请查看[配置](/zh/deckrender/configuration)。

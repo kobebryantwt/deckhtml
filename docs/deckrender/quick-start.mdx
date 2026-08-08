@@ -1,64 +1,96 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: "Install DeckRender, verify the CLI, and render a document into page images."
+description: "Install DeckRender, create an HTML input, render a PNG in guest mode, and verify the artifact and JSON result."
 ---
 
-DeckRender requires Node.js 18 or later. You can run it without a global installation or install the command once.
+This example creates its own input and runs through a Deckflow cloud render in guest mode. The HTML source is uploaded for processing; no account is required for the first request.
 
 <Steps>
-  <Step title="Run or install DeckRender">
-    <Tabs>
-      <Tab title="Run with npx">
-        ```bash
-        npx -y @deckflow/deckrender@latest --version
-        ```
-      </Tab>
-      <Tab title="Install globally">
-        ```bash
-        npm install -g @deckflow/deckrender
-        deckrender --version
-        ```
-      </Tab>
-    </Tabs>
-  </Step>
-  <Step title="Render every slide">
+  <Step title="Check Node.js">
+    DeckRender requires Node.js 18 or later.
+
     ```bash
-    deckrender presentation.pptx
-    ```
-
-    With no `--output`, a multi-page image render creates a directory beside the input:
-
-    ```text
-    presentation/
-    ├── 001.png
-    ├── 002.png
-    └── 003.png
+    node --version
     ```
   </Step>
-  <Step title="Choose another result">
+  <Step title="Install and verify the CLI">
     ```bash
-    deckrender presentation.pptx -o presentation.pdf
-    deckrender presentation.pptx --pages 1-3 --image-format webp -o preview/
-    deckrender page.html -o screenshot.png
-    ```
-  </Step>
-  <Step title="Read a machine result">
-    ```bash
-    deckrender presentation.pptx --json | jq -r '.outputs[].file'
+    npm install -g @deckflow/deckrender
+    deckrender --version
+    deckrender formats
+    deckrender config list
     ```
 
-    `--json` writes the result to stdout. Progress and warnings stay on stderr, so the output can be piped safely.
+    Check the credential source shown by `config list`. DeckRender can inherit a token from DeckOps; an expired fallback token will cause `auth_error` instead of guest execution.
+  </Step>
+  <Step title="Create a known input">
+    Save this as `hello.html`:
+
+    ```html
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <style>
+          body { margin: 0; font: 48px system-ui; }
+          main { padding: 64px; background: #f4f7ff; }
+        </style>
+      </head>
+      <body><main>Hello DeckRender</main></body>
+    </html>
+    ```
+  </Step>
+  <Step title="Render one PNG">
+    ```bash
+    deckrender hello.html -o hello.png --json
+    ```
+  </Step>
+  <Step title="Verify the artifact and result">
+    A successful command exits `0`, writes `hello.png`, and prints a result shaped like:
+
+    ```json
+    {
+      "ok": true,
+      "input": "hello.html",
+      "format": "image",
+      "engine": "cloud",
+      "route": ["convertor.html2png"],
+      "pages": 1,
+      "outputs": [
+        {
+          "page": 1,
+          "file": "hello.png",
+          "bytes": 18432
+        }
+      ],
+      "durationMs": 3200
+    }
+    ```
+
+    Byte count and duration vary. Verify the file separately in automation:
+
+    ```bash
+    test -s hello.png
+    ```
+
+    In PowerShell, use `if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }`.
   </Step>
 </Steps>
 
-No credential is required for the first render. Guest requests are quota-limited; use [authentication and configuration](/deckrender/configuration) when an application needs authenticated access or persistent defaults.
+Guest rendering is quota-limited. If the command returns `auth_error`, run `deckrender auth status` to inspect the selected credential. Sign in or configure an API key and retry; an expired environment variable or DeckOps fallback credential can override guest mode. See [Authentication](/deckrender/authentication).
 
 <CardGroup cols={2}>
-  <Card title="Supported formats" href="/deckrender/formats">
-    Verify that the requested source and output pair has an implemented route.
+  <Card title="Render another format" href="/deckrender/formats">
+    Find the supported image, PDF, and video route for your source.
   </Card>
-  <Card title="CLI output rules" href="/deckrender/cli/overview">
-    Control files, directories, ZIP archives, stdout, sizing, and page ranges.
+  <Card title="Control output" href="/deckrender/cli/overview">
+    Write numbered frames, ZIP files, raw stdout, page ranges, and profiles.
+  </Card>
+  <Card title="Automate safely" href="/deckrender/cli/automation">
+    Separate stdout from diagnostics and branch on stable error codes.
+  </Card>
+  <Card title="Use Node.js" href="/deckrender/sdk/node">
+    Reuse a renderer, listen for progress, or inject a custom engine.
   </Card>
 </CardGroup>

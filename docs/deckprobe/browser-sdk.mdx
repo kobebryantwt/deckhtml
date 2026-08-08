@@ -1,10 +1,14 @@
 ---
 title: DeckProbe Browser SDK
-sidebarTitle: Browser SDK
+sidebarTitle: Browser SDK (Source)
 description: "Install the DeckProbe npm package and probe local browser files through WebAssembly on the main thread or in a Worker."
 ---
 
 The `@deckflow/deckprobe` package runs the same target-driven Rust engine in WebAssembly. It accepts `File`, `Blob`, `ArrayBuffer`, and `Uint8Array`; document bytes remain in the browser.
+
+<Warning>
+  Source contract only for the current release: `@deckflow/deckprobe@2.3.0` was published without the required `dist/` and `wasm/` files, so these imports fail. Use the CLI until a corrected npm artifact is available.
+</Warning>
 
 ## Install
 
@@ -40,6 +44,8 @@ const report = await probe(bytes, {
 });
 ```
 
+`initDeckProbe()` configuration is applied only on the first initialization. Configure a custom runtime before the first call to `probe()`.
+
 ## Probe in a Worker
 
 Use the Worker entry for user-provided files, large inputs, or deep probes that should not occupy the UI thread:
@@ -67,15 +73,35 @@ The main SDK entry exports `formats()`, `targets(format)`, `schema()`, and `vers
 ```ts
 import { formats, schema, targets, version } from "@deckflow/deckprobe";
 
-const engineVersion = version();
-const supportedFormats = formats();
-const pdfTargets = targets("pdf");
-const reportSchema = schema();
+const engineVersion = await version();
+const supportedFormats = await formats();
+const pdfTargets = await targets("pdf");
+const reportSchema = await schema();
 ```
 
-Use these functions to populate format and target selectors, validate responses against the bundled contract, and display the active engine version.
+All discovery functions are asynchronous. Use them to populate format and target selectors, validate responses against the bundled contract, and display the active engine version.
+
+## Vite development configuration
+
+Exclude DeckProbe from Vite dependency pre-bundling. Without this setting the WebAssembly wrapper can be moved away from its `.wasm` file during development, causing a 404 or an HTML response where WebAssembly bytes are expected.
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  optimizeDeps: {
+    exclude: ['@deckflow/deckprobe'],
+  },
+});
+```
+
+This applies to both the main-thread and Worker entries.
+
+<Tip>
+  `File` and `Blob` inputs are materialized in WebAssembly memory. Move larger files and deep probes into a Worker to keep the UI responsive.
+</Tip>
 
 ## Continue with the report
 
 Both the main-thread and Worker APIs return the same Schema v2 report. See [Output Model](/deckprobe/output-model) for report shapes, target statuses, evidence, and execution costs.
-

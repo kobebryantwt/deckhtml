@@ -47,7 +47,7 @@ const result = await deck.tasks.down(done.id);
 - `apiKey`：作为 `Authorization: Bearer <apiKey>` 发送
 - `spaceId`：作为上传和任务的默认工作空间
 
-没有设置 `spaceId` 时，SDK 会通过当前用户接口解析。Token 和 API Key 都为空时可使用访客模式，但会受到服务端限制。
+没有设置 `spaceId` 时，SDK 会通过当前用户接口解析。Token 和 API Key 都为空时可使用访客模式，但会受到服务端限制。游客创建的底层任务会保持 `pending`，直到客户端调用 `tasks.start(task.id)`；已认证任务会自动启动。各 SDK 支持情况见[认证](/zh/deckops/authentication)。
 
 ## 通用任务 API
 
@@ -59,6 +59,9 @@ const task = await deck.tasks.create({
   files: ['./slides.pptx'],
   params: {},
 });
+
+// 仅游客客户端需要；已认证任务会自动启动。
+await deck.tasks.start(task.id);
 ```
 
 任务 API 还提供 `list`、`get`、`start`、`delete`、`wait`、`subscribe` 和 `down`。

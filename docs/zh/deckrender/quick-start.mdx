@@ -1,64 +1,96 @@
 ---
 title: 快速开始
 sidebarTitle: 快速开始
-description: "安装 DeckRender、验证 CLI，并把文档渲染为页面图片。"
+description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 PNG，并验证产物和 JSON 结果。"
 ---
 
-DeckRender 需要 Node.js 18 或更高版本。可以直接运行，无需全局安装；也可以一次安装后持续使用命令。
+本示例会创建自己的输入，并通过 Deckflow 云端访客模式完成渲染。HTML 源文件会被上传处理；首次请求不需要账号。
 
 <Steps>
-  <Step title="运行或安装 DeckRender">
-    <Tabs>
-      <Tab title="使用 npx 直接运行">
-        ```bash
-        npx -y @deckflow/deckrender@latest --version
-        ```
-      </Tab>
-      <Tab title="全局安装">
-        ```bash
-        npm install -g @deckflow/deckrender
-        deckrender --version
-        ```
-      </Tab>
-    </Tabs>
-  </Step>
-  <Step title="渲染全部幻灯片">
+  <Step title="检查 Node.js">
+    DeckRender 需要 Node.js 18 或更高版本。
+
     ```bash
-    deckrender presentation.pptx
-    ```
-
-    未指定 `--output` 时，多页图片会写入源文件旁的同名目录：
-
-    ```text
-    presentation/
-    ├── 001.png
-    ├── 002.png
-    └── 003.png
+    node --version
     ```
   </Step>
-  <Step title="生成其他结果">
+  <Step title="安装并验证 CLI">
     ```bash
-    deckrender presentation.pptx -o presentation.pdf
-    deckrender presentation.pptx --pages 1-3 --image-format webp -o preview/
-    deckrender page.html -o screenshot.png
-    ```
-  </Step>
-  <Step title="读取机器可解析结果">
-    ```bash
-    deckrender presentation.pptx --json | jq -r '.outputs[].file'
+    npm install -g @deckflow/deckrender
+    deckrender --version
+    deckrender formats
+    deckrender config list
     ```
 
-    `--json` 把结果写入 stdout，进度与警告保留在 stderr，因此可以安全地通过管道处理。
+    检查 `config list` 显示的凭证来源。DeckRender 可能继承 DeckOps Token；已过期的回退 Token 会返回 `auth_error`，而不是进入游客模式。
+  </Step>
+  <Step title="创建已知输入">
+    保存为 `hello.html`：
+
+    ```html
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <style>
+          body { margin: 0; font: 48px system-ui; }
+          main { padding: 64px; background: #f4f7ff; }
+        </style>
+      </head>
+      <body><main>Hello DeckRender</main></body>
+    </html>
+    ```
+  </Step>
+  <Step title="渲染一张 PNG">
+    ```bash
+    deckrender hello.html -o hello.png --json
+    ```
+  </Step>
+  <Step title="验证产物和结果">
+    成功命令的退出码为 `0`，会写入 `hello.png`，并输出类似以下结构的结果：
+
+    ```json
+    {
+      "ok": true,
+      "input": "hello.html",
+      "format": "image",
+      "engine": "cloud",
+      "route": ["convertor.html2png"],
+      "pages": 1,
+      "outputs": [
+        {
+          "page": 1,
+          "file": "hello.png",
+          "bytes": 18432
+        }
+      ],
+      "durationMs": 3200
+    }
+    ```
+
+    字节数和耗时会变化。自动化流程还应单独检查文件：
+
+    ```bash
+    test -s hello.png
+    ```
+
+    PowerShell 中使用 `if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }`。
   </Step>
 </Steps>
 
-首次渲染不要求凭证。访客请求存在额度限制；应用需要认证访问或持久化默认参数时，请继续阅读[认证与配置](/zh/deckrender/configuration)。
+访客渲染存在额度限制。如果命令返回 `auth_error`，先运行 `deckrender auth status` 检查实际选中的凭证，再登录或配置 API Key 后重试。已过期的环境变量或 DeckOps 回退凭证可能会覆盖游客模式。详见[认证](/zh/deckrender/authentication)。
 
 <CardGroup cols={2}>
-  <Card title="支持的格式" href="/zh/deckrender/formats">
-    确认目标输入输出组合已经实现。
+  <Card title="渲染其他格式" href="/zh/deckrender/formats">
+    查询源格式对应的图片、PDF 和视频路径。
   </Card>
-  <Card title="CLI 输出规则" href="/zh/deckrender/cli/overview">
-    配置文件、目录、ZIP、标准输出、尺寸和页面范围。
+  <Card title="控制输出" href="/zh/deckrender/cli/overview">
+    写出连续图片、ZIP、原始 stdout、页面范围和 Profile。
+  </Card>
+  <Card title="稳定自动化" href="/zh/deckrender/cli/automation">
+    分离 stdout 与诊断，并根据稳定错误码处理失败。
+  </Card>
+  <Card title="使用 Node.js" href="/zh/deckrender/sdk/node">
+    复用 Renderer、监听进度或注入自定义 Engine。
   </Card>
 </CardGroup>

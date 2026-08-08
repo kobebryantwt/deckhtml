@@ -1,0 +1,44 @@
+---
+title: Workspace Workflow
+sidebarTitle: Workspace Workflow
+description: "Initialize, inspect, update, validate, and commit a persistent DeckUse PPTX workspace."
+---
+
+A persistent workspace is useful when several commands will update the same PPTX. DeckUse extracts the package, stores parsed presentation metadata under `.deckuse/metadata.json`, applies changes to the extracted OOXML files, and rebuilds a PPTX at commit time.
+
+```bash
+deckuse init input.pptx --dir working.deck
+deckuse status working.deck
+deckuse get text working.deck 'slide:1/text'
+deckuse replace working.deck '2025' '2026'
+deckuse set text working.deck 'slide:1/#22/p:0' 'Updated title'
+deckuse commit working.deck -o updated.pptx
+```
+
+## Workspace contents
+
+```text
+working.deck/
+├── [Content_Types].xml
+├── _rels/
+├── docProps/
+├── ppt/
+└── .deckuse/
+    └── metadata.json
+```
+
+Do not edit or remove `.deckuse/metadata.json`; selectors resolve against its cached presentation structure. `commit` validates the workspace metadata and basic package structure before creating the output.
+
+## Direct mode versus workspace mode
+
+| Behavior | Direct `.pptx` input | Persistent workspace |
+| --- | --- | --- |
+| Extraction | Temporary for every command | Once during `init` |
+| Read commands | Supported | Supported |
+| Write commands | Require `-o` | Modify workspace; `-o` is optional |
+| Final file | Written by each write command | Written by `commit` or optional `-o` |
+| Best for | One inspection or change | Several related changes |
+
+<Warning>
+  Workspace validation checks DeckUse metadata and basic package files; it is not a visual or full OOXML conformance test. Always retain the original PPTX and inspect the committed result.
+</Warning>

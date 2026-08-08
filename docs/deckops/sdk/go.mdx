@@ -1,12 +1,17 @@
 ---
-title: Go SDK
-sidebarTitle: Go
+title: Go SDK from Source
+sidebarTitle: Go (Source)
 description: "Use the DeckOps Go SDK for task, upload, parse, and result workflows."
 ---
 
-```bash
-go get github.com/deckops/deckops/sdks/go
+The Go SDK is implemented in `deckflow/deckops`, but its declared module path currently points to `github.com/deckops/deckops/sdks/go`, which is not a fetchable repository. Check out a reviewed revision locally and add a temporary `replace` directive:
+
+```go
+require github.com/deckops/deckops/sdks/go v0.0.0
+replace github.com/deckops/deckops/sdks/go => ../deckops/sdks/go
 ```
+
+Remove the local replacement after a corrected module is published.
 
 ```go
 package main

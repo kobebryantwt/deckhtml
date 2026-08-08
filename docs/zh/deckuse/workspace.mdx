@@ -1,0 +1,44 @@
+---
+title: Workspace 工作流
+sidebarTitle: Workspace 工作流
+description: "初始化、检查、修改、校验并提交持久化的 DeckUse PPTX Workspace。"
+---
+
+需要使用多个命令修改同一个 PPTX 时，适合使用持久化 Workspace。DeckUse 会解包文件，在 `.deckuse/metadata.json` 中保存解析后的演示文稿元数据，把修改写入解包后的 OOXML 文件，并在 Commit 时重新生成 PPTX。
+
+```bash
+deckuse init input.pptx --dir working.deck
+deckuse status working.deck
+deckuse get text working.deck 'slide:1/text'
+deckuse replace working.deck '2025' '2026'
+deckuse set text working.deck 'slide:1/#22/p:0' 'Updated title'
+deckuse commit working.deck -o updated.pptx
+```
+
+## Workspace 内容
+
+```text
+working.deck/
+├── [Content_Types].xml
+├── _rels/
+├── docProps/
+├── ppt/
+└── .deckuse/
+    └── metadata.json
+```
+
+不要修改或删除 `.deckuse/metadata.json`，Selector 会根据其中缓存的演示文稿结构进行定位。`commit` 会在生成输出前校验 Workspace 元数据和基本包结构。
+
+## 直接模式与 Workspace 模式
+
+| 行为 | 直接传入 `.pptx` | 持久化 Workspace |
+| --- | --- | --- |
+| 解包 | 每条命令临时执行 | `init` 时执行一次 |
+| 读取命令 | 支持 | 支持 |
+| 写命令 | 必须传入 `-o` | 修改 Workspace；`-o` 可选 |
+| 最终文件 | 每条写命令生成 | 由 `commit` 或可选的 `-o` 生成 |
+| 适合场景 | 一次检查或修改 | 多个相关修改 |
+
+<Warning>
+  Workspace 校验只检查 DeckUse 元数据和基本包文件，并不是视觉检查或完整 OOXML 一致性测试。请始终保留源 PPTX，并检查 Commit 后的结果。
+</Warning>

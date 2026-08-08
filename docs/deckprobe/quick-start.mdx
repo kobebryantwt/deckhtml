@@ -1,84 +1,97 @@
 ---
 title: DeckProbe Quickstart
 sidebarTitle: Quickstart
-description: "Try DeckProbe in the browser or install, verify, and run the native CLI."
+description: "Install DeckProbe, download a sample PDF, request two facts, and verify a Schema v2 result."
 ---
 
-## Try it online
+This path uses the native CLI. It runs entirely on your machine and requires no account or API key.
 
-<Card title="Open Deck Playground ↗" href="https://deckflow.github.io/playground/">
-  View a document profile and page preview directly in the browser.
-</Card>
+<Steps>
+  <Step title="Install a prebuilt release">
+    <Tabs>
+      <Tab title="macOS and Linux">
+        ```bash
+        curl --proto '=https' --tlsv1.2 -LsSf \
+          https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+        ```
+      </Tab>
+      <Tab title="Windows PowerShell">
+        ```powershell
+        powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+        ```
 
-
-## Install a prebuilt release
-
-The installer selects the archive for the current operating system and CPU.
-
-<Tabs>
-  <Tab title="macOS">
+        Restart the shell if the installer changes the user `Path`.
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Verify the executable">
     ```bash
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    deckprobe --version
+    deckprobe --help
     ```
-  </Tab>
-  <Tab title="Linux">
+
+    Source installation is also available with Rust 1.88 or later:
+
     ```bash
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
     ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+  </Step>
+  <Step title="Download a known input">
+    ```bash
+    curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf \
+      -o sample.pdf
+    ```
+  </Step>
+  <Step title="Request format and page count">
+    ```bash
+    deckprobe \
+      --targets format,page_count \
+      --view values \
+      --pretty \
+      sample.pdf
+    ```
+  </Step>
+  <Step title="Verify the result">
+    A successful values report has exit status `0`, `schema_version: 2`, a PDF driver, and a `values` map similar to:
+
+    ```json
+    {
+      "schema_version": 2,
+      "tool_version": "2.3.0",
+      "status": "ok",
+      "view": "values",
+      "driver": {
+        "id": "pdf",
+        "profile": "pdf"
+      },
+      "values": {
+        "document.format": "pdf",
+        "pdf.page_count": 1
+      },
+      "unresolved_targets": [],
+      "diagnostics": []
+    }
     ```
 
-    Restart the shell if the installer updates the user `Path`.
-  </Tab>
-</Tabs>
+    The full result also includes `input`; additional fields can appear when targets are satisfied opportunistically.
+  </Step>
+</Steps>
 
-## Or install from source
+<Tip>
+  Run `deckprobe targets pdf --pretty` before hard-coding format-specific targets. Use `--strict` when unresolved requested targets must produce a non-zero exit status.
+</Tip>
 
-Source installation requires Rust 1.88 or newer and Git:
-
-```bash
-cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
-```
-
-## Verify the installation
-
-Confirm that the executable is available:
-
-```bash
-deckprobe --version
-```
-
-For a compact option list or the full built-in help:
-
-```bash
-deckprobe -h
-deckprobe --help
-```
-
-## Probe a document
-
-Run the default metadata-level probe:
-
-```bash
-deckprobe --pretty report.pdf
-```
-
-Request only the facts your workflow needs:
-
-```bash
-deckprobe --pretty -t format,slide_count deck.pptx
-```
-
-The command writes a Schema v2 JSON report containing the selected driver, target results, confidence, evidence paths, diagnostics, and measured execution cost.
-
-## Next steps
-
-- Read [Output Model](/deckprobe/output-model) before consuming reports in automation.
-- Read the [CLI guide](/deckprobe/cli) for target selectors, JSONL, output behavior, and resource budgets.
-- Read the [Browser SDK guide](/deckprobe/browser-sdk) for browser inputs, WebAssembly initialization, and Worker usage.
-- See the repository's [installation guide](https://github.com/deckflow/deckprobe/blob/main/docs/INSTALLATION.md) for custom locations, upgrades, and uninstallation.
+<CardGroup cols={2}>
+  <Card title="Output model" href="/deckprobe/output-model">
+    Consume evidence, confidence, diagnostics, compact values, and errors safely.
+  </Card>
+  <Card title="CLI guide" href="/deckprobe/cli">
+    Add stdin, JSONL, selectors, budgets, plan-only mode, and automation behavior.
+  </Card>
+  <Card title="Browser SDK status" href="/deckprobe/browser-sdk">
+    Review the source API and current npm publication blocker.
+  </Card>
+  <Card title="Node.js API status" href="/deckprobe/node-sdk">
+    Review the source API and current npm publication blocker.
+  </Card>
+</CardGroup>

@@ -1,175 +1,67 @@
 ---
 title: Getting Started
 sidebarTitle: Getting Started
-description: "Review the minimum setup, invocation, and result for each Deckflow capability."
+description: "Compare the minimum input, command, and verified result for every Deckflow product."
 ---
 
-Use this page to identify the shortest verified path to a first result. Product pages contain the complete options and contracts.
+Each product solves a different document task. Start with the result you need, then follow the linked quickstart for prerequisites, a known input, expected output, and failure guidance.
 
-## DeckProbe
+| Product | First result | Runs | Credentials |
+| --- | --- | --- | --- |
+| DeckProbe | Schema v2 facts about a document | Local | None |
+| DeckRender | PNG, PDF, or supported video render | Mostly cloud | Guest or authenticated |
+| DeckOps | Markdown, structured parse data, or converted artifact | Cloud | API key/token recommended |
+| DeckUse | Updated PPTX | Local | None |
+| DeckHTML | PPTX or PNG from HTML | Local or cloud | None locally |
 
-Inspect a document locally and receive a Schema v2 JSON report.
-
-### Install
-
-<Tabs>
-  <Tab title="macOS and Linux">
-    ```bash
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
-    ```
-  </Tab>
-</Tabs>
-
-### Use
+## DeckProbe: inspect a known PDF
 
 ```bash
-deckprobe --pretty -t format,slide_count deck.pptx
+curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+deckprobe -t format,page_count --view values --pretty sample.pdf
 ```
 
-### Result
+Success means exit code `0`, `schema_version: 2`, driver `pdf`, and resolved values for `document.format` and `pdf.page_count`. Install the native CLI and see the exact response in the [DeckProbe Quickstart](/deckprobe/quick-start).
 
-```json
-{
-  "schema_version": 2,
-  "tool_version": "2.2.0",
-  "status": "ok",
-  "input": {
-    "display_name": "deck.pptx",
-    "source_kind": "local_file",
-    "file_size": 245760
-  },
-  "driver": {
-    "id": "powerpoint",
-    "profile": "pptx"
-  },
-  "results": {
-    "powerpoint.slide_count": {
-      "target": "powerpoint.slide_count",
-      "status": "resolved",
-      "value": 31,
-      "confidence": "exact",
-      "confidence_score": 1,
-      "path": "powerpoint.presentation_xml",
-      "source": "ppt/presentation.xml"
-    }
-  },
-  "execution": {
-    "probe_level": "metadata",
-    "paths": ["powerpoint.presentation_xml"],
-    "estimated_cost": 12,
-    "actual_cost": {
-      "physical_bytes_read": 4096,
-      "expanded_bytes": 16384,
-      "random_reads": 2
-    },
-    "unresolved_targets": []
-  },
-  "diagnostics": []
-}
-```
-
-Values and costs in this example are illustrative; the field names follow the Schema v2 contract. Continue with the [DeckProbe Quickstart](/deckprobe/quick-start) or [Output Model](/deckprobe/output-model).
-
-## DeckHTML
-
-Generate a PPTX file from an HTML source file.
-
-### Prepare
-
-Save the following as `index.html`:
-
-```html
-<!doctype html>
-<html>
-  <body>
-    <section>
-      <h1>Hello DeckHTML</h1>
-      <p>My first generated slide.</p>
-    </section>
-  </body>
-</html>
-```
-
-### Use
-
-Run the package directly without a global installation:
+## DeckRender: create a PNG
 
 ```bash
-npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+npm install -g @deckflow/deckrender
+deckrender hello.html -o hello.png --json
+test -s hello.png
 ```
 
-### Result
+The command uploads the HTML to Deckflow cloud, writes `hello.png`, and returns a `RenderResult` containing `ok`, route, page count, output path, bytes, and duration. Create the HTML input and review guest limits in the [DeckRender Quickstart](/deckrender/quick-start).
 
-The command writes `deck.pptx`. Add `--json` when the calling process needs structured command output:
-
-```bash
-npx -y @deckflow/deckhtml@latest index.html -o deck.pptx --json
-```
-
-Continue with the [DeckHTML Quickstart](/deckhtml/quick-start), [CLI](/deckhtml/cli/overview), or [Node.js SDK](/deckhtml/sdk/node).
-
-## DeckOps
-
-Install the TypeScript SDK and parse a supported document into Markdown:
+## DeckOps: run a cloud task
 
 ```bash
 npm install @deckops/sdk
+node run.mjs
 ```
 
-```ts
-import { createDeck } from '@deckops/sdk';
+The script in the [DeckOps Quickstart](/deckops/quick-start) creates a known HTML file, uploads it, starts a guest `convertor.html2png` task, and prints the completed task and PNG download metadata. The current npm artifact does not yet expose the repository's newer Parse facade.
 
-const deck = createDeck({ apiKey: process.env.DECKOPS_API_KEY });
-const result = await deck.parseDetailed('./slides.pptx');
-
-console.log(result.markdown);
-console.log(result.taskId, result.type);
-```
-
-Continue with the [DeckOps Quickstart](/deckops/quick-start), [Task Model](/deckops/task-model), or [Structured Results](/deckops/structured-results).
-
-## DeckRender
-
-Run the package without a global installation and render every slide to PNG:
+## DeckUse: update an existing PPTX
 
 ```bash
-npx -y @deckflow/deckrender@latest presentation.pptx
+npm install -g deckuse
+deckuse replace input.pptx '2025' '2026' -o updated.pptx
+deckuse get text updated.pptx "text[contains('2026')]"
 ```
 
-For a multi-page image render, the result is a numbered directory:
+DeckUse works locally and currently supports modifying existing PPTX content. It does not add or delete elements and does not support other Office formats. Follow the [DeckUse Quickstart](/deckuse/quick-start) to inspect selectors and verify the output.
 
-```text
-presentation/
-├── 001.png
-├── 002.png
-└── 003.png
-```
-
-Choose a different artifact from the output path, or add `--json` for an automation-safe result:
+## DeckHTML: generate a PPTX locally
 
 ```bash
-npx -y @deckflow/deckrender@latest presentation.pptx -o presentation.pdf
-npx -y @deckflow/deckrender@latest presentation.pptx --json
+npm install -g @deckflow/deckhtml
+deckhtml deck.html -o deck.pptx --mode local --json --quiet
+test -s deck.pptx
 ```
 
-Continue with the [DeckRender Quickstart](/deckrender/quick-start), [Supported Formats](/deckrender/formats), or [Node.js SDK](/deckrender/sdk/node).
+The command uses local Chromium and returns normalized paths, output format, execution mode, and slide count. Prepare the browser and a slide-sized HTML source in the [DeckHTML Quickstart](/deckhtml/quick-start).
 
-## DeckUse
-
-<CardGroup cols={1}>
-  <Card title="DeckUse" href="/deckuse/overview">
-    **Input:** supported Office source file
-
-    **Use:** modify or delete existing elements
-
-    **Result:** updated editable Office file
-  </Card>
-</CardGroup>
-
-If more than one capability appears to fit, compare the boundaries in [Choose a product](/product-guide).
+<Tip>
+  Still deciding? [Choose a product](/product-guide) compares common goals, execution boundaries, and current format limitations.
+</Tip>

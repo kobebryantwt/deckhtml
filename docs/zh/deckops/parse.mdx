@@ -6,6 +6,10 @@ description: "将支持的文档格式解析为结构化结果或归一化 Markd
 
 DeckOps 提供两个层级的解析接口：
 
+<Warning>
+  本页描述当前仓库源码实现。已发布的 `@deckops/sdk@0.7.3` 产物不包含下文的 Parse Facade、类型化 Parse 方法或 Parse 任务类型。软件包修正前，只能在经过验证的源码构建中使用这些接口。
+</Warning>
+
 | 接口 | 返回结果 | 适用场景 |
 | --- | --- | --- |
 | `deck.parse()` | Markdown 字符串 | 搜索、摘要、索引或大模型输入只需要便于消费的文本表示 |

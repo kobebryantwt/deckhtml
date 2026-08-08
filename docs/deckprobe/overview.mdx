@@ -1,79 +1,68 @@
 ---
 title: DeckProbe
 sidebarTitle: Overview
-description: "Inspect untrusted PDF, Microsoft Office, and modern Apple iWork documents without rendering them or opening the corresponding desktop applications."
+description: "Inspect document identity, metadata, structure, security, and asset facts locally without rendering or opening Office applications."
 ---
 
-DeckProbe is a target-driven document inspection engine available as a native Rust CLI and a Browser JavaScript SDK. It inspects untrusted documents without rendering them and without starting Microsoft Office, Apple iWork, or another desktop office suite.
+DeckProbe answers targeted questions about an existing document without rendering it, running macros, or launching Microsoft Office, Apple iWork, or another desktop suite. The native CLI reads lazily from disk; the repository's JavaScript implementation runs the same Rust engine through WebAssembly in browsers and Node.js.
+
+| Item | Current contract |
+| --- | --- |
+| Inputs | PDF; modern and legacy Word, Excel, and PowerPoint; modern Keynote, Numbers, and Pages |
+| Result | Schema v2 JSON with target values, evidence, confidence, diagnostics, and measured I/O cost |
+| Execution | Local native process or local WebAssembly; document bytes are not sent to Deckflow |
+| Interfaces | Native CLI and npm CLI; Browser, Worker, and Node.js source APIs awaiting a corrected npm package |
+| Authentication | None |
+
+## Use DeckProbe for
+
+- Verifying a claimed file type before accepting an upload.
+- Reading counts, metadata, structural facts, security signals, or asset inventory.
+- Routing a document to a parser or renderer based on evidence instead of extension alone.
+- Enforcing predictable read, decompression, archive-entry, and time budgets.
+- Producing stable JSON for policy engines, batch inventory, or agent tools.
+
+```mermaid
+flowchart LR
+  I["File or bytes"] --> D["Choose driver and verify container"]
+  D --> T["Resolve requested targets"]
+  T --> P["Run only required probe paths"]
+  P --> J["Schema v2 facts and evidence"]
+```
+
+The default report is deterministic when telemetry is disabled. Add telemetry only when elapsed time is needed.
+
+<Warning>
+  The current `@deckflow/deckprobe@2.3.0` npm publication is missing the `dist/` and `wasm/` runtime files required by its JavaScript imports. The native CLI and npm-provided CLI work, but the Browser, Worker, and Node.js APIs do not work from this artifact.
+</Warning>
+
+## Choose an interface
 
 <CardGroup cols={2}>
-  <Card title="Supported document formats" icon="file-check">
-    - PDF
-    - Modern and legacy Microsoft Word, Excel, and PowerPoint
-    - Modern Apple Keynote, Numbers, and Pages
+  <Card title="Native CLI" href="/deckprobe/quick-start">
+    Best for large files, batch jobs, stdin, JSONL services, and strict process exit handling.
   </Card>
-  <Card title="Local execution" icon="laptop">
-    - The native CLI does not depend on Python, the JVM, Microsoft Office, or an external PDF library
-    - The Browser SDK runs the same engine locally through WebAssembly and does not upload document bytes
+  <Card title="Browser SDK source contract" href="/deckprobe/browser-sdk">
+    Review the implemented API and the current npm publication blocker.
   </Card>
-</CardGroup>
-
-Instead of unpacking everything, DeckProbe executes only the probe paths needed for the requested targets and confidence level. Results are deterministic Schema v2 JSON with target-level evidence and measured I/O cost.
-
-<CardGroup cols={2}>
-  <Card title="Quickstart" href="/deckprobe/quick-start">
-    Install the CLI, verify it, and inspect a document.
+  <Card title="Node.js source contract" href="/deckprobe/node-sdk">
+    Review the implemented API and the current npm publication blocker.
   </Card>
-  <Card title="Output Model" href="/deckprobe/output-model">
-    Understand full reports, compact values, errors, and JSON Schema.
-  </Card>
-  <Card title="CLI" href="/deckprobe/cli">
-    Install the native executable and use files, stdin, or persistent JSONL.
-  </Card>
-  <Card title="Browser SDK" href="/deckprobe/browser-sdk">
-    Install the npm package and probe browser files through WebAssembly.
+  <Card title="Formats and targets" href="/deckprobe/formats-and-targets">
+    Review document families, current exceptions, target discovery, and probe levels.
   </Card>
 </CardGroup>
 
 <Card title="Try Deck Playground ↗" href="https://deckflow.github.io/playground/">
-  Open the visual playground to see document profile information and page previews in a browser.
+  Inspect a document profile and DeckProbe facts in the browser. Page previews shown by the Playground are a combined Playground feature, not a DeckProbe report output.
 </Card>
 
-## Why DeckProbe
+## Boundaries
 
-| Requirement | DeckProbe behavior |
-| --- | --- |
-| Focused inspection | Runs only the paths needed for targets such as format, page count, or slide count |
-| Predictable resource use | Enforces physical-read, decompression, archive-entry, and wall-clock budgets |
-| Automation-ready output | Returns stable JSON for successful, partial, and failed probes |
-| Verifiable results | Records status, value, confidence, selected path, and evidence source per target |
-| Safer format routing | Selects by filename extension, then verifies the container and required internal document type |
+DeckProbe returns document facts, not pixels or a complete content model. It does not run OCR, execute macros, follow external links, edit files, or return DeckOps parse results.
 
-## Supported formats
+- Use [DeckRender](/deckrender/overview) for images, PDF, thumbnails, or video.
+- Use [DeckOps](/deckops/overview) for page and element content, Markdown, extraction, or conversion.
+- Use [DeckUse](/deckuse/overview) to update supported properties in an existing PPTX.
 
-| Family | Profiles | Current inspection coverage |
-| --- | --- | --- |
-| PDF | `.pdf` | Header and Info metadata, page/object counts, xref type, signatures, links, attachments, JavaScript, forms, annotations, and XMP presence |
-| Word | `.docx`, `.docm`, `.dotx`, `.dotm` | OOXML metadata, saved statistics, paragraph/table structure, security signals, comments, and image assets |
-| Excel | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xlsb` | Worksheets, names, visibility, shared strings, tables, charts, pivots, security signals, and image assets; `.xlsb` is identity-only |
-| PowerPoint | `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm` | Slides, hidden slides, masters, layouts, notes, slide size, charts, comments, images, media, and security signals |
-| Legacy Office | `.doc`, `.dot`, `.xls`, `.xlt`, `.ppt`, `.pps`, `.pot` | Validated CFB streams, SummaryInformation metadata, macros, embedded-object signals, and core statistics |
-| Keynote | `.key` | Modern IWA identity and integrity, slide canvas, orientation, hidden/notes/build/transition counts, and referenced table models |
-| Numbers | `.numbers` | Modern IWA identity and integrity, ordered sheets, table dimensions, hidden/filtered dimensions, and persisted formulas |
-| Pages | `.pages` | Modern IWA identity and integrity, sections, page geometry, change tracking, body-text structure, cached pagination, and table models |
-
-<Note>
-  Apple iWork support covers modern ZIP/IWA documents. Legacy XML iWork packages are recognized but return a structured `UNSUPPORTED_FORMAT` error.
-</Note>
-
-## Scope
-
-DeckProbe returns document facts, not rendered output or a complete editable object model. It does not run OCR, execute macros, follow external links, or send files to a remote service.
-
-- For page- and element-level Document IR, semantic extraction, or format conversion, use [DeckOps](/deckops/overview).
-- To render documents, use [DeckRender](/deckrender/overview).
-- To modify supported Office source files, use [DeckUse](/deckuse/overview).
-
-<Info>
-  DeckProbe is an open-source project. Visit the [DeckProbe GitHub repository](https://github.com/deckflow/deckprobe) to review the source code, release history, issue tracker, and implementation-level reference documentation.
-</Info>
+DeckProbe is open source. See the [DeckProbe repository](https://github.com/deckflow/deckprobe) for releases and implementation details.

@@ -1,12 +1,16 @@
 ---
-title: Python SDK
-sidebarTitle: Python
+title: 从源码使用 Python SDK
+sidebarTitle: Python（源码）
 description: "在 Python 中通过 deckops-sdk 同步执行任务、上传、解析和结果获取。"
 ---
 
+Python SDK 已在仓库中实现，但当前没有发布到 PyPI。请从经过评审的源码版本安装：
+
 ```bash
-pip install deckops-sdk
+pip install "git+https://github.com/deckflow/deckops.git@<commit>#subdirectory=sdks/python"
 ```
+
+请把 `<commit>` 替换为应用已验证的准确版本。
 
 ```python
 import os
@@ -19,6 +23,10 @@ with create_deck(api_key=os.getenv("DECKOPS_API_KEY")) as deck:
 ```
 
 Python 客户端是同步接口，并持有自己的 HTTP 连接池。短生命周期客户端应使用 Context Manager 或主动调用 `close()`。
+
+<Warning>
+  执行任务时请配置 API Key 或用户 Token。当前 Python SDK 没有提供启动游客任务所需的 `tasks.start()` 方法。
+</Warning>
 
 ## 解析为 Markdown
 

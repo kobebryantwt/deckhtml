@@ -1,56 +1,70 @@
 ---
 title: DeckRender
 sidebarTitle: 概览
-description: "通过统一的 CLI 和 Node.js API，将文档渲染为图片、PDF 或视频。"
+description: "通过统一的 CLI 和 Node.js API，把支持的文档渲染为稳定的图片、PDF 或视频产物。"
 ---
 
-DeckRender 用于把文档生成视觉产物。传入本地文件、URL 或标准输入，并指定图片、PDF 或视频；DeckRender 会选择可用的渲染路径、执行任务并按稳定规则写出文件。
+DeckRender 是面向文档的视觉产物路由器。它接收一个本地文件、HTTP(S) URL 或标准输入流，选择已经实现的源格式到目标格式路径，执行任务，并写出单个文件、连续编号图片或 ZIP。
 
-<CardGroup cols={3}>
-  <Card title="输入" icon="file-import">
-    本地文件、在线 HTML 或 Markdown，以及明确指定源格式的标准输入。
-  </Card>
-  <Card title="输出" icon="images">
-    PNG、JPEG、WebP 页面图片，以及支持格式对应的 PDF 或 MP4 视频。
-  </Card>
-  <Card title="接入方式" icon="terminal">
-    `deckrender` CLI 与 `@deckflow/deckrender` Node.js API 由同一包提供。
-  </Card>
-</CardGroup>
+| 项目 | 当前契约 |
+| --- | --- |
+| 输入 | PowerPoint、PDF、Keynote、Word、HTML、Markdown、Pages、Numbers 的已支持路径 |
+| 输出 | PNG、JPEG、WebP 图片；PDF；MP4 视频 |
+| 接入方式 | `deckrender` CLI 和 `@deckflow/deckrender` Node.js API |
+| 执行位置 | 多数使用 Deckflow 云端任务，另有本地 PDF 透传和 iWork 预览提取 |
+| 认证 | 可选访客模式、浏览器登录、Token 或 API Key |
 
-## DeckRender 负责什么
+## DeckRender 适合什么
 
-- 读取并识别输入。
-- 选择直连、多步派生、本地或透传渲染路径。
-- 按路径能力应用尺寸、图片编码和页面筛选参数。
-- 写出单个产物、连续编号的页面图片或 ZIP 压缩包。
-- 返回包含执行引擎、路由、页数、文件和耗时的稳定结果。
+- 页面或幻灯片预览和缩略图。
+- 用于评审、搜索或视觉流程的 PNG、JPEG、WebP 图片。
+- 从支持的演示文稿、文档或 HTML 生成 PDF。
+- 从 PowerPoint 生成 MP4，或通过 PPTX 路径从 HTML 生成 MP4。
+- 不直接管理 DeckOps 任务链，也能得到稳定的产物与结果契约。
 
-DeckRender 不会把文档内容解析成中间表示，不负责提取文本或语义结构，也不修改源文件元素。它生成的 Render Plan 只描述执行过程，并不是文档内容模型。
+```mermaid
+flowchart LR
+  I["文件 / URL / stdin"] --> R["读取输入并选择路径"]
+  R --> E["本地、透传或云端执行"]
+  E --> W["写出文件、图片序列或 ZIP"]
+  W --> J["RenderResult"]
+```
 
-## 执行方式
+DeckRender 不解析文本或文档元素，不返回 Document IR，也不编辑源内容。它的 `RenderPlan` 只描述执行路径。
 
-多数路径通过 Deckflow 云端任务执行。PDF 透传以及 Pages、Numbers 文档中的内嵌预览读取在本地完成。认证并非必需：CLI 可以使用有限额的访客模式，也可以登录或配置 API Key 后使用认证访问。
+## 数据与执行边界
+
+多数格式会上传到 Deckflow 云端任务。本地 PDF 转 PDF 会直接透传，不上传文件。Pages 与 Numbers 在本地提取内嵌的第一页 JPEG 预览，并不是完整的 iWork 渲染。
+
+HTTP(S) URL 由本地 Node.js 进程获取。HTML 会补充用于解析相对资源的 Base URL，再作为源内容上传。DeckRender 不会捕获用户浏览器当前的状态、Cookie 或认证会话。
 
 <Warning>
-  Pages 和 Numbers 的输出来自 iWork 写入文档的内嵌预览，仅包含第一页，并沿用文档中保存的预览分辨率。
+  HTML 转 PDF 和 HTML 转视频会先把 HTML 重建为 PPTX。结果遵循幻灯片模型，并不是原生打印布局或在线页面录制。
 </Warning>
 
-## 下一步
+## 从这里开始
 
 <CardGroup cols={2}>
   <Card title="快速开始" href="/zh/deckrender/quick-start">
-    安装软件包并渲染第一个文档。
+    创建最小 HTML 输入、渲染一张 PNG，并验证结果。
   </Card>
   <Card title="支持的格式" href="/zh/deckrender/formats">
-    查看已经实现的输入输出组合及路径限制。
+    检查已实现路径、输出编码和保真限制。
+  </Card>
+  <Card title="认证" href="/zh/deckrender/authentication">
+    选择访客模式、浏览器登录、API Key 或 CI 环境变量。
   </Card>
   <Card title="CLI" href="/zh/deckrender/cli/overview">
-    了解输入、输出命名、页面范围、预设和自动化调用。
+    控制输入形式、输出命名、页面筛选、尺寸和 Profile。
   </Card>
   <Card title="Node.js SDK" href="/zh/deckrender/sdk/node">
-    在应用中渲染文档，并监听进度和警告。
+    在代码中渲染，并接收进度、警告和 `RenderResult`。
+  </Card>
+  <Card title="结果契约" href="/zh/deckrender/reference/result-contract">
+    消费路径、页数、写出产物、限制和类型化错误。
   </Card>
 </CardGroup>
 
-查看源码与版本发布，请访问 [DeckRender 开源仓库](https://github.com/deckflow/deckrender)。
+只需要文档事实时使用 [DeckProbe](/zh/deckprobe/overview)，需要结构化内容和更多云端操作时使用 [DeckOps](/zh/deckops/overview)，需要修改现有 PPTX 时使用 [DeckUse](/zh/deckuse/overview)。
+
+DeckRender 是开源项目，源码请查看 [DeckRender 仓库](https://github.com/deckflow/deckrender)。

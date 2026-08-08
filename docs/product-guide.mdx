@@ -1,36 +1,50 @@
 ---
 title: Choose a Product
 sidebarTitle: Choose a Product
+description: "Compare Deckflow products by input, operation, execution location, and final artifact."
 ---
 
-The five products solve different document tasks. Choose by the result your application needs rather than by the source file alone.
+Choose by the artifact your application must receive and whether the original document needs to remain editable. The same source file can travel through several products for different purposes.
 
-| Product | Best for | Execution | Primary result |
-| --- | --- | --- | --- |
-| DeckProbe | Fast inspection, upload checks, routing, and policy decisions | Native Rust locally or Browser JS SDK | Target evidence with confidence and measured cost |
-| DeckRender | Predictable document rendering | Local input routing with local, passthrough, or cloud execution | Images, PDF, or video |
-| DeckOps | Cloud parsing, extraction, conversion, and document operations | Cloud tasks through CLI or SDK | Format-specific structured results, Markdown, or generated files |
-| DeckUse | Source-aware Office file manipulation | Local library workflow | Updated Office source file |
-| DeckHTML | HTML- and SVG-native deck authoring | Local and cloud paths | PPTX or PNG generated from browser layout |
+## Product comparison
 
-## DeckProbe or DeckOps?
+| Product | Start with | Produces | Runs | Does not replace |
+| --- | --- | --- | --- | --- |
+| DeckProbe | Existing PDF, Office, or modern iWork document | Schema v2 target evidence and measured probe cost | Native Rust CLI; WebAssembly source awaiting corrected npm artifact | Full content parsing, rendering, or editing |
+| DeckRender | Supported document, URL, or stdin | Images, PDF, or video | Local, passthrough, or cloud route | Structured content extraction or source editing |
+| DeckOps | File, URL, or uploaded file ID | Format-specific parse results, Markdown, or generated files | Deckflow cloud tasks | Local-only inspection or editable source mutation |
+| DeckUse | Existing PPTX | Updated PPTX | Local Node.js workflow | DOCX/XLSX/Keynote editing or new deck authoring |
+| DeckHTML | HTML, SVG, URL, or stdin | PPTX, PNG, and conversion diagnostics | Local browser or cloud task | General-purpose conversion of existing Office files |
 
-This is the most common boundary:
+## Common decisions
 
-- Choose **DeckProbe** when document-level facts are the final result: verified format, metadata, counts, security signals, confidence, and probe cost.
-- Choose **DeckOps** when the application needs page and element structure, format-specific parse results, Markdown projection, extraction, or format conversion.
-- DeckProbe's `deep` level still returns target evidence; it does not return DeckOps parse results.
+<AccordionGroup>
+  <Accordion title="DeckProbe or DeckOps?">
+    Use **DeckProbe** when verified document-level facts are the final result or are needed before accepting and routing a file. Use **DeckOps** when you need page and element content, Markdown, semantic extraction, or a generated file. A deeper DeckProbe level still returns target evidence, not a DeckOps parse result.
+  </Accordion>
+  <Accordion title="DeckRender or DeckOps?">
+    Use **DeckRender** when your application needs a predictable visual artifact and does not want to manage underlying cloud task names, multi-step routes, page naming, or downloads. Use **DeckOps** when the task itself is part of a broader parse, extract, convert, or generation workflow.
+  </Accordion>
+  <Accordion title="DeckUse or DeckHTML?">
+    Use **DeckUse** when an existing PPTX is the source of truth and you need to change its current content. Use **DeckHTML** when HTML or SVG is the authoring source and a new PPTX or PNG is the result.
+  </Accordion>
+  <Accordion title="Can products be combined?">
+    Yes. A typical ingestion flow can use DeckProbe to validate a file, DeckOps to parse it, and DeckRender to produce previews. These are separate calls with separate result contracts; Deckflow does not require every workflow to use all products.
+  </Accordion>
+</AccordionGroup>
 
-## DeckRender or DeckOps?
+## Choose by scenario
 
-- Choose **DeckRender** when the application needs a render-ready file result, stable artifact naming, page selection, sizing, or a source-to-output render route through one CLI or Node.js API.
-- Choose **DeckOps** when the application needs the underlying task platform or a broader flow that also includes probing, parsing into structured results, semantic extraction, or conversion beyond DeckRender's visual targets.
+| Scenario | Recommended path |
+| --- | --- |
+| Reject encrypted or macro-enabled uploads before processing | DeckProbe → application policy |
+| Generate slide thumbnails for a review UI | DeckRender |
+| Convert a PPTX to PDF and also extract notes or layout data | DeckOps |
+| Read a document as Markdown for RAG | DeckOps Parse |
+| Replace a customer name throughout an existing PPTX | DeckUse |
+| Generate a branded, editable deck from a web layout | DeckHTML |
+| Validate, parse, and preview one uploaded document | DeckProbe → DeckOps → DeckRender |
 
-## DeckOps or DeckUse?
-
-- Choose **DeckOps** to parse supported formats or create derived cloud results.
-- Choose **DeckUse** when a supported Office file remains the editable artifact and existing elements must be modified or deleted.
-
-## When to use DeckHTML
-
-Choose DeckHTML when HTML or SVG is the source of slide structure and visual design. It converts browser layout into PPTX or PNG and reports where elements remain editable or require raster fallback.
+<Warning>
+  Product names describe responsibility, not identical format coverage or package availability. Check the selected product's format matrix and availability warning before designing a workflow; DeckProbe JavaScript and DeckOps Parse source APIs currently await corrected public artifacts.
+</Warning>

@@ -13,7 +13,7 @@ deckhtml deck.html -o deck.pptx --mode cloud --embed-fonts
 
 ## Authentication behavior
 
-Cloud mode supports a stable guest UUID. Guest requests are rate-limited and may require an explicit task start. For production use, sign in or configure an API key.
+Cloud mode supports a stable guest UUID. Guest requests are rate-limited; the DeckHTML CLI starts the guest task automatically. For production use, sign in or configure an API key.
 
 ```bash
 deckhtml auth login
@@ -22,6 +22,8 @@ deckhtml config set api-key <key>
 ```
 
 For CI, set `DECKHTML_API_KEY` instead of storing credentials interactively.
+
+See [Authentication](/deckhtml/authentication) for credential precedence, storage, and status behavior.
 
 ## Differences from local mode
 

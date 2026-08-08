@@ -1,0 +1,66 @@
+---
+title: Node.js API
+sidebarTitle: Node.js API (Source)
+description: "Probe local files or byte arrays from Node.js through the @deckflow/deckprobe WebAssembly package."
+---
+
+The Node.js API requires Node.js 20 or later. It uses the same Rust engine and Schema v2 contract as the native CLI.
+
+<Warning>
+  Source contract only for the current release: `@deckflow/deckprobe@2.3.0` was published without the required `dist/` and `wasm/` files, so the Node.js import fails. Use the native or npm CLI until a corrected artifact is available.
+</Warning>
+
+```bash
+npm install @deckflow/deckprobe
+```
+
+## Probe a file
+
+```ts
+import { probeFile } from '@deckflow/deckprobe';
+
+const report = await probeFile('./slides.pptx', {
+  targets: ['document.format', 'powerpoint.slide_count'],
+  level: 'metadata',
+});
+
+if (report.status === 'error') {
+  throw new Error(`${report.error.code}: ${report.error.message}`);
+}
+
+console.log(report.results['powerpoint.slide_count']?.value);
+```
+
+`probeFile()` reports `source_kind: "local_file"`. It reads the whole file into memory before passing bytes to WebAssembly; prefer the native CLI for large files or large batches because it reads lazily.
+
+## Probe bytes
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { probe } from '@deckflow/deckprobe';
+
+const bytes = await readFile('./report.pdf');
+const report = await probe(bytes, {
+  name: 'report.pdf',
+  targets: ['document.format', 'pdf.page_count'],
+});
+```
+
+`Buffer`, `Uint8Array`, and `ArrayBuffer` are accepted. Byte inputs require a logical filename with an extension so DeckProbe can select and verify the correct driver.
+
+## Discover capabilities
+
+```ts
+import { formats, schema, targets, version } from '@deckflow/deckprobe';
+
+console.log(await version());
+console.log(await formats());
+console.log(await targets('pdf'));
+console.log(await schema());
+```
+
+All four discovery APIs are asynchronous.
+
+<Note>
+  Node.js processing remains local and requires no Deckflow credential. The package also exposes the absolute `deckProbeWasmPath` for custom runtime packaging.
+</Note>

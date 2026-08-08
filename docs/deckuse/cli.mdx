@@ -1,0 +1,56 @@
+---
+title: CLI
+sidebarTitle: CLI
+description: "Reference the implemented DeckUse commands for inspecting and updating PPTX files."
+---
+
+```bash
+deckuse <command> [arguments] [options]
+```
+
+Most read commands accept either a `.pptx` file or an initialized workspace. Write commands also accept both, but direct `.pptx` writes require `-o <output.pptx>`.
+
+## Workspace commands
+
+| Command | Purpose |
+| --- | --- |
+| `deckuse init <pptx> [-d <dir>]` | Extract a PPTX and create persistent workspace metadata |
+| `deckuse status <workspace-or-pptx>` | Print workspace, validation, slide, master, and layout status |
+| `deckuse commit <workspace> [-o <pptx>]` | Validate and package a workspace as PPTX |
+
+## Inspection commands
+
+```bash
+deckuse list slides input.pptx
+deckuse show slide input.pptx 1
+deckuse get text input.pptx 'slide:1/text'
+```
+
+| Command | Purpose |
+| --- | --- |
+| `list slides` | List slide references, layouts, masters, shape counts, and content presence |
+| `show slide` | Print one slide's references and top-level shape tree |
+| `get text` | Resolve a selector and print paragraph text with canonical selectors |
+
+## Mutation commands
+
+```bash
+deckuse set text working.deck 'slide:1/#22/p:0' 'New title'
+deckuse replace working.deck 'Old name' 'New name'
+deckuse replace working.deck '^Q[1-4]' 'FY2026' --regex --slide 3
+deckuse move working.deck 'slide:1/#22' --left 0.1 --top 0.2
+deckuse commit working.deck -o updated.pptx
+```
+
+| Command | Important behavior |
+| --- | --- |
+| `set text <target> <selector> <text> [-o <pptx>]` | Replaces all paragraphs resolved by the selector with the supplied text |
+| `replace <target> <search> <replacement> [--slide N] [--regex] [-o <pptx>]` | Finds and replaces text globally or on one slide |
+| `move <target> <selector> --left N --top N [-o <pptx>]` | Moves selected slide shapes; positions are normalized values from `0` to `1` |
+| `set font-size <target> <selector> <points> [-o <pptx>]` | Present in the CLI, but selector-to-shape coverage is limited; verify every affected shape |
+
+<Warning>
+  There is no current CLI command to add or delete slides or elements. An unmatched selector can produce a message without changing the file, so verify command output and inspect the generated PPTX.
+</Warning>
+
+Set `DEBUG=1` when a command fails and a stack trace is needed.

@@ -128,7 +128,7 @@
           "primary": {
             "type": "button",
             "label": "Get Started",
-            "href": "https://app.deckflow.com/?initent=sign-up"
+            "href": "https://app.deckflow.com/?intent=sign-up"
           }
         },
         "tabs": [
@@ -152,7 +152,8 @@
                 "group": "Get Started",
                 "pages": [
                   "deckprobe/overview",
-                  "deckprobe/quick-start"
+                  "deckprobe/quick-start",
+                  "deckprobe/formats-and-targets"
                 ]
               },
               {
@@ -167,7 +168,8 @@
               {
                 "group": "SDK",
                 "pages": [
-                  "deckprobe/browser-sdk"
+                  "deckprobe/browser-sdk",
+                  "deckprobe/node-sdk"
                 ]
               },
               {
@@ -184,7 +186,7 @@
               { "group": "Get Started", "pages": ["deckrender/overview", "deckrender/quick-start", "deckrender/formats"] },
               { "group": "CLI", "pages": ["deckrender/cli/overview", "deckrender/cli/automation"] },
               { "group": "SDK", "pages": ["deckrender/sdk/node"] },
-              { "group": "Configuration", "pages": ["deckrender/configuration"] },
+              { "group": "Configuration", "pages": ["deckrender/authentication", "deckrender/configuration"] },
               { "group": "Reference", "pages": ["deckrender/reference/result-contract"] }
             ]
           },
@@ -196,6 +198,7 @@
                 "pages": [
                   "deckops/overview",
                   "deckops/quick-start",
+                  "deckops/authentication",
                   "deckops/task-model"
                 ]
               },
@@ -228,7 +231,9 @@
           {
             "tab": "DeckUse",
             "groups": [
-              { "group": "DeckUse", "pages": ["deckuse/overview"] }
+              { "group": "Get Started", "pages": ["deckuse/overview", "deckuse/quick-start", "deckuse/workspace"] },
+              { "group": "CLI", "pages": ["deckuse/cli", "deckuse/selectors"] },
+              { "group": "SDK", "pages": ["deckuse/sdk"] }
             ]
           },
           {
@@ -238,7 +243,8 @@
                 "group": "Get Started",
                 "pages": [
                   "deckhtml/overview",
-                  "deckhtml/quick-start"
+                  "deckhtml/quick-start",
+                  "deckhtml/authentication"
                 ]
               },
               {
@@ -332,7 +338,7 @@
           "primary": {
             "type": "button",
             "label": "开始使用",
-            "href": "https://app.deckflow.com/?initent=sign-up"
+            "href": "https://app.deckflow.com/?intent=sign-up"
           }
         },
         "tabs": [
@@ -356,7 +362,8 @@
                 "group": "开始使用",
                 "pages": [
                   "zh/deckprobe/overview",
-                  "zh/deckprobe/quick-start"
+                  "zh/deckprobe/quick-start",
+                  "zh/deckprobe/formats-and-targets"
                 ]
               },
               {
@@ -371,7 +378,8 @@
               {
                 "group": "SDK",
                 "pages": [
-                  "zh/deckprobe/browser-sdk"
+                  "zh/deckprobe/browser-sdk",
+                  "zh/deckprobe/node-sdk"
                 ]
               },
               {
@@ -388,7 +396,7 @@
               { "group": "开始使用", "pages": ["zh/deckrender/overview", "zh/deckrender/quick-start", "zh/deckrender/formats"] },
               { "group": "CLI", "pages": ["zh/deckrender/cli/overview", "zh/deckrender/cli/automation"] },
               { "group": "SDK", "pages": ["zh/deckrender/sdk/node"] },
-              { "group": "配置", "pages": ["zh/deckrender/configuration"] },
+              { "group": "配置", "pages": ["zh/deckrender/authentication", "zh/deckrender/configuration"] },
               { "group": "参考", "pages": ["zh/deckrender/reference/result-contract"] }
             ]
           },
@@ -400,6 +408,7 @@
                 "pages": [
                   "zh/deckops/overview",
                   "zh/deckops/quick-start",
+                  "zh/deckops/authentication",
                   "zh/deckops/task-model"
                 ]
               },
@@ -432,7 +441,9 @@
           {
             "tab": "DeckUse",
             "groups": [
-              { "group": "DeckUse", "pages": ["zh/deckuse/overview"] }
+              { "group": "开始使用", "pages": ["zh/deckuse/overview", "zh/deckuse/quick-start", "zh/deckuse/workspace"] },
+              { "group": "CLI", "pages": ["zh/deckuse/cli", "zh/deckuse/selectors"] },
+              { "group": "SDK", "pages": ["zh/deckuse/sdk"] }
             ]
           },
           {
@@ -442,7 +453,8 @@
                 "group": "开始使用",
                 "pages": [
                   "zh/deckhtml/overview",
-                  "zh/deckhtml/quick-start"
+                  "zh/deckhtml/quick-start",
+                  "zh/deckhtml/authentication"
                 ]
               },
               {

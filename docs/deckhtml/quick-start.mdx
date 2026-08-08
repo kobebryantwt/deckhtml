@@ -1,12 +1,33 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: "Create a slide-sized HTML file and convert it to PPTX with DeckHTML."
+description: "Install DeckHTML, verify the browser runtime, and create a local PPTX."
 ---
 
+This path keeps the source on your machine. You need Node.js 18 or later and a compatible Chromium, Chrome, or Edge executable.
+
 <Steps>
+  <Step title="Install and verify DeckHTML">
+    ```bash
+    npm install -g @deckflow/deckhtml
+    deckhtml --version
+    ```
+  </Step>
+  <Step title="Make a browser available">
+    DeckHTML first checks `DECKHTML_CHROMIUM_EXECUTABLE_PATH`, then a Playwright-managed browser, then supported system Chrome or Edge installations. If none is available, install Chromium with Playwright:
+
+    ```bash
+    npx -y playwright install chromium
+    ```
+
+    In a container or custom image, point DeckHTML to the exact executable:
+
+    ```bash
+    export DECKHTML_CHROMIUM_EXECUTABLE_PATH=/path/to/chromium
+    ```
+  </Step>
   <Step title="Create a slide">
-    Save the following as `deck.html`. Declaring the deck size lets DeckHTML use the intended viewport.
+    Save this as `deck.html`:
 
     ```html
     <!doctype html>
@@ -17,12 +38,7 @@ description: "Create a slide-sized HTML file and convert it to PPTX with DeckHTM
         <style>
           * { box-sizing: border-box; }
           body { margin: 0; font-family: Arial, sans-serif; }
-          .slide-container {
-            width: 1280px;
-            height: 720px;
-            padding: 72px;
-            background: #f7fafc;
-          }
+          .slide-container { width: 1280px; height: 720px; padding: 72px; background: #f7fafc; }
         </style>
       </head>
       <body>
@@ -34,46 +50,37 @@ description: "Create a slide-sized HTML file and convert it to PPTX with DeckHTM
     </html>
     ```
   </Step>
-  <Step title="Convert locally">
+  <Step title="Convert and verify">
     ```bash
-    npx -y @deckflow/deckhtml@latest deck.html \
-      -o deck.pptx \
-      --mode local \
-      --json
+    deckhtml deck.html -o deck.pptx --mode local --json --quiet
+    test -s deck.pptx && echo "deck.pptx created"
     ```
-  </Step>
-  <Step title="Check the result">
-    A successful command exits with code `0`, writes `deck.pptx`, and prints a JSON envelope similar to:
+
+    In PowerShell, use `if (!(Test-Path deck.pptx) -or (Get-Item deck.pptx).Length -eq 0) { exit 1 }`.
+
+    `--quiet` keeps stdout machine-readable. The JSON result contains normalized absolute paths, so the exact values depend on your working directory:
 
     ```json
     {
       "ok": true,
-      "input": ["deck.html"],
-      "output": "deck.pptx",
+      "input": ["/absolute/path/deck.html"],
+      "output": "/absolute/path/deck.pptx",
       "format": "pptx",
       "mode": "local",
       "slideCount": 1
     }
     ```
   </Step>
-  <Step title="Generate a conversion report">
+  <Step title="Inspect conversion decisions">
     ```bash
-    npx -y @deckflow/deckhtml@latest deck.html \
-      -o deck.pptx \
-      --mode local \
-      --report \
-      --force
+    deckhtml deck.html -o deck.pptx --mode local --report --force
     ```
 
-    Review `deck.pptx.report.json` for native, vector, raster, ignored, and unsupported mappings.
+    Review `deck.pptx.report.json` for native, vector, raster, ignored, and unsupported elements.
   </Step>
 </Steps>
 
 <CardGroup cols={2}>
-  <Card title="HTML input contract" href="/deckhtml/reference/input-html">
-    Add multiple slides, assets, fonts, and stable element identities.
-  </Card>
-  <Card title="Element mapping" href="/deckhtml/guides/element-mapping">
-    Understand which content stays editable and which content may be rasterized.
-  </Card>
+  <Card title="HTML input contract" href="/deckhtml/reference/input-html">Add multiple slides, assets, fonts, and stable identities.</Card>
+  <Card title="Errors" href="/deckhtml/guides/errors">Resolve browser, resource, input, and conversion failures.</Card>
 </CardGroup>

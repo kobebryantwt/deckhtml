@@ -43,3 +43,7 @@ const result = await deck.tasks.down<'convertor.ppt2pdf'>(done.id);
 ```
 
 需要 Markdown 时使用 `parse()`；需要 Markdown 与任务信息时使用 `parseDetailed()`；需要结构化结果时使用底层 Parse 方法。
+
+<Warning>
+  部分已发布的 `0.7.3` 产物早于 Parse Facade，但仓库中的软件包版本没有变化。使用前请检查 `typeof deck.parseDetailed === 'function'`。如果不存在，请按[快速开始](/zh/deckops/quick-start)使用底层 `pdf.parse`、`pptx.parse`、`docx.parseTextAndImage` 或 `keynote.parseTextAndImage` 任务流程，或等待更新的软件包产物。
+</Warning>

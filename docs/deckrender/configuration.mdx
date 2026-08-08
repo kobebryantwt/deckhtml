@@ -1,65 +1,49 @@
 ---
-title: Authentication and Configuration
-sidebarTitle: Authentication & Config
-description: "Configure guest or authenticated rendering and persistent CLI defaults."
+title: Configuration
+sidebarTitle: Configuration
+description: "Persist DeckRender CLI defaults, understand precedence, and isolate configuration in CI."
 ---
 
-DeckRender can submit cloud renders without credentials in rate-limited guest mode. Log in or set an API key for authenticated use.
-
-```bash
-deckrender auth login
-deckrender auth status
-deckrender config list
-```
-
-`auth status` validates the effective credential. `config list` shows masked values and the source that won for each field.
-
-## Credential precedence
-
-Each field resolves independently in this order:
-
-1. Explicit SDK renderer option.
-2. Environment variable.
-3. `~/.deckflow/credentials`.
-4. `~/.deckops/config.json`, read only.
-5. Built-in default.
-
-| Field | Environment variables, in order |
-| --- | --- |
-| API key | `DECKRENDER_API_KEY`, `DECKFLOW_API_KEY`, `DECKHTML_API_KEY` |
-| Token | `DECKRENDER_TOKEN`, `DECKFLOW_TOKEN` |
-| Space | `DECKRENDER_SPACE_ID`, `DECKFLOW_SPACE_ID` |
-| API base | `DECKRENDER_API_BASE`, `DECKFLOW_API_BASE` |
-
-The default API root is `https://app.deckflow.com/v1`. Shared credentials are stored in `~/.deckflow/credentials`; DeckRender preserves unknown keys written by other Deckflow tools.
-
-## Persistent CLI defaults
-
-Render defaults live separately in `~/.deckrender/config.json`:
+DeckRender keeps render preferences in `~/.deckrender/config.json`, separate from the shared Deckflow credential file.
 
 ```bash
 deckrender config set profile web
 deckrender config set image-format webp
 deckrender config set width 2560
 deckrender config unset width
+deckrender config list
 deckrender config path
 ```
 
-Supported keys are `profile`, `format`, `image-format`, `quality`, `width`, `scale`, and `timeout`. Precedence is:
+## Supported keys
+
+| Key | Values |
+| --- | --- |
+| `profile` | `web`, `presentation`, `print`, `thumbnail` |
+| `format` | `image`, `pdf`, `video` |
+| `image-format` | `png`, `jpg`, `webp` |
+| `quality` | `low`, `medium`, `high` |
+| `width` | Positive long-edge pixel value |
+| `scale` | Positive multiplier |
+| `timeout` | Positive task wait time in seconds |
+
+Precedence is:
 
 ```text
 profile defaults < ~/.deckrender/config.json < explicit CLI options
 ```
 
-If a profile or stored default cannot apply to the selected route, it is dropped with a warning. An incompatible option typed explicitly remains an error.
+If a profile or stored default cannot apply to the selected route, DeckRender drops it with a warning. An incompatible option typed explicitly remains an `unsupported_option` error.
 
-## CI and isolated environments
+## Isolated environments
 
 ```bash
-export DECKFLOW_API_KEY='...'
 export DECKFLOW_CONFIG_DIR=/tmp/deckflow-ci
 export DECKRENDER_CONFIG_DIR=/tmp/deckrender-ci
-deckrender deck.pptx --json --quiet
+export DECKOPS_CONFIG_DIR=/tmp/deckops-ci
+deckrender hello.html -o hello.png --json --quiet
 ```
 
-Non-interactive and JSON invocations do not open the browser login flow after an authentication failure.
+All three directories are needed to prevent an older DeckOps token from being selected as a fallback credential.
+
+Use [Authentication](/deckrender/authentication) for guest mode, login, API keys, shared credentials, and credential precedence.

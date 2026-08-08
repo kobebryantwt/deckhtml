@@ -1,0 +1,58 @@
+---
+title: Node.js API Status
+sidebarTitle: Node.js API (Blocked)
+description: "Use DeckUse workspace, selector, reader, writer, and command exports from Node.js."
+---
+
+```bash
+npm install deckuse
+```
+
+<Warning>
+  The current `deckuse@0.2.0` ESM entry fails under Node.js 22 with `Dynamic require of "child_process" is not supported`. Use the verified CLI for production until the package build is corrected. The remainder of this page documents source exports, not a currently verified installed-package contract.
+</Warning>
+
+The package exports the same command functions used by the CLI, plus lower-level workspace, selector, reader, writer, error, and type APIs.
+
+## Run a file-native command
+
+```ts
+import { replaceTextCommand } from 'deckuse';
+
+await replaceTextCommand(
+  './input.pptx',
+  '2025',
+  '2026',
+  { output: './updated.pptx' },
+);
+```
+
+Command functions print the same progress messages as the CLI. A direct PPTX mutation requires an output path.
+
+## Manage a workspace
+
+```ts
+import {
+  Workspace,
+  SelectorParser,
+  SelectorResolver,
+} from 'deckuse';
+
+const workspace = await Workspace.load('./working.deck');
+const selector = SelectorParser.parse("slide:1/text[contains('Revenue')]");
+const paragraphs = await SelectorResolver.resolveParagraphs(
+  selector,
+  workspace.metadata,
+  workspace.workspaceDir,
+);
+
+for (const paragraph of paragraphs) {
+  console.log(paragraph.idPath, paragraph.paragraphIndex, paragraph.text);
+}
+```
+
+Public exports include `Workspace`, `SelectorParser`, `SelectorResolver`, `PptxReader`, `PptxWriter`, command functions, DeckUse error classes, and workspace/selector result types.
+
+<Warning>
+  The low-level reader and writer APIs expose implementation-oriented PPTX structures and do not provide a broad compatibility guarantee. Prefer command functions for currently supported operations, retain the source file, and verify the output presentation.
+</Warning>

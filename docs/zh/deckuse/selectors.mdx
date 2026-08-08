@@ -1,0 +1,38 @@
+---
+title: Selectors
+sidebarTitle: Selectors
+description: "通过宽泛或规范 Selector 定位 DeckUse 中的幻灯片、Shape、文本和段落。"
+---
+
+Selector 用于定位 PPTX 中已有的内容。可以先使用宽泛 Selector 检查演示文稿，再复用 `get text` 输出的规范 ID Path Selector 进行精确修改。
+
+## 支持的形式
+
+| 形式 | 示例 | 含义 |
+| --- | --- | --- |
+| 类型 | `text` | 所有匹配类型的元素 |
+| 索引 | `slide:3` | 第三页；索引从 1 开始 |
+| 路径 | `slide:3/text` | 第三页中的文本 |
+| 键值筛选 | `shape[type=textbox]` | 属性匹配的 Shape |
+| 函数筛选 | `text[contains('Revenue')]` | 包含指定字符串的文本 |
+| 规范 ID Path | `slide:1/#22` | 使用输出 OOXML ID Path 定位 Shape |
+| 段落路径 | `slide:1/#22/p:0` | Shape 中一个从 0 开始的段落 |
+
+```bash
+deckuse get text input.pptx "text[contains('Revenue')]"
+deckuse get text input.pptx 'slide:1/text'
+deckuse set text input.pptx 'slide:1/#22/p:0' 'Revenue overview' -o updated.pptx
+```
+
+## 引号
+
+请给整个 Selector 添加 Shell 引号。`contains()` 的内容包含引号时，可以在 Shell 或 Selector 值中切换使用另一种引号。
+
+## 选择限制
+
+- 宽泛 Filter 依赖 DeckUse 解析后的 PPTX 模型中是否存在相应属性。
+- 规范 Path 属于当前源文件，其他工具重建文件后可能发生变化。
+- 部分宽泛 Selector 无法到达 Group 中深层嵌套的 Shape。
+- `move` 只适用于普通幻灯片中的 Shape，不适用于 Slide Master 或 Layout。
+
+下一次操作依赖精确段落路径时，请在修改后重新执行 `get text`。

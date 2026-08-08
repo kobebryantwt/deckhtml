@@ -1,36 +1,50 @@
 ---
 title: 选择产品
 sidebarTitle: 选择产品
+description: "按照输入、操作、执行位置和最终产物比较 Deckflow 产品。"
 ---
 
-五个产品解决不同的文档任务。选择时应关注应用最终需要什么结果，而不只是输入文件的格式。
+选择时先看应用必须得到什么产物，以及原始文档是否需要继续保持可编辑。同一个源文件可以因为不同目的进入多个产品。
 
-| 产品 | 适合场景 | 执行方式 | 主要结果 |
-| --- | --- | --- | --- |
-| DeckProbe | 快速嗅探、上传检查、路由和策略判断 | 本地原生 Rust 或 Browser JS SDK | 带置信度和实际成本的 Target 证据 |
-| DeckRender | 稳定、可预测的文档渲染 | 本地完成输入路由，按路径采用本地、透传或云端执行 | 图片、PDF 或视频 |
-| DeckOps | 云端解析、提取、转换和文档操作 | 通过 CLI 或 SDK 执行云端任务 | 格式专属结构化结果、Markdown 或生成文件 |
-| DeckUse | 源文件感知的 Office 文件操作 | 本地库工作流 | 更新后的 Office 源文件 |
-| DeckHTML | HTML 与 SVG 驱动的 Deck 创作 | 本地与云端路径 | 根据浏览器布局生成 PPTX 或 PNG |
+## 产品对比
 
-## DeckProbe 还是 DeckOps？
+| 产品 | 输入 | 产物 | 执行位置 | 不替代什么 |
+| --- | --- | --- | --- | --- |
+| DeckProbe | 已有 PDF、Office 或现代 iWork 文档 | Schema v2 Target 证据和实际探测成本 | 原生 Rust CLI；WebAssembly 源码等待修正 npm 产物 | 完整内容解析、渲染或编辑 |
+| DeckRender | 支持的文档、URL 或标准输入 | 图片、PDF 或视频 | 本地、透传或云端路径 | 结构化内容提取或源文件编辑 |
+| DeckOps | 文件、URL 或已上传的 File ID | 格式专属解析结果、Markdown 或生成文件 | Deckflow 云端任务 | 纯本地检查或可编辑源文件修改 |
+| DeckUse | 现有 PPTX | 修改后的 PPTX | 本地 Node.js 工作流 | DOCX/XLSX/Keynote 编辑或新建 Deck |
+| DeckHTML | HTML、SVG、URL 或标准输入 | PPTX、PNG 和转换诊断 | 本地浏览器或云端任务 | 对现有 Office 文件的通用转换 |
 
-这是最容易混淆的边界：
+## 常见选择
 
-- 最终结果是文档级事实，例如已验证格式、元数据、数量、安全信号、置信度和探测成本时，选择 **DeckProbe**。
-- 需要页面和元素结构、格式专属解析结果、Markdown 投影、信息提取或格式转换时，选择 **DeckOps**。
-- DeckProbe 的 `deep` 级别仍然返回 Target 证据，不会返回 DeckOps 解析结果。
+<AccordionGroup>
+  <Accordion title="DeckProbe 还是 DeckOps？">
+    最终只需要经过验证的文档级事实，或需要在接收、路由文件前判断风险时，使用 **DeckProbe**。需要页面和元素内容、Markdown、语义提取或生成文件时，使用 **DeckOps**。提高 DeckProbe 的探测级别仍然只会得到 Target 证据，不会变成 DeckOps 的解析结果。
+  </Accordion>
+  <Accordion title="DeckRender 还是 DeckOps？">
+    应用只需要稳定的视觉文件，不希望管理底层任务名、多步路径、页面命名和下载时，使用 **DeckRender**。渲染属于更大的解析、提取、转换或生成流程时，直接使用 **DeckOps**。
+  </Accordion>
+  <Accordion title="DeckUse 还是 DeckHTML？">
+    现有 PPTX 是事实源，并需要修改其中已有内容时，使用 **DeckUse**。HTML 或 SVG 是创作源，并要生成新的 PPTX 或 PNG 时，使用 **DeckHTML**。
+  </Accordion>
+  <Accordion title="产品可以组合使用吗？">
+    可以。典型接入流程可以先用 DeckProbe 校验文件，再用 DeckOps 解析内容，最后用 DeckRender 生成预览。三者是独立调用并返回不同契约，Deckflow 不要求所有流程都使用全部产品。
+  </Accordion>
+</AccordionGroup>
 
-## DeckRender 还是 DeckOps？
+## 按场景选择
 
-- 应用需要可直接使用的渲染文件、稳定的产物命名、页面筛选、尺寸控制，或希望通过统一 CLI/Node.js API 完成源格式到视觉产物的路由时，选择 **DeckRender**。
-- 应用需要直接使用底层任务平台，或者流程还包含 Probe、结构化 Parse、语义 Extract 及 DeckRender 视觉目标以外的 Convert 时，选择 **DeckOps**。
+| 场景 | 建议路径 |
+| --- | --- |
+| 在处理前拒绝加密或包含宏的上传文件 | DeckProbe → 应用策略 |
+| 为评审界面生成幻灯片缩略图 | DeckRender |
+| 把 PPTX 转为 PDF，同时提取备注或布局数据 | DeckOps |
+| 为 RAG 将文档解析为 Markdown | DeckOps Parse |
+| 在现有 PPTX 中全局替换客户名称 | DeckUse |
+| 根据 Web 布局生成品牌化、可编辑的 Deck | DeckHTML |
+| 校验、解析并预览同一个上传文档 | DeckProbe → DeckOps → DeckRender |
 
-## DeckOps 还是 DeckUse？
-
-- 解析支持的格式或生成云端派生结果时，选择 **DeckOps**。
-- 支持的 Office 文件仍然是可编辑产物，并需要修改或删除已有元素时，选择 **DeckUse**。
-
-## 什么时候使用 DeckHTML？
-
-HTML 或 SVG 是幻灯片结构和视觉设计的源格式时，选择 DeckHTML。它会把浏览器布局转换为 PPTX 或 PNG，并报告元素保持可编辑或发生栅格降级的位置。
+<Warning>
+  产品名称表示职责，并不表示格式覆盖或软件包可用性完全相同。设计工作流前，请查看所选产品的格式矩阵和可用性警告；DeckProbe JavaScript 与 DeckOps Parse 源码 API 当前仍在等待修正后的公开产物。
+</Warning>

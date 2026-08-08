@@ -1,37 +1,70 @@
 ---
 title: Deckflow 开发者中心
 sidebarTitle: 概览
-description: "构建涵盖文件嗅探、渲染、解析、语义提取、格式转换、Office 文件操作和 HTML Deck 生成的文档工作流。"
+description: "选择并接入 Deckflow 的文档嗅探、渲染、云端操作、PPTX 修改和 HTML Deck 生成能力。"
 ---
 
-Deckflow 为文档工作流的不同阶段提供独立组件。先确定需要得到的结果，再进入相应产品文档。
+Deckflow 是面向应用与 AI Agent 的文档运行时。五个产品属于同一套文档处理生态，但最终产物不同：经过验证的文档事实、视觉文件、云端结构化结果、修改后的 PPTX，或从 HTML 生成的 Deck。
 
 <CardGroup cols={2}>
-  <Card title="DeckProbe" href="/zh/deckprobe/overview">
-    在本地或浏览器中嗅探 PDF、Microsoft Office 和现代 Apple iWork 文档。
+  <Card title="打开前检查文档" icon="magnifying-glass" href="/zh/deckprobe/overview">
+    **DeckProbe** 在本地读取文档身份、元数据、结构、安全信号和资源事实，无需启动 Office 或 iWork。
   </Card>
-  <Card title="DeckRender" href="/zh/deckrender/overview">
-    通过稳定的输出路径，将支持的文档渲染为图片、PDF 或视频。
+  <Card title="渲染文档" icon="images" href="/zh/deckrender/overview">
+    **DeckRender** 把支持的文件路由成图片、PDF 或视频，并按稳定规则写出产物。
   </Card>
-  <Card title="DeckOps" href="/zh/deckops/overview">
-    执行云端解析、提取、格式转换和其他文档处理任务。
+  <Card title="执行文档操作" icon="cube" href="/zh/deckops/overview">
+    **DeckOps** 提供云端解析、提取、转换、生成和异步任务执行能力。
   </Card>
-  <Card title="DeckUse" href="/zh/deckuse/overview">
-    Manipulate 支持的 Office 源文件，并保持文件可继续编辑。
+  <Card title="修改现有 PPTX" icon="pen-to-square" href="/zh/deckuse/overview">
+    **DeckUse** 替换指定文本、移动受支持的形状，最终生成仍可编辑的 PPTX。
   </Card>
-  <Card title="DeckHTML" href="/zh/deckhtml/overview">
-    将 HTML 或 SVG 转换为 PPTX 和 PNG 演示文稿产物。
+  <Card title="使用 HTML 创作 Deck" icon="code" href="/zh/deckhtml/overview">
+    **DeckHTML** 将浏览器布局映射为 PPTX 或 PNG，并报告哪些元素保持可编辑、哪些会降级为图片。
   </Card>
 </CardGroup>
 
-## 按任务选择
+## 五个产品如何协作
 
-| 使用场景 | 建议从这里开始 |
-| --- | --- |
-| 识别文档并获取元数据、结构、安全或资源事实 | [DeckProbe](/zh/deckprobe/overview) |
-| 把文档渲染为图片、PDF 或视频 | [DeckRender](/zh/deckrender/overview) |
-| 将文档解析成结构化数据或 Markdown，或执行信息提取和格式转换 | [DeckOps](/zh/deckops/overview) |
-| 修改或删除支持的 Office 源文件元素 | [DeckUse](/zh/deckuse/overview) |
-| 从 HTML 生成 Deck | [DeckHTML](/zh/deckhtml/overview) |
+```mermaid
+flowchart LR
+  F["现有文档"] --> P["DeckProbe\n文档事实"]
+  F --> R["DeckRender\n图片 / PDF / 视频"]
+  F --> O["DeckOps\n解析 / 提取 / 转换"]
+  F --> U["DeckUse\n修改后的 PPTX"]
+  H["HTML / SVG 源"] --> D["DeckHTML\nPPTX / PNG"]
+  P -. "路由或校验" .-> R
+  P -. "路由或校验" .-> O
+```
 
-准备开始接入时，阅读[开始使用](/zh/getting-started)；如果多个能力看起来都适用，继续阅读[选择产品](/zh/product-guide)。
+DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、透传或 Deckflow 云端执行。DeckOps 在云端运行文档任务。DeckHTML 同时支持本地浏览器转换和云端模式。
+
+## 按最终结果选择
+
+| 使用目标 | 产品 | 主要接入方式 | 认证 |
+| --- | --- | --- | --- |
+| 验证格式、数量、元数据、结构或风险信号 | [DeckProbe](/zh/deckprobe/overview) | 原生或 npm CLI；JavaScript SDK 等待软件包修正 | 不需要；文件留在本地 |
+| 生成页面图片、PDF、缩略图或视频 | [DeckRender](/zh/deckrender/overview) | CLI 或 Node.js SDK | 云端路径可选；支持访客模式 |
+| 解析、提取、转换、生成或编排云端任务 | [DeckOps](/zh/deckops/overview) | 已发布 TypeScript 任务 SDK 或 CLI；源码中的 Python/Go 实现 | 高层 Parse 需要凭证；底层任务提供受限游客模式 |
+| 替换现有 PPTX 的文本或移动受支持的形状 | [DeckUse](/zh/deckuse/overview) | CLI；Node.js 软件包当前存在阻塞 | 不需要；文件留在本地 |
+| 从 HTML 或 SVG 生成 PPTX 或 PNG | [DeckHTML](/zh/deckhtml/overview) | CLI 或 Node.js SDK | 本地模式不需要；云端模式可选 |
+
+<Note>
+  每个产品支持的格式和操作范围不同。某个产品能识别文件，不代表其他产品也能处理。请以各产品的支持格式或命令参考页作为当前版本契约。
+</Note>
+
+## 开始接入
+
+<Steps>
+  <Step title="先确定最终产物">
+    判断流程最终需要文档事实、视觉文件、结构化内容、修改后的源文件，还是从 HTML 生成的 Deck。
+  </Step>
+  <Step title="跑通一个完整示例">
+    打开[开始使用](/zh/getting-started)，查看五个产品最短的安装、调用和结果路径。
+  </Step>
+  <Step title="进入产品文档">
+    完成对应产品的快速开始，再通过 CLI、SDK、指南和参考页完成生产接入。
+  </Step>
+</Steps>
+
+如果两个产品看起来都适用，请先阅读[选择产品](/zh/product-guide)。

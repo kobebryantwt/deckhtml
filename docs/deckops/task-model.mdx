@@ -47,7 +47,7 @@ Every request includes a stable `X-Auth-UUID`. You can additionally use:
 - `apiKey`, sent as `Authorization: Bearer <apiKey>`
 - `spaceId`, used as the default workspace for uploads and tasks
 
-When `spaceId` is omitted, the SDK resolves it from the current user endpoint. Guest mode works without a token or API key but is subject to server limits.
+When `spaceId` is omitted, the SDK resolves it from the current user endpoint. Guest mode works without a token or API key but is subject to server limits. Guest-created low-level tasks remain pending until the client calls `tasks.start(task.id)`; authenticated tasks start automatically. See [Authentication](/deckops/authentication) for SDK-specific support.
 
 ## Generic task API
 
@@ -59,6 +59,9 @@ const task = await deck.tasks.create({
   files: ['./slides.pptx'],
   params: {},
 });
+
+// Guest clients only; authenticated tasks start automatically.
+await deck.tasks.start(task.id);
 ```
 
 The task API also provides `list`, `get`, `start`, `delete`, `wait`, `subscribe`, and `down`.

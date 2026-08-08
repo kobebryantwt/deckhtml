@@ -1,0 +1,38 @@
+---
+title: Formats and Targets
+sidebarTitle: Formats & Targets
+description: "Review DeckProbe document families, implementation exceptions, probe levels, and target discovery."
+---
+
+DeckProbe chooses a driver from the logical filename, then verifies the container and required internal document type before trusting the profile.
+
+| Family | Profiles | Current fact coverage |
+| --- | --- | --- |
+| PDF | `.pdf` | Header and Info metadata, page/object counts, xref type, signatures, links, attachments, JavaScript, forms, annotations, XMP presence |
+| Word OOXML | `.docx`, `.docm`, `.dotx`, `.dotm` | Metadata, saved statistics, paragraph/table structure, security signals, comments, image assets |
+| Excel OOXML | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xlsb` | Worksheets, names, visibility, shared strings, tables, charts, pivots, security signals, image assets |
+| PowerPoint OOXML | `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm` | Slides, hidden slides, masters, layouts, notes, size, charts, comments, images, media, security signals |
+| Legacy Office | `.doc`, `.dot`, `.xls`, `.xlt`, `.ppt`, `.pps`, `.pot` | CFB streams, SummaryInformation, macros, embedded-object signals, core statistics |
+| Modern iWork | `.key`, `.numbers`, `.pages` | IWA identity/integrity and application-specific structure, counts, geometry, formulas, tables, notes, builds, or transitions where present |
+
+`.xlsb` currently provides identity-level coverage. Legacy XML iWork packages are recognized but return a structured `UNSUPPORTED_FORMAT` error.
+
+## Discover the installed version
+
+```bash
+deckprobe formats --pretty
+deckprobe targets pdf --pretty
+deckprobe schema --pretty
+```
+
+`formats` returns drivers, profiles, and support status. `targets` returns target definitions, aliases, value types, minimum levels, selectors, cost classes, and whether each target applies to the selected profile.
+
+## Probe levels
+
+| Level | Use it for |
+| --- | --- |
+| `header` | Container identity and inexpensive routing facts |
+| `metadata` | Common metadata, saved statistics, and primary structure |
+| `deep` | Format-specific structure, security, assets, integrity, and higher-cost paths |
+
+Request only the targets your application needs. A higher level expands which paths are available; it does not change DeckProbe into a full content parser.

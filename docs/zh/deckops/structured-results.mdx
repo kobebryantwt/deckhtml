@@ -6,6 +6,10 @@ description: "比较 DeckOps 不同 Parse 任务返回的格式专属结果契�
 
 每个 Parser 会保留当前能够从对应源格式中获得的结构。这些结果用途相近，但并不共享同一套节点 Schema。
 
+<Warning>
+  类型化 Parse API 已存在于仓库源码，但当前 `@deckops/sdk@0.7.3` npm 产物没有包含。本页 Schema 描述源码实现，暂时不是可安装的 npm 契约。
+</Warning>
+
 ## PDF
 
 `pdf.parse` 返回 `textBlocks` 和可选的 `images`。文本块包含文本、从 0 开始的页定位、可选的粗体或斜体样式，以及 `heading`、`list-item`、`caption` 等可选语义角色。

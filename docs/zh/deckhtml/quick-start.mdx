@@ -1,12 +1,33 @@
 ---
 title: 快速开始
 sidebarTitle: 快速开始
-description: "创建符合幻灯片尺寸的 HTML，并使用 DeckHTML 转换为 PPTX。"
+description: "安装 DeckHTML、验证浏览器运行时，并在本地生成 PPTX。"
 ---
 
+这条路径会让源文件留在本机。需要 Node.js 18 或更高版本，以及兼容的 Chromium、Chrome 或 Edge 可执行文件。
+
 <Steps>
-  <Step title="创建一页幻灯片">
-    将下面的内容保存为 `deck.html`。声明 Deck 尺寸可以让 DeckHTML 使用预期的 Viewport。
+  <Step title="安装并验证 DeckHTML">
+    ```bash
+    npm install -g @deckflow/deckhtml
+    deckhtml --version
+    ```
+  </Step>
+  <Step title="准备浏览器">
+    DeckHTML 会依次检查 `DECKHTML_CHROMIUM_EXECUTABLE_PATH`、Playwright 管理的浏览器，以及系统中的 Chrome 或 Edge。如果都不可用，可以通过 Playwright 安装 Chromium：
+
+    ```bash
+    npx -y playwright install chromium
+    ```
+
+    在容器或自定义镜像中，请指定准确的可执行文件：
+
+    ```bash
+    export DECKHTML_CHROMIUM_EXECUTABLE_PATH=/path/to/chromium
+    ```
+  </Step>
+  <Step title="创建幻灯片">
+    保存为 `deck.html`：
 
     ```html
     <!doctype html>
@@ -17,12 +38,7 @@ description: "创建符合幻灯片尺寸的 HTML，并使用 DeckHTML 转换为
         <style>
           * { box-sizing: border-box; }
           body { margin: 0; font-family: Arial, sans-serif; }
-          .slide-container {
-            width: 1280px;
-            height: 720px;
-            padding: 72px;
-            background: #f7fafc;
-          }
+          .slide-container { width: 1280px; height: 720px; padding: 72px; background: #f7fafc; }
         </style>
       </head>
       <body>
@@ -34,46 +50,37 @@ description: "创建符合幻灯片尺寸的 HTML，并使用 DeckHTML 转换为
     </html>
     ```
   </Step>
-  <Step title="在本地转换">
+  <Step title="转换并验证">
     ```bash
-    npx -y @deckflow/deckhtml@latest deck.html \
-      -o deck.pptx \
-      --mode local \
-      --json
+    deckhtml deck.html -o deck.pptx --mode local --json --quiet
+    test -s deck.pptx && echo "deck.pptx created"
     ```
-  </Step>
-  <Step title="检查结果">
-    命令成功时退出码为 `0`，写入 `deck.pptx`，并输出类似下面的 JSON：
+
+    PowerShell 中使用 `if (!(Test-Path deck.pptx) -or (Get-Item deck.pptx).Length -eq 0) { exit 1 }`。
+
+    `--quiet` 会让标准输出保持机器可读。JSON 结果使用规范化后的绝对路径，因此具体值取决于当前工作目录：
 
     ```json
     {
       "ok": true,
-      "input": ["deck.html"],
-      "output": "deck.pptx",
+      "input": ["/absolute/path/deck.html"],
+      "output": "/absolute/path/deck.pptx",
       "format": "pptx",
       "mode": "local",
       "slideCount": 1
     }
     ```
   </Step>
-  <Step title="生成转换报告">
+  <Step title="检查转换决策">
     ```bash
-    npx -y @deckflow/deckhtml@latest deck.html \
-      -o deck.pptx \
-      --mode local \
-      --report \
-      --force
+    deckhtml deck.html -o deck.pptx --mode local --report --force
     ```
 
-    在 `deck.pptx.report.json` 中检查原生、矢量、栅格、忽略和不支持的映射。
+    在 `deck.pptx.report.json` 中检查原生、矢量、栅格、忽略和不支持的元素。
   </Step>
 </Steps>
 
 <CardGroup cols={2}>
-  <Card title="HTML 输入契约" href="/zh/deckhtml/reference/input-html">
-    继续添加多页结构、资源、字体和稳定元素标识。
-  </Card>
-  <Card title="元素映射" href="/zh/deckhtml/guides/element-mapping">
-    了解哪些内容保持可编辑，哪些内容可能被栅格化。
-  </Card>
+  <Card title="HTML 输入契约" href="/zh/deckhtml/reference/input-html">增加多页、资源、字体和稳定元素标识。</Card>
+  <Card title="错误处理" href="/zh/deckhtml/guides/errors">解决浏览器、资源、输入和转换错误。</Card>
 </CardGroup>

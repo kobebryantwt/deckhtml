@@ -1,0 +1,38 @@
+---
+title: Selectors
+sidebarTitle: Selectors
+description: "Target DeckUse slides, shapes, text, and paragraphs with broad or canonical selectors."
+---
+
+Selectors identify existing PPTX content. Start with broad selectors to inspect a deck, then reuse the canonical ID-path selectors printed by `get text` for precise changes.
+
+## Supported forms
+
+| Form | Example | Meaning |
+| --- | --- | --- |
+| Type | `text` | All matching elements of a type |
+| Indexed | `slide:3` | The third slide; indices are 1-based |
+| Path | `slide:3/text` | Text on the third slide |
+| Key/value filter | `shape[type=textbox]` | Shapes with a matching property |
+| Function filter | `text[contains('Revenue')]` | Text containing a string |
+| Canonical ID path | `slide:1/#22` | Shape with the reported OOXML ID path |
+| Paragraph path | `slide:1/#22/p:0` | One zero-based paragraph inside that shape |
+
+```bash
+deckuse get text input.pptx "text[contains('Revenue')]"
+deckuse get text input.pptx 'slide:1/text'
+deckuse set text input.pptx 'slide:1/#22/p:0' 'Revenue overview' -o updated.pptx
+```
+
+## Quoting
+
+Wrap the whole selector in shell quotes. When a `contains()` value includes a quote, use the other quote type for the shell or selector value.
+
+## Selection limits
+
+- Broad filters depend on properties available in DeckUse's parsed PPTX model.
+- Canonical paths are specific to the source deck and can change after other tools rebuild the file.
+- Grouped and deeply nested shapes may not be reached by every broad selector.
+- `move` applies only to shapes on ordinary slides, not slide masters or layouts.
+
+Use `get text` again after a change when the next operation depends on an exact paragraph path.

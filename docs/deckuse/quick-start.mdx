@@ -1,0 +1,82 @@
+---
+title: Quickstart
+sidebarTitle: Quickstart
+description: "Install DeckUse, inspect a PPTX, replace text, and verify the updated presentation."
+---
+
+Use an existing PPTX copied to `input.pptx`, or generate the reproducible sample below. The sample contains `Revenue 2025`, so every subsequent command has a known match.
+
+<Steps>
+  <Step title="Check prerequisites">
+    DeckUse requires Node.js 18 or later and the `zip` and `unzip` command-line tools.
+
+    ```bash
+    node --version
+    zip -v
+    unzip -v
+    ```
+
+    On Windows, install `zip.exe` and `unzip.exe` and ensure both are on `Path`; PowerShell's archive cmdlets are not command-name substitutes for the current CLI.
+  </Step>
+  <Step title="Install and verify the CLI">
+    ```bash
+    npm install -g deckuse
+    deckuse --help
+    ```
+  </Step>
+  <Step title="Prepare a known PPTX">
+    If you do not already have `input.pptx`, save this as `sample.html`:
+
+    ```html
+    <!doctype html>
+    <html><body><section class="slide-container"><h1>Revenue 2025</h1></section></body></html>
+    ```
+
+    Then generate the fixture locally with DeckHTML:
+
+    ```bash
+    npx -y @deckflow/deckhtml@latest sample.html \
+      -o input.pptx --mode local --quiet
+    ```
+
+    DeckHTML requires a local Chromium/Chrome/Edge executable; see its [Quickstart](/deckhtml/quick-start) if browser discovery fails.
+  </Step>
+  <Step title="Inspect slides and text">
+    ```bash
+    deckuse list slides input.pptx
+    deckuse get text input.pptx 'slide:1/text'
+    ```
+
+    `get text` prints every resolved paragraph together with a reusable canonical selector such as `slide:1/#22/p:0`. Choose an exact phrase that appears in this output for the next step.
+  </Step>
+  <Step title="Create an updated PPTX">
+    Replace a value that actually appears in the preceding output. The generated sample contains `2025`; substitute a real value when using your own file. A direct write against a `.pptx` requires `-o` so the source is not overwritten.
+
+    ```bash
+    deckuse replace input.pptx '2025' '2026' -o updated.pptx
+    ```
+
+    Confirm that the command reports at least one replacement. A zero-match command can still produce an output file without changing text.
+  </Step>
+  <Step title="Verify the result">
+    ```bash
+    test -f updated.pptx
+    deckuse get text updated.pptx "text[contains('2026')]"
+    ```
+
+    In PowerShell, replace `test -f updated.pptx` with `if (!(Test-Path updated.pptx)) { exit 1 }`.
+
+    Open `updated.pptx` in PowerPoint or another compatible application to verify its visual layout before shipping it.
+  </Step>
+</Steps>
+
+If you need several changes, use a [persistent workspace](/deckuse/workspace) so the PPTX is unpacked and repackaged only once.
+
+<CardGroup cols={2}>
+  <Card title="Command reference" href="/deckuse/cli">
+    Set text, replace text, move shapes, inspect status, and commit workspaces.
+  </Card>
+  <Card title="Selector syntax" href="/deckuse/selectors">
+    Move from broad text matches to stable ID-path selectors.
+  </Card>
+</CardGroup>

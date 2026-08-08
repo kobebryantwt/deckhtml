@@ -1,57 +1,72 @@
 ---
 title: DeckOps
 sidebarTitle: Overview
-description: "Run parsing, extraction, conversion, and other document-processing tasks through one cloud task API."
+description: "Run cloud parsing, extraction, conversion, and document operations through asynchronous tasks."
 ---
 
-DeckOps is Deckflow's cloud document-processing runtime. It combines file upload, asynchronous task execution, structured parsing, extraction, conversion, and result delivery behind CLI and SDK interfaces.
+DeckOps is Deckflow's cloud document-processing runtime. Upload a supported file or provide a URL, create an asynchronous task, then receive Markdown, a format-specific structured result, or a converted artifact.
+
+| | DeckOps |
+| --- | --- |
+| Best for | Server-side parsing, extraction, conversion, and document workflows |
+| Inputs | PDF, PPTX, DOCX, Keynote, supported conversion inputs, or an HTML URL |
+| Results | Markdown, format-specific JSON, or files such as PDF, images, video, HTML, and PPTX |
+| Runs | Deckflow cloud |
+| Interfaces | Published TypeScript task SDK and CLIs; Python and Go implementations currently require source checkout |
+| Authentication | API key or user token; limited guest execution is available for low-level tasks |
 
 ```mermaid
 flowchart LR
-  I["File or URL"] --> U["Upload or route input"]
-  U --> T["Create task"]
-  T --> W["Wait, poll, or subscribe"]
-  W --> R["Download artifact or structured result"]
+  I["File or URL"] --> U["Upload or materialize input"]
+  U --> C["Create task"]
+  C --> S["Start guest task when required"]
+  S --> W["Wait by SSE or polling"]
+  W --> R["Download result"]
 ```
 
+## When to use DeckOps
+
+- Parse PDF, PPTX, DOCX, or Keynote into Markdown for search, review, or AI pipelines.
+- Retain format-specific structure such as slide geometry, notes, document elements, or PDF semantic roles.
+- Convert supported documents into visual or editable artifacts.
+- Run OCR, presentation inspection, compression, splitting, joining, font, image, or content tasks in the cloud.
+
+DeckOps does not currently expose one cross-format public Document IR. The high-level `parse()` facade normalizes supported parse results to Markdown; low-level parse tasks preserve a different structured contract for each format. Read [Structured results](/deckops/structured-results) before storing or transforming those responses.
+
+## A first cloud task
+
+```ts
+import { createDeck } from '@deckops/sdk';
+
+const deck = createDeck();
+const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
+await deck.tasks.start(task.id); // required for a guest task
+const completed = await deck.tasks.wait(task.id);
+const result = await deck.tasks.down(completed.id);
+
+console.log(completed.id, completed.type, completed.status);
+console.log(result);
+```
+
+This published-package path uploads the file, explicitly starts a guest task, waits for completion, and downloads the result. Follow the [Quickstart](/deckops/quick-start) for a complete runnable example.
+
+<Warning>
+  The repository source implements `parse()`, `parseDetailed()`, and typed Parse tasks, but the current `@deckops/sdk@0.7.3` npm artifact does not expose them. Parse documentation is source-contract documentation until a corrected artifact is published. Python is not currently published to PyPI, and the Go module is not fetchable from its repository URL.
+</Warning>
+
+## Execution and data boundary
+
+Files processed by DeckOps are uploaded to Deckflow cloud. Authenticated tasks start automatically. A guest-created low-level task must be started explicitly before waiting; the high-level parse facade does not perform that guest start for you.
+
+<Warning>
+  Use an API key or user token with `parse()` and `parseDetailed()`. If you need guest mode, use the low-level task API and call `tasks.start(task.id)` after creation. The Python SDK does not currently expose this guest-start method.
+</Warning>
+
+## Continue
+
 <CardGroup cols={2}>
-  <Card title="Quickstart" href="/deckops/quick-start">
-    Parse a document and inspect the first result.
-  </Card>
-  <Card title="Task model" href="/deckops/task-model">
-    Understand uploads, asynchronous execution, progress, and downloads.
-  </Card>
-  <Card title="Parse documents" href="/deckops/parse">
-    Get Markdown or retain each format's structured parse result.
-  </Card>
-  <Card title="Operations" href="/deckops/operations">
-    Explore conversion, PPTX, OCR, compression, and content tasks.
-  </Card>
+  <Card title="Quickstart" href="/deckops/quick-start">Run and verify an authenticated PDF parse.</Card>
+  <Card title="Authentication" href="/deckops/authentication">Choose guest, API-key, or user-token execution.</Card>
+  <Card title="Task model" href="/deckops/task-model">Handle task creation, progress, retries, and downloads.</Card>
+  <Card title="Capabilities" href="/deckops/operations">Find the task family that matches your workflow.</Card>
 </CardGroup>
-
-## Capability groups
-
-| Area | What it provides |
-| --- | --- |
-| Parse | Parse PDF, PPTX, DOCX, and Keynote files, or extract readable content from a web URL |
-| Extract | Inspect PPTX fonts, text shapes, layout data, images, and speaker notes; run image OCR |
-| Convert | Convert presentation and document formats into PDF, images, video, HTML, or PPTX where supported |
-| Operate | Compress files, split or join PPTX files, embed fonts, and resize or transcode images |
-| Content workflows | Create, translate, or revamp document content through cloud tasks |
-
-## Structured results, not one public IR
-
-The current SDK exposes a different structured result contract for each parsed format. `deck.parse()` provides a normalized Markdown convenience result, while low-level parse tasks retain format-specific detail such as PPTX geometry, DOCX element types, PDF semantic roles, or Keynote slide structure.
-
-Use [Structured Results](/deckops/structured-results) before building against a parse response.
-
-## Available integrations
-
-- TypeScript SDK for Node.js and browsers: `@deckops/sdk`
-- Python SDK: `deckops-sdk`
-- Go SDK: `github.com/deckops/deckops/sdks/go`
-- Node.js CLI from npm and a native Go CLI from GitHub Releases
-
-<Info>
-  DeckOps executes document tasks in the cloud. Clients may run with a stable guest UUID, a user token, or an API key; server-side limits depend on the selected authentication mode.
-</Info>

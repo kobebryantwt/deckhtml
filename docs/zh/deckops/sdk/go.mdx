@@ -1,12 +1,17 @@
 ---
-title: Go SDK
-sidebarTitle: Go
+title: 从源码使用 Go SDK
+sidebarTitle: Go（源码）
 description: "使用 DeckOps Go SDK 执行任务、上传、解析和结果获取。"
 ---
 
-```bash
-go get github.com/deckops/deckops/sdks/go
+Go SDK 已在 `deckflow/deckops` 中实现，但其声明的 Module Path 当前指向无法获取的 `github.com/deckops/deckops/sdks/go` 仓库。请在本地检出经过评审的版本，并临时增加 `replace`：
+
+```go
+require github.com/deckops/deckops/sdks/go v0.0.0
+replace github.com/deckops/deckops/sdks/go => ../deckops/sdks/go
 ```
+
+修正后的 Module 发布后，请移除本地替换。
 
 ```go
 package main

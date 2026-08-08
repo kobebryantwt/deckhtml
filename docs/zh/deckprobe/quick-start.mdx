@@ -1,84 +1,97 @@
 ---
 title: DeckProbe 快速开始
 sidebarTitle: 快速开始
-description: "在线体验 DeckProbe，或安装、验证并运行原生 CLI。"
+description: "安装 DeckProbe、下载示例 PDF、请求两个事实，并验证 Schema v2 结果。"
 ---
 
-## 在线体验
+本流程使用原生 CLI，全部操作都在本机完成，不需要账号或 API Key。
 
-<Card title="打开 Deck Playground ↗" href="https://deckflow.github.io/playground/">
-  直接在浏览器中查看文档 Profile 和页面预览。
-</Card>
+<Steps>
+  <Step title="安装预编译版本">
+    <Tabs>
+      <Tab title="macOS 与 Linux">
+        ```bash
+        curl --proto '=https' --tlsv1.2 -LsSf \
+          https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+        ```
+      </Tab>
+      <Tab title="Windows PowerShell">
+        ```powershell
+        powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+        ```
 
-
-## 安装预编译版本
-
-安装器会自动选择与当前操作系统和 CPU 匹配的归档文件。
-
-<Tabs>
-  <Tab title="macOS">
+        安装程序修改用户 `Path` 后，请重启 Shell。
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="验证可执行程序">
     ```bash
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    deckprobe --version
+    deckprobe --help
     ```
-  </Tab>
-  <Tab title="Linux">
+
+    也可以使用 Rust 1.88 或更高版本从源码安装：
+
     ```bash
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
+    cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
     ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
+  </Step>
+  <Step title="下载已知输入">
+    ```bash
+    curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf \
+      -o sample.pdf
+    ```
+  </Step>
+  <Step title="请求格式和页数">
+    ```bash
+    deckprobe \
+      --targets format,page_count \
+      --view values \
+      --pretty \
+      sample.pdf
+    ```
+  </Step>
+  <Step title="验证结果">
+    成功的 Values Report 退出码为 `0`，包含 `schema_version: 2`、PDF Driver，以及类似以下内容的 `values`：
+
+    ```json
+    {
+      "schema_version": 2,
+      "tool_version": "2.3.0",
+      "status": "ok",
+      "view": "values",
+      "driver": {
+        "id": "pdf",
+        "profile": "pdf"
+      },
+      "values": {
+        "document.format": "pdf",
+        "pdf.page_count": 1
+      },
+      "unresolved_targets": [],
+      "diagnostics": []
+    }
     ```
 
-    如果安装器更新了用户 `Path`，请重启终端。
-  </Tab>
-</Tabs>
+    完整结果还包含 `input`；部分 Target 被顺带解析时，可能出现其他字段。
+  </Step>
+</Steps>
 
-## 或从源码安装
+<Tip>
+  固定格式专属 Target 前，先运行 `deckprobe targets pdf --pretty`。请求的 Target 未解析时必须返回非零状态，可以添加 `--strict`。
+</Tip>
 
-源码安装需要 Rust 1.88 或更高版本以及 Git：
-
-```bash
-cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
-```
-
-## 验证安装
-
-确认命令已经可用：
-
-```bash
-deckprobe --version
-```
-
-查看简要选项或完整内置帮助：
-
-```bash
-deckprobe -h
-deckprobe --help
-```
-
-## 嗅探文档
-
-执行默认的 Metadata-level Probe：
-
-```bash
-deckprobe --pretty report.pdf
-```
-
-也可以只请求工作流需要的事实：
-
-```bash
-deckprobe --pretty -t format,slide_count deck.pptx
-```
-
-命令会输出 Schema v2 JSON Report，其中包含所选 Driver、Target 结果、置信度、证据路径、诊断和实际执行成本。
-
-## 下一步
-
-- 在自动化中消费报告前，阅读[输出模型](/zh/deckprobe/output-model)。
-- 需要了解 Target Selector、JSONL、输出行为和资源预算时，阅读 [CLI 使用指南](/zh/deckprobe/cli)。
-- 需要了解浏览器输入、WebAssembly 初始化和 Worker 时，阅读 [Browser SDK 使用指南](/zh/deckprobe/browser-sdk)。
-- 自定义安装位置、升级和卸载请参考仓库中的[安装指南](https://github.com/deckflow/deckprobe/blob/main/docs/INSTALLATION.md)。
+<CardGroup cols={2}>
+  <Card title="输出模型" href="/zh/deckprobe/output-model">
+    稳定消费证据、置信度、诊断、紧凑 Values 和错误。
+  </Card>
+  <Card title="CLI 指南" href="/zh/deckprobe/cli">
+    使用 stdin、JSONL、Selector、预算、Plan Only 和自动化行为。
+  </Card>
+  <Card title="Browser SDK 状态" href="/zh/deckprobe/browser-sdk">
+    查看源码 API 和当前 npm 发布阻塞。
+  </Card>
+  <Card title="Node.js API 状态" href="/zh/deckprobe/node-sdk">
+    查看源码 API 和当前 npm 发布阻塞。
+  </Card>
+</CardGroup>

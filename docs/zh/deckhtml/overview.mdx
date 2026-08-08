@@ -1,47 +1,61 @@
 ---
 title: DeckHTML
 sidebarTitle: 概览
-description: "将 HTML 或 SVG 转换为 PPTX 和 PNG，并在可能时保留可编辑的演示文稿元素。"
+description: "把 HTML 或 SVG 转换为 PPTX 和 PNG，并尽可能保留可编辑的演示文稿元素。"
 ---
 
-DeckHTML 将浏览器渲染后的 HTML 或 SVG 转换为演示文稿产物。它读取页面的计算布局，再把每个元素映射为原生、矢量、栅格、忽略或不支持的演示文稿表示。
+DeckHTML 把经过浏览器布局的 HTML 转换为 PPTX 或 PNG。它会尽可能把文字、图片、表格、形状、受支持的 SVG 和公式映射为原生或矢量演示文稿元素；当视觉一致性比可编辑性更可靠时，则回退为栅格图像。
+
+| | DeckHTML |
+| --- | --- |
+| 适用场景 | HTML 原生幻灯片创作和自动生成演示文稿 |
+| 输入 | 本地 HTML 或 SVG、stdin 中的 HTML、多个有序文件，或 HTML URL |
+| 输出 | PPTX 或 PNG |
+| 执行位置 | 本地 Chromium，或 Deckflow 云端 |
+| 接入方式 | CLI 和本地 Node.js API |
+| 认证 | 本地模式不需要；云端支持游客、登录或 API Key |
 
 ```mermaid
 flowchart LR
-  H["HTML 或 SVG"] --> B["浏览器布局"]
-  B --> I["检查幻灯片和元素"]
-  I --> M["映射为原生、矢量或栅格输出"]
-  M --> O["PPTX 或 PNG"]
-  M --> R["报告和诊断"]
+  H["HTML 或 SVG"] --> B["Chromium 布局"]
+  B --> M["原生、矢量或栅格映射"]
+  M --> P["PPTX 或 PNG"]
+  M --> R["诊断和报告"]
 ```
 
-<CardGroup cols={2}>
-  <Card title="快速开始" href="/zh/deckhtml/quick-start">
-    在本地转换第一个 HTML Deck 并检查输出。
-  </Card>
-  <Card title="编写 HTML" href="/zh/deckhtml/reference/input-html">
-    按可靠转换需要组织 Slide、尺寸、元素标识、字体和资源。
-  </Card>
-  <Card title="CLI" href="/zh/deckhtml/cli/overview">
-    在终端或 CI 中转换文件、stdin、URL 或有序输入。
-  </Card>
-  <Card title="Node SDK" href="/zh/deckhtml/sdk/overview">
-    在代码中控制转换、严格模式、资源和浏览器执行。
-  </Card>
-</CardGroup>
+## 适合使用 DeckHTML 的场景
 
-## DeckHTML 会保留什么
+- 从模板、应用数据或 AI 生成的 HTML 创建演示文稿。
+- 在 PowerPoint 中保留受支持文字、形状、表格、图片、SVG 几何和公式的可编辑性。
+- 把多个本地 HTML/SVG 文件按顺序合并为幻灯片。
+- 从同一份输入生成 PNG 预览。
+- 在自动化质量检查中查看逐元素转换决策。
 
-存在稳定 PPTX 映射时，DeckHTML 会尽量让文本、图片、表格、常见形状、支持的 SVG 几何和 MathML 公式保持可编辑。Canvas 图表、复杂 SVG、分层背景等不支持效果可能会被栅格化以保留视觉表现。
-
-转换报告会逐元素呈现这条边界。对可编辑性有要求时，应把报告检查纳入自动化流程。
+DeckHTML 不承诺浏览器到 PowerPoint 的无损转换。Canvas、复杂 SVG、滤镜、分层效果、iframe 和不支持的 CSS 可能被栅格化、忽略或标记为不支持。
 
 ## 执行模式
 
-- **Local**：在当前机器运行 Playwright 和转换器，无需云端凭证，支持 PPTX 和 PNG。
-- **Cloud**：上传输入并执行 DeckOps 转换任务，字体嵌入只在此模式提供。
-- **Auto**：已配置凭证时选择 Cloud，否则选择 Local。
+| 模式 | 数据边界 | 凭证 | 说明 |
+| --- | --- | --- | --- |
+| 本地 | 数据留在本机 | 无 | 需要兼容的 Chromium、Chrome 或 Edge 可执行文件 |
+| 云端 | 输入上传到 Deckflow | 游客、登录或 API Key | 字体嵌入仅云端可用 |
+| 自动 | 有凭证时使用云端，否则本地 | 取决于最终模式 | 生产工作流建议显式指定 |
 
-## 产品边界
+Node.js API 只在本地运行并返回 Buffer，不会写文件。CLI 可以本地运行，也可以提交 DeckOps 云端任务。
 
-DeckHTML 从 HTML 或 SVG 出发。检查已有文档使用 [DeckProbe](/zh/deckprobe/overview)，云端解析和文档操作使用 [DeckOps](/zh/deckops/overview)，需要把修改写回支持的 Office 源文件时使用 [DeckUse](/zh/deckuse/overview)。
+## 第一次转换
+
+```bash
+deckhtml deck.html -o deck.pptx --mode local --json
+```
+
+成功时命令以代码 `0` 退出，写入 PPTX，并返回解析后的输入/输出路径和幻灯片数量。请按[快速开始](/zh/deckhtml/quick-start)创建已知输入并验证结果。
+
+## 继续阅读
+
+<CardGroup cols={2}>
+  <Card title="快速开始" href="/zh/deckhtml/quick-start">安装、检查 Chromium 并生成一个 PPTX。</Card>
+  <Card title="输入契约" href="/zh/deckhtml/reference/input-html">定义幻灯片、尺寸、标识、字体和资源。</Card>
+  <Card title="元素映射" href="/zh/deckhtml/guides/element-mapping">了解可编辑性和栅格回退。</Card>
+  <Card title="认证" href="/zh/deckhtml/authentication">配置云端游客、登录或 API Key。</Card>
+</CardGroup>

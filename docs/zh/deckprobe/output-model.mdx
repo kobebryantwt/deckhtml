@@ -30,7 +30,7 @@ Schema v2 定义了三种报告形态：
 ```json
 {
   "schema_version": 2,
-  "tool_version": "2.2.0",
+  "tool_version": "2.3.0",
   "status": "ok",
   "input": {
     "display_name": "deck.pptx",
@@ -109,7 +109,7 @@ deckprobe -t @summary --view values report.pdf
 ```json
 {
   "schema_version": 2,
-  "tool_version": "2.2.0",
+  "tool_version": "2.3.0",
   "status": "error",
   "error": {
     "code": "MALFORMED_INPUT",
@@ -139,7 +139,7 @@ DeckProbe 提供 Discovery Command，应用无需硬编码所有格式与 Target
 
 | 命令 | 返回内容 |
 | --- | --- |
-| `deckprobe formats --pretty` | 支持的 Driver、Profile、扩展名和能力边界 |
+| `deckprobe formats --pretty` | 支持的 Driver、Profile 和能力边界 |
 | `deckprobe targets --format pptx --pretty` | PPTX 的 Target ID、Alias、Value Type、Selector、最低 Level、Cost 和格式选项 |
 | `deckprobe schema --pretty` | 当前二进制内置的完整 Schema v2 JSON Schema |
 

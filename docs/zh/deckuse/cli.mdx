@@ -1,0 +1,56 @@
+---
+title: CLI
+sidebarTitle: CLI
+description: "查看 DeckUse 已实现的 PPTX 检查与修改命令。"
+---
+
+```bash
+deckuse <command> [arguments] [options]
+```
+
+多数读取命令可以接收 `.pptx` 或已初始化的 Workspace。写命令也支持这两种输入，但直接写 `.pptx` 时必须传入 `-o <output.pptx>`。
+
+## Workspace 命令
+
+| 命令 | 用途 |
+| --- | --- |
+| `deckuse init <pptx> [-d <dir>]` | 解包 PPTX 并创建持久化 Workspace 元数据 |
+| `deckuse status <workspace-or-pptx>` | 输出 Workspace、校验、幻灯片、Master 和 Layout 状态 |
+| `deckuse commit <workspace> [-o <pptx>]` | 校验并把 Workspace 打包为 PPTX |
+
+## 检查命令
+
+```bash
+deckuse list slides input.pptx
+deckuse show slide input.pptx 1
+deckuse get text input.pptx 'slide:1/text'
+```
+
+| 命令 | 用途 |
+| --- | --- |
+| `list slides` | 列出页面引用、Layout、Master、Shape 数量和内容状态 |
+| `show slide` | 输出一页的引用和顶层 Shape Tree |
+| `get text` | 解析 Selector，并输出段落文本和规范 Selector |
+
+## 修改命令
+
+```bash
+deckuse set text working.deck 'slide:1/#22/p:0' 'New title'
+deckuse replace working.deck 'Old name' 'New name'
+deckuse replace working.deck '^Q[1-4]' 'FY2026' --regex --slide 3
+deckuse move working.deck 'slide:1/#22' --left 0.1 --top 0.2
+deckuse commit working.deck -o updated.pptx
+```
+
+| 命令 | 重要行为 |
+| --- | --- |
+| `set text <target> <selector> <text> [-o <pptx>]` | 使用指定文本替换 Selector 匹配到的全部段落 |
+| `replace <target> <search> <replacement> [--slide N] [--regex] [-o <pptx>]` | 在全局或指定页面中查找替换文本 |
+| `move <target> <selector> --left N --top N [-o <pptx>]` | 移动已选页面 Shape；位置是 `0` 到 `1` 的归一化值 |
+| `set font-size <target> <selector> <points> [-o <pptx>]` | CLI 中已提供，但 Selector 到 Shape 的覆盖有限；必须检查每个目标 |
+
+<Warning>
+  当前 CLI 没有添加或删除幻灯片、元素的命令。Selector 没有匹配时可能只输出提示而不修改文件，因此需要检查命令输出和生成后的 PPTX。
+</Warning>
+
+命令失败且需要堆栈信息时，可以设置 `DEBUG=1`。

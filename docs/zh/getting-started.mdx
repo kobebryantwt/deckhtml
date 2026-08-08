@@ -1,175 +1,67 @@
 ---
 title: 开始使用
 sidebarTitle: 开始使用
-description: "总览每项 Deckflow 能力的最小准备、调用方式和返回结果。"
+description: "对比每个 Deckflow 产品的最小输入、命令和可验证结果。"
 ---
 
-通过本页找到得到第一个结果的最短且经过确认的路径。完整参数和契约请继续查看对应产品文档。
+每个产品解决不同的文档任务。先确定需要的结果，再进入对应快速开始，完成环境准备、已知输入、预期输出和错误处理。
 
-## DeckProbe
+| 产品 | 第一个结果 | 执行位置 | 凭证 |
+| --- | --- | --- | --- |
+| DeckProbe | 文档事实的 Schema v2 报告 | 本地 | 无 |
+| DeckRender | PNG、PDF 或支持的视频渲染 | 主要在云端 | 游客或认证 |
+| DeckOps | Markdown、结构化解析数据或转换产物 | 云端 | 推荐 API Key/Token |
+| DeckUse | 更新后的 PPTX | 本地 | 无 |
+| DeckHTML | 从 HTML 生成 PPTX 或 PNG | 本地或云端 | 本地无需凭证 |
 
-在本地嗅探文档，并得到 Schema v2 JSON 报告。
-
-### 安装
-
-<Tabs>
-  <Tab title="macOS 与 Linux">
-    ```bash
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
-    ```
-  </Tab>
-</Tabs>
-
-### 使用
+## DeckProbe：检查一个已知 PDF
 
 ```bash
-deckprobe --pretty -t format,slide_count deck.pptx
+curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+deckprobe -t format,page_count --view values --pretty sample.pdf
 ```
 
-### 结果
+成功时退出码为 `0`，`schema_version` 为 `2`，驱动为 `pdf`，并解析出 `document.format` 和 `pdf.page_count`。安装原生 CLI 并查看完整响应见 [DeckProbe 快速开始](/zh/deckprobe/quick-start)。
 
-```json
-{
-  "schema_version": 2,
-  "tool_version": "2.2.0",
-  "status": "ok",
-  "input": {
-    "display_name": "deck.pptx",
-    "source_kind": "local_file",
-    "file_size": 245760
-  },
-  "driver": {
-    "id": "powerpoint",
-    "profile": "pptx"
-  },
-  "results": {
-    "powerpoint.slide_count": {
-      "target": "powerpoint.slide_count",
-      "status": "resolved",
-      "value": 31,
-      "confidence": "exact",
-      "confidence_score": 1,
-      "path": "powerpoint.presentation_xml",
-      "source": "ppt/presentation.xml"
-    }
-  },
-  "execution": {
-    "probe_level": "metadata",
-    "paths": ["powerpoint.presentation_xml"],
-    "estimated_cost": 12,
-    "actual_cost": {
-      "physical_bytes_read": 4096,
-      "expanded_bytes": 16384,
-      "random_reads": 2
-    },
-    "unresolved_targets": []
-  },
-  "diagnostics": []
-}
-```
-
-示例中的数值和成本仅用于说明，字段名遵循 Schema v2 契约。可以继续阅读 [DeckProbe 快速开始](/zh/deckprobe/quick-start)或[输出模型](/zh/deckprobe/output-model)。
-
-## DeckHTML
-
-从一个 HTML 源文件生成 PPTX。
-
-### 准备
-
-将以下内容保存为 `index.html`：
-
-```html
-<!doctype html>
-<html>
-  <body>
-    <section>
-      <h1>Hello DeckHTML</h1>
-      <p>My first generated slide.</p>
-    </section>
-  </body>
-</html>
-```
-
-### 使用
-
-无需全局安装，直接运行 npm 包：
+## DeckRender：生成 PNG
 
 ```bash
-npx -y @deckflow/deckhtml@latest index.html -o deck.pptx
+npm install -g @deckflow/deckrender
+deckrender hello.html -o hello.png --json
+test -s hello.png
 ```
 
-### 结果
+命令会把 HTML 上传到 Deckflow 云端，写入 `hello.png`，并返回包含 `ok`、路由、页数、输出路径、字节数和耗时的 `RenderResult`。创建输入并了解游客限额见 [DeckRender 快速开始](/zh/deckrender/quick-start)。
 
-命令会写入 `deck.pptx`。调用方需要结构化命令结果时增加 `--json`：
-
-```bash
-npx -y @deckflow/deckhtml@latest index.html -o deck.pptx --json
-```
-
-可以继续阅读 [DeckHTML 快速开始](/zh/deckhtml/quick-start)、[CLI](/zh/deckhtml/cli/overview)或 [Node.js SDK](/zh/deckhtml/sdk/node)。
-
-## DeckOps
-
-安装 TypeScript SDK，将支持的文档解析为 Markdown：
+## DeckOps：运行一个云端任务
 
 ```bash
 npm install @deckops/sdk
+node run.mjs
 ```
 
-```ts
-import { createDeck } from '@deckops/sdk';
+[DeckOps 快速开始](/zh/deckops/quick-start)中的脚本会创建一个已知 HTML 文件，上传并启动游客 `convertor.html2png` 任务，再输出已完成任务和 PNG 下载元数据。当前 npm 产物还没有暴露仓库中较新的 Parse Facade。
 
-const deck = createDeck({ apiKey: process.env.DECKOPS_API_KEY });
-const result = await deck.parseDetailed('./slides.pptx');
-
-console.log(result.markdown);
-console.log(result.taskId, result.type);
-```
-
-继续阅读 [DeckOps 快速开始](/zh/deckops/quick-start)、[任务模型](/zh/deckops/task-model)或[结构化解析结果](/zh/deckops/structured-results)。
-
-## DeckRender
-
-无需全局安装，直接运行软件包并把全部幻灯片渲染为 PNG：
+## DeckUse：更新现有 PPTX
 
 ```bash
-npx -y @deckflow/deckrender@latest presentation.pptx
+npm install -g deckuse
+deckuse replace input.pptx '2025' '2026' -o updated.pptx
+deckuse get text updated.pptx "text[contains('2026')]"
 ```
 
-多页图片会生成连续编号的目录：
+DeckUse 在本地执行，当前支持修改现有 PPTX 内容。它不能新增或删除元素，也不支持其他 Office 格式。请按 [DeckUse 快速开始](/zh/deckuse/quick-start)检查选择器并验证输出。
 
-```text
-presentation/
-├── 001.png
-├── 002.png
-└── 003.png
-```
-
-可以通过输出路径选择其他产物，自动化调用时添加 `--json`：
+## DeckHTML：在本地生成 PPTX
 
 ```bash
-npx -y @deckflow/deckrender@latest presentation.pptx -o presentation.pdf
-npx -y @deckflow/deckrender@latest presentation.pptx --json
+npm install -g @deckflow/deckhtml
+deckhtml deck.html -o deck.pptx --mode local --json --quiet
+test -s deck.pptx
 ```
 
-继续阅读 [DeckRender 快速开始](/zh/deckrender/quick-start)、[支持的格式](/zh/deckrender/formats)或 [Node.js SDK](/zh/deckrender/sdk/node)。
+命令使用本地 Chromium，返回规范化路径、输出格式、执行模式和幻灯片数量。准备浏览器和幻灯片尺寸的 HTML 见 [DeckHTML 快速开始](/zh/deckhtml/quick-start)。
 
-## DeckUse
-
-<CardGroup cols={1}>
-  <Card title="DeckUse" href="/zh/deckuse/overview">
-    **输入：**支持的 Office 源文件
-
-    **使用：**修改或删除已有元素
-
-    **结果：**更新后仍可编辑的 Office 文件
-  </Card>
-</CardGroup>
-
-如果多个能力看起来都适用，可以在[选择产品](/zh/product-guide)中比较它们的边界。
+<Tip>
+  如果还没确定产品，请在[选择产品](/zh/product-guide)中比较常见目标、执行边界和当前格式限制。
+</Tip>

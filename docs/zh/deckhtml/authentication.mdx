@@ -1,0 +1,49 @@
+---
+title: 认证
+sidebarTitle: 认证
+description: "为 DeckHTML 云端模式配置游客、浏览器登录或 API Key。"
+---
+
+本地模式和 Node.js API 不需要 Deckflow 凭证。云端模式会把输入上传到 Deckflow，并支持游客、用户 Token 或 API Key。
+
+| 模式 | 配置 | 适用场景 |
+| --- | --- | --- |
+| 本地 | 无 | 私有本地转换和开发 |
+| 云端游客 | 无 | 限频试用；CLI 会启动游客任务 |
+| 浏览器登录 | `deckhtml auth login` | 使用用户 Token 的交互式开发 |
+| API Key | `DECKHTML_API_KEY` 或 CLI 配置 | 生产服务和 CI |
+
+## 浏览器登录
+
+```bash
+deckhtml auth login
+deckhtml auth status
+```
+
+登录流程会把 Token 和空间信息保存到 `~/.deckflow/credentials`（或 `DECKHTML_CONFIG_DIR/credentials`）。`auth status` 只报告本地是否存在配置，不会向服务端验证其有效性。
+
+## API Key
+
+CI 中优先使用环境密钥：
+
+```bash
+export DECKHTML_API_KEY="your-api-key"
+deckhtml deck.html -o deck.pptx --mode cloud
+```
+
+开发机器上也可以通过 CLI 持久化：
+
+```bash
+deckhtml config set api-key "your-api-key"
+deckhtml auth status
+```
+
+环境变量的优先级高于已保存的 API Key。不要提交凭证文件，也不要把 API Key 放入浏览器代码。
+
+## 游客模式
+
+未配置凭证时也可以显式使用 `--mode cloud`。CLI 会提供游客身份并启动限频任务。需要稳定生产限额或工作空间归属时，请使用认证模式。
+
+<Info>
+  `--embed-fonts` 仅在云端模式可用。使用时会上传 HTML 输入和所需字体资源。
+</Info>

@@ -6,23 +6,23 @@ description: "在脚本和 CI 中安全消费 DeckHTML 输出。"
 
 ## 默认输出
 
-命令成功后，默认把进度写入 stderr，把生成产物路径写入 stdout。多页 PNG 会输出每个文件路径。
+默认模式面向人类阅读，可能输出进度、字体提示和产物路径，不应把它当作稳定的 stdout 协议解析。多页 PNG 会输出每个文件路径。
 
 DeckHTML 默认拒绝覆盖已有的本地产物，只有明确需要替换时才传 `--force`。
 
 ## JSON 输出
 
-`--json` 会让最终成功 Envelope 保持在 stdout，便于脚本解析。
+需要机器可读 stdout 时，请同时使用 `--json --quiet`。当前 CLI 只加 `--json` 时，仍可能在最终 Envelope 前把人类可读转换日志写入 stdout。
 
 ```bash
-deckhtml deck.html -o deck.pptx --mode local --json
+deckhtml deck.html -o deck.pptx --mode local --json --quiet
 ```
 
 ```json
 {
   "ok": true,
-  "input": ["deck.html"],
-  "output": "deck.pptx",
+  "input": ["/absolute/path/deck.html"],
+  "output": "/absolute/path/deck.pptx",
   "format": "pptx",
   "mode": "local",
   "slideCount": 3

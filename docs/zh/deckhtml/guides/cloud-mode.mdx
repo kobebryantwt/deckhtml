@@ -13,7 +13,7 @@ deckhtml deck.html -o deck.pptx --mode cloud --embed-fonts
 
 ## 认证行为
 
-Cloud 模式支持稳定的访客 UUID。访客请求会被限频，并可能需要显式启动任务。生产环境建议登录或配置 API Key。
+Cloud 模式支持稳定的访客 UUID。访客请求会被限频；DeckHTML CLI 会自动启动游客任务。生产环境建议登录或配置 API Key。
 
 ```bash
 deckhtml auth login
@@ -22,6 +22,8 @@ deckhtml config set api-key <key>
 ```
 
 CI 环境使用 `DECKHTML_API_KEY`，无需交互式存储凭证。
+
+凭证优先级、存储方式和状态行为见[认证](/zh/deckhtml/authentication)。
 
 ## 与 Local 模式的区别
 

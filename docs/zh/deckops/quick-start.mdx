@@ -1,66 +1,77 @@
 ---
 title: 快速开始
 sidebarTitle: 快速开始
-description: "安装 TypeScript SDK，解析文档并获取任务结果。"
+description: "安装已发布的 TypeScript SDK，并完成一个游客云端任务。"
 ---
 
-TypeScript SDK 是在 Node.js 或浏览器应用中接入 DeckOps 的最短路径。
+这条路径会创建一个已知 HTML 输入，上传到 Deckflow 云端，显式启动游客任务，并验证返回的 PNG 元数据。它适用于当前已发布的 `@deckops/sdk@0.7.3`，需要 Node.js 18 或更高版本。
 
 <Steps>
-  <Step title="安装 SDK">
+  <Step title="准备项目">
     ```bash
+    mkdir deckops-quickstart && cd deckops-quickstart
+    npm init -y
     npm install @deckops/sdk
     ```
   </Step>
-  <Step title="创建客户端">
-    生产环境建议使用 API Key；省略凭证时将使用受限的访客模式。
+  <Step title="创建输入">
+    保存为 `sample.html`：
 
-    ```ts
+    ```html
+    <!doctype html>
+    <html><body><h1>Hello DeckOps</h1></body></html>
+    ```
+  </Step>
+  <Step title="创建脚本">
+    保存为 `run.mjs`：
+
+    ```js
     import { createDeck } from '@deckops/sdk';
 
-    const deck = createDeck({
-      apiKey: process.env.DECKOPS_API_KEY,
-    });
-    ```
-  </Step>
-  <Step title="解析文档">
-    `parseDetailed()` 会上传文件、根据扩展名选择 Parser、等待任务完成、下载结构化结果并转换成 Markdown。
+    const deck = createDeck();
+    const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
 
-    ```ts
-    const result = await deck.parseDetailed('./slides.pptx');
-
-    console.log(result.markdown);
-    console.log(result.taskId, result.type);
-    ```
-  </Step>
-  <Step title="执行类型化转换任务">
-    ```ts
-    const task = await deck.convertPptToPdf({
-      files: ['./slides.pptx'],
-      name: 'slides',
-    });
-
+    // 游客任务会保持 pending，必须显式启动。
+    await deck.tasks.start(task.id);
     const completed = await deck.tasks.wait(task.id, {
-      onProgress: (next) => console.log(next.status),
+      timeout: 120,
+      onProgress: (next) => console.error(next.status),
     });
-    const files = await deck.tasks.down<'convertor.ppt2pdf'>(completed.id);
+    const result = await deck.tasks.down(completed.id);
+
+    console.log(JSON.stringify({
+      taskId: completed.id,
+      type: completed.type,
+      status: completed.status,
+      result,
+    }, null, 2));
+    ```
+  </Step>
+  <Step title="运行并验证">
+    ```bash
+    node run.mjs
+    ```
+
+    成功响应包含非空任务 ID、`convertor.html2png`、`completed`，以及由 PNG 下载地址、字节数和哈希组成的结果元组：
+
+    ```json
+    {
+      "taskId": "<task-id>",
+      "type": "convertor.html2png",
+      "status": "completed",
+      "result": ["<download-url>", 8063, "<hash>"]
+    }
     ```
   </Step>
 </Steps>
 
-## 接下来阅读
+游客执行存在限频。生产环境请配置 API Key 或用户 Token；已认证任务会自动启动。详见[认证](/zh/deckops/authentication)。
+
+<Warning>
+  仓库源码包含更新的 Parse Facade 和类型化 Parse 任务，但当前已发布的 `@deckops/sdk@0.7.3` 产物没有暴露这些接口。在修正后的软件包发布前，Parse 页面描述的是源码实现，不能视为可安装的 npm 契约。
+</Warning>
 
 <CardGroup cols={2}>
-  <Card title="解析文档" href="/zh/deckops/parse">
-    比较 Markdown 门面和底层结构化结果。
-  </Card>
-  <Card title="任务模型" href="/zh/deckops/task-model">
-    建立可靠的上传、进度、重试和下载流程。
-  </Card>
-  <Card title="TypeScript SDK" href="/zh/deckops/sdk/typescript">
-    配置认证、浏览器上传和类型化任务方法。
-  </Card>
-  <Card title="任务类型参考" href="/zh/deckops/reference/task-types">
-    查询每种操作实际使用的任务名称。
-  </Card>
+  <Card title="任务模型" href="/zh/deckops/task-model">增加进度、超时、失败和下载处理。</Card>
+  <Card title="操作" href="/zh/deckops/operations">查找已安装 SDK 实际提供的任务方法。</Card>
 </CardGroup>
