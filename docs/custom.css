@@ -136,7 +136,7 @@ pre {
   transform: translateY(-1px);
 }
 
-/* Editorial building blocks used by the Overview and Examples pages. */
+/* Editorial building blocks used only where they clarify page structure. */
 .deckflow-hero {
   position: relative;
   overflow: hidden;
@@ -242,22 +242,6 @@ pre {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.example-result {
-  margin: 1rem 0;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--deck-border);
-  border-radius: 14px;
-  background: var(--deck-code-bg);
-}
-
-.example-result > :first-child {
-  margin-top: 0 !important;
-}
-
-.example-result > :last-child {
-  margin-bottom: 0 !important;
 }
 
 @media (max-width: 640px) {

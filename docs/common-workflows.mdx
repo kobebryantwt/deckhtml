@@ -4,20 +4,16 @@ sidebarTitle: Common Workflows
 description: "Map real application workflows to DeckProbe, DeckRender, DeckOps, DeckUse, and DeckHTML."
 ---
 
-<div className="deckflow-hero">
-  <span className="deckflow-hero-eyebrow">From product choice to application design</span>
-  <h2 className="deckflow-hero-title">Follow the result through a real workflow</h2>
-  <p className="deckflow-hero-copy">Each path names the starting input, product sequence, final contract, and the exact point where document bytes leave the local machine.</p>
-</div>
+Use this page after choosing the result your application needs. Each workflow identifies the starting input, product sequence, final contract, and the point where document bytes leave the local machine.
 
-<Columns cols={3}>
-  <Card title="Gate uploads" icon="shield-halved" iconType="solid" href="#gate-document-uploads-before-cloud-processing" color="#14b8a6">DeckProbe → policy decision</Card>
-  <Card title="Build search or RAG" icon="database" iconType="solid" href="#build-search-rag-or-document-understanding" color="#8b5cf6">DeckOps → structured content</Card>
-  <Card title="Add document previews" icon="images" iconType="solid" href="#add-previews-to-review-and-approval-interfaces" color="#3b82f6">DeckRender → visual artifacts</Card>
-  <Card title="Personalize a PPTX" icon="pen-to-square" iconType="solid" href="#personalize-an-existing-presentation" color="#f59e0b">DeckUse → updated PPTX</Card>
-  <Card title="Generate from app data" icon="code" iconType="solid" href="#generate-a-deck-from-application-data" color="#ec4899">DeckHTML → PPTX or PNG</Card>
-  <Card title="Combine the pipeline" icon="diagram-project" iconType="solid" href="#combine-validation-content-and-previews" color="#0f766e">Probe → Ops → Render</Card>
-</Columns>
+| Application goal | Recommended path | Final result |
+| --- | --- | --- |
+| Gate an upload before cloud processing | DeckProbe → application policy | Accept, reject, or route |
+| Build search, RAG, or document understanding | DeckOps Parse | Markdown or structured content |
+| Add previews to a review interface | DeckRender | Images, PDF, or supported video |
+| Personalize an existing presentation | DeckUse | Updated editable PPTX |
+| Generate a presentation from application data | DeckHTML | PPTX or PNG with diagnostics |
+| Validate, parse, and preview one upload | DeckProbe → DeckOps → DeckRender | Policy, content, and visual artifacts |
 
 ## Gate document uploads before cloud processing
 

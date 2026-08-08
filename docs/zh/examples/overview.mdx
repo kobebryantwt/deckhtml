@@ -4,30 +4,17 @@ sidebarTitle: 概览
 description: "复制带有已知输入、可运行命令、预期输出和验证步骤的完整 Deckflow 示例。"
 ---
 
-<div className="deckflow-hero">
-  <span className="deckflow-hero-eyebrow">复制、运行，再进行改造</span>
-  <h2 className="deckflow-hero-title">从一个完整文档任务开始</h2>
-  <p className="deckflow-hero-copy">示例比产品指南更具体：每个示例都从已知输入开始，以一个可验证结果结束，确认成功后再替换为自己的文档。</p>
-</div>
+每个示例都从已知输入开始，以一个可以验证的结果结束。先跑通完整路径，再替换为自己的文档或源代码。
 
 <Columns cols={2}>
-  <Card title="检查并路由上传的 PDF" icon="shield-halved" iconType="solid" color="#14b8a6" href="/zh/examples/inspect-and-route" cta="运行示例" arrow>
+  <Card title="检查并路由上传的 PDF" icon="shield-halved" iconType="solid" href="/zh/examples/inspect-and-route" cta="运行示例" arrow>
     在本地运行 DeckProbe，读取 Schema v2 事实，并将其转换为应用路由判断。
   </Card>
-  <Card title="从 HTML 生成可编辑 PPTX" icon="file-powerpoint" iconType="solid" color="#ec4899" href="/zh/examples/html-to-pptx" cta="运行示例" arrow>
+  <Card title="从 HTML 生成可编辑 PPTX" icon="file-powerpoint" iconType="solid" href="/zh/examples/html-to-pptx" cta="运行示例" arrow>
     创建单页 HTML，在本地使用 DeckHTML 转换，并验证 PPTX 产物。
   </Card>
 </Columns>
 
-## 示例与其他页面的区别
-
-| 页面 | 回答的问题 |
-| --- | --- |
-| [开始使用](/zh/getting-started) | 每个产品如何最快得到第一个结果？ |
-| [选择产品](/zh/product-guide) | 哪个产品对我需要的输出负责？ |
-| [常见工作流](/zh/common-workflows) | 产品如何进入应用，又如何相互组合？ |
-| 示例 | 哪些文件和命令可以直接复制，完成一个具体任务？ |
-
 <Info>
-  示例会跟随已经验证的产品能力逐步增加。只有公开软件包、输入、命令和成功标准可以连续完成测试时，才会加入新的示例。
+  需要查看每个产品的最短结果时使用[开始使用](/zh/getting-started)，需要组合多个产品时查看[常见工作流](/zh/common-workflows)。这里只收录公开软件包、输入、命令和成功标准能够作为一条连续路径完成测试的示例。
 </Info>
