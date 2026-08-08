@@ -17,11 +17,28 @@ description: "对比每个 Deckflow 产品的最小输入、命令和可验证�
 ## DeckProbe：检查一个已知 PDF
 
 ```bash
+npm install -g @deckflow/deckprobe
+deckprobe --version
+
 curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
 deckprobe -t format,page_count --view values --pretty sample.pdf
 ```
 
-成功时退出码为 `0`，`schema_version` 为 `2`，驱动为 `pdf`，并解析出 `document.format` 和 `pdf.page_count`。安装原生 CLI 并查看完整响应见 [DeckProbe 快速开始](/zh/deckprobe/quick-start)。
+npm 软件包中的 CLI 会调用对应平台的原生二进制。成功时退出码为 `0`，`schema_version` 为 `2`，驱动为 `pdf`，并解析出 `document.format` 和 `pdf.page_count`：
+
+```json
+{
+  "schema_version": 2,
+  "status": "ok",
+  "driver": { "id": "pdf", "profile": "pdf" },
+  "values": {
+    "document.format": "pdf",
+    "pdf.page_count": 1
+  }
+}
+```
+
+不同平台的安装器和完整响应见 [DeckProbe 快速开始](/zh/deckprobe/quick-start)。
 
 ## DeckRender：生成 PNG
 
@@ -35,12 +52,57 @@ test -s hello.png
 
 ## DeckOps：运行一个云端任务
 
+安装当前已发布的任务 SDK：
+
 ```bash
 npm install @deckops/sdk
+```
+
+把以下输入保存为 `sample.html`：
+
+```html
+<!doctype html>
+<html><body><h1>Hello DeckOps</h1></body></html>
+```
+
+把以下脚本保存为 `run.mjs`。它会创建游客任务、显式启动、等待完成，然后下载结果元数据：
+
+```js
+import { createDeck } from '@deckops/sdk';
+
+const deck = createDeck();
+const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
+
+await deck.tasks.start(task.id);
+const completed = await deck.tasks.wait(task.id, { timeout: 120 });
+const result = await deck.tasks.down(completed.id);
+
+console.log(JSON.stringify({
+  taskId: completed.id,
+  type: completed.type,
+  status: completed.status,
+  result,
+}, null, 2));
+```
+
+执行脚本：
+
+```bash
 node run.mjs
 ```
 
-[DeckOps 快速开始](/zh/deckops/quick-start)中的脚本会创建一个已知 HTML 文件，上传并启动游客 `convertor.html2png` 任务，再输出已完成任务和 PNG 下载元数据。当前 npm 产物还没有暴露仓库中较新的 Parse Facade。
+HTML 会上传到 Deckflow 云端。成功结果会标识任务，并返回 PNG 下载地址、字节数和哈希：
+
+```json
+{
+  "taskId": "<task-id>",
+  "type": "convertor.html2png",
+  "status": "completed",
+  "result": ["<download-url>", 8063, "<hash>"]
+}
+```
+
+进度处理和当前软件包可用性说明见 [DeckOps 快速开始](/zh/deckops/quick-start)。
 
 ## DeckUse：更新现有 PPTX
 

@@ -17,11 +17,28 @@ Each product solves a different document task. Start with the result you need, t
 ## DeckProbe: inspect a known PDF
 
 ```bash
+npm install -g @deckflow/deckprobe
+deckprobe --version
+
 curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
 deckprobe -t format,page_count --view values --pretty sample.pdf
 ```
 
-Success means exit code `0`, `schema_version: 2`, driver `pdf`, and resolved values for `document.format` and `pdf.page_count`. Install the native CLI and see the exact response in the [DeckProbe Quickstart](/deckprobe/quick-start).
+The npm package's CLI uses the platform-specific native binary. Success means exit code `0`, `schema_version: 2`, driver `pdf`, and resolved values for `document.format` and `pdf.page_count`:
+
+```json
+{
+  "schema_version": 2,
+  "status": "ok",
+  "driver": { "id": "pdf", "profile": "pdf" },
+  "values": {
+    "document.format": "pdf",
+    "pdf.page_count": 1
+  }
+}
+```
+
+See the [DeckProbe Quickstart](/deckprobe/quick-start) for platform installers and the complete response.
 
 ## DeckRender: create a PNG
 
@@ -35,12 +52,57 @@ The command uploads the HTML to Deckflow cloud, writes `hello.png`, and returns 
 
 ## DeckOps: run a cloud task
 
+Install the published task SDK:
+
 ```bash
 npm install @deckops/sdk
+```
+
+Save this input as `sample.html`:
+
+```html
+<!doctype html>
+<html><body><h1>Hello DeckOps</h1></body></html>
+```
+
+Save the following as `run.mjs`. It creates a guest task, starts it explicitly, waits for completion, and downloads its result metadata:
+
+```js
+import { createDeck } from '@deckops/sdk';
+
+const deck = createDeck();
+const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
+
+await deck.tasks.start(task.id);
+const completed = await deck.tasks.wait(task.id, { timeout: 120 });
+const result = await deck.tasks.down(completed.id);
+
+console.log(JSON.stringify({
+  taskId: completed.id,
+  type: completed.type,
+  status: completed.status,
+  result,
+}, null, 2));
+```
+
+Run it:
+
+```bash
 node run.mjs
 ```
 
-The script in the [DeckOps Quickstart](/deckops/quick-start) creates a known HTML file, uploads it, starts a guest `convertor.html2png` task, and prints the completed task and PNG download metadata. The current npm artifact does not yet expose the repository's newer Parse facade.
+The HTML is uploaded to Deckflow cloud. A successful result identifies the task and returns a PNG download URL, byte size, and hash:
+
+```json
+{
+  "taskId": "<task-id>",
+  "type": "convertor.html2png",
+  "status": "completed",
+  "result": ["<download-url>", 8063, "<hash>"]
+}
+```
+
+Continue with the [DeckOps Quickstart](/deckops/quick-start) for progress handling and current package availability notes.
 
 ## DeckUse: update an existing PPTX
 

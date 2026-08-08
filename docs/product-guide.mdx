@@ -33,17 +33,11 @@ Choose by the artifact your application must receive and whether the original do
   </Accordion>
 </AccordionGroup>
 
-## Choose by scenario
+## Move from selection to implementation
 
-| Scenario | Recommended path |
-| --- | --- |
-| Reject encrypted or macro-enabled uploads before processing | DeckProbe → application policy |
-| Generate slide thumbnails for a review UI | DeckRender |
-| Convert a PPTX to PDF and also extract notes or layout data | DeckOps |
-| Read a document as Markdown for RAG | DeckOps Parse |
-| Replace a customer name throughout an existing PPTX | DeckUse |
-| Generate a branded, editable deck from a web layout | DeckHTML |
-| Validate, parse, and preview one uploaded document | DeckProbe → DeckOps → DeckRender |
+<Card title="Common workflows" href="/common-workflows">
+  Follow result-oriented application paths for upload validation, search and RAG, review previews, PPTX personalization, HTML-authored decks, and multi-product ingestion.
+</Card>
 
 <Warning>
   Product names describe responsibility, not identical format coverage or package availability. Check the selected product's format matrix and availability warning before designing a workflow; DeckProbe JavaScript and DeckOps Parse source APIs currently await corrected public artifacts.

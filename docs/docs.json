@@ -140,7 +140,8 @@
                 "pages": [
                   "introduction",
                   "getting-started",
-                  "product-guide"
+                  "product-guide",
+                  "common-workflows"
                 ]
               }
             ]
@@ -350,7 +351,8 @@
                 "pages": [
                   "zh/introduction",
                   "zh/getting-started",
-                  "zh/product-guide"
+                  "zh/product-guide",
+                  "zh/common-workflows"
                 ]
               }
             ]

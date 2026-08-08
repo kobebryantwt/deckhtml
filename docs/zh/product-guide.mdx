@@ -33,17 +33,11 @@ description: "按照输入、操作、执行位置和最终产物比较 Deckflow
   </Accordion>
 </AccordionGroup>
 
-## 按场景选择
+## 从选择进入实现
 
-| 场景 | 建议路径 |
-| --- | --- |
-| 在处理前拒绝加密或包含宏的上传文件 | DeckProbe → 应用策略 |
-| 为评审界面生成幻灯片缩略图 | DeckRender |
-| 把 PPTX 转为 PDF，同时提取备注或布局数据 | DeckOps |
-| 为 RAG 将文档解析为 Markdown | DeckOps Parse |
-| 在现有 PPTX 中全局替换客户名称 | DeckUse |
-| 根据 Web 布局生成品牌化、可编辑的 Deck | DeckHTML |
-| 校验、解析并预览同一个上传文档 | DeckProbe → DeckOps → DeckRender |
+<Card title="常见工作流" href="/zh/common-workflows">
+  按最终结果查看上传校验、搜索与 RAG、评审预览、PPTX 个性化、HTML 创作和多产品接入流程。
+</Card>
 
 <Warning>
   产品名称表示职责，并不表示格式覆盖或软件包可用性完全相同。设计工作流前，请查看所选产品的格式矩阵和可用性警告；DeckProbe JavaScript 与 DeckOps Parse 源码 API 当前仍在等待修正后的公开产物。
