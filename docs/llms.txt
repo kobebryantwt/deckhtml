@@ -1,0 +1,77 @@
+# Deckflow Developer Documentation
+
+> Deckflow is a document runtime stack for local document inspection, visual rendering, cloud document operations, editable PPTX modification, and HTML-to-deck generation.
+
+Use the English or Simplified Chinese section that matches the developer's language. Start with Overview and Getting Started, use Choose a Product for product boundaries, then follow the selected product's quickstart and reference. Treat availability notices and format matrices as version-specific contracts. For the complete documentation corpus, fetch https://docs.deckflow.com/llms-full.txt.
+
+## Start Here
+
+- [Overview](https://docs.deckflow.com/introduction.md): Understand the five products and their execution boundaries.
+- [Getting Started](https://docs.deckflow.com/getting-started.md): Run the smallest verified path for each product.
+- [Choose a Product](https://docs.deckflow.com/product-guide.md): Compare inputs, outputs, execution location, and overlap.
+- [Common Workflows](https://docs.deckflow.com/common-workflows.md): Map application goals to one or more Deckflow products.
+- [Examples](https://docs.deckflow.com/examples/overview.md): Browse complete recipes with known inputs and expected results.
+
+## DeckProbe
+
+- [DeckProbe Overview](https://docs.deckflow.com/deckprobe/overview.md): Inspect document facts locally without opening Office or iWork.
+- [DeckProbe Quickstart](https://docs.deckflow.com/deckprobe/quick-start.md): Install the native CLI and verify a first Schema v2 result.
+- [Formats and Targets](https://docs.deckflow.com/deckprobe/formats-and-targets.md): Check supported format families and target names.
+- [CLI](https://docs.deckflow.com/deckprobe/cli.md): Integrate the native command-line interface.
+- [Output Model](https://docs.deckflow.com/deckprobe/output-model.md): Read full, values, and error report contracts.
+
+## DeckRender
+
+- [DeckRender Overview](https://docs.deckflow.com/deckrender/overview.md): Render supported inputs to images, PDF, or video.
+- [DeckRender Quickstart](https://docs.deckflow.com/deckrender/quick-start.md): Create and verify a first render artifact.
+- [Supported Formats](https://docs.deckflow.com/deckrender/formats.md): Review direct, derived, passthrough, and unavailable routes.
+- [Authentication](https://docs.deckflow.com/deckrender/authentication.md): Choose guest, browser login, token, or API key access.
+- [Result Contract](https://docs.deckflow.com/deckrender/reference/result-contract.md): Interpret files, routes, pages, duration, and caveats.
+
+## DeckOps
+
+- [DeckOps Overview](https://docs.deckflow.com/deckops/overview.md): Understand cloud parsing, conversion, generation, and task execution.
+- [DeckOps Quickstart](https://docs.deckflow.com/deckops/quick-start.md): Submit, start, wait for, and download a task.
+- [Authentication](https://docs.deckflow.com/deckops/authentication.md): Configure guest, token, API key, and space behavior.
+- [Task Model](https://docs.deckflow.com/deckops/task-model.md): Follow asynchronous task states and result downloads.
+- [Parse Documents](https://docs.deckflow.com/deckops/parse.md): Review Parse behavior and current public-package availability.
+
+## DeckUse
+
+- [DeckUse Overview](https://docs.deckflow.com/deckuse/overview.md): Modify supported content in an existing PPTX locally.
+- [DeckUse Quickstart](https://docs.deckflow.com/deckuse/quick-start.md): Inspect, replace, commit, and verify an updated PPTX.
+- [CLI](https://docs.deckflow.com/deckuse/cli.md): Use available read and write commands.
+- [Selectors](https://docs.deckflow.com/deckuse/selectors.md): Target slides, shapes, and text.
+- [Workspace Workflow](https://docs.deckflow.com/deckuse/workspace.md): Group several local changes before committing an updated PPTX.
+
+## DeckHTML
+
+- [DeckHTML Overview](https://docs.deckflow.com/deckhtml/overview.md): Generate PPTX or PNG from HTML and SVG.
+- [DeckHTML Quickstart](https://docs.deckflow.com/deckhtml/quick-start.md): Prepare Chromium and generate a first local PPTX.
+- [Local Mode](https://docs.deckflow.com/deckhtml/guides/local-mode.md): Keep source files on the local machine.
+- [Cloud Mode](https://docs.deckflow.com/deckhtml/guides/cloud-mode.md): Use cloud execution and cloud-only capabilities.
+- [Element Mapping](https://docs.deckflow.com/deckhtml/guides/element-mapping.md): Understand editable, vector, raster, ignored, and unsupported mappings.
+- [CLI Commands](https://docs.deckflow.com/deckhtml/cli/commands.md): Review command syntax and options.
+- [Node.js SDK](https://docs.deckflow.com/deckhtml/sdk/overview.md): Convert HTML programmatically and inspect diagnostics.
+
+## Platform
+
+- [API Overview](https://docs.deckflow.com/platform/api/overview.md): Submit, query, and download Deckflow cloud tasks.
+- [MCP Overview](https://docs.deckflow.com/platform/mcp/overview.md): Connect Deckflow tools to compatible AI clients.
+
+## 简体中文
+
+- [开发者中心概览](https://docs.deckflow.com/zh/introduction.md): 了解五个产品及其执行边界。
+- [开始使用](https://docs.deckflow.com/zh/getting-started.md): 运行每个产品最小且可验证的接入路径。
+- [选择产品](https://docs.deckflow.com/zh/product-guide.md): 对比输入、输出、执行位置和能力边界。
+- [常见工作流](https://docs.deckflow.com/zh/common-workflows.md): 将应用目标对应到一个或多个 Deckflow 产品。
+- [示例](https://docs.deckflow.com/zh/examples/overview.md): 查看带有已知输入和预期结果的完整配方。
+- [DeckProbe](https://docs.deckflow.com/zh/deckprobe/overview.md): 在本地嗅探文档事实。
+- [DeckRender](https://docs.deckflow.com/zh/deckrender/overview.md): 将支持的输入渲染为视觉产物。
+- [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 执行云端文档任务。
+- [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 在本地修改现有 PPTX。
+- [DeckHTML](https://docs.deckflow.com/zh/deckhtml/overview.md): 从 HTML 或 SVG 生成 PPTX 或 PNG。
+
+## Optional
+
+- [Complete documentation corpus](https://docs.deckflow.com/llms-full.txt): Fetch all published documentation as one text resource when the compact index is insufficient.

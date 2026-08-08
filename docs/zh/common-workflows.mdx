@@ -4,26 +4,32 @@ sidebarTitle: 常见工作流
 description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps、DeckUse 和 DeckHTML。"
 ---
 
-确定应用需要的结果后，再通过本页选择实际工作流。每个工作流都会说明起始输入、产品组合、最终结果，以及文档数据在何处离开本机。
+<div className="deckflow-hero">
+  <span className="deckflow-hero-eyebrow">从产品选择进入应用设计</span>
+  <h2 className="deckflow-hero-title">沿着真实工作流理解最终结果</h2>
+  <p className="deckflow-hero-copy">每条路径都说明起始输入、产品顺序、最终契约，以及文档字节从哪个环节开始离开本机。</p>
+</div>
 
-| 应用目标 | 推荐路径 | 最终结果 |
-| --- | --- | --- |
-| 处理前校验上传文件 | DeckProbe → 应用策略 | 接收、拒绝或路由文档 |
-| 构建可检索的文档语料 | DeckOps Parse | Markdown 或格式专属结构化内容 |
-| 为评审界面增加文档预览 | DeckRender | 页面图片、PDF 或支持的视频 |
-| 个性化现有演示文稿 | DeckUse | 修改后仍可编辑的 PPTX |
-| 从应用数据生成演示文稿 | DeckHTML | PPTX 或 PNG，以及转换诊断 |
-| 校验、解析并预览同一上传文件 | DeckProbe → DeckOps → DeckRender | 策略判断、内容和视觉产物 |
+<Columns cols={3}>
+  <Card title="控制上传入口" icon="shield-halved" iconType="solid" href="#在云端处理前校验文档上传" color="#14b8a6">DeckProbe → 策略判断</Card>
+  <Card title="构建搜索或 RAG" icon="database" iconType="solid" href="#构建搜索、rag-或文档理解" color="#8b5cf6">DeckOps → 结构化内容</Card>
+  <Card title="加入文档预览" icon="images" iconType="solid" href="#为评审和审批界面增加预览" color="#3b82f6">DeckRender → 视觉产物</Card>
+  <Card title="个性化修改 PPTX" icon="pen-to-square" iconType="solid" href="#个性化现有演示文稿" color="#f59e0b">DeckUse → 更新后的 PPTX</Card>
+  <Card title="从应用数据生成" icon="code" iconType="solid" href="#从应用数据生成-deck" color="#ec4899">DeckHTML → PPTX 或 PNG</Card>
+  <Card title="组合完整链路" icon="diagram-project" iconType="solid" href="#组合校验、内容和预览" color="#0f766e">Probe → Ops → Render</Card>
+</Columns>
 
 ## 在云端处理前校验文档上传
 
-**起始输入：**应用接收到的不可信 PDF、Office 或现代 iWork 文件。
+<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">应用接收到的不可信 PDF、Office 或现代 iWork 文件。</span></div>
 
-1. 在本地运行 DeckProbe，获取身份、加密、宏、结构、数量或资源 Target。
-2. 根据 Schema v2 证据执行应用自己的接收和路由策略。
-3. 需要下游云端处理时，只把已接收文件发送给 DeckOps 或 DeckRender。
+<Steps>
+  <Step title="本地检查">运行 DeckProbe，获取身份、加密、宏、结构、数量或资源 Target。</Step>
+  <Step title="执行策略">根据 Schema v2 证据应用接收和路由规则。</Step>
+  <Step title="明确进入下一步">只有需要云端处理时，才把通过校验的文件交给 DeckOps 或 DeckRender。</Step>
+</Steps>
 
-**最终结果：**基于证据的接收、拒绝或路由判断。DeckProbe 阶段文档字节留在本地，只有应用把文件传给云端产品时才会离开本机。
+<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">基于证据的接收、拒绝或路由判断。DeckProbe 阶段字节留在本地，只有应用把文件交给云端产品时才会离开本机。</span></div>
 
 <Card title="从 DeckProbe 开始" href="/zh/deckprobe/quick-start">
   安装原生 CLI，检查一个已知 PDF，并验证策略输入契约。
@@ -31,11 +37,11 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 
 ## 构建搜索、RAG 或文档理解
 
-**起始输入：**受支持的 PDF、PPTX、DOCX、Keynote 文件或 HTML URL。
+<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">受支持的 PDF、PPTX、DOCX、Keynote 文件或 HTML URL。</span></div>
 
 应用需要 Markdown 或源格式结构而不是像素时，使用 DeckOps Parse。把 Task ID 与派生结果一起保存，让失败、重试和格式专属 Schema 保持可观测。
 
-**最终结果：**用于索引和模型输入的 Markdown，或在已实现范围内包含布局、备注、元素和语义角色的格式专属结构化响应。
+<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">用于索引和模型输入的 Markdown，或在已实现范围内包含布局、备注、元素和语义角色的格式专属结构化响应。</span></div>
 
 <Warning>
   Parse Facade 和类型化 Parse 任务已存在于 DeckOps 仓库源码，但当前 `@deckops/sdk@0.7.3` npm 产物没有包含。实现前请先查看[解析文档](/zh/deckops/parse)及其可用性说明。
@@ -43,11 +49,11 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 
 ## 为评审和审批界面增加预览
 
-**起始输入：**受支持的文档、URL 或 stdin 流。
+<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">受支持的文档、URL 或 stdin 流。</span></div>
 
 应用需要页面图片、缩略图、PDF 或受支持的视频，又不想管理底层 DeckOps 路由和下载时，使用 DeckRender。多数路径会把源文件上传到 Deckflow 云端；本地 PDF 透传和 Pages/Numbers 预览提取是明确例外。
 
-**最终结果：**写入的产物，以及包含路由、页数、输出文件、字节数、耗时和保真限制的 `RenderResult`。
+<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">写入的产物，以及包含路由、页数、输出文件、字节数、耗时和保真限制的 <code>RenderResult</code>。</span></div>
 
 <Card title="从 DeckRender 开始" href="/zh/deckrender/quick-start">
   创建已知 HTML 输入，渲染一张 PNG，并验证文件和 JSON 结果。
@@ -55,11 +61,11 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 
 ## 个性化现有演示文稿
 
-**起始输入：**必须继续作为事实源的可编辑 `.pptx`。
+<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">必须继续作为事实源的可编辑 <code>.pptx</code>。</span></div>
 
 使用 DeckUse 检查 Selector、替换或设置现有文本，并移动受支持的 Shape。一次输出包含多项修改时，使用持久化 Workspace。
 
-**最终结果：**在本地生成的另一个可编辑 PPTX。当前版本不能新增或删除元素，也不能编辑 DOCX、XLSX 或 Keynote。
+<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">在本地生成的另一个可编辑 PPTX。当前版本不能新增或删除元素，也不能编辑 DOCX、XLSX 或 Keynote。</span></div>
 
 <Card title="从 DeckUse 开始" href="/zh/deckuse/quick-start">
   生成或提供一个已知 PPTX，替换文本并验证修改后的文件。
@@ -67,11 +73,11 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 
 ## 从应用数据生成 Deck
 
-**起始输入：**根据模板、应用数据或生成内容编写的 HTML 或 SVG。
+<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">根据模板、应用数据或生成内容编写的 HTML 或 SVG。</span></div>
 
 使用 DeckHTML 把浏览器布局尽可能映射为可编辑 PPTX 元素，并在必要时回退为栅格图像。输入必须留在本机时使用本地模式；需要字体嵌入等云端专属能力时选择云端模式。
 
-**最终结果：**PPTX 或 PNG，以及标识原生、矢量、栅格、忽略和不支持映射的诊断信息。
+<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">PPTX 或 PNG，以及标识原生、矢量、栅格、忽略和不支持映射的诊断信息。</span></div>
 
 <Card title="从 DeckHTML 开始" href="/zh/deckhtml/quick-start">
   准备 Chromium、创建一页幻灯片、生成 PPTX，并检查转换决策。
@@ -97,3 +103,7 @@ DeckProbe 证据、DeckOps 结构化结果和 DeckRender 产物是三个独立�
   <Card title="选择产品" href="/zh/product-guide">只需要一种结果时比较产品边界。</Card>
   <Card title="运行最小示例" href="/zh/getting-started">查看五个产品的安装、调用和预期结果。</Card>
 </CardGroup>
+
+<Card title="希望直接复制运行？" icon="flask" iconType="solid" href="/zh/examples/overview" cta="浏览示例" arrow>
+  示例从一份已知文件或源代码开始，并提供命令、预期输出和验证步骤。
+</Card>

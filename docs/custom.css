@@ -136,6 +136,137 @@ pre {
   transform: translateY(-1px);
 }
 
+/* Editorial building blocks used by the Overview and Examples pages. */
+.deckflow-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 1.25rem 0 2rem;
+  padding: clamp(1.4rem, 3vw, 2.25rem);
+  border: 1px solid var(--deck-accent-border);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(45, 212, 191, 0.2), transparent 32%),
+    linear-gradient(135deg, var(--deck-surface) 0%, var(--deck-surface-muted) 100%);
+}
+
+.deckflow-hero::after {
+  content: "";
+  position: absolute;
+  width: 12rem;
+  height: 12rem;
+  right: -6rem;
+  bottom: -7rem;
+  border: 1px solid var(--deck-accent-border);
+  border-radius: 999px;
+}
+
+.deckflow-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+  color: var(--deck-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.deckflow-hero-title {
+  max-width: 42rem;
+  margin: 0 !important;
+  color: var(--deck-text);
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+}
+
+.deckflow-hero-copy {
+  max-width: 44rem;
+  margin: 0.9rem 0 0 !important;
+  color: var(--deck-text-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.deckflow-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.2rem;
+}
+
+.deckflow-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--deck-border);
+  border-radius: 999px;
+  background: var(--deck-surface);
+  color: var(--deck-text-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.workflow-meta {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.22fr) 1fr;
+  gap: 0.9rem;
+  align-items: start;
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border-left: 3px solid var(--deck-accent);
+  border-radius: 0 12px 12px 0;
+  background: var(--deck-surface-muted);
+}
+
+.workflow-meta-label {
+  color: var(--deck-accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workflow-meta-value {
+  color: var(--deck-text);
+  line-height: 1.65;
+}
+
+.product-kicker {
+  display: inline-flex;
+  margin: 0.25rem 0 0.6rem;
+  color: var(--deck-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.example-result {
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--deck-border);
+  border-radius: 14px;
+  background: var(--deck-code-bg);
+}
+
+.example-result > :first-child {
+  margin-top: 0 !important;
+}
+
+.example-result > :last-child {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .workflow-meta {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+}
+
 .mcp-client-card {
   display: flex;
   flex-direction: column;

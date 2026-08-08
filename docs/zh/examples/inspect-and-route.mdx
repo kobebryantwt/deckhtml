@@ -1,0 +1,80 @@
+---
+title: 检查并路由上传的 PDF
+sidebarTitle: 检查并路由 PDF
+description: "在本地使用 DeckProbe 检查已知 PDF，并将 Schema v2 事实转换为上传路由判断。"
+---
+
+本示例下载一个已知的单页 PDF，在本地进行嗅探，然后执行一条简单策略。整个过程不需要打开 PDF 阅读器，也不会上传文档。
+
+<div className="workflow-meta"><span className="workflow-meta-label">最终产物</span><span className="workflow-meta-value"><code>report.json</code>，以及由策略脚本打印的接收或拒绝判断。</span></div>
+
+## 环境要求
+
+- Node.js 20 或更高版本
+- macOS、Linux 或 Windows，以及受支持的 DeckProbe 原生软件包
+- 仅安装软件和下载示例时需要网络
+
+## 运行示例
+
+<Steps>
+  <Step title="安装并验证 DeckProbe">
+
+```bash
+npm install -g @deckflow/deckprobe
+deckprobe --version
+```
+
+  </Step>
+  <Step title="下载已知输入">
+
+```bash
+curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+```
+
+  </Step>
+  <Step title="写出探测报告">
+
+```bash
+deckprobe -t format,page_count --view values --pretty sample.pdf > report.json
+```
+
+  </Step>
+  <Step title="执行应用策略">
+
+保存为 `route.mjs`：
+
+```js
+import { readFile } from 'node:fs/promises';
+
+const report = JSON.parse(await readFile('report.json', 'utf8'));
+const format = report.values?.['document.format'];
+const pages = report.values?.['pdf.page_count'];
+
+if (report.status !== 'ok' || format !== 'pdf' || pages > 25) {
+  console.error('REJECT: unsupported or oversized input');
+  process.exit(1);
+}
+
+console.log(`ACCEPT: ${format}, ${pages} page`);
+```
+
+运行：
+
+```bash
+node route.mjs
+```
+
+  </Step>
+</Steps>
+
+## 预期结果
+
+```text
+ACCEPT: pdf, 1 page
+```
+
+原生 CLI 在本地读取文件。下载示例需要网络，但 DeckProbe 在检查过程中不会上传 `sample.pdf`。
+
+<Card title="调整判断策略" icon="sliders" iconType="solid" href="/zh/deckprobe/formats-and-targets">
+  根据源格式加入加密、宏、幻灯片数量、工作表或资源 Target。
+</Card>

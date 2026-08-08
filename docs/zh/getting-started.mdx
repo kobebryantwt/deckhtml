@@ -4,7 +4,21 @@ sidebarTitle: 开始使用
 description: "对比每个 Deckflow 产品的最小输入、命令和可验证结果。"
 ---
 
-每个产品解决不同的文档任务。先确定需要的结果，再进入对应快速开始，完成环境准备、已知输入、预期输出和错误处理。
+<div className="deckflow-hero">
+  <span className="deckflow-hero-eyebrow">五个第一次结果</span>
+  <h2 className="deckflow-hero-title">完成安装、运行与验证，而不只是复制命令</h2>
+  <p className="deckflow-hero-copy">下面每条路径都提供安装边界、具体调用，以及能够证明第一次运行成功的结果信号。</p>
+</div>
+
+<Columns cols={3}>
+  <Card title="本地检查" icon="magnifying-glass" iconType="solid" href="#deckprobe检查一个已知-pdf" color="#14b8a6">Schema v2 事实</Card>
+  <Card title="生成视觉文件" icon="images" iconType="solid" href="#deckrender生成-png" color="#3b82f6">PNG 产物</Card>
+  <Card title="执行云端任务" icon="cube" iconType="solid" href="#deckops运行一个云端任务" color="#8b5cf6">任务结果</Card>
+  <Card title="修改 PPTX" icon="pen-to-square" iconType="solid" href="#deckuse更新现有-pptx" color="#f59e0b">可编辑输出</Card>
+  <Card title="生成 Deck" icon="code" iconType="solid" href="#deckhtml在本地生成-pptx" color="#ec4899">HTML → PPTX</Card>
+</Columns>
+
+## 快速对照
 
 | 产品 | 第一个结果 | 执行位置 | 凭证 |
 | --- | --- | --- | --- |
@@ -15,6 +29,8 @@ description: "对比每个 Deckflow 产品的最小输入、命令和可验证�
 | DeckHTML | 从 HTML 生成 PPTX 或 PNG | 本地或云端 | 本地无需凭证 |
 
 ## DeckProbe：检查一个已知 PDF
+
+<span className="product-kicker">本地 · 无需凭证 · 事实 JSON</span>
 
 ```bash
 npm install -g @deckflow/deckprobe
@@ -42,6 +58,8 @@ npm 软件包中的 CLI 会调用对应平台的原生二进制。成功时退�
 
 ## DeckRender：生成 PNG
 
+<span className="product-kicker">云端路径 · 支持访客 · 视觉产物</span>
+
 ```bash
 npm install -g @deckflow/deckrender
 deckrender hello.html -o hello.png --json
@@ -51,6 +69,8 @@ test -s hello.png
 命令会把 HTML 上传到 Deckflow 云端，写入 `hello.png`，并返回包含 `ok`、路由、页数、输出路径、字节数和耗时的 `RenderResult`。创建输入并了解游客限额见 [DeckRender 快速开始](/zh/deckrender/quick-start)。
 
 ## DeckOps：运行一个云端任务
+
+<span className="product-kicker">云端 · 异步任务 · 可下载结果</span>
 
 安装当前已发布的任务 SDK：
 
@@ -106,6 +126,8 @@ HTML 会上传到 Deckflow 云端。成功结果会标识任务，并返回 PNG 
 
 ## DeckUse：更新现有 PPTX
 
+<span className="product-kicker">本地 · 现有 PPTX · 可编辑输出</span>
+
 ```bash
 npm install -g deckuse
 deckuse replace input.pptx '2025' '2026' -o updated.pptx
@@ -115,6 +137,8 @@ deckuse get text updated.pptx "text[contains('2026')]"
 DeckUse 在本地执行，当前支持修改现有 PPTX 内容。它不能新增或删除元素，也不支持其他 Office 格式。请按 [DeckUse 快速开始](/zh/deckuse/quick-start)检查选择器并验证输出。
 
 ## DeckHTML：在本地生成 PPTX
+
+<span className="product-kicker">本地 Chromium · HTML 输入 · PPTX 输出</span>
 
 ```bash
 npm install -g @deckflow/deckhtml

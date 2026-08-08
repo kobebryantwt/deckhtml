@@ -4,7 +4,21 @@ sidebarTitle: Getting Started
 description: "Compare the minimum input, command, and verified result for every Deckflow product."
 ---
 
-Each product solves a different document task. Start with the result you need, then follow the linked quickstart for prerequisites, a known input, expected output, and failure guidance.
+<div className="deckflow-hero">
+  <span className="deckflow-hero-eyebrow">Five first results</span>
+  <h2 className="deckflow-hero-title">Install, run, and verify—not just copy a command</h2>
+  <p className="deckflow-hero-copy">Every path below includes the installation boundary, a concrete invocation, and the signal that proves the first result succeeded.</p>
+</div>
+
+<Columns cols={3}>
+  <Card title="Inspect locally" icon="magnifying-glass" iconType="solid" href="#deckprobe-inspect-a-known-pdf" color="#14b8a6">Schema v2 facts</Card>
+  <Card title="Render visually" icon="images" iconType="solid" href="#deckrender-create-a-png" color="#3b82f6">PNG artifact</Card>
+  <Card title="Run a cloud task" icon="cube" iconType="solid" href="#deckops-run-a-cloud-task" color="#8b5cf6">Task result</Card>
+  <Card title="Update a PPTX" icon="pen-to-square" iconType="solid" href="#deckuse-update-an-existing-pptx" color="#f59e0b">Editable output</Card>
+  <Card title="Generate a deck" icon="code" iconType="solid" href="#deckhtml-generate-a-pptx-locally" color="#ec4899">PPTX from HTML</Card>
+</Columns>
+
+## At a glance
 
 | Product | First result | Runs | Credentials |
 | --- | --- | --- | --- |
@@ -15,6 +29,8 @@ Each product solves a different document task. Start with the result you need, t
 | DeckHTML | PPTX or PNG from HTML | Local or cloud | None locally |
 
 ## DeckProbe: inspect a known PDF
+
+<span className="product-kicker">Local · no credentials · factual JSON</span>
 
 ```bash
 npm install -g @deckflow/deckprobe
@@ -42,6 +58,8 @@ See the [DeckProbe Quickstart](/deckprobe/quick-start) for platform installers a
 
 ## DeckRender: create a PNG
 
+<span className="product-kicker">Cloud route · guest available · visual artifact</span>
+
 ```bash
 npm install -g @deckflow/deckrender
 deckrender hello.html -o hello.png --json
@@ -51,6 +69,8 @@ test -s hello.png
 The command uploads the HTML to Deckflow cloud, writes `hello.png`, and returns a `RenderResult` containing `ok`, route, page count, output path, bytes, and duration. Create the HTML input and review guest limits in the [DeckRender Quickstart](/deckrender/quick-start).
 
 ## DeckOps: run a cloud task
+
+<span className="product-kicker">Cloud · asynchronous task · downloadable result</span>
 
 Install the published task SDK:
 
@@ -106,6 +126,8 @@ Continue with the [DeckOps Quickstart](/deckops/quick-start) for progress handli
 
 ## DeckUse: update an existing PPTX
 
+<span className="product-kicker">Local · existing PPTX · editable output</span>
+
 ```bash
 npm install -g deckuse
 deckuse replace input.pptx '2025' '2026' -o updated.pptx
@@ -115,6 +137,8 @@ deckuse get text updated.pptx "text[contains('2026')]"
 DeckUse works locally and currently supports modifying existing PPTX content. It does not add or delete elements and does not support other Office formats. Follow the [DeckUse Quickstart](/deckuse/quick-start) to inspect selectors and verify the output.
 
 ## DeckHTML: generate a PPTX locally
+
+<span className="product-kicker">Local Chromium · HTML source · PPTX output</span>
 
 ```bash
 npm install -g @deckflow/deckhtml

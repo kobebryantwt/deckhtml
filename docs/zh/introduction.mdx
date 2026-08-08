@@ -4,23 +4,34 @@ sidebarTitle: 概览
 description: "选择并接入 Deckflow 的文档嗅探、渲染、云端操作、PPTX 修改和 HTML Deck 生成能力。"
 ---
 
-Deckflow 是面向应用与 AI Agent 的文档运行时。五个产品属于同一套文档处理生态，但最终产物不同：经过验证的文档事实、视觉文件、云端结构化结果、修改后的 PPTX，或从 HTML 生成的 Deck。
+<div className="deckflow-hero">
+  <span className="deckflow-hero-eyebrow">面向开发者的文档运行时</span>
+  <h2 className="deckflow-hero-title">一套文档能力，交付五种明确结果</h2>
+  <p className="deckflow-hero-copy">无需打开文件即可检查事实，生成稳定预览，执行云端文档任务，修改现有 PPTX，或从 HTML 生成新的演示文稿。</p>
+  <div className="deckflow-pills">
+    <span className="deckflow-pill">本地优先检查</span>
+    <span className="deckflow-pill">云端文档任务</span>
+    <span className="deckflow-pill">可编辑 PPTX 工作流</span>
+  </div>
+</div>
+
+## 从最终结果开始
 
 <CardGroup cols={2}>
-  <Card title="打开前检查文档" icon="magnifying-glass" href="/zh/deckprobe/overview">
-    **DeckProbe** 在本地读取文档身份、元数据、结构、安全信号和资源事实，无需启动 Office 或 iWork。
+  <Card title="打开前检查文档" icon="magnifying-glass" iconType="solid" color="#14b8a6" href="/zh/deckprobe/overview" cta="了解 DeckProbe" arrow>
+    <strong>DeckProbe</strong> 在本地读取文档身份、元数据、结构、安全信号和资源事实，无需启动 Office 或 iWork。
   </Card>
-  <Card title="渲染文档" icon="images" href="/zh/deckrender/overview">
-    **DeckRender** 把支持的文件路由成图片、PDF 或视频，并按稳定规则写出产物。
+  <Card title="渲染文档" icon="images" iconType="solid" color="#3b82f6" href="/zh/deckrender/overview" cta="了解 DeckRender" arrow>
+    <strong>DeckRender</strong> 把支持的文件路由成图片、PDF 或视频，并按稳定规则写出产物。
   </Card>
-  <Card title="执行文档操作" icon="cube" href="/zh/deckops/overview">
-    **DeckOps** 提供云端解析、提取、转换、生成和异步任务执行能力。
+  <Card title="执行文档操作" icon="cube" iconType="solid" color="#8b5cf6" href="/zh/deckops/overview" cta="了解 DeckOps" arrow>
+    <strong>DeckOps</strong> 提供云端解析、提取、转换、生成和异步任务执行能力。
   </Card>
-  <Card title="修改现有 PPTX" icon="pen-to-square" href="/zh/deckuse/overview">
-    **DeckUse** 替换指定文本、移动受支持的形状，最终生成仍可编辑的 PPTX。
+  <Card title="修改现有 PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/zh/deckuse/overview" cta="了解 DeckUse" arrow>
+    <strong>DeckUse</strong> 替换指定文本、移动受支持的形状，最终生成仍可编辑的 PPTX。
   </Card>
-  <Card title="使用 HTML 创作 Deck" icon="code" href="/zh/deckhtml/overview">
-    **DeckHTML** 将浏览器布局映射为 PPTX 或 PNG，并报告哪些元素保持可编辑、哪些会降级为图片。
+  <Card title="使用 HTML 创作 Deck" icon="code" iconType="solid" color="#ec4899" href="/zh/deckhtml/overview" cta="了解 DeckHTML" arrow>
+    <strong>DeckHTML</strong> 将浏览器布局映射为 PPTX 或 PNG，并报告哪些元素保持可编辑、哪些会降级为图片。
   </Card>
 </CardGroup>
 
@@ -39,7 +50,7 @@ flowchart LR
 
 DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、透传或 Deckflow 云端执行。DeckOps 在云端运行文档任务。DeckHTML 同时支持本地浏览器转换和云端模式。
 
-## 按最终结果选择
+## 比较执行边界
 
 | 使用目标 | 产品 | 主要接入方式 | 认证 |
 | --- | --- | --- | --- |
@@ -65,9 +76,16 @@ DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、�
   <Step title="对应应用工作流">
     需要把校验、解析、渲染或生成组合成一条应用路径时，查看[常见工作流](/zh/common-workflows)。
   </Step>
-  <Step title="进入产品文档">
-    完成对应产品的快速开始，再通过 CLI、SDK、指南和参考页完成生产接入。
+  <Step title="改造一个可运行示例">
+    打开[示例](/zh/examples/overview)，从带有明确输入和预期输出的完整任务配方开始。
   </Step>
 </Steps>
 
-如果两个产品看起来都适用，请先阅读[选择产品](/zh/product-guide)。
+<Columns cols={2}>
+  <Card title="还不确定该选哪个产品？" icon="route" iconType="solid" href="/zh/product-guide" horizontal>
+    对比输入、输出、执行位置和产品边界。
+  </Card>
+  <Card title="已经准备复制代码？" icon="flask" iconType="solid" href="/zh/examples/overview" horizontal>
+    从自包含示例开始，而不是在多个参考页面之间拼接调用链路。
+  </Card>
+</Columns>

@@ -4,26 +4,32 @@ sidebarTitle: Common Workflows
 description: "Map real application workflows to DeckProbe, DeckRender, DeckOps, DeckUse, and DeckHTML."
 ---
 
-Use this page after choosing the result your application needs. Each workflow identifies the starting input, product sequence, final result, and point where document data leaves the local machine.
+<div className="deckflow-hero">
+  <span className="deckflow-hero-eyebrow">From product choice to application design</span>
+  <h2 className="deckflow-hero-title">Follow the result through a real workflow</h2>
+  <p className="deckflow-hero-copy">Each path names the starting input, product sequence, final contract, and the exact point where document bytes leave the local machine.</p>
+</div>
 
-| Application goal | Recommended path | Final result |
-| --- | --- | --- |
-| Validate an upload before processing | DeckProbe → application policy | Accepted, rejected, or routed document |
-| Build a searchable document corpus | DeckOps Parse | Markdown or format-specific structured content |
-| Add document previews to a review UI | DeckRender | Page images, PDF, or supported video |
-| Personalize an existing presentation | DeckUse | Updated editable PPTX |
-| Generate presentations from application data | DeckHTML | PPTX or PNG plus conversion diagnostics |
-| Validate, parse, and preview one upload | DeckProbe → DeckOps → DeckRender | Policy decision, content, and visual artifacts |
+<Columns cols={3}>
+  <Card title="Gate uploads" icon="shield-halved" iconType="solid" href="#gate-document-uploads-before-cloud-processing" color="#14b8a6">DeckProbe → policy decision</Card>
+  <Card title="Build search or RAG" icon="database" iconType="solid" href="#build-search-rag-or-document-understanding" color="#8b5cf6">DeckOps → structured content</Card>
+  <Card title="Add document previews" icon="images" iconType="solid" href="#add-previews-to-review-and-approval-interfaces" color="#3b82f6">DeckRender → visual artifacts</Card>
+  <Card title="Personalize a PPTX" icon="pen-to-square" iconType="solid" href="#personalize-an-existing-presentation" color="#f59e0b">DeckUse → updated PPTX</Card>
+  <Card title="Generate from app data" icon="code" iconType="solid" href="#generate-a-deck-from-application-data" color="#ec4899">DeckHTML → PPTX or PNG</Card>
+  <Card title="Combine the pipeline" icon="diagram-project" iconType="solid" href="#combine-validation-content-and-previews" color="#0f766e">Probe → Ops → Render</Card>
+</Columns>
 
 ## Gate document uploads before cloud processing
 
-**Start with:** an untrusted PDF, Office, or modern iWork file received by your application.
+<div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">An untrusted PDF, Office, or modern iWork file received by your application.</span></div>
 
-1. Run DeckProbe locally for identity, encryption, macro, structure, count, or asset targets.
-2. Apply your application's acceptance and routing policy to the Schema v2 evidence.
-3. Send only accepted files to DeckOps or DeckRender when downstream cloud processing is required.
+<Steps>
+  <Step title="Inspect locally">Run DeckProbe for identity, encryption, macro, structure, count, or asset targets.</Step>
+  <Step title="Apply policy">Evaluate the Schema v2 evidence with your application's acceptance and routing rules.</Step>
+  <Step title="Continue deliberately">Send only accepted files to DeckOps or DeckRender when downstream cloud processing is required.</Step>
+</Steps>
 
-**Result:** an evidence-backed accept, reject, or routing decision. Document bytes stay local during DeckProbe and leave the machine only when your application passes them to a cloud product.
+<div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">An evidence-backed accept, reject, or routing decision. Bytes stay local during DeckProbe and leave the machine only when your application passes them to a cloud product.</span></div>
 
 <Card title="Start with DeckProbe" href="/deckprobe/quick-start">
   Install the native CLI, inspect a known PDF, and verify the policy input contract.
@@ -31,11 +37,11 @@ Use this page after choosing the result your application needs. Each workflow id
 
 ## Build search, RAG, or document understanding
 
-**Start with:** a supported PDF, PPTX, DOCX, Keynote file, or HTML URL.
+<div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">A supported PDF, PPTX, DOCX, Keynote file, or HTML URL.</span></div>
 
 Use DeckOps Parse when the application needs Markdown or source-format structure rather than pixels. Store the task ID with the derived result so failures, retries, and source-specific schemas remain observable.
 
-**Result:** Markdown for indexing and model input, or a format-specific structured response for layouts, notes, elements, and semantic roles where implemented.
+<div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">Markdown for indexing and model input, or a format-specific structured response for layouts, notes, elements, and semantic roles where implemented.</span></div>
 
 <Warning>
   The Parse facade and typed Parse tasks exist in the DeckOps repository source but are absent from the current `@deckops/sdk@0.7.3` npm artifact. Review [Parse Documents](/deckops/parse) and its availability notice before implementation.
@@ -43,11 +49,11 @@ Use DeckOps Parse when the application needs Markdown or source-format structure
 
 ## Add previews to review and approval interfaces
 
-**Start with:** a supported document, URL, or stdin stream.
+<div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">A supported document, URL, or stdin stream.</span></div>
 
 Use DeckRender when the application needs page images, thumbnails, a PDF, or supported video output without managing the underlying DeckOps route and downloads. Most routes upload the source to Deckflow cloud; local PDF passthrough and Pages/Numbers preview extraction are explicit exceptions.
 
-**Result:** written artifacts plus a `RenderResult` containing route, page count, output files, byte sizes, duration, and fidelity caveats.
+<div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">Written artifacts plus a <code>RenderResult</code> containing route, page count, output files, byte sizes, duration, and fidelity caveats.</span></div>
 
 <Card title="Start with DeckRender" href="/deckrender/quick-start">
   Create a known HTML input, render one PNG, and verify the file and JSON result.
@@ -55,11 +61,11 @@ Use DeckRender when the application needs page images, thumbnails, a PDF, or sup
 
 ## Personalize an existing presentation
 
-**Start with:** an editable `.pptx` that must remain the source of truth.
+<div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">An editable <code>.pptx</code> that must remain the source of truth.</span></div>
 
 Use DeckUse to inspect selectors, replace or set existing text, and move supported shapes. Keep a persistent workspace when several changes belong to one output.
 
-**Result:** another editable PPTX created locally. The current release does not add or delete elements and does not edit DOCX, XLSX, or Keynote.
+<div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">Another editable PPTX created locally. The current release does not add or delete elements and does not edit DOCX, XLSX, or Keynote.</span></div>
 
 <Card title="Start with DeckUse" href="/deckuse/quick-start">
   Generate or supply a known PPTX, replace text, and verify the updated file.
@@ -67,11 +73,11 @@ Use DeckUse to inspect selectors, replace or set existing text, and move support
 
 ## Generate a deck from application data
 
-**Start with:** HTML or SVG authored from templates, application data, or generated content.
+<div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">HTML or SVG authored from templates, application data, or generated content.</span></div>
 
 Use DeckHTML to map browser layout into editable PPTX elements where possible and raster fallback where necessary. Run locally when inputs must remain on the machine; choose cloud mode for cloud-only features such as font embedding.
 
-**Result:** PPTX or PNG plus diagnostics that identify native, vector, raster, ignored, and unsupported mappings.
+<div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">PPTX or PNG plus diagnostics that identify native, vector, raster, ignored, and unsupported mappings.</span></div>
 
 <Card title="Start with DeckHTML" href="/deckhtml/quick-start">
   Prepare Chromium, create one slide, generate a PPTX, and inspect conversion decisions.
@@ -97,3 +103,7 @@ DeckProbe evidence, DeckOps structured results, and DeckRender artifacts are sep
   <Card title="Choose a product" href="/product-guide">Compare boundaries when only one result is required.</Card>
   <Card title="Run the minimum examples" href="/getting-started">See installation, invocation, and expected results for all five products.</Card>
 </CardGroup>
+
+<Card title="Prefer a copy-and-run recipe?" icon="flask" iconType="solid" href="/examples/overview" cta="Browse examples" arrow>
+  Examples start from a known file or source snippet and include the command, expected output, and verification step.
+</Card>

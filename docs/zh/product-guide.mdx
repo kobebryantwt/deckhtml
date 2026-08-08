@@ -4,7 +4,19 @@ sidebarTitle: 选择产品
 description: "按照输入、操作、执行位置和最终产物比较 Deckflow 产品。"
 ---
 
-选择时先看应用必须得到什么产物，以及原始文档是否需要继续保持可编辑。同一个源文件可以因为不同目的进入多个产品。
+<div className="deckflow-hero">
+  <span className="deckflow-hero-eyebrow">按最终契约选择</span>
+  <h2 className="deckflow-hero-title">选择对最终结果负责的产品</h2>
+  <p className="deckflow-hero-copy">先判断应用需要文档事实、视觉文件、结构化内容、修改后的源文件，还是一个新 Deck，再确认它在哪里执行。</p>
+</div>
+
+<Columns cols={3}>
+  <Card title="文档事实" icon="magnifying-glass" iconType="solid" color="#14b8a6" href="/zh/deckprobe/overview">DeckProbe</Card>
+  <Card title="视觉文件" icon="images" iconType="solid" color="#3b82f6" href="/zh/deckrender/overview">DeckRender</Card>
+  <Card title="结构化结果" icon="cube" iconType="solid" color="#8b5cf6" href="/zh/deckops/overview">DeckOps</Card>
+  <Card title="修改后的 PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/zh/deckuse/overview">DeckUse</Card>
+  <Card title="新 Deck" icon="code" iconType="solid" color="#ec4899" href="/zh/deckhtml/overview">DeckHTML</Card>
+</Columns>
 
 ## 产品对比
 
@@ -20,13 +32,13 @@ description: "按照输入、操作、执行位置和最终产物比较 Deckflow
 
 <AccordionGroup>
   <Accordion title="DeckProbe 还是 DeckOps？">
-    最终只需要经过验证的文档级事实，或需要在接收、路由文件前判断风险时，使用 **DeckProbe**。需要页面和元素内容、Markdown、语义提取或生成文件时，使用 **DeckOps**。提高 DeckProbe 的探测级别仍然只会得到 Target 证据，不会变成 DeckOps 的解析结果。
+    最终只需要经过验证的文档级事实，或需要在接收、路由文件前判断风险时，使用 <strong>DeckProbe</strong>。需要页面和元素内容、Markdown、语义提取或生成文件时，使用 <strong>DeckOps</strong>。提高 DeckProbe 的探测级别仍然只会得到 Target 证据，不会变成 DeckOps 的解析结果。
   </Accordion>
   <Accordion title="DeckRender 还是 DeckOps？">
-    应用只需要稳定的视觉文件，不希望管理底层任务名、多步路径、页面命名和下载时，使用 **DeckRender**。渲染属于更大的解析、提取、转换或生成流程时，直接使用 **DeckOps**。
+    应用只需要稳定的视觉文件，不希望管理底层任务名、多步路径、页面命名和下载时，使用 <strong>DeckRender</strong>。渲染属于更大的解析、提取、转换或生成流程时，直接使用 <strong>DeckOps</strong>。
   </Accordion>
   <Accordion title="DeckUse 还是 DeckHTML？">
-    现有 PPTX 是事实源，并需要修改其中已有内容时，使用 **DeckUse**。HTML 或 SVG 是创作源，并要生成新的 PPTX 或 PNG 时，使用 **DeckHTML**。
+    现有 PPTX 是事实源，并需要修改其中已有内容时，使用 <strong>DeckUse</strong>。HTML 或 SVG 是创作源，并要生成新的 PPTX 或 PNG 时，使用 <strong>DeckHTML</strong>。
   </Accordion>
   <Accordion title="产品可以组合使用吗？">
     可以。典型接入流程可以先用 DeckProbe 校验文件，再用 DeckOps 解析内容，最后用 DeckRender 生成预览。三者是独立调用并返回不同契约，Deckflow 不要求所有流程都使用全部产品。

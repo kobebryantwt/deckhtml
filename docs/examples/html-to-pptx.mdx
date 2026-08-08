@@ -1,0 +1,84 @@
+---
+title: Generate a PPTX from HTML
+sidebarTitle: HTML to PPTX
+description: "Create a one-slide HTML source, convert it locally with DeckHTML, and verify the generated PPTX."
+---
+
+This example creates a presentation-sized HTML page and converts it to PPTX on the same machine with DeckHTML and Chromium.
+
+<div className="workflow-meta"><span className="workflow-meta-label">Produces</span><span className="workflow-meta-value">A local <code>deck.pptx</code> file and a JSON conversion summary.</span></div>
+
+## Requirements
+
+- Node.js 18 or later
+- Chromium from Playwright or a compatible installed Chrome/Edge executable
+- No Deckflow credentials for local mode
+
+## Run the example
+
+<Steps>
+  <Step title="Install DeckHTML and Chromium">
+
+```bash
+npm install -g @deckflow/deckhtml
+npx playwright install chromium
+deckhtml --version
+```
+
+  </Step>
+  <Step title="Create one slide">
+
+Save as `deck.html`:
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        width: 1280px;
+        height: 720px;
+        margin: 0;
+        padding: 80px;
+        display: grid;
+        align-content: center;
+        background: #071513;
+        color: #e8fffa;
+        font-family: Arial, sans-serif;
+      }
+      h1 { margin: 0 0 20px; font-size: 64px; }
+      p { margin: 0; color: #5eead4; font-size: 28px; }
+    </style>
+  </head>
+  <body>
+    <h1>Quarterly review</h1>
+    <p>Generated locally from HTML</p>
+  </body>
+</html>
+```
+
+  </Step>
+  <Step title="Generate the presentation">
+
+```bash
+deckhtml deck.html -o deck.pptx --mode local --json --quiet
+```
+
+  </Step>
+  <Step title="Verify the artifact">
+
+```bash
+node -e "const fs=require('fs'); const s=fs.statSync('deck.pptx'); if(s.size===0) process.exit(1); console.log(s.size + ' bytes')"
+```
+
+  </Step>
+</Steps>
+
+<Check>
+  Success means `deck.pptx` exists, has a non-zero size, and the JSON result reports PPTX output in local mode.
+</Check>
+
+<Card title="Understand element fidelity" icon="eye" iconType="solid" href="/deckhtml/guides/element-mapping">
+  Review which HTML elements become editable PowerPoint objects and which require vector or raster fallback.
+</Card>

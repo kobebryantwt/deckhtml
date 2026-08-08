@@ -143,6 +143,14 @@
                   "product-guide",
                   "common-workflows"
                 ]
+              },
+              {
+                "group": "Examples",
+                "pages": [
+                  "examples/overview",
+                  "examples/inspect-and-route",
+                  "examples/html-to-pptx"
+                ]
               }
             ]
           },
@@ -353,6 +361,14 @@
                   "zh/getting-started",
                   "zh/product-guide",
                   "zh/common-workflows"
+                ]
+              },
+              {
+                "group": "示例",
+                "pages": [
+                  "zh/examples/overview",
+                  "zh/examples/inspect-and-route",
+                  "zh/examples/html-to-pptx"
                 ]
               }
             ]

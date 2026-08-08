@@ -1,0 +1,84 @@
+---
+title: 从 HTML 生成 PPTX
+sidebarTitle: HTML 转 PPTX
+description: "创建单页 HTML，在本地使用 DeckHTML 转换，并验证生成的 PPTX。"
+---
+
+本示例创建一页演示文稿尺寸的 HTML，并使用 DeckHTML 与 Chromium 在同一台机器上转换为 PPTX。
+
+<div className="workflow-meta"><span className="workflow-meta-label">最终产物</span><span className="workflow-meta-value">本地 <code>deck.pptx</code> 文件，以及一份 JSON 转换摘要。</span></div>
+
+## 环境要求
+
+- Node.js 18 或更高版本
+- Playwright Chromium，或兼容的本机 Chrome/Edge 可执行文件
+- 本地模式不需要 Deckflow 凭证
+
+## 运行示例
+
+<Steps>
+  <Step title="安装 DeckHTML 与 Chromium">
+
+```bash
+npm install -g @deckflow/deckhtml
+npx playwright install chromium
+deckhtml --version
+```
+
+  </Step>
+  <Step title="创建一页幻灯片">
+
+保存为 `deck.html`：
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        width: 1280px;
+        height: 720px;
+        margin: 0;
+        padding: 80px;
+        display: grid;
+        align-content: center;
+        background: #071513;
+        color: #e8fffa;
+        font-family: Arial, sans-serif;
+      }
+      h1 { margin: 0 0 20px; font-size: 64px; }
+      p { margin: 0; color: #5eead4; font-size: 28px; }
+    </style>
+  </head>
+  <body>
+    <h1>Quarterly review</h1>
+    <p>Generated locally from HTML</p>
+  </body>
+</html>
+```
+
+  </Step>
+  <Step title="生成演示文稿">
+
+```bash
+deckhtml deck.html -o deck.pptx --mode local --json --quiet
+```
+
+  </Step>
+  <Step title="验证文件">
+
+```bash
+node -e "const fs=require('fs'); const s=fs.statSync('deck.pptx'); if(s.size===0) process.exit(1); console.log(s.size + ' bytes')"
+```
+
+  </Step>
+</Steps>
+
+<Check>
+  `deck.pptx` 存在且大小不为零，同时 JSON 结果报告本地模式的 PPTX 输出，即表示成功。
+</Check>
+
+<Card title="理解元素保真度" icon="eye" iconType="solid" href="/zh/deckhtml/guides/element-mapping">
+  查看哪些 HTML 元素可以成为可编辑 PowerPoint 对象，哪些需要回退为矢量或栅格图像。
+</Card>

@@ -1,0 +1,80 @@
+---
+title: Inspect and Route an Uploaded PDF
+sidebarTitle: Inspect and Route a PDF
+description: "Use DeckProbe locally to inspect a known PDF and turn Schema v2 facts into an upload routing decision."
+---
+
+This example downloads a known one-page PDF, probes it locally, and applies a small policy without opening a PDF viewer or uploading the document.
+
+<div className="workflow-meta"><span className="workflow-meta-label">Produces</span><span className="workflow-meta-value"><code>report.json</code> plus an accept or reject decision printed by the policy script.</span></div>
+
+## Requirements
+
+- Node.js 20 or later
+- macOS, Linux, or Windows with a supported DeckProbe native package
+- Network access only for installation and downloading the sample
+
+## Run the example
+
+<Steps>
+  <Step title="Install and verify DeckProbe">
+
+```bash
+npm install -g @deckflow/deckprobe
+deckprobe --version
+```
+
+  </Step>
+  <Step title="Download a known input">
+
+```bash
+curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+```
+
+  </Step>
+  <Step title="Write the probe report">
+
+```bash
+deckprobe -t format,page_count --view values --pretty sample.pdf > report.json
+```
+
+  </Step>
+  <Step title="Apply an application policy">
+
+Save as `route.mjs`:
+
+```js
+import { readFile } from 'node:fs/promises';
+
+const report = JSON.parse(await readFile('report.json', 'utf8'));
+const format = report.values?.['document.format'];
+const pages = report.values?.['pdf.page_count'];
+
+if (report.status !== 'ok' || format !== 'pdf' || pages > 25) {
+  console.error('REJECT: unsupported or oversized input');
+  process.exit(1);
+}
+
+console.log(`ACCEPT: ${format}, ${pages} page`);
+```
+
+Run it:
+
+```bash
+node route.mjs
+```
+
+  </Step>
+</Steps>
+
+## Expected result
+
+```text
+ACCEPT: pdf, 1 page
+```
+
+The native CLI reads the file locally. The sample download uses the network, but DeckProbe does not upload `sample.pdf` during inspection.
+
+<Card title="Adapt the policy" icon="sliders" iconType="solid" href="/deckprobe/formats-and-targets">
+  Add encryption, macro, slide count, worksheet, or asset targets supported by the source format.
+</Card>

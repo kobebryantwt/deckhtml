@@ -4,23 +4,34 @@ sidebarTitle: Overview
 description: "Choose and integrate Deckflow components for document inspection, rendering, cloud operations, PPTX manipulation, and HTML-native deck generation."
 ---
 
-Deckflow is a document runtime for applications and AI agents. Its five focused products share a document-processing ecosystem, but each one has a different final result: verified facts, visual artifacts, structured cloud results, an updated PPTX, or a deck generated from HTML.
+<div className="deckflow-hero">
+  <span className="deckflow-hero-eyebrow">Document runtime for developers</span>
+  <h2 className="deckflow-hero-title">One document stack, five focused outcomes</h2>
+  <p className="deckflow-hero-copy">Inspect a file without opening it, render dependable previews, run cloud document operations, update an existing PPTX, or generate a new deck from HTML.</p>
+  <div className="deckflow-pills">
+    <span className="deckflow-pill">Local-first inspection</span>
+    <span className="deckflow-pill">Cloud document tasks</span>
+    <span className="deckflow-pill">Editable PPTX workflows</span>
+  </div>
+</div>
+
+## Start with the outcome
 
 <CardGroup cols={2}>
-  <Card title="Inspect before opening" icon="magnifying-glass" href="/deckprobe/overview">
-    **DeckProbe** reads document identity, metadata, structure, security signals, and asset facts locally without launching Office or iWork.
+  <Card title="Inspect before opening" icon="magnifying-glass" iconType="solid" color="#14b8a6" href="/deckprobe/overview" cta="Explore DeckProbe" arrow>
+    <strong>DeckProbe</strong> reads document identity, metadata, structure, security signals, and asset facts locally without launching Office or iWork.
   </Card>
-  <Card title="Render a document" icon="images" href="/deckrender/overview">
-    **DeckRender** routes supported files to images, PDF, or video and writes predictable artifacts.
+  <Card title="Render a document" icon="images" iconType="solid" color="#3b82f6" href="/deckrender/overview" cta="Explore DeckRender" arrow>
+    <strong>DeckRender</strong> routes supported files to images, PDF, or video and writes predictable artifacts.
   </Card>
-  <Card title="Run document operations" icon="cube" href="/deckops/overview">
-    **DeckOps** provides cloud parsing, extraction, conversion, generation, and asynchronous task execution.
+  <Card title="Run document operations" icon="cube" iconType="solid" color="#8b5cf6" href="/deckops/overview" cta="Explore DeckOps" arrow>
+    <strong>DeckOps</strong> provides cloud parsing, extraction, conversion, generation, and asynchronous task execution.
   </Card>
-  <Card title="Update an existing PPTX" icon="pen-to-square" href="/deckuse/overview">
-    **DeckUse** replaces selected text and moves supported shapes while producing another editable PPTX.
+  <Card title="Update an existing PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/deckuse/overview" cta="Explore DeckUse" arrow>
+    <strong>DeckUse</strong> replaces selected text and moves supported shapes while producing another editable PPTX.
   </Card>
-  <Card title="Author a deck in HTML" icon="code" href="/deckhtml/overview">
-    **DeckHTML** maps browser layout to PPTX or PNG and reports which elements stay editable or fall back to pixels.
+  <Card title="Author a deck in HTML" icon="code" iconType="solid" color="#ec4899" href="/deckhtml/overview" cta="Explore DeckHTML" arrow>
+    <strong>DeckHTML</strong> maps browser layout to PPTX or PNG and reports which elements stay editable or fall back to pixels.
   </Card>
 </CardGroup>
 
@@ -39,7 +50,7 @@ flowchart LR
 
 DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and Deckflow cloud routes. DeckOps executes document tasks in the cloud. DeckHTML supports local browser-based conversion and a cloud mode.
 
-## Choose by the result you need
+## Compare the execution boundary
 
 | Goal | Product | Primary interface | Authentication |
 | --- | --- | --- | --- |
@@ -65,9 +76,16 @@ DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and D
   <Step title="Map the application workflow">
     Use [Common Workflows](/common-workflows) when validation, parsing, rendering, or generation must be combined into one application path.
   </Step>
-  <Step title="Move to the product guide">
-    Follow the product's Quickstart, then use its CLI, SDK, guides, and reference pages for production integration.
+  <Step title="Adapt a runnable example">
+    Open [Examples](/examples/overview) for complete, task-oriented recipes with known input and expected output.
   </Step>
 </Steps>
 
-If two products appear to overlap, use [Choose a Product](/product-guide) before implementing the workflow.
+<Columns cols={2}>
+  <Card title="Not sure which product fits?" icon="route" iconType="solid" href="/product-guide" horizontal>
+    Compare inputs, outputs, execution locations, and product boundaries.
+  </Card>
+  <Card title="Ready to copy code?" icon="flask" iconType="solid" href="/examples/overview" horizontal>
+    Start with a self-contained example instead of assembling a path from reference pages.
+  </Card>
+</Columns>
