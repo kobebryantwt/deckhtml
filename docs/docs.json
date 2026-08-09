@@ -4,11 +4,11 @@
   "description": "Developer documentation for DeckProbe, DeckRender, DeckOps, DeckUse, and DeckHTML.",
   "theme": "maple",
   "logo": {
-    "light": "/logo/light.png",
-    "dark": "/logo/dark.png",
+    "light": "/logo-v2/light.png",
+    "dark": "/logo-v2/dark.png",
     "href": "/introduction"
   },
-  "favicon": "/favicon.ico",
+  "favicon": "/logo-v2/favicon.png",
   "background": {
     "color": {
       "light": "#f7f8f6",
