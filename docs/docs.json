@@ -115,9 +115,9 @@
     { "source": "/zh/deckops/document-information", "destination": "/zh/deckops/structured-results", "permanent": true }
   ],
   "colors": {
-    "primary": "#0f766e",
-    "light": "#34d399",
-    "dark": "#14b8a6"
+    "primary": "#c04a3d",
+    "light": "#f0785c",
+    "dark": "#9a618f"
   },
   "navigation": {
     "languages": [
