@@ -6,8 +6,6 @@ description: "Inspect document identity, metadata, structure, security, and asse
 
 DeckProbe inspects predefined facts about a document without opening or rendering it, running macros, or launching Microsoft Office, Apple iWork, or another desktop suite. It returns named, verifiable properties such as format, page or slide count, encryption status, and asset inventory. It does not answer questions about document meaning or build a page-and-element content model.
 
-The native CLI reads lazily from disk. The JavaScript SDK is designed to run the same Rust engine through WebAssembly in browsers and Node.js; see the publication status below before choosing that interface.
-
 | Item | Current contract |
 | --- | --- |
 | Inputs | PDF; modern and legacy Word, Excel, and PowerPoint; modern Keynote, Numbers, and Pages |
@@ -31,10 +29,6 @@ flowchart LR
   T --> P["Run only required probe paths"]
   P --> J["Schema v2 facts and evidence"]
 ```
-
-<Tip>
-  With telemetry disabled, the default report is deterministic. Enable telemetry only when the report needs elapsed-time measurements.
-</Tip>
 
 <Warning>
   The current `@deckflow/deckprobe@2.3.0` npm publication is missing the `dist/` and `wasm/` runtime files required by its JavaScript imports. The native CLI and npm-provided CLI work, but the Browser, Worker, and Node.js APIs do not work from this artifact.
