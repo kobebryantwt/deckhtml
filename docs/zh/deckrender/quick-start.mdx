@@ -74,7 +74,11 @@ description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 
     test -s hello.png
     ```
 
-    PowerShell 中使用 `if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }`。
+    PowerShell 中使用：
+
+    ```powershell
+    if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }
+    ```
   </Step>
 </Steps>
 

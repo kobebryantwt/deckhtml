@@ -148,6 +148,18 @@ pre {
   transform: translateY(-1px);
 }
 
+.playground-cta .card {
+  border-color: var(--deck-accent-border) !important;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(154, 97, 143, 0.14), transparent 32%),
+    linear-gradient(135deg, var(--deck-accent-soft), var(--deck-surface)) !important;
+}
+
+.playground-cta .card:hover {
+  border-color: var(--deck-accent) !important;
+  box-shadow: 0 16px 36px rgba(192, 74, 61, 0.14);
+}
+
 /* Editorial building blocks used only where they clarify page structure. */
 .deckflow-hero {
   position: relative;

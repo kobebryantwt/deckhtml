@@ -18,21 +18,23 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 ## 常见 Agent 场景
 
 <CardGroup cols={2}>
-  <Card title="企业附件入口" icon="inbox" iconType="solid" href="#在云端处理前校验文档上传">
+  <Card title="企业附件入口" icon="inbox" iconType="solid" href="/zh/common-workflows#upload-gate">
     在本地检查收到的 Office、PDF 或 iWork 文件，执行应用策略，再把通过校验的文件交给云端处理。
   </Card>
   <Card title="大规模文档盘点" icon="boxes-stacked" iconType="solid" href="/zh/deckprobe/cli/automation-and-output">
     批量运行带资源预算的 DeckProbe 任务，保存格式、数量、结构、安全信号和资源事实，再决定后续处理方式。
   </Card>
-  <Card title="多模态理解与评审" icon="eye" iconType="solid" href="#组合校验内容和预览">
+  <Card title="多模态理解与评审" icon="eye" iconType="solid" href="/zh/common-workflows#multimodal-review">
     把 DeckOps 内容结果和 DeckRender 视觉产物作为相互独立、可追踪的输入，用于搜索、AI、预览或人工评审。
   </Card>
-  <Card title="生成文档的交付检查" icon="clipboard-check" iconType="solid" href="#从应用数据生成-deck">
+  <Card title="生成文档的交付检查" icon="clipboard-check" iconType="solid" href="/zh/common-workflows#delivery-check">
     使用 DeckHTML 生成 Deck，或使用 DeckUse 更新 PPTX，再渲染视觉产物，交由应用或评审人员在交付前检查。
   </Card>
 </CardGroup>
 
 这些是可以组合的应用模式，不是一条自动执行的端到端流水线。每个产品都有独立的输入、结果契约、执行边界和重试行为。
+
+<div id="upload-gate"></div>
 
 ## 在云端处理前校验文档上传
 
@@ -97,6 +99,22 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 <Card title="从 DeckHTML 开始" href="/zh/deckhtml/quick-start">
   准备 Chromium、创建一页幻灯片、生成 PPTX，并检查转换决策。
 </Card>
+
+<div id="delivery-check"></div>
+
+## 在交付前检查修改或生成的 Deck
+
+从 DeckUse 或 DeckHTML 生成的 PPTX 开始，再使用 DeckRender 渲染候选文件。DeckRender 路线可能会把该 PPTX 上传到 DeckFlow 云端。
+
+<Steps>
+  <Step title="生成候选文件">使用 DeckUse 更新现有 PPTX，或使用 DeckHTML 从 HTML 生成新 Deck。</Step>
+  <Step title="生成视觉产物">使用 DeckRender 写出页面图片、PDF 或其他受支持的视觉输出。</Step>
+  <Step title="执行交付检查">由应用或评审人员检查视觉产物，再决定是否交付 PPTX。</Step>
+</Steps>
+
+应用可以把视觉产物和返回的路线限制作为评审或审批判断的输入。
+
+<div id="multimodal-review"></div>
 
 ## 组合校验、内容和预览
 

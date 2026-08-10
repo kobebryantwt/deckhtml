@@ -74,7 +74,11 @@ This example creates its own input and runs through a DeckFlow cloud render in g
     test -s hello.png
     ```
 
-    In PowerShell, use `if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }`.
+    In PowerShell, use:
+
+    ```powershell
+    if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }
+    ```
   </Step>
 </Steps>
 

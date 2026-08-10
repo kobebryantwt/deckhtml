@@ -18,21 +18,23 @@ Use this page after choosing the result your application needs. Each workflow id
 ## Common agent scenarios
 
 <CardGroup cols={2}>
-  <Card title="Enterprise attachment intake" icon="inbox" iconType="solid" href="#gate-document-uploads-before-cloud-processing">
+  <Card title="Enterprise attachment intake" icon="inbox" iconType="solid" href="/common-workflows#upload-gate">
     Inspect an incoming Office, PDF, or iWork file locally, apply application policy, then send only accepted files to cloud processing.
   </Card>
   <Card title="Large-scale document inventory" icon="boxes-stacked" iconType="solid" href="/deckprobe/cli/automation-and-output">
     Run budgeted DeckProbe jobs in batches and store format, counts, structure, security signals, and asset facts before choosing downstream work.
   </Card>
-  <Card title="Multimodal understanding and review" icon="eye" iconType="solid" href="#combine-validation-content-and-previews">
+  <Card title="Multimodal understanding and review" icon="eye" iconType="solid" href="/common-workflows#multimodal-review">
     Keep DeckOps content results and DeckRender visual artifacts as separate, traceable inputs for search, AI, preview, or human review.
   </Card>
-  <Card title="Generated-document delivery check" icon="clipboard-check" iconType="solid" href="#generate-a-deck-from-application-data">
+  <Card title="Generated-document delivery check" icon="clipboard-check" iconType="solid" href="/common-workflows#delivery-check">
     Generate a deck with DeckHTML or update a PPTX with DeckUse, then render an artifact that the application or a reviewer can inspect before delivery.
   </Card>
 </CardGroup>
 
 These are composable application patterns, not an automatic end-to-end pipeline. Each product has its own input, result contract, execution boundary, and retry behavior.
+
+<div id="upload-gate"></div>
 
 ## Gate document uploads before cloud processing
 
@@ -97,6 +99,22 @@ Use DeckHTML to map browser layout into editable PPTX elements where possible an
 <Card title="Start with DeckHTML" href="/deckhtml/quick-start">
   Prepare Chromium, create one slide, generate a PPTX, and inspect conversion decisions.
 </Card>
+
+<div id="delivery-check"></div>
+
+## Review an updated or generated deck before delivery
+
+Start with a PPTX produced by DeckUse or DeckHTML, then render the candidate with DeckRender. The render route may upload that PPTX to DeckFlow cloud.
+
+<Steps>
+  <Step title="Produce the candidate">Update an existing PPTX with DeckUse, or generate a new one from HTML with DeckHTML.</Step>
+  <Step title="Create a visual artifact">Use DeckRender to write page images, a PDF, or another supported visual output.</Step>
+  <Step title="Apply the delivery check">Let the application or a reviewer inspect the artifact before the PPTX is delivered.</Step>
+</Steps>
+
+Use the visual artifact and reported route caveats as inputs to the application's review or approval decision.
+
+<div id="multimodal-review"></div>
 
 ## Combine validation, content, and previews
 

@@ -11,18 +11,16 @@ DeckRender routes one source format to one output family. Recognizing an input d
 | Input | Image | PDF | Video |
 | --- | --- | --- | --- |
 | PowerPoint `.pptx`, `.ppt` | PNG, JPEG, WebP | Yes | MP4 |
-| PDF `.pdf` | PNG, JPEG, WebP | Local passthrough | Planned |
-| Keynote `.key` | PNG, WebP | Yes | Planned |
+| PDF `.pdf` | PNG, JPEG, WebP | Local passthrough | — |
+| Keynote `.key` | PNG, WebP | Yes | — |
 | Word `.docx`, `.doc` | PNG, JPEG, WebP | Yes | — |
 | HTML `.html`, `.htm`, URL | PNG, WebP | Yes | MP4 |
 | Markdown `.md`, `.markdown` | PNG, WebP | — | — |
 | Pages `.pages` | Embedded JPEG preview | One-page PDF wrapper | — |
 | Numbers `.numbers` | Embedded JPEG preview | One-page PDF wrapper | — |
-| Excel `.xlsx` | Planned | Planned | — |
 
 - **Yes** means the route is implemented in the current release.
-- **Planned** returns `not_implemented`; the error explains the missing capability.
-- **—** returns `unsupported_format` because the current route table has no such combination.
+- **—** means the current release does not provide that source/output combination.
 
 Query the installed version instead of hard-coding this table:
 
@@ -31,7 +29,7 @@ deckrender formats
 deckrender formats --json
 ```
 
-The JSON form reports `supported`, `planned`, route `kind`, task chain, and fidelity caveat for every source/output pair.
+The JSON form reports route availability, route `kind`, task chain, and fidelity caveat for each source/output pair.
 
 ## Image options by source
 
@@ -81,4 +79,4 @@ On cloud routes, an explicit incompatible option normally fails with `unsupporte
 
 `--pages` and `--page` apply only to multi-frame image routes. Selection happens after the base cloud render, so it reduces downloads and written files, but not the pages rendered by the base task or its compute cost.
 
-PDF and video are single-file outputs. They reject sizing, image encoding, quality, and page-selection options because the current backend tasks expose no matching parameters. Video tuning flags such as `--fps`, `--duration`, and `--transition` are also not implemented.
+PDF and video are single-file outputs. They reject sizing, image encoding, quality, and page-selection options because those controls apply to image routes.
