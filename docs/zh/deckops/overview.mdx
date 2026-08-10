@@ -4,14 +4,14 @@ sidebarTitle: 概览
 description: "通过异步任务运行云端解析、提取、转换和文档操作。"
 ---
 
-DeckOps 是 Deckflow 的云端文档处理运行时。上传支持的文件或提供 URL，创建异步任务，然后得到 Markdown、与格式对应的结构化结果或转换后的文件。
+DeckOps 是 DeckFlow 的云端文档处理运行时。上传支持的文件或提供 URL，创建异步任务，然后得到 Markdown、与格式对应的结构化结果或转换后的文件。
 
 | | DeckOps |
 | --- | --- |
 | 适用场景 | 服务端解析、提取、转换和文档工作流 |
 | 输入 | PDF、PPTX、DOCX、Keynote、受支持的转换输入，或 HTML URL |
 | 结果 | Markdown、与格式对应的 JSON，或 PDF、图片、视频、HTML、PPTX 等文件 |
-| 执行位置 | Deckflow 云端 |
+| 执行位置 | DeckFlow 云端 |
 | 接入方式 | 已发布的 TypeScript 任务 SDK 和 CLI；Python、Go 实现当前需要检出源码 |
 | 认证 | API Key 或用户 Token；底层任务支持受限的游客模式 |
 
@@ -56,7 +56,7 @@ console.log(result);
 
 ## 执行与数据边界
 
-DeckOps 处理的文件会上传到 Deckflow 云端。已认证任务会自动启动；游客创建的底层任务必须先显式启动再等待，高层解析接口不会替你启动游客任务。
+DeckOps 处理的文件会上传到 DeckFlow 云端。已认证任务会自动启动；游客创建的底层任务必须先显式启动再等待，高层解析接口不会替你启动游客任务。
 
 <Warning>
   使用 `parse()` 和 `parseDetailed()` 时请配置 API Key 或用户 Token。需要游客模式时，请使用底层任务 API，并在创建后调用 `tasks.start(task.id)`。Python SDK 当前没有提供这个游客启动方法。

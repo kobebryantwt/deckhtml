@@ -1,11 +1,11 @@
 ---
 title: 提交异步任务
 sidebarTitle: 提交异步任务
-description: "通过统一的 POST /tools/tasks 接口提交 Deckflow 的各类业务任务。"
+description: "通过统一的 POST /tools/tasks 接口提交 DeckFlow 的各类业务任务。"
 openapi: "/platform/api/default-module.openapi.json POST /tools/tasks"
 ---
 
-这是 Deckflow 所有任务的统一提交入口。文档生成、文档翻译、文档焕新和工具 API 都复用这个接口，差异主要体现在 `type` 和 `params` 的组合上。
+这是 DeckFlow 所有任务的统一提交入口。文档生成、文档翻译、文档焕新和工具 API 都复用这个接口，差异主要体现在 `type` 和 `params` 的组合上。
 
 <Note>
   可以把这个接口理解为统一的任务提交器。不同场景页负责告诉你应该传什么 `type` 和 `params`。

@@ -1,13 +1,13 @@
 ---
-title: Deckflow 开发者中心
+title: DeckFlow 开发者中心
 sidebarTitle: 概览
-description: "选择并接入 Deckflow 的文档嗅探、渲染、云端操作、PPTX 修改和 HTML Deck 生成能力。"
+description: "使用 DeckFlow 为 Agent 构建文档探测、渲染、解析、转换、修改和生成工作流。"
 ---
 
 <div className="deckflow-hero">
-  <span className="deckflow-hero-eyebrow">面向开发者的文档运行时</span>
-  <h2 className="deckflow-hero-title">一套文档能力，交付五种明确结果</h2>
-  <p className="deckflow-hero-copy">无需打开文件即可检查事实，生成稳定预览，执行云端文档任务，修改现有 PPTX，或从 HTML 生成新的演示文稿。</p>
+  <span className="deckflow-hero-eyebrow">面向 AI Agent 的文档运行时</span>
+  <h2 className="deckflow-hero-title">让 Agent 以可靠方式处理文档</h2>
+  <p className="deckflow-hero-copy">上传前在本地探测文件，生成视觉产物，在云端解析或转换内容，修改现有 PPTX，或从 HTML 生成新的演示文稿。</p>
   <div className="deckflow-pills">
     <span className="deckflow-pill">本地优先检查</span>
     <span className="deckflow-pill">云端文档任务</span>
@@ -26,7 +26,7 @@ description: "选择并接入 Deckflow 的文档嗅探、渲染、云端操作�
     <strong>DeckProbe</strong> 在本地读取文档身份、元数据、结构、安全信号和资源事实，无需启动 Office 或 iWork。
   </Card>
   <Card title="渲染文档" icon="images" iconType="solid" color="#3b82f6" href="/zh/deckrender/overview" cta="了解 DeckRender" arrow>
-    <strong>DeckRender</strong> 把支持的文件路由成图片、PDF 或视频，并按稳定规则写出产物。
+    <strong>DeckRender</strong> 把支持的文件路由成图片、PDF 或视频，并为写出的产物返回结构化结果。
   </Card>
   <Card title="执行文档操作" icon="cube" iconType="solid" color="#8b5cf6" href="/zh/deckops/overview" cta="了解 DeckOps" arrow>
     <strong>DeckOps</strong> 提供云端解析、提取、转换、生成和异步任务执行能力。
@@ -65,7 +65,7 @@ description: "选择并接入 Deckflow 的文档嗅探、渲染、云端操作�
         <span>解析、提取、转换和生成</span>
       </a>
       <a className="product-map-card" href="/zh/deckuse/overview">
-        <span className="product-map-label">修改源文件</span>
+        <span className="product-map-label">修改现有 PPTX</span>
         <strong>DeckUse</strong>
         <span>生成修改后仍可编辑的 PPTX</span>
       </a>
@@ -88,7 +88,7 @@ description: "选择并接入 Deckflow 的文档嗅探、渲染、云端操作�
   </section>
 </div>
 
-DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、透传或 Deckflow 云端执行。DeckOps 在云端运行文档任务。DeckHTML 同时支持本地浏览器转换和云端模式。
+DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、透传或 DeckFlow 云端执行。DeckOps 在云端运行文档任务。DeckHTML 同时支持本地浏览器转换和云端模式。
 
 ## 比较执行边界
 
@@ -108,7 +108,7 @@ DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、�
 
 <Steps>
   <Step title="先确定最终产物">
-    判断流程最终需要文档事实、视觉文件、结构化内容、修改后的源文件，还是从 HTML 生成的 Deck。
+    判断流程最终需要文档事实、视觉产物、Markdown 或格式专属内容、修改后的 PPTX，还是从 HTML 生成的 Deck。
   </Step>
   <Step title="跑通一个完整示例">
     打开[开始使用](/zh/getting-started)，查看五个产品最短的安装、调用和结果路径。

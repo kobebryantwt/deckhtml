@@ -1,10 +1,10 @@
 ---
 title: MCP Tools
 sidebarTitle: MCP Tools
-description: "Review the three Deckflow MCP servers, the four capability tools in each group, and the shared support tools exposed by every endpoint."
+description: "Review the three DeckFlow MCP servers, the four capability tools in each group, and the shared support tools exposed by every endpoint."
 ---
 
-Deckflow MCP currently provides three hosted servers. Each server exposes four capability tools, and each endpoint also includes the same two support tools: `get_task` and `download_task_result`.
+DeckFlow MCP currently provides three hosted servers. Each server exposes four capability tools, and each endpoint also includes the same two support tools: `get_task` and `download_task_result`.
 
 <Note>
   File inputs use one shared convention. In the hosted MCP setup, use `http(s)` URLs or `fileId:<uploaded-file-id>` references because the remote server cannot read your local filesystem directly.
@@ -79,10 +79,10 @@ Endpoint: `https://mcp.deckflow.com/v1/html2pptx`
 
 | Tool | Example prompt |
 | --- | --- |
-| `html_to_pptx` | “Use the Deckflow MCP `html2pptx` server to convert this HTML page into an editable PPTX deck and keep the original slide layout.” |
-| `html_to_image` | “Use the Deckflow MCP `html2pptx` server to render this HTML page as a PNG preview image for review.” |
-| `markdown_to_image` | “Use the Deckflow MCP `html2pptx` server to turn this Markdown release note into a clean PNG image for sharing in chat.” |
-| `build_html_player` | “Use the Deckflow MCP `html2pptx` server to package these HTML slide sections into a browser-based player I can open and review.” |
+| `html_to_pptx` | “Use the DeckFlow MCP `html2pptx` server to convert this HTML page into an editable PPTX deck and keep the original slide layout.” |
+| `html_to_image` | “Use the DeckFlow MCP `html2pptx` server to render this HTML page as a PNG preview image for review.” |
+| `markdown_to_image` | “Use the DeckFlow MCP `html2pptx` server to turn this Markdown release note into a clean PNG image for sharing in chat.” |
+| `build_html_player` | “Use the DeckFlow MCP `html2pptx` server to package these HTML slide sections into a browser-based player I can open and review.” |
 
 ## `deckflow-pptx`
 
@@ -113,10 +113,10 @@ Endpoint: `https://mcp.deckflow.com/v1/pptx`
 
 | Tool | Example prompt |
 | --- | --- |
-| `split_pptx` | “Use the Deckflow MCP `pptx` server to split this PPTX into separate slide files so I can review each page individually.” |
-| `merge_pptx` | “Use the Deckflow MCP `pptx` server to merge these two PPTX decks into one file and preserve their original order.” |
-| `embed_pptx_fonts` | “Use the Deckflow MCP `pptx` server to embed the fonts used in this PPTX so the deck displays consistently on other machines.” |
-| `inspect_pptx` | “Use the Deckflow MCP `pptx` server to inspect this PPTX and tell me which fonts it uses.” |
+| `split_pptx` | “Use the DeckFlow MCP `pptx` server to split this PPTX into separate slide files so I can review each page individually.” |
+| `merge_pptx` | “Use the DeckFlow MCP `pptx` server to merge these two PPTX decks into one file and preserve their original order.” |
+| `embed_pptx_fonts` | “Use the DeckFlow MCP `pptx` server to embed the fonts used in this PPTX so the deck displays consistently on other machines.” |
+| `inspect_pptx` | “Use the DeckFlow MCP `pptx` server to inspect this PPTX and tell me which fonts it uses.” |
 
 ## `deckflow-tools`
 
@@ -124,7 +124,7 @@ Endpoint: `https://mcp.deckflow.com/v1/tools`
 
 | Tool | Purpose | Key parameters |
 | --- | --- | --- |
-| `convert_file` | Convert supported files across Deckflow delivery formats | `file`, `targetFormat`, `resolution`, `imageFormat`, `waitSeconds` |
+| `convert_file` | Convert supported files across DeckFlow delivery formats | `file`, `targetFormat`, `resolution`, `imageFormat`, `waitSeconds` |
 | `ocr_image` | Recognize text in an image | `file`, `language`, `waitSeconds` |
 | `transform_image` | Resize an image or convert it to WebP | `file`, `action`, `maxWidth`, `maxHeight`, `waitSeconds` |
 | `compress_file` | Compress a file or video | `file`, `waitSeconds` |
@@ -151,10 +151,10 @@ Endpoint: `https://mcp.deckflow.com/v1/tools`
 
 | Tool | Example prompt |
 | --- | --- |
-| `convert_file` | “Use the Deckflow MCP `tools` server to convert this PDF into images so I can use each page as a visual asset.” |
-| `ocr_image` | “Use the Deckflow MCP `tools` server to read the text from this screenshot and return the extracted content in English.” |
-| `transform_image` | “Use the Deckflow MCP `tools` server to resize this image to a smaller width for web delivery.” |
-| `compress_file` | “Use the Deckflow MCP `tools` server to compress this large file so it is easier to upload and share.” |
+| `convert_file` | “Use the DeckFlow MCP `tools` server to convert this PDF into images so I can use each page as a visual asset.” |
+| `ocr_image` | “Use the DeckFlow MCP `tools` server to read the text from this screenshot and return the extracted content in English.” |
+| `transform_image` | “Use the DeckFlow MCP `tools` server to resize this image to a smaller width for web delivery.” |
+| `compress_file` | “Use the DeckFlow MCP `tools` server to compress this large file so it is easier to upload and share.” |
 
 ## Recommended setup patterns
 

@@ -1,7 +1,7 @@
 ---
 title: 开始使用
 sidebarTitle: 开始使用
-description: "对比每个 Deckflow 产品的最小输入、命令和可验证结果。"
+description: "对比每个 DeckFlow 产品的最小输入、命令和可验证结果。"
 ---
 
 先选择应用需要得到的第一个结果。下面每个部分都包含安装、具体调用，以及能够证明示例成功的结果信号。
@@ -52,7 +52,7 @@ deckrender hello.html -o hello.png --json
 test -s hello.png
 ```
 
-命令会把 HTML 上传到 Deckflow 云端，写入 `hello.png`，并返回包含 `ok`、路由、页数、输出路径、字节数和耗时的 `RenderResult`。创建输入并了解游客限额见 [DeckRender 快速开始](/zh/deckrender/quick-start)。
+命令会把 HTML 上传到 DeckFlow 云端，写入 `hello.png`，并返回包含 `ok`、路由、页数、输出路径、字节数和耗时的 `RenderResult`。创建输入并了解游客限额见 [DeckRender 快速开始](/zh/deckrender/quick-start)。
 
 ## DeckOps：运行一个云端任务
 
@@ -97,7 +97,7 @@ console.log(JSON.stringify({
 node run.mjs
 ```
 
-HTML 会上传到 Deckflow 云端。成功结果会标识任务，并返回 PNG 下载地址、字节数和哈希：
+HTML 会上传到 DeckFlow 云端。成功结果会标识任务，并返回 PNG 下载地址、字节数和哈希：
 
 ```json
 {

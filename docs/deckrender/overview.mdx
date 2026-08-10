@@ -11,7 +11,7 @@ DeckRender turns supported documents into image, PDF, or video files through one
 | Inputs | PowerPoint, PDF, Keynote, Word, HTML, Markdown, Pages, and Numbers on supported routes |
 | Outputs | PNG, JPEG, or WebP images; PDF; MP4 video |
 | Interfaces | `deckrender` CLI and `@deckflow/deckrender` Node.js API |
-| Execution | Mostly Deckflow cloud tasks, plus local PDF passthrough and iWork preview extraction |
+| Execution | Mostly DeckFlow cloud tasks, plus local PDF passthrough and iWork preview extraction |
 | Authentication | Optional guest mode, browser login, token, or API key |
 
 ## Use DeckRender for
@@ -32,7 +32,7 @@ DeckRender turns supported documents into image, PDF, or video files through one
     Match the source, requested output family, and compatible image options against the installed route table.
   </Step>
   <Step title="Execute locally or in the cloud">
-    Use local passthrough or preview extraction where implemented; otherwise upload the source and run Deckflow cloud tasks.
+    Use local passthrough or preview extraction where implemented; otherwise upload the source and run DeckFlow cloud tasks.
   </Step>
   <Step title="Write and report the result">
     Download and write the requested artifact layout, then return a `RenderResult` describing the route and written files.
@@ -43,7 +43,7 @@ DeckRender does not parse text or document elements, return Document IR, or edit
 
 ## Data and execution boundary
 
-Most formats are uploaded to Deckflow cloud tasks. A local PDF-to-PDF request is passed through without upload. Pages and Numbers are handled locally by extracting the embedded first-page JPEG preview; this is not a full iWork render.
+Most formats are uploaded to DeckFlow cloud tasks. A local PDF-to-PDF request is passed through without upload. Pages and Numbers are handled locally by extracting the embedded first-page JPEG preview; this is not a full iWork render.
 
 An HTTP(S) URL is fetched by the local Node.js process. HTML receives a base URL for relative assets and is then uploaded as source content. DeckRender does not capture the current state, cookies, or authenticated session of the user's browser.
 

@@ -11,7 +11,7 @@ DeckHTML 把经过浏览器布局的 HTML 转换为 PPTX 或 PNG。它会尽可�
 | 适用场景 | HTML 原生幻灯片创作和自动生成演示文稿 |
 | 输入 | 本地 HTML 或 SVG、stdin 中的 HTML、多个有序文件，或 HTML URL |
 | 输出 | PPTX 或 PNG |
-| 执行位置 | 本地 Chromium，或 Deckflow 云端 |
+| 执行位置 | 本地 Chromium，或 DeckFlow 云端 |
 | 接入方式 | CLI 和本地 Node.js API |
 | 认证 | 本地模式不需要；云端支持游客、登录或 API Key |
 
@@ -29,7 +29,7 @@ flowchart LR
 - 在 PowerPoint 中保留受支持文字、形状、表格、图片、SVG 几何和公式的可编辑性。
 - 把多个本地 HTML/SVG 文件按顺序合并为幻灯片。
 - 从同一份输入生成 PNG 预览。
-- 在自动化质量检查中查看逐元素转换决策。
+- 在自己的自动化检查中使用逐元素转换诊断。
 
 DeckHTML 不承诺浏览器到 PowerPoint 的无损转换。Canvas、复杂 SVG、滤镜、分层效果、iframe 和不支持的 CSS 可能被栅格化、忽略或标记为不支持。
 
@@ -38,7 +38,7 @@ DeckHTML 不承诺浏览器到 PowerPoint 的无损转换。Canvas、复杂 SVG�
 | 模式 | 数据边界 | 凭证 | 说明 |
 | --- | --- | --- | --- |
 | 本地 | 数据留在本机 | 无 | 需要兼容的 Chromium、Chrome 或 Edge 可执行文件 |
-| 云端 | 输入上传到 Deckflow | 游客、登录或 API Key | 字体嵌入仅云端可用 |
+| 云端 | 输入上传到 DeckFlow | 游客、登录或 API Key | 字体嵌入仅云端可用 |
 | 自动 | 有凭证时使用云端，否则本地 | 取决于最终模式 | 生产工作流建议显式指定 |
 
 Node.js API 只在本地运行并返回 Buffer，不会写文件。CLI 可以本地运行，也可以提交 DeckOps 云端任务。

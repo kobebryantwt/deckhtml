@@ -4,14 +4,14 @@ sidebarTitle: Overview
 description: "Run cloud parsing, extraction, conversion, and document operations through asynchronous tasks."
 ---
 
-DeckOps is Deckflow's cloud document-processing runtime. Upload a supported file or provide a URL, create an asynchronous task, then receive Markdown, a format-specific structured result, or a converted artifact.
+DeckOps is DeckFlow's cloud document-processing runtime. Upload a supported file or provide a URL, create an asynchronous task, then receive Markdown, a format-specific structured result, or a converted artifact.
 
 | | DeckOps |
 | --- | --- |
 | Best for | Server-side parsing, extraction, conversion, and document workflows |
 | Inputs | PDF, PPTX, DOCX, Keynote, supported conversion inputs, or an HTML URL |
 | Results | Markdown, format-specific JSON, or files such as PDF, images, video, HTML, and PPTX |
-| Runs | Deckflow cloud |
+| Runs | DeckFlow cloud |
 | Interfaces | Published TypeScript task SDK and CLIs; Python and Go implementations currently require source checkout |
 | Authentication | API key or user token; limited guest execution is available for low-level tasks |
 
@@ -56,7 +56,7 @@ This published-package path uploads the file, explicitly starts a guest task, wa
 
 ## Execution and data boundary
 
-Files processed by DeckOps are uploaded to Deckflow cloud. Authenticated tasks start automatically. A guest-created low-level task must be started explicitly before waiting; the high-level parse facade does not perform that guest start for you.
+Files processed by DeckOps are uploaded to DeckFlow cloud. Authenticated tasks start automatically. A guest-created low-level task must be started explicitly before waiting; the high-level parse facade does not perform that guest start for you.
 
 <Warning>
   Use an API key or user token with `parse()` and `parseDetailed()`. If you need guest mode, use the low-level task API and call `tasks.start(task.id)` after creation. The Python SDK does not currently expose this guest-start method.

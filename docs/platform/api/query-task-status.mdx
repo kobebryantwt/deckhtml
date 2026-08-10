@@ -5,7 +5,7 @@ description: "Query the latest task state, poll for completion, or subscribe thr
 openapi: "/platform/api/default-module.openapi.json GET /tools/tasks/{id}"
 ---
 
-Use this endpoint after submitting any Deckflow job. It is the shared status endpoint for generation, translation, revamp, and tool workflows.
+Use this endpoint after submitting any DeckFlow job. It is the shared status endpoint for generation, translation, revamp, and tool workflows.
 
 ## What this endpoint returns
 
@@ -74,7 +74,7 @@ print(task.get("result", {}).get("url"))
 
 ## Server-Sent Events (SSE)
 
-Deckflow also supports a streaming status mode on this same endpoint. To enable it, send the extra request header:
+DeckFlow also supports a streaming status mode on this same endpoint. To enable it, send the extra request header:
 
 ```text
 response-event-stream: yes

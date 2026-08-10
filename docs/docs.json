@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "Deckflow",
+  "name": "DeckFlow",
   "description": "Developer documentation for DeckProbe, DeckRender, DeckOps, DeckUse, and DeckHTML.",
   "theme": "maple",
   "logo": {

@@ -1,10 +1,10 @@
 ---
 title: Overview
 sidebarTitle: Overview
-description: "Use the Deckflow API reference to understand the common async task flow, the core task endpoints, and the scenario-specific parameters built on top of them."
+description: "Use the DeckFlow API reference to understand the common async task flow, the core task endpoints, and the scenario-specific parameters built on top of them."
 ---
 
-Deckflow's API is organized around a common async task flow. Business scenarios such as generation, translation, revamp, and tool APIs all reuse the same submission and task-management pattern.
+DeckFlow's API is organized around a common async task flow. Business scenarios such as generation, translation, revamp, and tool APIs all reuse the same submission and task-management pattern.
 
 <Note>
   This shared API remains in the platform layer until each scenario has a confirmed owner in the new product model. Product-specific APIs should move under that product once their contracts and ownership are explicit.
@@ -27,7 +27,7 @@ This section is therefore split into two layers:
 
 ## Common async task flow
 
-Deckflow uses the same lifecycle across business scenarios:
+DeckFlow uses the same lifecycle across business scenarios:
 
 - Authenticate with `Authorization: Bearer <YOUR_API_KEY>`.
 - Submit files, task type, and JSON options as `multipart/form-data`.

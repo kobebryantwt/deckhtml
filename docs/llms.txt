@@ -1,6 +1,6 @@
-# Deckflow Developer Documentation
+# DeckFlow Developer Documentation
 
-> Deckflow is a document runtime stack for local document inspection, visual rendering, cloud document operations, editable PPTX modification, and HTML-to-deck generation.
+> DeckFlow is the document runtime for agents: inspect files locally, produce visual artifacts, run cloud document operations, update existing PPTX files, and generate decks from HTML.
 
 Use the English or Simplified Chinese section that matches the developer's language. Start with Overview and Getting Started, use Choose a Product for product boundaries, then follow the selected product's quickstart and reference. Treat availability notices and format matrices as version-specific contracts. For the complete documentation corpus, fetch https://docs.deckflow.com/llms-full.txt.
 
@@ -9,7 +9,7 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [Overview](https://docs.deckflow.com/introduction.md): Understand the five products and their execution boundaries.
 - [Getting Started](https://docs.deckflow.com/getting-started.md): Run the smallest verified path for each product.
 - [Choose a Product](https://docs.deckflow.com/product-guide.md): Compare inputs, outputs, execution location, and overlap.
-- [Common Workflows](https://docs.deckflow.com/common-workflows.md): Map application goals to one or more Deckflow products.
+- [Common Workflows](https://docs.deckflow.com/common-workflows.md): Map application goals to one or more DeckFlow products.
 - [Examples](https://docs.deckflow.com/examples/overview.md): Browse complete recipes with known inputs and expected results.
 
 ## DeckProbe
@@ -56,15 +56,15 @@ Use the English or Simplified Chinese section that matches the developer's langu
 
 ## Platform
 
-- [API Overview](https://docs.deckflow.com/platform/api/overview.md): Submit, query, and download Deckflow cloud tasks.
-- [MCP Overview](https://docs.deckflow.com/platform/mcp/overview.md): Connect Deckflow tools to compatible AI clients.
+- [API Overview](https://docs.deckflow.com/platform/api/overview.md): Submit, query, and download DeckFlow cloud tasks.
+- [MCP Overview](https://docs.deckflow.com/platform/mcp/overview.md): Connect DeckFlow tools to compatible AI clients.
 
 ## 简体中文
 
 - [开发者中心概览](https://docs.deckflow.com/zh/introduction.md): 了解五个产品及其执行边界。
 - [开始使用](https://docs.deckflow.com/zh/getting-started.md): 运行每个产品最小且可验证的接入路径。
 - [选择产品](https://docs.deckflow.com/zh/product-guide.md): 对比输入、输出、执行位置和能力边界。
-- [常见工作流](https://docs.deckflow.com/zh/common-workflows.md): 将应用目标对应到一个或多个 Deckflow 产品。
+- [常见工作流](https://docs.deckflow.com/zh/common-workflows.md): 将应用目标对应到一个或多个 DeckFlow 产品。
 - [示例](https://docs.deckflow.com/zh/examples/overview.md): 查看带有已知输入和预期结果的完整配方。
 - [DeckProbe](https://docs.deckflow.com/zh/deckprobe/overview.md): 在本地嗅探文档事实。
 - [DeckRender](https://docs.deckflow.com/zh/deckrender/overview.md): 将支持的输入渲染为视觉产物。

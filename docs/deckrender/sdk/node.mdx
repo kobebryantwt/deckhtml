@@ -31,7 +31,7 @@ console.log(result.outputs);
 
 `render()` resolves the input, builds and executes a route, writes the artifacts, and returns a `RenderResult`. Omit credentials to use guest mode.
 
-Most routes upload the source to Deckflow cloud. A URL is fetched by the local Node.js process first; relative HTML assets receive a base URL, then the resulting source is uploaded. This is not a capture of the user's browser session, cookies, or current runtime DOM. Local PDF passthrough and Pages/Numbers preview extraction do not upload the input.
+Most routes upload the source to DeckFlow cloud. A URL is fetched by the local Node.js process first; relative HTML assets receive a base URL, then the resulting source is uploaded. This is not a capture of the user's browser session, cookies, or current runtime DOM. Local PDF passthrough and Pages/Numbers preview extraction do not upload the input.
 
 ## Reusable renderer
 

@@ -13,7 +13,7 @@ deckrender auth login
 deckrender auth status
 ```
 
-登录会打开 Deckflow 授权页面，并把返回的 Token 保存到 `~/.deckflow/credentials`。存在凭证时，`auth status` 会向服务端验证并显示来源；没有凭证时，它只会报告当前使用访客模式，不发起凭证验证请求。
+登录会打开 DeckFlow 授权页面，并把返回的 Token 保存到 `~/.deckflow/credentials`。存在凭证时，`auth status` 会向服务端验证并显示来源；没有凭证时，它只会报告当前使用访客模式，不发起凭证验证请求。
 
 ## API Key
 
@@ -36,7 +36,7 @@ deckrender hello.html -o hello.png --json --quiet
 每个字段独立按以下顺序解析：
 
 1. Node.js Renderer 显式选项。
-2. DeckRender 或 Deckflow 环境变量。
+2. DeckRender 或 DeckFlow 环境变量。
 3. `~/.deckflow/credentials`。
 4. 只读的 `~/.deckops/config.json`。
 5. 内置 API 地址默认值。
@@ -50,7 +50,7 @@ deckrender auth logout
 deckrender config list
 ```
 
-退出登录只会删除 Deckflow 共享文件中的凭证。环境变量或 DeckOps 配置中的 Token 仍然可能让后续调用处于认证状态，请通过 `config list` 确认最终来源。
+退出登录只会删除 DeckFlow 共享文件中的凭证。环境变量或 DeckOps 配置中的 Token 仍然可能让后续调用处于认证状态，请通过 `config list` 确认最终来源。
 
 <Warning>
   JSON、CI 和其他非交互式调用收到 `401` 后不会打开浏览器。请在任务开始前配置 API Key 或 Token。

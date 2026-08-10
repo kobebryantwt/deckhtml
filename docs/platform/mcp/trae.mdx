@@ -1,22 +1,22 @@
 ---
-title: Deckflow MCP in TRAE
+title: DeckFlow MCP in TRAE
 sidebarTitle: TRAE
-description: "Configure one or more Deckflow MCP servers in TRAE with the hosted Streamable HTTP endpoints."
+description: "Configure one or more DeckFlow MCP servers in TRAE with the hosted Streamable HTTP endpoints."
 ---
 
-Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP endpoints and complete browser-based authorization.
+Use this page to add DeckFlow MCP in TRAE through the hosted Streamable HTTP endpoints and complete browser-based authorization.
 
 <Note>
   Add one MCP server per endpoint in TRAE. Use `deckflow-html2pptx` for HTML rendering workflows, `deckflow-pptx` for PPTX post-processing, and `deckflow-tools` for general file utilities.
 </Note>
 
-## Set up Deckflow MCP in TRAE
+## Set up DeckFlow MCP in TRAE
 
 <Steps>
   <Step title="Open the MCP settings">
     In TRAE, click the settings icon in the top-right corner, switch to the `MCP` tab, then choose `Add` and the manual configuration option. TRAE opens an editable `mcp.json` tab for the new server entry.
   </Step>
-  <Step title="Paste the Deckflow server config">
+  <Step title="Paste the DeckFlow server config">
     Add the hosted MCP configuration you need. A full setup looks like this:
 
     ```json
@@ -36,7 +36,7 @@ Use this page to add Deckflow MCP in TRAE through the hosted Streamable HTTP end
     ```
   </Step>
   <Step title="Save and wait for the verification prompt">
-    After saving the entry, TRAE shows the new Deckflow servers in the MCP list. If authorization is still required, TRAE marks each server as needing verification and shows a link to continue the verification flow.
+    After saving the entry, TRAE shows the new DeckFlow servers in the MCP list. If authorization is still required, TRAE marks each server as needing verification and shows a link to continue the verification flow.
   </Step>
   <Step title="Complete authorization">
     Click the verification link, finish the browser authorization flow, then return to TRAE.
@@ -75,7 +75,7 @@ Use deckflow-tools to convert this PDF into images and then compress them for sh
 
 ## Validation checklist
 
-- TRAE shows the Deckflow servers you added as enabled in the MCP list.
+- TRAE shows the DeckFlow servers you added as enabled in the MCP list.
 - Hosted HTTP mode completes the verification step successfully.
-- Deckflow tools are discoverable in the MCP tool list.
+- DeckFlow tools are discoverable in the MCP tool list.
 - HTML-to-PPTX, PPTX utilities, and general file tools are exposed under the expected server names.

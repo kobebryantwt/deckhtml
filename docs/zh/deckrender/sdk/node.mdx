@@ -31,7 +31,7 @@ console.log(result.outputs);
 
 `render()` 会读取输入、构建并执行路由、写出产物，然后返回 `RenderResult`。省略凭证时使用访客模式。
 
-多数路线会把源文件上传到 Deckflow 云端。URL 会先由本地 Node.js 进程抓取；HTML 的相对资源会获得 Base URL，随后得到的源内容才会上传。这并不是对用户浏览器会话、Cookie 或当前运行时 DOM 的捕获。本地 PDF 透传以及 Pages/Numbers 预览提取不会上传输入。
+多数路线会把源文件上传到 DeckFlow 云端。URL 会先由本地 Node.js 进程抓取；HTML 的相对资源会获得 Base URL，随后得到的源内容才会上传。这并不是对用户浏览器会话、Cookie 或当前运行时 DOM 的捕获。本地 PDF 透传以及 Pages/Numbers 预览提取不会上传输入。
 
 ## 复用 Renderer
 

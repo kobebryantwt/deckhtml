@@ -1,13 +1,13 @@
 ---
-title: Deckflow Developer Center
+title: DeckFlow Developer Center
 sidebarTitle: Overview
-description: "Choose and integrate Deckflow components for document inspection, rendering, cloud operations, PPTX manipulation, and HTML-native deck generation."
+description: "Build agent workflows that inspect, render, parse, transform, update, and generate documents with DeckFlow."
 ---
 
 <div className="deckflow-hero">
-  <span className="deckflow-hero-eyebrow">Document runtime for developers</span>
-  <h2 className="deckflow-hero-title">One document stack, five focused outcomes</h2>
-  <p className="deckflow-hero-copy">Inspect a file without opening it, render dependable previews, run cloud document operations, update an existing PPTX, or generate a new deck from HTML.</p>
+  <span className="deckflow-hero-eyebrow">The Document Runtime for Agents</span>
+  <h2 className="deckflow-hero-title">Give agents a reliable way to work with documents</h2>
+  <p className="deckflow-hero-copy">Inspect a file locally before upload, produce visual artifacts, parse or transform content in the cloud, update an existing PPTX, or generate a new deck from HTML.</p>
   <div className="deckflow-pills">
     <span className="deckflow-pill">Local-first inspection</span>
     <span className="deckflow-pill">Cloud document tasks</span>
@@ -26,7 +26,7 @@ description: "Choose and integrate Deckflow components for document inspection, 
     <strong>DeckProbe</strong> reads document identity, metadata, structure, security signals, and asset facts locally without launching Office or iWork.
   </Card>
   <Card title="Render a document" icon="images" iconType="solid" color="#3b82f6" href="/deckrender/overview" cta="Explore DeckRender" arrow>
-    <strong>DeckRender</strong> routes supported files to images, PDF, or video and writes predictable artifacts.
+    <strong>DeckRender</strong> routes supported files to images, PDF, or video and returns a structured result for the written artifacts.
   </Card>
   <Card title="Run document operations" icon="cube" iconType="solid" color="#8b5cf6" href="/deckops/overview" cta="Explore DeckOps" arrow>
     <strong>DeckOps</strong> provides cloud parsing, extraction, conversion, generation, and asynchronous task execution.
@@ -65,7 +65,7 @@ description: "Choose and integrate Deckflow components for document inspection, 
         <span>Parse, extract, convert, and generate</span>
       </a>
       <a className="product-map-card" href="/deckuse/overview">
-        <span className="product-map-label">Modify the source</span>
+        <span className="product-map-label">Update an existing PPTX</span>
         <strong>DeckUse</strong>
         <span>Updated, editable PPTX</span>
       </a>
@@ -88,7 +88,7 @@ description: "Choose and integrate Deckflow components for document inspection, 
   </section>
 </div>
 
-DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and Deckflow cloud routes. DeckOps executes document tasks in the cloud. DeckHTML supports local browser-based conversion and a cloud mode.
+DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and DeckFlow cloud routes. DeckOps executes document tasks in the cloud. DeckHTML supports local browser-based conversion and a cloud mode.
 
 ## Compare the execution boundary
 
@@ -108,7 +108,7 @@ DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and D
 
 <Steps>
   <Step title="Choose the final artifact">
-    Decide whether the workflow needs facts, pixels, structured content, an updated source file, or a deck generated from HTML.
+    Decide whether the workflow needs facts, visual artifacts, Markdown or format-specific content, an updated PPTX, or a deck generated from HTML.
   </Step>
   <Step title="Run one complete example">
     Open [Getting Started](/getting-started) for the shortest install, invocation, and result path for all five products.

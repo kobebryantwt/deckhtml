@@ -1,10 +1,10 @@
 ---
-title: Deckflow MCP in Codex
+title: DeckFlow MCP in Codex
 sidebarTitle: Codex
-description: "Configure one or more Deckflow MCP servers in Codex through the settings UI or by editing Codex config files."
+description: "Configure one or more DeckFlow MCP servers in Codex through the settings UI or by editing Codex config files."
 ---
 
-Use this page to connect Deckflow MCP in Codex. The goal here is simple: register one or more Deckflow MCP servers, confirm Codex can see them, and then start calling Deckflow tools from your normal coding workflow.
+Use this page to connect DeckFlow MCP in Codex. The goal here is simple: register one or more DeckFlow MCP servers, confirm Codex can see them, and then start calling DeckFlow tools from your normal coding workflow.
 
 <Note>
   Codex configuration is stored in `~/.codex/config.toml` at user scope, and can also be overridden per project with `.codex/config.toml`.
@@ -12,7 +12,7 @@ Use this page to connect Deckflow MCP in Codex. The goal here is simple: registe
 
 ## Recommended setup
 
-For most users, start from Codex settings and add the Deckflow servers there. If you prefer managing MCP entries in source-controlled config, add the same definitions directly to a Codex config file.
+For most users, start from Codex settings and add the DeckFlow servers there. If you prefer managing MCP entries in source-controlled config, add the same definitions directly to a Codex config file.
 
 ## Add the MCP servers from the Codex UI
 
@@ -23,7 +23,7 @@ For most users, start from Codex settings and add the Deckflow servers there. If
   <Step title="Add one or more custom servers">
     Create MCP server entries such as `deckflow-html2pptx`, `deckflow-pptx`, and `deckflow-tools`.
   </Step>
-  <Step title="Use the matching Deckflow endpoints">
+  <Step title="Use the matching DeckFlow endpoints">
     Register the hosted MCP servers you need:
 
     ```text
@@ -39,7 +39,7 @@ For most users, start from Codex settings and add the Deckflow servers there. If
 
 ## Alternative: edit `config.toml` directly
 
-You can also define the Deckflow servers in your Codex config file:
+You can also define the DeckFlow servers in your Codex config file:
 
 ```toml
 [mcp_servers.deckflow-html2pptx]
@@ -61,9 +61,9 @@ Use `~/.codex/config.toml` for your personal setup, or `.codex/config.toml` insi
 
 After setup, confirm:
 
-- the Deckflow servers you added appear in Codex MCP settings
+- the DeckFlow servers you added appear in Codex MCP settings
 - each server is enabled and connected
-- Deckflow tools are available in a new Codex session
+- DeckFlow tools are available in a new Codex session
 
 ## Try a first task
 

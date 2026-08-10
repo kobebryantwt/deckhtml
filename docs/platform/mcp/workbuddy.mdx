@@ -1,10 +1,10 @@
 ---
-title: Deckflow MCP in WorkBuddy
+title: DeckFlow MCP in WorkBuddy
 sidebarTitle: WorkBuddy
-description: "Configure one or more Deckflow MCP servers in WorkBuddy from the Connectors UI and verify that the tool lists are available."
+description: "Configure one or more DeckFlow MCP servers in WorkBuddy from the Connectors UI and verify that the tool lists are available."
 ---
 
-Use this page to add Deckflow MCP in WorkBuddy. The normal path is to create a custom connector, paste the hosted MCP config, confirm trust for each server, and then verify that WorkBuddy can see the Deckflow tools.
+Use this page to add DeckFlow MCP in WorkBuddy. The normal path is to create a custom connector, paste the hosted MCP config, confirm trust for each server, and then verify that WorkBuddy can see the DeckFlow tools.
 
 <Note>
   Hosted HTTP is the recommended WorkBuddy setup path. Add one MCP server per endpoint, trust each server the first time it appears, then verify the tool lists directly in the MCP manager.
@@ -17,13 +17,13 @@ Use this page to add Deckflow MCP in WorkBuddy. The normal path is to create a c
     In WorkBuddy, open the `Connectors` area from the top navigation. Then click `Custom Connector` to create a new MCP entry.
   </Step>
   <Step title="Open the MCP config editor">
-    In the MCP manager, click `Configure MCP`. WorkBuddy opens the config file editor where you can paste the Deckflow MCP definitions and save them.
+    In the MCP manager, click `Configure MCP`. WorkBuddy opens the config file editor where you can paste the DeckFlow MCP definitions and save them.
   </Step>
 </Steps>
 
 ![WorkBuddy MCP config entry](/images/mcp/workbuddy-mcp-entry.png)
 
-## Add the Deckflow MCP config
+## Add the DeckFlow MCP config
 
 Paste this config into WorkBuddy's MCP config editor:
 
@@ -49,10 +49,10 @@ Save the file after the new server entries are added.
 
 <Steps>
   <Step title="Return to the MCP manager">
-    After the config is saved, WorkBuddy lists the new Deckflow servers under `My MCP`.
+    After the config is saved, WorkBuddy lists the new DeckFlow servers under `My MCP`.
   </Step>
   <Step title="Trust each server">
-    On first connection, WorkBuddy asks for trust confirmation for each Deckflow server. Click `Trust` for `deckflow-html2pptx`, `deckflow-pptx`, and `deckflow-tools`.
+    On first connection, WorkBuddy asks for trust confirmation for each DeckFlow server. Click `Trust` for `deckflow-html2pptx`, `deckflow-pptx`, and `deckflow-tools`.
   </Step>
   <Step title="Confirm that all three servers are enabled">
     After trust is granted, WorkBuddy enables the three MCP servers and shows their tool counts in the manager.
@@ -61,11 +61,11 @@ Save the file after the new server entries are added.
 
 ![WorkBuddy verification required state](/images/mcp/workbuddy-mcp-verify.png)
 
-## Verify the Deckflow tools
+## Verify the DeckFlow tools
 
-After the servers are trusted and enabled, WorkBuddy expands each Deckflow entry and shows the available MCP tools directly in the MCP manager.
+After the servers are trusted and enabled, WorkBuddy expands each DeckFlow entry and shows the available MCP tools directly in the MCP manager.
 
-![WorkBuddy Deckflow tools list](/images/mcp/workbuddy-mcp-tools.png)
+![WorkBuddy DeckFlow tools list](/images/mcp/workbuddy-mcp-tools.png)
 
 ## What to try after setup
 
@@ -90,7 +90,7 @@ Use deckflow-tools to run OCR on this image and return the extracted text.
 
 ## Validation checklist
 
-- WorkBuddy recognizes the Deckflow servers you added as available MCP servers.
+- WorkBuddy recognizes the DeckFlow servers you added as available MCP servers.
 - The first-connection trust prompt no longer blocks the three server entries.
-- Tool discovery shows 6 tools under each Deckflow server entry.
+- Tool discovery shows 6 tools under each DeckFlow server entry.
 - Each group contains 4 capability tools plus the shared `get_task` and `download_task_result` support tools.

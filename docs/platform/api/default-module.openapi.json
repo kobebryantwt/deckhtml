@@ -2,19 +2,19 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Default Module",
-    "description": "Deckflow task API for submitting async jobs, querying task state, and downloading completed results.",
+    "description": "DeckFlow task API for submitting async jobs, querying task state, and downloading completed results.",
     "version": "1.0.0"
   },
   "tags": [
     {
       "name": "Tasks",
-      "description": "Submit Deckflow jobs, inspect their execution state, and download completed results."
+      "description": "Submit DeckFlow jobs, inspect their execution state, and download completed results."
     }
   ],
   "servers": [
     {
       "url": "https://app.deckflow.com/api",
-      "description": "Deckflow production API"
+      "description": "DeckFlow production API"
     }
   ],
   "security": [
@@ -26,7 +26,7 @@
     "/tools/tasks": {
       "post": {
         "summary": "Submit async task",
-        "description": "Submit an asynchronous Deckflow task. Different business scenarios reuse this same endpoint and are selected through the `type` field plus the JSON string in `params`.",
+        "description": "Submit an asynchronous DeckFlow task. Different business scenarios reuse this same endpoint and are selected through the `type` field plus the JSON string in `params`.",
         "tags": [
           "Tasks"
         ],
@@ -130,7 +130,7 @@
     "/tools/tasks/{id}": {
       "get": {
         "summary": "Query task status",
-        "description": "Retrieve the latest execution state for a previously submitted Deckflow task. This same endpoint also supports SSE mode when the `response-event-stream: yes` header is present.",
+        "description": "Retrieve the latest execution state for a previously submitted DeckFlow task. This same endpoint also supports SSE mode when the `response-event-stream: yes` header is present.",
         "tags": [
           "Tasks"
         ],

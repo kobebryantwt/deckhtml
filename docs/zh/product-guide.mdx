@@ -1,7 +1,7 @@
 ---
 title: 选择产品
 sidebarTitle: 选择产品
-description: "按照输入、操作、执行位置和最终产物比较 Deckflow 产品。"
+description: "按照输入、操作、执行位置和最终产物比较 DeckFlow 产品。"
 ---
 
 先看应用必须得到什么产物——文档事实、视觉文件、结构化内容、修改后的源文件，还是一个新 Deck——再确认任务在哪里执行。同一个源文件可以为了不同结果进入多个产品。
@@ -12,7 +12,7 @@ description: "按照输入、操作、执行位置和最终产物比较 Deckflow
 | --- | --- | --- | --- | --- |
 | DeckProbe | 已有 PDF、Office 或现代 iWork 文档 | Schema v2 Target 证据和实际探测成本 | 原生 Rust CLI；WebAssembly 源码等待修正 npm 产物 | 完整内容解析、渲染或编辑 |
 | DeckRender | 支持的文档、URL 或标准输入 | 图片、PDF 或视频 | 本地、透传或云端路径 | 结构化内容提取或源文件编辑 |
-| DeckOps | 文件、URL 或已上传的 File ID | 格式专属解析结果、Markdown 或生成文件 | Deckflow 云端任务 | 纯本地检查或可编辑源文件修改 |
+| DeckOps | 文件、URL 或已上传的 File ID | 格式专属解析结果、Markdown 或生成文件 | DeckFlow 云端任务 | 纯本地检查或可编辑源文件修改 |
 | DeckUse | 现有 PPTX | 修改后的 PPTX | 本地 Node.js 工作流 | DOCX/XLSX/Keynote 编辑或新建 Deck |
 | DeckHTML | HTML、SVG、URL 或标准输入 | PPTX、PNG 和转换诊断 | 本地浏览器或云端任务 | 对现有 Office 文件的通用转换 |
 
@@ -23,13 +23,13 @@ description: "按照输入、操作、执行位置和最终产物比较 Deckflow
     最终只需要经过验证的文档级事实，或需要在接收、路由文件前判断风险时，使用 <strong>DeckProbe</strong>。需要页面和元素内容、Markdown、语义提取或生成文件时，使用 <strong>DeckOps</strong>。提高 DeckProbe 的探测级别仍然只会得到 Target 证据，不会变成 DeckOps 的解析结果。
   </Accordion>
   <Accordion title="DeckRender 还是 DeckOps？">
-    应用只需要稳定的视觉文件，不希望管理底层任务名、多步路径、页面命名和下载时，使用 <strong>DeckRender</strong>。渲染属于更大的解析、提取、转换或生成流程时，直接使用 <strong>DeckOps</strong>。
+    应用需要图片、PDF 或视频，并且不希望管理底层任务名、多步路径、页面命名和下载时，使用 <strong>DeckRender</strong>。渲染属于更大的解析、提取、转换或生成流程时，直接使用 <strong>DeckOps</strong>。
   </Accordion>
   <Accordion title="DeckUse 还是 DeckHTML？">
     现有 PPTX 是事实源，并需要修改其中已有内容时，使用 <strong>DeckUse</strong>。HTML 或 SVG 是创作源，并要生成新的 PPTX 或 PNG 时，使用 <strong>DeckHTML</strong>。
   </Accordion>
   <Accordion title="产品可以组合使用吗？">
-    可以。典型接入流程可以先用 DeckProbe 校验文件，再用 DeckOps 解析内容，最后用 DeckRender 生成预览。三者是独立调用并返回不同契约，Deckflow 不要求所有流程都使用全部产品。
+    可以。典型接入流程可以先用 DeckProbe 校验文件，再用 DeckOps 解析内容，最后用 DeckRender 生成预览。三者是独立调用并返回不同契约，DeckFlow 不要求所有流程都使用全部产品。
   </Accordion>
 </AccordionGroup>
 

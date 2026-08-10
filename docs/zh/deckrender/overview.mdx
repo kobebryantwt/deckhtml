@@ -11,7 +11,7 @@ DeckRender 通过同一套 CLI 和 Node.js API，把受支持的文档转为图�
 | 输入 | PowerPoint、PDF、Keynote、Word、HTML、Markdown、Pages、Numbers 的已支持路径 |
 | 输出 | PNG、JPEG、WebP 图片；PDF；MP4 视频 |
 | 接入方式 | `deckrender` CLI 和 `@deckflow/deckrender` Node.js API |
-| 执行位置 | 多数使用 Deckflow 云端任务，另有本地 PDF 透传和 iWork 预览提取 |
+| 执行位置 | 多数使用 DeckFlow 云端任务，另有本地 PDF 透传和 iWork 预览提取 |
 | 认证 | 可选访客模式、浏览器登录、Token 或 API Key |
 
 ## DeckRender 适合什么
@@ -32,7 +32,7 @@ DeckRender 通过同一套 CLI 和 Node.js API，把受支持的文档转为图�
     根据源格式、目标输出类型和图片参数，在当前安装版本的路由表中选择可执行路线。
   </Step>
   <Step title="在本地或云端执行">
-    已实现本地透传或预览提取时在本机完成；其他路线会上传源文件并执行 Deckflow 云端任务。
+    已实现本地透传或预览提取时在本机完成；其他路线会上传源文件并执行 DeckFlow 云端任务。
   </Step>
   <Step title="写出并返回结果">
     下载并按指定布局写出产物，然后返回描述执行路线和文件位置的 `RenderResult`。
@@ -43,7 +43,7 @@ DeckRender 不解析文本或文档元素，不返回 Document IR，也不编辑
 
 ## 数据与执行边界
 
-多数格式会上传到 Deckflow 云端任务。本地 PDF 转 PDF 会直接透传，不上传文件。Pages 与 Numbers 在本地提取内嵌的第一页 JPEG 预览，并不是完整的 iWork 渲染。
+多数格式会上传到 DeckFlow 云端任务。本地 PDF 转 PDF 会直接透传，不上传文件。Pages 与 Numbers 在本地提取内嵌的第一页 JPEG 预览，并不是完整的 iWork 渲染。
 
 HTTP(S) URL 由本地 Node.js 进程获取。HTML 会补充用于解析相对资源的 Base URL，再作为源内容上传。DeckRender 不会捕获用户浏览器当前的状态、Cookie 或认证会话。
 

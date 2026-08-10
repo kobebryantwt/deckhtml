@@ -1,10 +1,10 @@
 ---
-title: 在 WorkBuddy 中使用 Deckflow MCP
+title: 在 WorkBuddy 中使用 DeckFlow MCP
 sidebarTitle: WorkBuddy
-description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow MCP Server，并确认当前可用的工具列表。"
+description: "通过 WorkBuddy 的连接器界面配置一个或多个 DeckFlow MCP Server，并确认当前可用的工具列表。"
 ---
 
-本页重点说明如何在 WorkBuddy 中完成 Deckflow MCP 的接入。标准流程是创建自定义连接器、粘贴托管 MCP 配置、完成首次信任确认，然后确认 WorkBuddy 已经能看到 Deckflow 暴露的工具列表。
+本页重点说明如何在 WorkBuddy 中完成 DeckFlow MCP 的接入。标准流程是创建自定义连接器、粘贴托管 MCP 配置、完成首次信任确认，然后确认 WorkBuddy 已经能看到 DeckFlow 暴露的工具列表。
 
 <Note>
   在 WorkBuddy 里，优先使用托管模式。每个端点都作为独立的 MCP Server 添加，首次连接时先完成信任确认，之后就能在 MCP 管理界面里看到对应工具列表。
@@ -17,13 +17,13 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
     在 WorkBuddy 顶部导航中打开 `连接器`，然后点击 `自定义连接器`，创建新的 MCP 条目。
   </Step>
   <Step title="打开 MCP 配置编辑器">
-    在 MCP 管理窗口中点击 `配置 MCP`。WorkBuddy 会打开配置文件编辑器，供你粘贴 Deckflow MCP 的配置内容并保存。
+    在 MCP 管理窗口中点击 `配置 MCP`。WorkBuddy 会打开配置文件编辑器，供你粘贴 DeckFlow MCP 的配置内容并保存。
   </Step>
 </Steps>
 
 ![WorkBuddy MCP config entry](/images/mcp/workbuddy-mcp-entry.png)
 
-## 添加 Deckflow MCP 配置
+## 添加 DeckFlow MCP 配置
 
 将下面这段配置粘贴到 WorkBuddy 的 MCP 配置编辑器中：
 
@@ -49,10 +49,10 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
 
 <Steps>
   <Step title="返回 MCP 管理窗口">
-    保存完成后，WorkBuddy 会在 `我的 MCP` 区域显示新加的 Deckflow Server。
+    保存完成后，WorkBuddy 会在 `我的 MCP` 区域显示新加的 DeckFlow Server。
   </Step>
   <Step title="信任每个服务">
-    首次连接时，WorkBuddy 会要求你对每个 Deckflow Server 做信任确认。分别点击 `信任`，允许 `deckflow-html2pptx`、`deckflow-pptx`、`deckflow-tools` 接入。
+    首次连接时，WorkBuddy 会要求你对每个 DeckFlow Server 做信任确认。分别点击 `信任`，允许 `deckflow-html2pptx`、`deckflow-pptx`、`deckflow-tools` 接入。
   </Step>
   <Step title="确认 3 个服务都已启用">
     信任完成后，WorkBuddy 会启用这 3 个 MCP Server，并显示各自的工具数量。
@@ -61,11 +61,11 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
 
 ![WorkBuddy verification required state](/images/mcp/workbuddy-mcp-verify.png)
 
-## 查看 Deckflow 工具列表
+## 查看 DeckFlow 工具列表
 
-信任完成并启用后，WorkBuddy 会展开每个 Deckflow 条目，并在 MCP 管理窗口中显示当前可用的工具列表。
+信任完成并启用后，WorkBuddy 会展开每个 DeckFlow 条目，并在 MCP 管理窗口中显示当前可用的工具列表。
 
-![WorkBuddy Deckflow tools list](/images/mcp/workbuddy-mcp-tools.png)
+![WorkBuddy DeckFlow tools list](/images/mcp/workbuddy-mcp-tools.png)
 
 ## 配置完成后先试这些
 
@@ -90,7 +90,7 @@ description: "通过 WorkBuddy 的连接器界面配置一个或多个 Deckflow 
 
 ## 验证清单
 
-- WorkBuddy 能够识别你添加的 Deckflow Server。
+- WorkBuddy 能够识别你添加的 DeckFlow Server。
 - 首次连接时的信任提示不再阻塞这 3 个服务的启用。
-- MCP 管理窗口中每个 Deckflow Server 下都能看到 6 个工具。
+- MCP 管理窗口中每个 DeckFlow Server 下都能看到 6 个工具。
 - 每组都包含 4 个能力工具，以及共享的 `get_task` 和 `download_task_result` 支撑工具。

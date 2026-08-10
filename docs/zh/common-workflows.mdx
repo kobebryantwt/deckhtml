@@ -15,6 +15,25 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 | 从应用数据生成演示文稿 | DeckHTML | PPTX 或 PNG，以及诊断信息 |
 | 校验、解析并预览同一上传文件 | DeckProbe → DeckOps → DeckRender | 策略、内容和视觉产物 |
 
+## 常见 Agent 场景
+
+<CardGroup cols={2}>
+  <Card title="企业附件入口" icon="inbox" iconType="solid" href="#在云端处理前校验文档上传">
+    在本地检查收到的 Office、PDF 或 iWork 文件，执行应用策略，再把通过校验的文件交给云端处理。
+  </Card>
+  <Card title="大规模文档盘点" icon="boxes-stacked" iconType="solid" href="/zh/deckprobe/cli/automation-and-output">
+    批量运行带资源预算的 DeckProbe 任务，保存格式、数量、结构、安全信号和资源事实，再决定后续处理方式。
+  </Card>
+  <Card title="多模态理解与评审" icon="eye" iconType="solid" href="#组合校验内容和预览">
+    把 DeckOps 内容结果和 DeckRender 视觉产物作为相互独立、可追踪的输入，用于搜索、AI、预览或人工评审。
+  </Card>
+  <Card title="生成文档的交付检查" icon="clipboard-check" iconType="solid" href="#从应用数据生成-deck">
+    使用 DeckHTML 生成 Deck，或使用 DeckUse 更新 PPTX，再渲染视觉产物，交由应用或评审人员在交付前检查。
+  </Card>
+</CardGroup>
+
+这些是可以组合的应用模式，不是一条自动执行的端到端流水线。每个产品都有独立的输入、结果契约、执行边界和重试行为。
+
 ## 在云端处理前校验文档上传
 
 <div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">应用接收到的不可信 PDF、Office 或现代 iWork 文件。</span></div>
@@ -47,7 +66,7 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 
 <div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">受支持的文档、URL 或 stdin 流。</span></div>
 
-应用需要页面图片、缩略图、PDF 或受支持的视频，又不想管理底层 DeckOps 路由和下载时，使用 DeckRender。多数路径会把源文件上传到 Deckflow 云端；本地 PDF 透传和 Pages/Numbers 预览提取是明确例外。
+应用需要页面图片、缩略图、PDF 或受支持的视频，又不想管理底层 DeckOps 路由和下载时，使用 DeckRender。多数路径会把源文件上传到 DeckFlow 云端；本地 PDF 透传和 Pages/Numbers 预览提取是明确例外。
 
 <div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">写入的产物，以及包含路由、页数、输出文件、字节数、耗时和保真限制的 <code>RenderResult</code>。</span></div>
 

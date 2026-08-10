@@ -1,11 +1,11 @@
 ---
 title: Submit Async Task
 sidebarTitle: Submit Async Task
-description: "Submit any Deckflow business scenario through the shared POST /tools/tasks endpoint."
+description: "Submit any DeckFlow business scenario through the shared POST /tools/tasks endpoint."
 openapi: "/platform/api/default-module.openapi.json POST /tools/tasks"
 ---
 
-This is the single entrypoint for creating Deckflow jobs. Generation, translation, revamp, and tool workflows all reuse this endpoint and differentiate themselves through `type` and `params`.
+This is the single entrypoint for creating DeckFlow jobs. Generation, translation, revamp, and tool workflows all reuse this endpoint and differentiate themselves through `type` and `params`.
 
 <Note>
   Think of this endpoint as the universal task submitter. Scenario guides tell you which `type` and `params` combination to send for each workflow.

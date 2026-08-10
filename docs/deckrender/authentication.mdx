@@ -13,7 +13,7 @@ deckrender auth login
 deckrender auth status
 ```
 
-Login opens the Deckflow authorization page and stores the returned token in `~/.deckflow/credentials`. When credentials exist, `auth status` validates them against the backend and shows their source; without credentials it reports that guest mode is active without making a validation request.
+Login opens the DeckFlow authorization page and stores the returned token in `~/.deckflow/credentials`. When credentials exist, `auth status` validates them against the backend and shows their source; without credentials it reports that guest mode is active without making a validation request.
 
 ## API key
 
@@ -36,7 +36,7 @@ deckrender hello.html -o hello.png --json --quiet
 Each field resolves independently:
 
 1. Explicit Node.js renderer option.
-2. DeckRender or Deckflow environment variable.
+2. DeckRender or DeckFlow environment variable.
 3. `~/.deckflow/credentials`.
 4. `~/.deckops/config.json`, read only.
 5. Built-in API base default.
@@ -50,7 +50,7 @@ deckrender auth logout
 deckrender config list
 ```
 
-Logout removes credentials stored in the shared Deckflow file. An environment variable or token in the DeckOps config can still authenticate subsequent calls; confirm the effective source with `config list`.
+Logout removes credentials stored in the shared DeckFlow file. An environment variable or token in the DeckOps config can still authenticate subsequent calls; confirm the effective source with `config list`.
 
 <Warning>
   JSON, CI, and other non-interactive calls do not open a browser after `401`. Configure an API key or token before starting the job.

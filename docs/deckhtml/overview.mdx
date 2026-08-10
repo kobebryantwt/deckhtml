@@ -11,7 +11,7 @@ DeckHTML turns browser-laid-out HTML into PPTX or PNG. It maps text, images, tab
 | Best for | HTML-native slide authoring and automated presentation generation |
 | Inputs | Local HTML or SVG, HTML from stdin, multiple ordered files, or an HTML URL |
 | Outputs | PPTX or PNG |
-| Runs | Locally with Chromium, or in Deckflow cloud |
+| Runs | Locally with Chromium, or in DeckFlow cloud |
 | Interfaces | CLI and local Node.js API |
 | Authentication | None for local mode; guest, login, or API key for cloud mode |
 
@@ -29,7 +29,7 @@ flowchart LR
 - Keep supported text, shapes, tables, images, SVG geometry, and equations editable in PowerPoint.
 - Convert several local HTML/SVG files into ordered slides.
 - Produce PNG previews from the same source.
-- Inspect per-element conversion decisions in automated quality checks.
+- Consume per-element conversion diagnostics in your own automated checks.
 
 DeckHTML is not a promise of lossless browser-to-PowerPoint conversion. Canvas, complex SVG, filters, layered effects, iframes, and unsupported CSS may be rasterized, ignored, or reported as unsupported.
 
@@ -38,7 +38,7 @@ DeckHTML is not a promise of lossless browser-to-PowerPoint conversion. Canvas, 
 | Mode | Data boundary | Credentials | Notes |
 | --- | --- | --- | --- |
 | Local | Remains on your machine | None | Requires a compatible Chromium/Chrome/Edge executable |
-| Cloud | Input is uploaded to Deckflow | Guest, login, or API key | Font embedding is cloud-only |
+| Cloud | Input is uploaded to DeckFlow | Guest, login, or API key | Font embedding is cloud-only |
 | Auto | Selects cloud when credentials exist, otherwise local | Depends on selected mode | Be explicit in production workflows |
 
 The Node.js API is local-only and returns buffers rather than writing files. The CLI can run locally or submit a DeckOps cloud task.

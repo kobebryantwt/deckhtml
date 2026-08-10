@@ -1,22 +1,22 @@
 ---
-title: 在 TRAE 中使用 Deckflow MCP
+title: 在 TRAE 中使用 DeckFlow MCP
 sidebarTitle: TRAE
-description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 Deckflow MCP Server。"
+description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 DeckFlow MCP Server。"
 ---
 
-本页重点说明如何在 TRAE 中通过托管的 Streamable HTTP 方式接入 Deckflow MCP，并完成浏览器授权。
+本页重点说明如何在 TRAE 中通过托管的 Streamable HTTP 方式接入 DeckFlow MCP，并完成浏览器授权。
 
 <Note>
   在 TRAE 中，每个端点都应作为独立的 MCP Server 添加。`deckflow-html2pptx` 负责 HTML 渲染相关能力，`deckflow-pptx` 负责 PPTX 文件处理，`deckflow-tools` 负责通用文件小工具。
 </Note>
 
-## 在 TRAE 中完成 Deckflow MCP 配置
+## 在 TRAE 中完成 DeckFlow MCP 配置
 
 <Steps>
   <Step title="打开 MCP 设置">
     在 TRAE 右上角点击设置图标，切换到 `MCP` 标签页，然后点击 `Add` 并选择手动配置。TRAE 会打开一个可编辑的 `mcp.json` 标签页。
   </Step>
-  <Step title="粘贴 Deckflow 配置">
+  <Step title="粘贴 DeckFlow 配置">
     按需粘贴下面这组托管配置。完整接入方式如下：
 
     ```json
@@ -36,7 +36,7 @@ description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 Dec
     ```
   </Step>
   <Step title="保存并等待验证提示">
-    保存后，TRAE 会在 MCP 列表中显示新加的 Deckflow Server。如果还没有完成授权，界面会提示当前服务需要验证，并提供继续验证的入口。
+    保存后，TRAE 会在 MCP 列表中显示新加的 DeckFlow Server。如果还没有完成授权，界面会提示当前服务需要验证，并提供继续验证的入口。
   </Step>
   <Step title="完成授权">
     点击验证入口，在浏览器中完成授权流程，然后回到 TRAE。
@@ -75,7 +75,7 @@ description: "通过 TRAE 的 MCP 设置界面配置一个或多个托管的 Dec
 
 ## 验证清单
 
-- TRAE 在 MCP 列表中显示你添加的 Deckflow Server，且状态为已启用。
+- TRAE 在 MCP 列表中显示你添加的 DeckFlow Server，且状态为已启用。
 - 托管模式可以顺利完成验证流程。
-- Deckflow 的工具能够在 MCP 工具列表中被发现。
+- DeckFlow 的工具能够在 MCP 工具列表中被发现。
 - HTML→PPTX、PPTX 文件处理、通用文件工具这 3 组能力与配置的服务名一一对应。

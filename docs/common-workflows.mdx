@@ -15,6 +15,25 @@ Use this page after choosing the result your application needs. Each workflow id
 | Generate a presentation from application data | DeckHTML | PPTX or PNG with diagnostics |
 | Validate, parse, and preview one upload | DeckProbe → DeckOps → DeckRender | Policy, content, and visual artifacts |
 
+## Common agent scenarios
+
+<CardGroup cols={2}>
+  <Card title="Enterprise attachment intake" icon="inbox" iconType="solid" href="#gate-document-uploads-before-cloud-processing">
+    Inspect an incoming Office, PDF, or iWork file locally, apply application policy, then send only accepted files to cloud processing.
+  </Card>
+  <Card title="Large-scale document inventory" icon="boxes-stacked" iconType="solid" href="/deckprobe/cli/automation-and-output">
+    Run budgeted DeckProbe jobs in batches and store format, counts, structure, security signals, and asset facts before choosing downstream work.
+  </Card>
+  <Card title="Multimodal understanding and review" icon="eye" iconType="solid" href="#combine-validation-content-and-previews">
+    Keep DeckOps content results and DeckRender visual artifacts as separate, traceable inputs for search, AI, preview, or human review.
+  </Card>
+  <Card title="Generated-document delivery check" icon="clipboard-check" iconType="solid" href="#generate-a-deck-from-application-data">
+    Generate a deck with DeckHTML or update a PPTX with DeckUse, then render an artifact that the application or a reviewer can inspect before delivery.
+  </Card>
+</CardGroup>
+
+These are composable application patterns, not an automatic end-to-end pipeline. Each product has its own input, result contract, execution boundary, and retry behavior.
+
 ## Gate document uploads before cloud processing
 
 <div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">An untrusted PDF, Office, or modern iWork file received by your application.</span></div>
@@ -47,7 +66,7 @@ Use DeckOps Parse when the application needs Markdown or source-format structure
 
 <div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">A supported document, URL, or stdin stream.</span></div>
 
-Use DeckRender when the application needs page images, thumbnails, a PDF, or supported video output without managing the underlying DeckOps route and downloads. Most routes upload the source to Deckflow cloud; local PDF passthrough and Pages/Numbers preview extraction are explicit exceptions.
+Use DeckRender when the application needs page images, thumbnails, a PDF, or supported video output without managing the underlying DeckOps route and downloads. Most routes upload the source to DeckFlow cloud; local PDF passthrough and Pages/Numbers preview extraction are explicit exceptions.
 
 <div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">Written artifacts plus a <code>RenderResult</code> containing route, page count, output files, byte sizes, duration, and fidelity caveats.</span></div>
 
