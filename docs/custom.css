@@ -257,10 +257,109 @@ pre {
   text-transform: uppercase;
 }
 
+.product-map {
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.product-map-lane {
+  display: grid;
+  grid-template-columns: minmax(9.5rem, 0.32fr) minmax(0, 1fr);
+  gap: 1rem 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--deck-border);
+  border-radius: 16px;
+  background: var(--deck-surface-muted);
+}
+
+.product-map-source {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.8rem 0.9rem;
+  border-left: 3px solid var(--deck-accent);
+  border-radius: 0 10px 10px 0;
+  background: var(--deck-surface);
+}
+
+.product-map-source strong,
+.product-map-card strong {
+  color: var(--deck-text);
+  font-size: 0.98rem;
+}
+
+.product-map-source > span:last-child,
+.product-map-card > span:last-child {
+  color: var(--deck-text-muted);
+  font-size: 0.79rem;
+  line-height: 1.45;
+}
+
+.product-map-label {
+  color: var(--deck-accent);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.product-map-capabilities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.product-map-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--deck-border);
+  border-radius: 10px;
+  background: var(--deck-surface);
+  text-decoration: none !important;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.product-map-card:hover {
+  border-color: var(--deck-accent-border);
+  transform: translateY(-1px);
+}
+
+.product-map-note {
+  grid-column: 2;
+  margin: -0.15rem 0 0 !important;
+  color: var(--deck-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.product-map-note strong {
+  color: var(--deck-text);
+}
+
+.product-map-lane-compact .product-map-capabilities {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 @media (max-width: 640px) {
   .workflow-meta {
     grid-template-columns: 1fr;
     gap: 0.3rem;
+  }
+
+  .product-map-lane {
+    grid-template-columns: 1fr;
+  }
+
+  .product-map-capabilities {
+    grid-template-columns: 1fr;
+  }
+
+  .product-map-note {
+    grid-column: 1;
   }
 }
 

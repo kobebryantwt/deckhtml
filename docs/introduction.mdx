@@ -41,16 +41,52 @@ description: "Choose and integrate Deckflow components for document inspection, 
 
 ## How the products fit together
 
-```mermaid
-flowchart LR
-  F["Existing document"] --> P["DeckProbe\nverified facts"]
-  F --> R["DeckRender\nimages / PDF / video"]
-  F --> O["DeckOps\nparse / extract / convert"]
-  F --> U["DeckUse\nupdated PPTX"]
-  H["HTML / SVG source"] --> D["DeckHTML\nPPTX / PNG"]
-  P -. "route or validate" .-> R
-  P -. "route or validate" .-> O
-```
+<div className="product-map">
+  <section className="product-map-lane">
+    <div className="product-map-source">
+      <span className="product-map-label">Input</span>
+      <strong>Existing document</strong>
+      <span>PDF, Office, or iWork</span>
+    </div>
+    <div className="product-map-capabilities">
+      <a className="product-map-card" href="/deckprobe/overview">
+        <span className="product-map-label">Inspect facts</span>
+        <strong>DeckProbe</strong>
+        <span>Identity, metadata, structure, and risk signals</span>
+      </a>
+      <a className="product-map-card" href="/deckrender/overview">
+        <span className="product-map-label">Create visual output</span>
+        <strong>DeckRender</strong>
+        <span>Images, PDF, thumbnails, or video</span>
+      </a>
+      <a className="product-map-card" href="/deckops/overview">
+        <span className="product-map-label">Operate on content</span>
+        <strong>DeckOps</strong>
+        <span>Parse, extract, convert, and generate</span>
+      </a>
+      <a className="product-map-card" href="/deckuse/overview">
+        <span className="product-map-label">Modify the source</span>
+        <strong>DeckUse</strong>
+        <span>Updated, editable PPTX</span>
+      </a>
+    </div>
+    <p className="product-map-note"><strong>Optional routing step:</strong> use DeckProbe facts to validate a document before sending it to DeckRender or DeckOps.</p>
+  </section>
+  <section className="product-map-lane product-map-lane-compact">
+    <div className="product-map-source">
+      <span className="product-map-label">Input</span>
+      <strong>HTML or SVG</strong>
+      <span>Browser-authored layout</span>
+    </div>
+    <div className="product-map-capabilities">
+      <a className="product-map-card" href="/deckhtml/overview">
+        <span className="product-map-label">Generate a deck</span>
+        <strong>DeckHTML</strong>
+        <span>PPTX or PNG with mapping diagnostics</span>
+      </a>
+    </div>
+  </section>
+</div>
 
 DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and Deckflow cloud routes. DeckOps executes document tasks in the cloud. DeckHTML supports local browser-based conversion and a cloud mode.
 

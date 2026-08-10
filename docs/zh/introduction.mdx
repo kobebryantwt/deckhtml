@@ -41,16 +41,52 @@ description: "选择并接入 Deckflow 的文档嗅探、渲染、云端操作�
 
 ## 五个产品如何协作
 
-```mermaid
-flowchart LR
-  F["现有文档"] --> P["DeckProbe\n文档事实"]
-  F --> R["DeckRender\n图片 / PDF / 视频"]
-  F --> O["DeckOps\n解析 / 提取 / 转换"]
-  F --> U["DeckUse\n修改后的 PPTX"]
-  H["HTML / SVG 源"] --> D["DeckHTML\nPPTX / PNG"]
-  P -. "路由或校验" .-> R
-  P -. "路由或校验" .-> O
-```
+<div className="product-map">
+  <section className="product-map-lane">
+    <div className="product-map-source">
+      <span className="product-map-label">输入</span>
+      <strong>现有文档</strong>
+      <span>PDF、Office 或 iWork</span>
+    </div>
+    <div className="product-map-capabilities">
+      <a className="product-map-card" href="/zh/deckprobe/overview">
+        <span className="product-map-label">检查文档事实</span>
+        <strong>DeckProbe</strong>
+        <span>身份、元数据、结构和风险信号</span>
+      </a>
+      <a className="product-map-card" href="/zh/deckrender/overview">
+        <span className="product-map-label">生成视觉产物</span>
+        <strong>DeckRender</strong>
+        <span>图片、PDF、缩略图或视频</span>
+      </a>
+      <a className="product-map-card" href="/zh/deckops/overview">
+        <span className="product-map-label">操作文档内容</span>
+        <strong>DeckOps</strong>
+        <span>解析、提取、转换和生成</span>
+      </a>
+      <a className="product-map-card" href="/zh/deckuse/overview">
+        <span className="product-map-label">修改源文件</span>
+        <strong>DeckUse</strong>
+        <span>生成修改后仍可编辑的 PPTX</span>
+      </a>
+    </div>
+    <p className="product-map-note"><strong>可选路由步骤：</strong>在把文档交给 DeckRender 或 DeckOps 前，使用 DeckProbe 事实完成验证和路由判断。</p>
+  </section>
+  <section className="product-map-lane product-map-lane-compact">
+    <div className="product-map-source">
+      <span className="product-map-label">输入</span>
+      <strong>HTML 或 SVG</strong>
+      <span>使用浏览器布局创作</span>
+    </div>
+    <div className="product-map-capabilities">
+      <a className="product-map-card" href="/zh/deckhtml/overview">
+        <span className="product-map-label">生成演示文稿</span>
+        <strong>DeckHTML</strong>
+        <span>PPTX 或 PNG，以及映射诊断</span>
+      </a>
+    </div>
+  </section>
+</div>
 
 DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、透传或 Deckflow 云端执行。DeckOps 在云端运行文档任务。DeckHTML 同时支持本地浏览器转换和云端模式。
 
