@@ -36,11 +36,13 @@ This path uses the native CLI. It runs entirely on your machine and requires no 
     cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
     ```
   </Step>
-  <Step title="Download a known input">
+  <Step title="Download a multi-page PDF">
     ```bash
-    curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf \
+    curl -fL https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf \
       -o sample.pdf
     ```
+
+    This 14-page paper provides enough structure and metadata to make the result useful for verification.
   </Step>
   <Step title="Request format and page count">
     ```bash
@@ -66,7 +68,7 @@ This path uses the native CLI. It runs entirely on your machine and requires no 
       },
       "values": {
         "document.format": "pdf",
-        "pdf.page_count": 1
+        "pdf.page_count": 14
       },
       "unresolved_targets": [],
       "diagnostics": []
@@ -78,7 +80,7 @@ This path uses the native CLI. It runs entirely on your machine and requires no 
 </Steps>
 
 <Tip>
-  Run `deckprobe targets pdf --pretty` before hard-coding format-specific targets. Use `--strict` when unresolved requested targets must produce a non-zero exit status.
+  Before hard-coding format-specific targets, run `deckprobe targets pdf --pretty` to confirm their IDs, minimum probe levels, and applicability. If an automated workflow requires every requested target to resolve, add `--strict`: DeckProbe still writes the complete JSON report, then exits with status `5` when a target is unresolved.
 </Tip>
 
 <CardGroup cols={2}>

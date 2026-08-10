@@ -16,7 +16,7 @@ DeckProbe 面向机器消费设计：成功 Probe、Partial Result 和运行时�
 | JSONL 模式 | 每个非空输入行对应一个紧凑 JSON Value |
 | `--help` 和 `--version` | 面向人的文本 |
 
-不要根据 Pretty 格式编写不同的解析逻辑：`--pretty` 只改变空白。默认的 `--view full` 保留完整 Target Evidence；`--view values` 返回紧凑 Target-to-Value Envelope。
+`--pretty` 只会为同一份 JSON 添加换行和缩进，字段、值与数据结构都不会变化。程序应始终使用 JSON 解析器读取输出，不要依赖某个字段位于第几行，也不要根据是否启用 `--pretty` 编写两套解析逻辑。默认的 `--view full` 保留完整 Target 证据；`--view values` 只返回紧凑的 Target 与 Value 映射。
 
 ## 报告形态
 

@@ -4,21 +4,23 @@ sidebarTitle: 概览
 description: "无需渲染或打开 Office 应用，即可在本地检查文档身份、元数据、结构、安全和资源事实。"
 ---
 
-DeckProbe 用于回答关于现有文档的指定问题，不会渲染文档、运行宏，也无需启动 Microsoft Office、Apple iWork 或其他桌面套件。原生 CLI 会从磁盘惰性读取；仓库中的 JavaScript 实现通过 WebAssembly 在浏览器和 Node.js 中运行同一套 Rust 引擎。
+DeckProbe 在不打开或渲染文件、不运行宏，也不启动 Microsoft Office、Apple iWork 等桌面套件的前提下，检查预先定义的文档事实。它返回格式、页数或幻灯片数量、加密状态、资源清单等有明确名称且可验证的属性；不回答文档内容或语义问题，也不构建页面与元素级内容模型。
+
+原生 CLI 从磁盘惰性读取。JavaScript SDK 设计为通过 WebAssembly 在浏览器和 Node.js 中复用同一套 Rust 引擎；选择该接入方式前，请先查看下方的发布状态。
 
 | 项目 | 当前契约 |
 | --- | --- |
 | 输入 | PDF；现代与旧版 Word、Excel、PowerPoint；现代 Keynote、Numbers、Pages |
 | 结果 | Schema v2 JSON，包含 Target 值、证据、置信度、诊断和实际 I/O 成本 |
 | 执行位置 | 本地原生进程或本地 WebAssembly；文档字节不会发送给 Deckflow |
-| 接入方式 | 原生 CLI 和 npm CLI；Browser、Worker、Node.js 源码 API 等待修正后的 npm 包 |
+| 接入方式 | 原生 CLI 和 npm CLI；<span className="release-blocked">⚠ Browser、Worker、Node.js npm 发布阻塞</span> |
 | 认证 | 不需要 |
 
 ## DeckProbe 适合什么
 
 - 接收上传文件前，验证它声明的格式。
 - 读取数量、元数据、结构事实、安全信号或资源清单。
-- 根据证据而不是扩展名，把文档路由给 Parser 或 Renderer。
+- 根据证据而不是扩展名，把文档路由给 DeckOps 或 DeckRender。
 - 限制物理读取、解压、归档条目和时间预算。
 - 为策略引擎、批量盘点或 Agent 工具生成稳定 JSON。
 
@@ -30,7 +32,9 @@ flowchart LR
   P --> J["Schema v2 事实与证据"]
 ```
 
-关闭 Telemetry 时，默认报告是确定性的。只有需要耗时信息时才添加 Telemetry。
+<Tip>
+  关闭 Telemetry 时，默认报告是确定性的。仅在报告需要包含耗时信息时启用 Telemetry。
+</Tip>
 
 <Warning>
   当前 `@deckflow/deckprobe@2.3.0` npm 产物缺少 JavaScript 导入所需的 `dist/` 和 `wasm/` 运行文件。原生 CLI 和 npm 提供的 CLI 可以使用，但该产物中的 Browser、Worker 和 Node.js API 无法运行。

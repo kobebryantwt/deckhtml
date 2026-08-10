@@ -1,23 +1,29 @@
 ---
-title: 格式与 Target
+title: 支持格式与 Target
 sidebarTitle: 格式与 Target
-description: "查看 DeckProbe 支持的文档类型、实现例外、Probe Level 和 Target 发现方式。"
+description: "了解 DeckProbe 支持哪些格式、可请求哪些命名事实，以及 Probe Level 如何限制探测深度和成本。"
 ---
 
-DeckProbe 根据逻辑文件名选择 Driver，再检查容器和必需的内部文档类型，不会直接相信 Profile。
+DeckProbe 根据逻辑文件名选择 Driver，再验证容器和必需的内部文档类型，因此不会只相信扩展名。每种格式会暴露各自的 Target；Planner 只读取完成所请求 Target 必需的路径。
 
-| 类型 | Profiles | 当前事实覆盖 |
+## 支持格式
+
+| 格式族 | 扩展名 | 可探测信息 |
 | --- | --- | --- |
-| PDF | `.pdf` | Header、Info 元数据、页面/对象数量、xref 类型、签名、链接、附件、JavaScript、表单、批注、XMP |
-| Word OOXML | `.docx`、`.docm`、`.dotx`、`.dotm` | 元数据、保存统计、段落/表格结构、安全信号、评论、图片资源 |
-| Excel OOXML | `.xlsx`、`.xlsm`、`.xltx`、`.xltm`、`.xlsb` | 工作表、名称、可见性、共享字符串、表格、图表、Pivot、安全信号、图片资源 |
-| PowerPoint OOXML | `.pptx`、`.pptm`、`.ppsx`、`.ppsm`、`.potx`、`.potm` | 幻灯片、隐藏页、Master、Layout、备注、尺寸、图表、评论、图片、媒体、安全信号 |
-| 旧版 Office | `.doc`、`.dot`、`.xls`、`.xlt`、`.ppt`、`.pps`、`.pot` | CFB Stream、SummaryInformation、宏、嵌入对象信号、核心统计 |
-| 现代 iWork | `.key`、`.numbers`、`.pages` | IWA 身份/完整性，以及文件中存在的结构、数量、几何、公式、表格、备注、Build 或 Transition |
+| PDF | `.pdf` | Header、Info 元数据、页面和对象数量、xref 类型、签名、链接、附件、JavaScript、表单、批注和 XMP |
+| Word OOXML | `.docx`、`.docm`、`.dotx`、`.dotm` | 元数据、保存统计、段落和表格结构、安全信号、评论和图片资源 |
+| Excel OOXML | `.xlsx`、`.xlsm`、`.xltx`、`.xltm`、`.xlsb` | 工作表、名称、可见性、共享字符串、表格、图表、Pivot、安全信号和图片资源 |
+| PowerPoint OOXML | `.pptx`、`.pptm`、`.ppsx`、`.ppsm`、`.potx`、`.potm` | 幻灯片、隐藏页、Master、Layout、备注、尺寸、图表、评论、图片、媒体和安全信号 |
+| 旧版 Office | `.doc`、`.dot`、`.xls`、`.xlt`、`.ppt`、`.pps`、`.pot` | 已验证的 CFB Stream、SummaryInformation、宏、嵌入对象信号和核心统计 |
+| 现代 iWork | `.key`、`.numbers`、`.pages` | IWA 身份与完整性，以及文件中存在的结构、数量、几何、公式、表格、备注、Build 或 Transition |
 
-`.xlsb` 当前只提供 Identity 级别覆盖。旧版 XML iWork 包可以被识别，但会返回结构化 `UNSUPPORTED_FORMAT` 错误。
+<Tip>
+  `.xlsb` 当前只支持文档身份探测。旧版 XML iWork 包可以被识别，但会返回结构化 `UNSUPPORTED_FORMAT` 错误。
+</Tip>
 
-## 查询已安装版本
+## 查询当前安装版本的契约
+
+不同格式暴露的事实并不相同，请通过 CLI 的发现命令查看当前版本：
 
 ```bash
 deckprobe formats --pretty
@@ -25,14 +31,49 @@ deckprobe targets pdf --pretty
 deckprobe schema --pretty
 ```
 
-`formats` 返回 Driver、Profile 和支持状态。`targets` 返回 Target 定义、别名、值类型、最低 Level、Selector、成本等级，以及是否适用于当前 Profile。
+- `formats` 列出可用 Driver、接受的 Profile 和支持状态。
+- `targets pdf` 列出 PDF 的准确 Target ID 与别名、值类型、最低和可用 Level、成本等级、适用范围及 Selector 展开结果。
+- `schema` 输出完整的 Schema v2 JSON Schema，用于校验 Full、Values 和 Error Report。
 
-## Probe Levels
+## Target 是什么？
 
-| Level | 适合场景 |
+Target 是有明确名称的文档事实，并不是关于文档内容的自然语言问题。它定义 DeckProbe 需要解析的值，以及支撑该值的证据。
+
+| Target | 要解析的事实 |
 | --- | --- |
-| `header` | 容器身份和低成本路由事实 |
-| `metadata` | 通用元数据、保存统计和主要结构 |
-| `deep` | 格式专属结构、安全、资源、完整性和高成本 Path |
+| `document.format` | 经验证的文档格式 |
+| `pdf.page_count` | PDF 的页面数量 |
+| `security.password_protected` | 当前格式是否报告密码保护状态 |
 
-只请求应用真正需要的 Target。更高 Level 只会扩大可用 Path，不会把 DeckProbe 变成完整内容 Parser。
+应用依赖稳定字段时，应请求完整 Target ID。`page_count` 等短别名适合在命令行中使用。Selector 预设可以一次选择一组相关 Target：
+
+- `@header` 选择 Header 级别的身份事实。
+- `@summary` 选择身份、通用元数据和主要结构。
+- `@security`、`@structure`、`@assets` 和 `@quality` 分别选择对应主题的事实。
+- `@format` 选择当前 Level 可用的格式专属 Target；`@all` 选择全部可用 Target。
+
+运行 `deckprobe targets <format> --pretty`，可查看当前安装版本中每个 Selector 的准确展开结果。
+
+## Probe Level 如何影响请求
+
+Probe Level 规定 Planner 可以使用的最大路径深度和成本等级。Target 决定**需要什么**，Level 决定**允许使用哪些 Probe Path**。提高 Level 并不会自动返回更多内容。
+
+| Level | CLI 别名 | 允许的路径 | 典型用途 |
+| --- | --- | --- | --- |
+| `header` | `h`、`l0`、`0` | 仅容器和 Header 身份 | 快速验证格式、拒绝文件或选择路由 |
+| `metadata`（默认） | `m`、`l1`、`1` | Header 加上有界元数据、核心属性、主要数量和支持的安全事实 | 常规盘点与策略检查 |
+| `deep` | `d`、`l2`、`2` | 成本更高的格式专属结构、资源和完整性路径 | 检查 `metadata` 无法满足的特定事实 |
+
+例如：
+
+```bash
+deckprobe -l header   -t @header  --view values sample.pdf
+deckprobe -l metadata -t @summary --view values sample.pdf
+deckprobe -l deep     -t @all     --view values sample.pdf
+```
+
+如果 Target 所需的最低 Level 高于当前请求，它会保持未解析状态。自动化流程需要把该情况视为失败时，请加入 `--strict`；进程会以状态码 `5` 退出。
+
+<Warning>
+  `-l deep -t @all` 适合探索能力，但可能选择高成本路径。生产环境应只请求应用实际消费的 Target。
+</Warning>

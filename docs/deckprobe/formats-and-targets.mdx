@@ -1,23 +1,29 @@
 ---
-title: Formats and Targets
+title: Formats and Probe Targets
 sidebarTitle: Formats & Targets
-description: "Review DeckProbe document families, implementation exceptions, probe levels, and target discovery."
+description: "Understand which formats DeckProbe supports, which named facts you can request, and how probe levels limit depth and cost."
 ---
 
-DeckProbe chooses a driver from the logical filename, then verifies the container and required internal document type before trusting the profile.
+DeckProbe uses the logical filename to choose a driver, then verifies the container and required internal document type. It does not trust the extension alone. Each format exposes its own set of Targets, and the planner reads only the paths required to resolve the Targets you request.
 
-| Family | Profiles | Current fact coverage |
+## Supported formats
+
+| Format family | Extensions | Available facts |
 | --- | --- | --- |
-| PDF | `.pdf` | Header and Info metadata, page/object counts, xref type, signatures, links, attachments, JavaScript, forms, annotations, XMP presence |
-| Word OOXML | `.docx`, `.docm`, `.dotx`, `.dotm` | Metadata, saved statistics, paragraph/table structure, security signals, comments, image assets |
-| Excel OOXML | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xlsb` | Worksheets, names, visibility, shared strings, tables, charts, pivots, security signals, image assets |
-| PowerPoint OOXML | `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm` | Slides, hidden slides, masters, layouts, notes, size, charts, comments, images, media, security signals |
-| Legacy Office | `.doc`, `.dot`, `.xls`, `.xlt`, `.ppt`, `.pps`, `.pot` | CFB streams, SummaryInformation, macros, embedded-object signals, core statistics |
-| Modern iWork | `.key`, `.numbers`, `.pages` | IWA identity/integrity and application-specific structure, counts, geometry, formulas, tables, notes, builds, or transitions where present |
+| PDF | `.pdf` | Header and Info metadata, page and object counts, xref type, signatures, links, attachments, JavaScript, forms, annotations, and XMP presence |
+| Word OOXML | `.docx`, `.docm`, `.dotx`, `.dotm` | Metadata, saved statistics, paragraph and table structure, security signals, comments, and image assets |
+| Excel OOXML | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xlsb` | Worksheets, names, visibility, shared strings, tables, charts, pivots, security signals, and image assets |
+| PowerPoint OOXML | `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm` | Slides, hidden slides, masters, layouts, notes, size, charts, comments, images, media, and security signals |
+| Legacy Office | `.doc`, `.dot`, `.xls`, `.xlt`, `.ppt`, `.pps`, `.pot` | Validated CFB streams, SummaryInformation, macros, embedded-object signals, and core statistics |
+| Modern iWork | `.key`, `.numbers`, `.pages` | IWA identity and integrity plus application-specific structure, counts, geometry, formulas, tables, notes, builds, or transitions when present |
 
-`.xlsb` currently provides identity-level coverage. Legacy XML iWork packages are recognized but return a structured `UNSUPPORTED_FORMAT` error.
+<Tip>
+  `.xlsb` currently stops at document identity. Legacy XML iWork packages can be recognized, but return a structured `UNSUPPORTED_FORMAT` error.
+</Tip>
 
-## Discover the installed version
+## Inspect the installed contract
+
+Use the CLI discovery commands instead of assuming that every format exposes the same facts:
 
 ```bash
 deckprobe formats --pretty
@@ -25,14 +31,49 @@ deckprobe targets pdf --pretty
 deckprobe schema --pretty
 ```
 
-`formats` returns drivers, profiles, and support status. `targets` returns target definitions, aliases, value types, minimum levels, selectors, cost classes, and whether each target applies to the selected profile.
+- `formats` lists the available drivers, accepted profiles, and support status.
+- `targets pdf` lists exact Target IDs and aliases for PDF, their value types, minimum and supported levels, cost classes, applicability, and selector expansions.
+- `schema` prints the complete Schema v2 JSON Schema used to validate Full, Values, and Error reports.
 
-## Probe levels
+## What is a Target?
 
-| Level | Use it for |
+A Target is a named document fact, not a natural-language question about the document's content. It defines the value DeckProbe should resolve and the evidence that supports it.
+
+| Target | What it asks DeckProbe to resolve |
 | --- | --- |
-| `header` | Container identity and inexpensive routing facts |
-| `metadata` | Common metadata, saved statistics, and primary structure |
-| `deep` | Format-specific structure, security, assets, integrity, and higher-cost paths |
+| `document.format` | Verified document format |
+| `pdf.page_count` | Number of pages in a PDF |
+| `security.password_protected` | Whether the selected format reports password protection |
 
-Request only the targets your application needs. A higher level expands which paths are available; it does not change DeckProbe into a full content parser.
+Request explicit Target IDs when your application depends on a stable field. Short aliases such as `page_count` are convenient on the command line. Selector presets request related groups of Targets:
+
+- `@header` selects header-level identity facts.
+- `@summary` selects identity, common metadata, and primary structure.
+- `@security`, `@structure`, `@assets`, and `@quality` select facts for those concerns.
+- `@format` selects format-specific Targets available at the active level; `@all` selects every available Target.
+
+Run `deckprobe targets <format> --pretty` to see the exact expansion for the installed version.
+
+## How Probe Level affects a request
+
+Probe Level sets the maximum path depth and cost class the planner may use. Targets define **what** you need; the level defines **which probe paths are allowed** to resolve them. Raising the level does not automatically return more content.
+
+| Level | CLI aliases | Paths it enables | Typical use |
+| --- | --- | --- | --- |
+| `header` | `h`, `l0`, `0` | Container and header identity only | Fast format verification, rejection, and routing |
+| `metadata` (default) | `m`, `l1`, `1` | Header plus bounded metadata, core properties, primary counts, and supported security facts | Routine inventory and policy checks |
+| `deep` | `d`, `l2`, `2` | Higher-cost, format-specific structure, asset, and integrity paths | Targeted inspection that cannot be satisfied at `metadata` |
+
+For example:
+
+```bash
+deckprobe -l header   -t @header  --view values sample.pdf
+deckprobe -l metadata -t @summary --view values sample.pdf
+deckprobe -l deep     -t @all     --view values sample.pdf
+```
+
+If a Target requires a higher level than the active request allows, it remains unresolved. Add `--strict` when that condition must produce exit status `5` for automation.
+
+<Warning>
+  `-l deep -t @all` is useful for exploration, but can select expensive paths. In production, request only the explicit Targets your application consumes.
+</Warning>

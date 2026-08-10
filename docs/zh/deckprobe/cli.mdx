@@ -40,7 +40,7 @@ deckprobe --help
 
 ## 完成第一次嗅探
 
-使用默认的 Metadata-level Profile 嗅探本地文档：
+使用默认的 `metadata` 探测层级嗅探本地文档：
 
 ```bash
 deckprobe report.pdf
@@ -52,7 +52,7 @@ deckprobe report.pdf
 deckprobe -t format,slide_count --pretty deck.pptx
 ```
 
-DeckProbe 向标准输出写入一个 Schema v2 JSON Report。成功解析的 Target 包含 Value、Confidence、所选 Path 和 Evidence Source；报告还会记录实际执行成本与 Diagnostics。
+DeckProbe 向标准输出写入一份 Schema v2 JSON 报告。成功解析的 Target 包含 Value、置信度、所选 Path 和证据来源；报告还会记录实际执行成本与诊断信息。
 
 ## 常见任务
 
@@ -63,7 +63,7 @@ deckprobe -t @summary report.pdf
 # 嗅探安全相关信号
 deckprobe -t @security upload.docm
 
-# 返回紧凑 Values，而不是完整 Evidence Record
+# 只返回紧凑的 Values，不返回完整证据记录
 deckprobe -t @summary --view values report.pdf
 
 # 预览所选 Path，不执行非 Header Probe Path
@@ -77,20 +77,19 @@ deckprobe --strict -t format,page_count report.pdf
 
 <CardGroup cols={2}>
   <Card title="输入与 Target" href="/zh/deckprobe/cli/inputs-and-targets">
-    使用本地文件、stdin 或 JSONL；选择 Required/Optional Target；配置 Level、Confidence、Format Option 和预算。
+    使用本地文件、stdin 或 JSONL；选择必选与可选 Target；配置探测层级、置信度、格式选项和预算。
   </Card>
   <Card title="自动化与输出" href="/zh/deckprobe/cli/automation-and-output">
-    消费 Full、Values 和 Error Report；处理 JSONL、Strict Mode、Exit Status、确定性输出和 CI 工作流。
+    处理 Full、Values 和错误报告；配置 JSONL、严格模式、退出码、确定性输出和 CI 工作流。
   </Card>
   <Card title="命令参考" href="/zh/deckprobe/cli/command-reference">
     查看全部公开命令、全局参数、Alias、取值、Discovery、Completion 和 Man Page 命令。
   </Card>
   <Card title="输出模型" href="/zh/deckprobe/output-model">
-    阅读完整的 Schema v2 契约和 Target Evidence 模型。
+    阅读完整的 Schema v2 契约和 Target 证据模型。
   </Card>
 </CardGroup>
 
 <Tip>
   使用 `deckprobe targets --format FORMAT --pretty` 和 `deckprobe schema --pretty` 查询当前安装版本内置的能力与报告契约，避免硬编码会持续变化的列表。
 </Tip>
-

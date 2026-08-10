@@ -16,7 +16,7 @@ DeckProbe is designed for machine consumption: successful probes, partial result
 | JSONL mode | One compact JSON value for each non-empty input line |
 | `--help` and `--version` | Human-readable text |
 
-Do not parse Pretty output differently: `--pretty` changes whitespace only. The default `--view full` retains complete Target Evidence; `--view values` returns a compact Target-to-Value envelope.
+`--pretty` adds line breaks and indentation to the same JSON; it does not change fields, values, or structure. Always use a JSON parser instead of depending on line numbers or maintaining separate parsing logic for pretty and compact output. The default `--view full` retains complete Target evidence; `--view values` returns a compact Target-to-Value map.
 
 ## Report shapes
 

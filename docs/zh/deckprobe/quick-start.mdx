@@ -36,11 +36,13 @@ description: "安装 DeckProbe、下载示例 PDF、请求两个事实，并验�
     cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
     ```
   </Step>
-  <Step title="下载已知输入">
+  <Step title="下载多页 PDF">
     ```bash
-    curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf \
+    curl -fL https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf \
       -o sample.pdf
     ```
+
+    这份论文共有 14 页，包含足够的结构和元数据，便于验证探测结果。
   </Step>
   <Step title="请求格式和页数">
     ```bash
@@ -66,7 +68,7 @@ description: "安装 DeckProbe、下载示例 PDF、请求两个事实，并验�
       },
       "values": {
         "document.format": "pdf",
-        "pdf.page_count": 1
+        "pdf.page_count": 14
       },
       "unresolved_targets": [],
       "diagnostics": []
@@ -78,7 +80,7 @@ description: "安装 DeckProbe、下载示例 PDF、请求两个事实，并验�
 </Steps>
 
 <Tip>
-  固定格式专属 Target 前，先运行 `deckprobe targets pdf --pretty`。请求的 Target 未解析时必须返回非零状态，可以添加 `--strict`。
+  将格式专属 Target 写入程序前，先运行 `deckprobe targets pdf --pretty`，确认 Target ID、最低 Probe Level 和适用范围。自动化流程若要求所有 Target 都必须解析成功，请在探测命令中加入 `--strict`：Target 未解析时，DeckProbe 仍会输出完整 JSON，随后以状态码 `5` 退出。
 </Tip>
 
 <CardGroup cols={2}>

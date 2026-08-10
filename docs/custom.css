@@ -58,6 +58,16 @@ kbd,
   background: var(--deck-accent-soft);
 }
 
+.release-blocked {
+  color: #c62828;
+  font-weight: 700;
+}
+
+.dark .release-blocked,
+[data-theme="dark"] .release-blocked {
+  color: #ff8a80;
+}
+
 /* Maple places search and Ask Assistant in the left rail. These rules make
    that rail feel closer to HeyGen/HyperFrames without changing content. */
 #search-bar-entry,

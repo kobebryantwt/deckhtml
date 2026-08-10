@@ -75,6 +75,22 @@ deckprobe generate --help
 | `high` | `h` |
 | `exact` | `x` |
 
+Target option examples:
+
+```bash
+# Request two required Targets
+deckprobe -t format,page_count report.pdf
+
+# Request the security-related Target group
+deckprobe -t @security upload.docm
+
+# Return object_count only if an already-selected path also produces it
+deckprobe -t page_count -o object_count report.pdf
+
+# Require exact confidence for slide_count only
+deckprobe -t slide_count,orientation -C slide_count=exact deck.pptx
+```
+
 ## Probe level and resource options
 
 | Option | Default | Description |
@@ -93,6 +109,21 @@ Probe Level values:
 | Metadata | `metadata`, `m`, `l1`, `1` |
 | Deep | `deep`, `d`, `l2`, `2` |
 
+Probe Level examples:
+
+```bash
+# Header: inspect container and document identity for fast verification
+deckprobe -l header -t @header --view values report.pdf
+
+# Metadata: use the default level for bounded metadata and common counts
+deckprobe -l metadata -t @summary,page_count --view values report.pdf
+
+# Deep: permit higher-cost paths while requesting only needed Targets
+deckprobe -l deep -t @security,attachment_count --view values report.pdf
+```
+
+`-l` can also be written as `--probe-level`, for example `deckprobe --probe-level deep ...`. The level controls which paths may run; it does not automatically select every Target available at that level.
+
 ## Output and execution options
 
 | Option | Default | Description |
@@ -104,6 +135,22 @@ Probe Level values:
 | `--view VIEW` | `full` | Select `full` Evidence Report or compact `values` envelope |
 | `-h`, `--help` | — | Print help; use `--help` for complete details |
 | `-V`, `--version` | — | Print version |
+
+Output option examples:
+
+```bash
+# Write a readable full evidence report
+deckprobe --pretty --view full -t page_count report.pdf
+
+# Write only the compact Target-to-Value map
+deckprobe --view values -t format,page_count report.pdf
+
+# Inspect the plan without running non-header paths
+deckprobe --plan --pretty -t @summary,@security upload.docm
+
+# Exit with status 5 when any required Target is unresolved
+deckprobe --strict -t format,page_count report.pdf
+```
 
 ## `formats`
 
