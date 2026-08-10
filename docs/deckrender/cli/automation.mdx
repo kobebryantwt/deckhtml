@@ -7,11 +7,11 @@ description: "Integrate the DeckRender CLI with scripts using JSON output, stabl
 DeckRender keeps result data on stdout and progress, warnings, and errors on stderr. This allows callers to parse stdout without filtering terminal messages.
 
 ```bash
-result=$(deckrender deck.pptx --json)
+result=$(deckrender deck.pptx --json --quiet)
 first_file=$(printf '%s' "$result" | jq -r '.outputs[0].file')
 ```
 
-Use `--quiet` to suppress progress and warnings. Under `--json`, warnings remain structured messages on stderr; they never enter the success document on stdout.
+`--json` keeps the success document on stdout. Warnings are emitted as separate JSON objects on stderr. Add `--quiet` when automation needs stderr to contain only a final failure envelope.
 
 ## Success envelope
 
@@ -55,6 +55,15 @@ With `--json`, failures are written to stderr:
 
 Backend failures may also include `requestId`; include it when reporting a service issue.
 
+Without `--quiet`, stderr can contain newline-delimited warning objects before the final error object:
+
+```jsonl
+{"warning":"Resolution 2000 snapped to 1920: convertor.ppt2image accepts only 1080/1920/2560."}
+{"ok":false,"error":{"code":"render_error","message":"Task convertor.ppt2image failed: ..."}}
+```
+
+For the simplest error parser, use `--json --quiet`. If warnings are needed, read stderr as JSON Lines and treat the last object containing `error` as the failure envelope.
+
 ## Exit codes
 
 | Exit | Meaning | Error codes |
@@ -80,3 +89,23 @@ deckrender page.html -o - > page.png
 ```
 
 It cannot be combined with `--json`, and it fails if the route yields multiple frames.
+
+## A complete CI pattern
+
+```bash
+set +e
+deckrender deck.pptx --json --quiet -o frames/ > result.json 2> error.json
+code=$?
+set -e
+
+case "$code" in
+  0) jq -r '.outputs[].file' result.json ;;
+  2) jq -r '.error.code + ": " + .error.message' error.json >&2 ;;
+  3) echo "Configure DeckRender credentials before this job" >&2 ;;
+  *) jq -r '.error.message' error.json >&2 ;;
+esac
+
+exit "$code"
+```
+
+Exit `2` covers invalid usage, unsupported combinations, unsupported options, and planned-but-unimplemented routes. Inspect `error.code` to distinguish them.

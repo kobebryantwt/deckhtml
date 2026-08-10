@@ -43,7 +43,7 @@ This example creates its own input and runs through a Deckflow cloud render in g
   </Step>
   <Step title="Render one PNG">
     ```bash
-    deckrender hello.html -o hello.png --json
+    deckrender hello.html -o hello.png --json --quiet
     ```
   </Step>
   <Step title="Verify the artifact and result">
@@ -68,7 +68,7 @@ This example creates its own input and runs through a Deckflow cloud render in g
     }
     ```
 
-    Byte count and duration vary. Verify the file separately in automation:
+    `--quiet` keeps stderr empty unless the command fails. Byte count and duration vary. Verify the file separately in automation:
 
     ```bash
     test -s hello.png

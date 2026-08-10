@@ -37,6 +37,8 @@ Profile 或持久化默认值不能应用到当前路径时，DeckRender 会丢�
 
 ## 隔离环境
 
+CI 任务或访客模式测试不应继承工作站凭证时，需要同时重定向三个配置目录：
+
 ```bash
 export DECKFLOW_CONFIG_DIR=/tmp/deckflow-ci
 export DECKRENDER_CONFIG_DIR=/tmp/deckrender-ci
@@ -44,6 +46,14 @@ export DECKOPS_CONFIG_DIR=/tmp/deckops-ci
 deckrender hello.html -o hello.png --json --quiet
 ```
 
-三个目录都需要设置，避免旧的 DeckOps Token 被选为回退凭证。
+三个目录都需要设置，避免旧的 DeckOps Token 被选为备用凭证。环境变量的优先级高于配置文件；需要验证真正的访客模式时，还要清理继承的凭证变量：
+
+```bash
+unset DECKRENDER_API_KEY DECKFLOW_API_KEY DECKHTML_API_KEY
+unset DECKRENDER_TOKEN DECKFLOW_TOKEN
+deckrender config list
+```
+
+渲染前，`config list` 中的 `api-key` 和 `token` 都应显示为未设置。如果同一 Shell 中的其他进程仍需要这些变量，请在独立 CI Step 或容器中执行，不要直接清理共享环境。
 
 访客模式、登录、API Key、共享凭证和凭证优先级请查看[认证](/zh/deckrender/authentication)。

@@ -13,7 +13,7 @@ deckrender auth login
 deckrender auth status
 ```
 
-登录会打开 Deckflow 授权页面，并把返回的 Token 保存到 `~/.deckflow/credentials`。`auth status` 会向服务端验证当前有效凭证，并显示凭证来源。
+登录会打开 Deckflow 授权页面，并把返回的 Token 保存到 `~/.deckflow/credentials`。存在凭证时，`auth status` 会向服务端验证并显示来源；没有凭证时，它只会报告当前使用访客模式，不发起凭证验证请求。
 
 ## API Key
 

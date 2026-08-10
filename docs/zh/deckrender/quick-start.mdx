@@ -43,7 +43,7 @@ description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 
   </Step>
   <Step title="渲染一张 PNG">
     ```bash
-    deckrender hello.html -o hello.png --json
+    deckrender hello.html -o hello.png --json --quiet
     ```
   </Step>
   <Step title="验证产物和结果">
@@ -68,7 +68,7 @@ description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 
     }
     ```
 
-    字节数和耗时会变化。自动化流程还应单独检查文件：
+    `--quiet` 会在命令失败前保持 stderr 为空。字节数和耗时会变化，自动化流程还应单独检查文件：
 
     ```bash
     test -s hello.png

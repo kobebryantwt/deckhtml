@@ -37,6 +37,8 @@ If a profile or stored default cannot apply to the selected route, DeckRender dr
 
 ## Isolated environments
 
+Redirect all three config locations when a CI job or guest-mode test must not inherit workstation credentials:
+
 ```bash
 export DECKFLOW_CONFIG_DIR=/tmp/deckflow-ci
 export DECKRENDER_CONFIG_DIR=/tmp/deckrender-ci
@@ -44,6 +46,14 @@ export DECKOPS_CONFIG_DIR=/tmp/deckops-ci
 deckrender hello.html -o hello.png --json --quiet
 ```
 
-All three directories are needed to prevent an older DeckOps token from being selected as a fallback credential.
+All three directories are needed to prevent an older DeckOps token from being selected as a fallback credential. Environment variables have higher priority than these files, so clear inherited credential variables for a true guest-mode check:
+
+```bash
+unset DECKRENDER_API_KEY DECKFLOW_API_KEY DECKHTML_API_KEY
+unset DECKRENDER_TOKEN DECKFLOW_TOKEN
+deckrender config list
+```
+
+`config list` should show both `api-key` and `token` as unset before the render. Do not clear variables in a shared shell if another process still needs them; use an isolated CI step or container instead.
 
 Use [Authentication](/deckrender/authentication) for guest mode, login, API keys, shared credentials, and credential precedence.

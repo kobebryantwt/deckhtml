@@ -1,55 +1,84 @@
 ---
 title: Supported Formats
 sidebarTitle: Supported Formats
-description: "Find implemented DeckRender input and output combinations and understand route-specific behavior."
+description: "Choose an implemented DeckRender route and check which image, sizing, and page options it can honor."
 ---
 
-DeckRender uses a source-to-target route table. A recognized source format does not imply that every target is available.
+DeckRender routes one source format to one output family. Recognizing an input does not mean every output or option is available for it.
+
+## Input and output matrix
 
 | Input | Image | PDF | Video |
 | --- | --- | --- | --- |
-| PowerPoint `.pptx`, `.ppt` | PNG/JPEG/WebP | Yes | MP4 |
-| PDF `.pdf` | PNG/JPEG/WebP | Passthrough | — |
-| Keynote `.key` | PNG/WebP | Yes | — |
-| Word `.docx`, `.doc` | PNG/JPEG/WebP | Yes | — |
-| HTML `.html`, `.htm`, URL | PNG/WebP | Yes | MP4 |
-| Markdown `.md`, `.markdown` | PNG/WebP | — | — |
-| Pages `.pages` | Embedded JPEG preview | Local PDF wrapper | — |
-| Numbers `.numbers` | Embedded JPEG preview | Local PDF wrapper | — |
-| Excel `.xlsx` | Not implemented | Not implemented | — |
+| PowerPoint `.pptx`, `.ppt` | PNG, JPEG, WebP | Yes | MP4 |
+| PDF `.pdf` | PNG, JPEG, WebP | Local passthrough | Planned |
+| Keynote `.key` | PNG, WebP | Yes | Planned |
+| Word `.docx`, `.doc` | PNG, JPEG, WebP | Yes | — |
+| HTML `.html`, `.htm`, URL | PNG, WebP | Yes | MP4 |
+| Markdown `.md`, `.markdown` | PNG, WebP | — | — |
+| Pages `.pages` | Embedded JPEG preview | One-page PDF wrapper | — |
+| Numbers `.numbers` | Embedded JPEG preview | One-page PDF wrapper | — |
+| Excel `.xlsx` | Planned | Planned | — |
 
-Run the command for the matrix implemented by the installed version:
+- **Yes** means the route is implemented in the current release.
+- **Planned** returns `not_implemented`; the error explains the missing capability.
+- **—** returns `unsupported_format` because the current route table has no such combination.
+
+Query the installed version instead of hard-coding this table:
 
 ```bash
 deckrender formats
 deckrender formats --json
 ```
 
-The JSON form includes whether a route is direct, derived, local, or passthrough, its task chain, and any fidelity caveat.
+The JSON form reports `supported`, `planned`, route `kind`, task chain, and fidelity caveat for every source/output pair.
 
-## Important route behavior
+## Image options by source
+
+Image controls belong to the task that creates the image, so they differ by route.
+
+| Image source | `--width` / `--scale` | `--image-format` | `--pages` |
+| --- | --- | --- | --- |
+| PowerPoint | Snaps to 1080, 1920, or 2560 px | `png`, `jpg`, `webp` | Yes |
+| PDF | Any positive long-edge value | `png`, `jpg`, `webp` | Yes |
+| Word | Any positive value on the PDF-to-image step | `png`, `jpg`, `webp` | Yes |
+| Keynote | Not available | `png`, `webp` | Yes |
+| HTML or URL as HTML | Width and scale | `png`, `webp` | No; one full-page image |
+| Markdown | Page width and scale | `png`, `webp` | No; one image |
+| Pages or Numbers | Not available | Embedded JPEG only | No; first page only |
+
+On cloud routes, an explicit incompatible option normally fails with `unsupported_option`. A value inherited from a profile or saved config is normally dropped with a warning so a general default does not break an otherwise valid route.
+
+<Warning>
+  The current HTML and Markdown routes do not map `--quality` to a backend parameter; use `--width` or `--scale` instead. Pages and Numbers always write the embedded JPEG bytes and do not transcode `--image-format`. Use a `.jpg` output name for image output. These cases are implementation limits of version 0.1.0.
+</Warning>
+
+<Tip>
+  WebP is a separate per-image cloud conversion step. With `--pages`, DeckRender filters frames before WebP conversion, so only selected pages enter that extra step.
+</Tip>
+
+## Route-specific behavior
 
 <AccordionGroup>
   <Accordion title="HTML to PDF or video">
-    These are derived routes. DeckRender first rebuilds the HTML as PPTX, then exports that PPTX to PDF or video. The result follows the slide model rather than being a native print or live-page capture. The caveat is returned in the result.
+    DeckRender first converts HTML to PPTX, then exports that PPTX. PDF follows slide layout rather than native browser print layout; video is a slideshow of the reconstructed deck, not a recording of a live page. The result includes a `caveat`.
   </Accordion>
   <Accordion title="Word to image">
-    Word input is converted to PDF first, then the PDF is rendered into page images. The result reports both tasks in `route`.
+    Word is converted to PDF, then the PDF is rendered into page images. The result `route` contains both tasks. Intermediate output is downloaded and uploaded again because the current backend cannot chain tasks by an upstream task ID.
   </Accordion>
   <Accordion title="Pages and Numbers">
-    These local routes extract the document's embedded `preview.jpg`. Only the first page is available and DeckRender cannot increase its stored resolution. PDF output wraps that JPEG in a PDF; it does not perform a full iWork render.
+    These local routes extract `preview.jpg` (or a fallback preview) from the iWork package. Only the first page and its stored resolution are available. Image output should use a `.jpg` destination because no local transcoder runs. PDF output wraps the same JPEG in a single-page PDF; it is not a full Pages or Numbers render.
   </Accordion>
   <Accordion title="PDF to PDF">
-    A local PDF file is copied through the artifact writer without a cloud task. URL or stdin input cannot use this passthrough route.
+    A local PDF file is copied through without upload or re-rendering. URL and stdin inputs do not have a local path and therefore cannot use this passthrough route.
+  </Accordion>
+  <Accordion title="URL input">
+    Without `--from`, a URL is treated as HTML. DeckRender fetches it in the local Node.js process, inserts a base URL for relative assets, and uploads the resulting source. It does not capture the current cookies, login state, or runtime DOM from the user's browser. Use `--from` when the URL points to another supported file type.
   </Accordion>
 </AccordionGroup>
 
-## Image controls vary by route
+## Page selection and single-file output
 
-- PowerPoint image output accepts 1080, 1920, or 2560 for the long edge. Other requested widths snap to the nearest tier with a warning.
-- PDF image output accepts an arbitrary long-edge resolution.
-- HTML and Markdown image output accept scale and an explicit width.
-- Keynote and embedded iWork preview routes do not expose resolution controls.
-- WebP is produced by a trailing image conversion step when the base route does not emit it directly.
+`--pages` and `--page` apply only to multi-frame image routes. Selection happens after the base cloud render, so it reduces downloads and written files, but not the pages rendered by the base task or its compute cost.
 
-An explicitly supplied option that the selected route cannot honor returns `unsupported_option`. A default inherited from a profile or config file is dropped with a warning instead.
+PDF and video are single-file outputs. They reject sizing, image encoding, quality, and page-selection options because the current backend tasks expose no matching parameters. Video tuning flags such as `--fps`, `--duration`, and `--transition` are also not implemented.

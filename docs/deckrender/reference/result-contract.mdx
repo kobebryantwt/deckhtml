@@ -41,6 +41,12 @@ interface RenderOutputEntry {
 
 The render plan and `route` are execution metadata. They do not contain parsed pages, elements, text, or Document IR.
 
+Output entry paths depend on the destination:
+
+- Regular file and directory output uses the path written by DeckRender; relative `-o` values remain relative in the result.
+- Raw stdout output uses `file: "-"`.
+- For a ZIP destination, `outputs[].file` is the member name inside the archive, such as `001.png`, not the ZIP path. The CLI success line identifies the archive itself.
+
 ## Errors
 
 The Node.js API throws `DeckRenderError`, which exposes `code`, `message`, optional `hint`, and optional backend `requestId`.

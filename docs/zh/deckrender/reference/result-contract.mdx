@@ -41,6 +41,12 @@ interface RenderOutputEntry {
 
 Render Plan 和 `route` 都属于执行元数据，不包含解析后的页面、元素、文本或 Document IR。
 
+输出条目的路径取决于写出方式：
+
+- 普通文件和目录输出记录 DeckRender 实际写入的路径；相对 `-o` 值在结果中仍是相对路径。
+- 原始 stdout 输出使用 `file: "-"`。
+- 输出 ZIP 时，`outputs[].file` 表示压缩包内的成员名，例如 `001.png`，而不是 ZIP 文件路径；CLI 的成功信息会显示压缩包本身。
+
 ## 错误
 
 Node.js API 会抛出 `DeckRenderError`，其中包含 `code`、`message`、可选的 `hint`，以及可选的云端 `requestId`。

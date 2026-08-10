@@ -7,11 +7,11 @@ description: "使用 JSON 输出、稳定的数据流和退出码，把 DeckRend
 DeckRender 把结果数据写入 stdout，把进度、警告和错误写入 stderr。调用方无需过滤终端信息即可解析 stdout。
 
 ```bash
-result=$(deckrender deck.pptx --json)
+result=$(deckrender deck.pptx --json --quiet)
 first_file=$(printf '%s' "$result" | jq -r '.outputs[0].file')
 ```
 
-使用 `--quiet` 可以隐藏进度和警告。启用 `--json` 时，警告仍以结构化消息写入 stderr，不会混入 stdout 的成功结果。
+`--json` 会把成功结果保留在 stdout。警告会作为独立 JSON 对象写到 stderr。自动化流程希望 stderr 只包含最终失败结果时，请同时使用 `--quiet`。
 
 ## 成功结果
 
@@ -55,6 +55,15 @@ first_file=$(printf '%s' "$result" | jq -r '.outputs[0].file')
 
 云端失败还可能包含 `requestId`，反馈服务问题时请一并提供。
 
+未使用 `--quiet` 时，stderr 可能先输出多条警告 JSON，最后才输出错误对象：
+
+```jsonl
+{"warning":"Resolution 2000 snapped to 1920: convertor.ppt2image accepts only 1080/1920/2560."}
+{"ok":false,"error":{"code":"render_error","message":"Task convertor.ppt2image failed: ..."}}
+```
+
+希望错误解析最简单时，请使用 `--json --quiet`。如果需要保留警告，应把 stderr 按 JSON Lines 读取，并将最后一个包含 `error` 的对象作为失败结果。
+
 ## 退出码
 
 | 退出码 | 含义 | 错误码 |
@@ -80,3 +89,23 @@ deckrender page.html -o - > page.png
 ```
 
 它不能与 `--json` 组合；路径产生多个页面时也会失败。
+
+## 完整的 CI 模式
+
+```bash
+set +e
+deckrender deck.pptx --json --quiet -o frames/ > result.json 2> error.json
+code=$?
+set -e
+
+case "$code" in
+  0) jq -r '.outputs[].file' result.json ;;
+  2) jq -r '.error.code + ": " + .error.message' error.json >&2 ;;
+  3) echo "Configure DeckRender credentials before this job" >&2 ;;
+  *) jq -r '.error.message' error.json >&2 ;;
+esac
+
+exit "$code"
+```
+
+退出码 `2` 可能表示调用参数错误、不支持的格式组合、不支持的选项，或已经规划但尚未实现的路线。应继续读取 `error.code` 区分具体原因。

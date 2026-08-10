@@ -31,6 +31,8 @@ console.log(result.outputs);
 
 `render()` 会读取输入、构建并执行路由、写出产物，然后返回 `RenderResult`。省略凭证时使用访客模式。
 
+多数路线会把源文件上传到 Deckflow 云端。URL 会先由本地 Node.js 进程抓取；HTML 的相对资源会获得 Base URL，随后得到的源内容才会上传。这并不是对用户浏览器会话、Cookie 或当前运行时 DOM 的捕获。本地 PDF 透传以及 Pages/Numbers 预览提取不会上传输入。
+
 ## 复用 Renderer
 
 ```ts
@@ -71,7 +73,20 @@ const result = await renderer.render({
 | `timeout` | `number` | 云端任务等待超时秒数 |
 | `onProgress` | `(event) => void` | 读取、规划、上传、任务、等待、下载和写出事件 |
 
+图片参数的支持范围取决于路线。在 0.1.0 中，`quality` 只会影响 PowerPoint 和基于 PDF 的图片路线；HTML 与 Markdown 应使用 `width` 或 `scale`。将这些参数直接提供给最终用户前，请先查看[支持格式](/zh/deckrender/formats)。
+
 SDK 不会自动应用 CLI profile 或 CLI 的渲染默认配置。请显式传入选项；应用需要复用相同行为时，也可以使用包导出的 `PROFILES` 和 `layerOptions`。
+
+应用需要在渲染前判断组合是否可用时，可以调用 `supportedTargets()` 或 `findRoute()`：
+
+```ts
+import { findRoute, supportedTargets } from '@deckflow/deckrender';
+
+console.log(supportedTargets('docx')); // ['image', 'pdf']
+console.log(findRoute('docx', 'image')?.kind); // 'derived'
+```
+
+这些函数读取当前安装软件包内置的路由表，不会请求云端服务。
 
 ## Renderer 配置
 
@@ -84,6 +99,10 @@ SDK 不会自动应用 CLI profile 或 CLI 的渲染默认配置。请显式传�
 - `onPaymentRequired`：收到 `402` 后由调用方实现的处理回调。
 
 即使提供了自定义云端客户端，本地和透传路径仍会在本地执行。
+
+<Warning>
+  注入的 `client` 会被视为已经认证。如果应用需要 DeckRender 内置的访客任务启动逻辑，请不要传入 `client`，让 DeckRender 自行创建。`onUnauthorized` 和 `onPaymentRequired` 也只应用于内置客户端路径；注入的客户端需要自行配置这些回调。
+</Warning>
 
 ## 处理类型化错误
 

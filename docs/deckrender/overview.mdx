@@ -4,7 +4,7 @@ sidebarTitle: Overview
 description: "Render supported documents into predictable image, PDF, or video artifacts through one CLI and Node.js API."
 ---
 
-DeckRender is a visual artifact router for documents. It accepts one local file, HTTP(S) URL, or stdin stream, selects an implemented source-to-output route, executes it, and writes a file, numbered frames, or a ZIP archive.
+DeckRender turns supported documents into image, PDF, or video files through one CLI and Node.js API. Give it one local file, HTTP(S) URL, or stdin stream; it selects an implemented route and writes a single file, numbered page images, or a ZIP archive.
 
 | Item | Current contract |
 | --- | --- |
@@ -22,15 +22,24 @@ DeckRender is a visual artifact router for documents. It accepts one local file,
 - MP4 slideshow output from PowerPoint, or from HTML through a PPTX route.
 - A stable artifact and result contract without managing DeckOps task chains directly.
 
-```mermaid
-flowchart LR
-  I["File / URL / stdin"] --> R["Resolve input and choose route"]
-  R --> E["Local, passthrough, or cloud execution"]
-  E --> W["Write file, frames, or ZIP"]
-  W --> J["RenderResult"]
-```
+## How one render runs
 
-DeckRender does not parse text or document elements, return Document IR, or edit source content. Its `RenderPlan` describes execution only.
+<Steps>
+  <Step title="Resolve the input">
+    Read one file or stdin stream, or fetch one URL in the local Node.js process.
+  </Step>
+  <Step title="Choose a supported route">
+    Match the source, requested output family, and compatible image options against the installed route table.
+  </Step>
+  <Step title="Execute locally or in the cloud">
+    Use local passthrough or preview extraction where implemented; otherwise upload the source and run Deckflow cloud tasks.
+  </Step>
+  <Step title="Write and report the result">
+    Download and write the requested artifact layout, then return a `RenderResult` describing the route and written files.
+  </Step>
+</Steps>
+
+DeckRender does not parse text or document elements, return Document IR, or edit source content. Its internal `RenderPlan` describes execution only.
 
 ## Data and execution boundary
 

@@ -21,6 +21,14 @@ cat page.html | deckrender - --from html -o page.png
 
 Stdin has no filename, so `--from` is required. A URL defaults to HTML unless `--from` says otherwise. DeckRender fetches URL content locally and inserts a base URL when needed so relative page assets can resolve during rendering.
 
+For a URL that points directly to another supported file, specify its type:
+
+```bash
+deckrender https://example.com/deck.pptx --from pptx -o frames/
+```
+
+URL requests do not inherit browser cookies, custom request headers, or a logged-in browser session. Download protected input in the application first, then pass the local file to DeckRender.
+
 ## Common render options
 
 | Option | Purpose |
@@ -41,7 +49,17 @@ Stdin has no filename, so `--from` is required. A URL defaults to HTML unless `-
 | `--quiet` | Suppress progress and warnings |
 | `-v, --verbose` | Emit detailed diagnostics to stderr |
 
-`--quiet` and `--verbose` conflict. Explicit options unsupported by the selected route fail rather than being silently ignored.
+`--quiet` and `--verbose` conflict. Option support depends on the selected route; most incompatible explicit options fail with `unsupported_option`. Check [Supported Formats](/deckrender/formats) for the route table and the current 0.1.0 exceptions.
+
+The output extension can infer both output family and image encoding:
+
+```bash
+deckrender deck.pptx -o deck.pdf       # PDF
+deckrender deck.pptx -o frame.webp     # WebP image output
+deckrender deck.pptx --format video -o deck.mp4
+```
+
+If `--format` conflicts with the `-o` extension, `--format` wins and DeckRender warns. The filename is not renamed, so avoid combinations such as `--format pdf -o output.png` that put one file type behind another extension.
 
 ## Output path rules
 

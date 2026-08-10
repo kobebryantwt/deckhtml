@@ -1,55 +1,84 @@
 ---
-title: 支持的格式
-sidebarTitle: 支持的格式
-description: "查看 DeckRender 已实现的输入输出组合，并了解不同渲染路径的行为。"
+title: 支持格式
+sidebarTitle: 支持格式
+description: "选择已实现的 DeckRender 路线，并确认它支持哪些图片、尺寸和页面参数。"
 ---
 
-DeckRender 按“源格式到目标格式”的路由表执行。能够识别某种源格式，不代表它支持所有目标产物。
+DeckRender 将一种源格式路由到一种输出类型。能够识别输入，并不代表它支持所有输出或参数。
+
+## 输入与输出矩阵
 
 | 输入 | 图片 | PDF | 视频 |
 | --- | --- | --- | --- |
-| PowerPoint `.pptx`、`.ppt` | PNG/JPEG/WebP | 支持 | MP4 |
-| PDF `.pdf` | PNG/JPEG/WebP | 透传 | — |
-| Keynote `.key` | PNG/WebP | 支持 | — |
-| Word `.docx`、`.doc` | PNG/JPEG/WebP | 支持 | — |
-| HTML `.html`、`.htm`、URL | PNG/WebP | 支持 | MP4 |
-| Markdown `.md`、`.markdown` | PNG/WebP | — | — |
-| Pages `.pages` | 内嵌 JPEG 预览 | 本地封装为 PDF | — |
-| Numbers `.numbers` | 内嵌 JPEG 预览 | 本地封装为 PDF | — |
-| Excel `.xlsx` | 尚未实现 | 尚未实现 | — |
+| PowerPoint `.pptx`、`.ppt` | PNG、JPEG、WebP | 支持 | MP4 |
+| PDF `.pdf` | PNG、JPEG、WebP | 本地透传 | 已规划 |
+| Keynote `.key` | PNG、WebP | 支持 | 已规划 |
+| Word `.docx`、`.doc` | PNG、JPEG、WebP | 支持 | — |
+| HTML `.html`、`.htm`、URL | PNG、WebP | 支持 | MP4 |
+| Markdown `.md`、`.markdown` | PNG、WebP | — | — |
+| Pages `.pages` | 内嵌 JPEG 预览 | 单页 PDF 封装 | — |
+| Numbers `.numbers` | 内嵌 JPEG 预览 | 单页 PDF 封装 | — |
+| Excel `.xlsx` | 已规划 | 已规划 | — |
 
-使用以下命令查看当前安装版本实际实现的矩阵：
+- **支持**表示当前版本已经实现该路线。
+- **已规划**会返回 `not_implemented`，错误信息会说明当前缺少的能力。
+- **—**会返回 `unsupported_format`，表示当前路由表不存在该组合。
+
+不要在程序中硬编码这张表，应查询当前安装版本：
 
 ```bash
 deckrender formats
 deckrender formats --json
 ```
 
-JSON 结果还会说明路由属于直连、派生、本地还是透传，并列出任务链和已知保真限制。
+JSON 结果会为每个输入和输出组合返回 `supported`、`planned`、路线 `kind`、任务链和保真限制。
 
-## 重要的路径行为
+## 不同来源支持的图片参数
+
+图片参数由实际生成图片的任务决定，因此不同路线的支持范围并不相同。
+
+| 图片来源 | `--width` / `--scale` | `--image-format` | `--pages` |
+| --- | --- | --- | --- |
+| PowerPoint | 吸附到 1080、1920 或 2560 px | `png`、`jpg`、`webp` | 支持 |
+| PDF | 任意正数长边尺寸 | `png`、`jpg`、`webp` | 支持 |
+| Word | 在 PDF 转图片步骤接受任意正数 | `png`、`jpg`、`webp` | 支持 |
+| Keynote | 不支持 | `png`、`webp` | 支持 |
+| HTML 或按 HTML 处理的 URL | 支持宽度和缩放 | `png`、`webp` | 不支持；只生成一张长图 |
+| Markdown | 支持页面宽度和缩放 | `png`、`webp` | 不支持；只生成一张图片 |
+| Pages 或 Numbers | 不支持 | 仅内嵌 JPEG | 不支持；仅第一页 |
+
+在云端路线中，显式传入不兼容参数通常会返回 `unsupported_option`。如果参数来自 Profile 或保存的配置，DeckRender 通常会发出警告并忽略它，避免通用默认值阻断本可执行的路线。
+
+<Warning>
+  当前 HTML 和 Markdown 路线不会把 `--quality` 映射到后端参数，请改用 `--width` 或 `--scale`。Pages 和 Numbers 始终写出内嵌 JPEG 字节，不会根据 `--image-format` 转码；图片输出应使用 `.jpg` 文件名。这些是 0.1.0 版本的实现限制。
+</Warning>
+
+<Tip>
+  WebP 通过额外的逐图云端转换步骤生成。使用 `--pages` 时，DeckRender 会先筛选页面，再执行 WebP 转换，因此只有选中页面会进入该步骤。
+</Tip>
+
+## 路线的特殊行为
 
 <AccordionGroup>
   <Accordion title="HTML 转 PDF 或视频">
-    这是多步派生路径。DeckRender 会先把 HTML 重建为 PPTX，再把 PPTX 导出为 PDF 或视频。结果遵循幻灯片模型，并非原生打印或在线页面录制；对应限制会出现在结果中。
+    DeckRender 会先把 HTML 转为 PPTX，再导出 PPTX。PDF 遵循幻灯片布局，而不是浏览器原生打印布局；视频是重建后演示文稿的播放结果，不是实时网页录屏。结果中会包含 `caveat`。
   </Accordion>
   <Accordion title="Word 转图片">
-    Word 输入先转换为 PDF，再把 PDF 渲染为页面图片。结果中的 `route` 会包含两个任务。
+    Word 会先转为 PDF，再把 PDF 渲染成页面图片。结果的 `route` 会包含两个任务。当前后端不能通过上游任务 ID 直接串联任务，因此中间产物会经历一次下载和重新上传。
   </Accordion>
-  <Accordion title="Pages 与 Numbers">
-    这两条本地路径读取文档内嵌的 `preview.jpg`，只能得到第一页，也无法提高预览图在文件中保存的分辨率。PDF 输出只是把该 JPEG 封装为 PDF，并不是完整的 iWork 渲染。
+  <Accordion title="Pages 和 Numbers">
+    这些本地路线从 iWork 包中提取 `preview.jpg` 或备用预览。只能得到第一页和文件中保存的原始分辨率。由于本地不会执行转码，图片输出应使用 `.jpg` 目标文件。PDF 输出只是把同一张 JPEG 封装为单页 PDF，并不是完整渲染 Pages 或 Numbers。
   </Accordion>
   <Accordion title="PDF 转 PDF">
-    本地 PDF 文件会经产物写出器直接复制，不创建云端任务。URL 或标准输入不能使用该透传路径。
+    本地 PDF 文件会直接复制，不上传也不重新渲染。URL 与 stdin 输入没有本地路径，因此不能使用该透传路线。
+  </Accordion>
+  <Accordion title="URL 输入">
+    未提供 `--from` 时，URL 会按 HTML 处理。DeckRender 在本地 Node.js 进程中抓取页面，为相对资源插入 Base URL，然后上传得到的源内容。它不会获得用户浏览器当前的 Cookie、登录状态或运行时 DOM。URL 指向其他受支持文件时，需要使用 `--from` 指定格式。
   </Accordion>
 </AccordionGroup>
 
-## 不同路径支持的图片参数不同
+## 页面选择与单文件输出
 
-- PowerPoint 图片的长边只支持 1080、1920 或 2560；其他宽度会取最接近档位并给出警告。
-- PDF 图片支持任意长边分辨率。
-- HTML 与 Markdown 图片支持缩放倍数和显式宽度。
-- Keynote 与 iWork 内嵌预览路径不提供分辨率控制。
-- 基础路径不能直接输出 WebP 时，会追加图片转换步骤。
+`--pages` 和 `--page` 只适用于多图片路线。筛选发生在基础云端渲染完成之后，因此可以减少下载和写入的文件，但不会减少基础任务渲染的页数或计算成本。
 
-显式传入路径无法执行的选项时，命令返回 `unsupported_option`。来自 profile 或配置文件的默认值无法执行时，只会被丢弃并给出警告。
+PDF 和视频都是单文件输出。当前后端任务没有对应参数，因此这些输出不接受尺寸、图片编码、质量或页面选择参数。`--fps`、`--duration`、`--transition` 等视频调节参数也尚未实现。

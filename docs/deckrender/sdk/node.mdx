@@ -31,6 +31,8 @@ console.log(result.outputs);
 
 `render()` resolves the input, builds and executes a route, writes the artifacts, and returns a `RenderResult`. Omit credentials to use guest mode.
 
+Most routes upload the source to Deckflow cloud. A URL is fetched by the local Node.js process first; relative HTML assets receive a base URL, then the resulting source is uploaded. This is not a capture of the user's browser session, cookies, or current runtime DOM. Local PDF passthrough and Pages/Numbers preview extraction do not upload the input.
+
 ## Reusable renderer
 
 ```ts
@@ -71,7 +73,20 @@ Use `createRenderer()` to reuse credentials, warning handling, or a custom execu
 | `timeout` | `number` | Cloud task wait timeout in seconds |
 | `onProgress` | `(event) => void` | Resolve, plan, upload, task, wait, download, and write events |
 
+Image options are route-specific. In version 0.1.0, `quality` affects PowerPoint and PDF-based image routes; use `width` or `scale` for HTML and Markdown. See [Supported Formats](/deckrender/formats) before exposing these options directly to users.
+
 The SDK does not apply CLI profiles or the CLI render-default config automatically. Pass render options explicitly; the exported `PROFILES` and `layerOptions` helpers are available if an application wants the same behavior.
+
+Use `supportedTargets()` or `findRoute()` when an application needs to check a combination before rendering:
+
+```ts
+import { findRoute, supportedTargets } from '@deckflow/deckrender';
+
+console.log(supportedTargets('docx')); // ['image', 'pdf']
+console.log(findRoute('docx', 'image')?.kind); // 'derived'
+```
+
+These functions describe the route table bundled with the installed package. They do not contact the cloud service.
 
 ## Renderer configuration
 
@@ -84,6 +99,10 @@ The SDK does not apply CLI profiles or the CLI render-default config automatical
 - `onPaymentRequired`: a caller-provided hook after `402`.
 
 Local and passthrough routes continue to run locally even when a custom cloud client is supplied.
+
+<Warning>
+  An injected `client` is treated as already authenticated. If the application needs DeckRender's built-in guest task startup, omit `client` and let DeckRender create it. `onUnauthorized` and `onPaymentRequired` also apply only to the built-in client path; an injected client must configure its own hooks.
+</Warning>
 
 ## Handle typed errors
 

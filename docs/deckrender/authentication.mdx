@@ -13,7 +13,7 @@ deckrender auth login
 deckrender auth status
 ```
 
-Login opens the Deckflow authorization page and stores the returned token in `~/.deckflow/credentials`. `auth status` validates the effective credential against the backend and shows its source.
+Login opens the Deckflow authorization page and stores the returned token in `~/.deckflow/credentials`. When credentials exist, `auth status` validates them against the backend and shows their source; without credentials it reports that guest mode is active without making a validation request.
 
 ## API key
 

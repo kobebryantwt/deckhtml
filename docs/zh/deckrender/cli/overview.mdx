@@ -21,6 +21,14 @@ cat page.html | deckrender - --from html -o page.png
 
 标准输入没有文件名，因此必须使用 `--from`。URL 默认按 HTML 处理，除非通过 `--from` 指定其他格式。DeckRender 会先在本地获取 URL 内容，并在需要时补充基础 URL，使页面中的相对资源能在渲染时正确解析。
 
+URL 直接指向其他受支持文件时，需要指定类型：
+
+```bash
+deckrender https://example.com/deck.pptx --from pptx -o frames/
+```
+
+URL 请求不会继承浏览器 Cookie、自定义请求 Header 或已经登录的浏览器会话。对于受保护的输入，应先在应用中完成下载，再把本地文件交给 DeckRender。
+
 ## 常用渲染选项
 
 | 选项 | 用途 |
@@ -41,7 +49,17 @@ cat page.html | deckrender - --from html -o page.png
 | `--quiet` | 隐藏进度与警告 |
 | `-v, --verbose` | 把详细诊断写入 stderr |
 
-`--quiet` 与 `--verbose` 不能同时使用。所选路径无法执行显式选项时，命令会报错，不会静默忽略。
+`--quiet` 与 `--verbose` 不能同时使用。参数支持范围取决于所选路线；多数不兼容的显式参数会返回 `unsupported_option`。路线参数表和 0.1.0 的当前例外请查看[支持格式](/zh/deckrender/formats)。
+
+输出扩展名可以同时推断输出类型和图片编码：
+
+```bash
+deckrender deck.pptx -o deck.pdf       # PDF
+deckrender deck.pptx -o frame.webp     # WebP 图片
+deckrender deck.pptx --format video -o deck.mp4
+```
+
+如果 `--format` 与 `-o` 扩展名冲突，DeckRender 会采用 `--format` 并给出警告，但不会修改文件名。因此应避免 `--format pdf -o output.png` 这类让文件内容与扩展名不一致的组合。
 
 ## 输出路径规则
 
