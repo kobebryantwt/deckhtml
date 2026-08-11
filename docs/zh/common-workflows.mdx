@@ -12,7 +12,7 @@ description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps
 | 构建搜索、RAG 或文档理解 | DeckOps Parse | Markdown 或结构化内容 |
 | 为评审界面加入预览 | DeckRender | 图片、PDF 或受支持的视频 |
 | 个性化修改现有演示文稿 | DeckUse | 修改后仍可编辑的 PPTX |
-| 从应用数据生成演示文稿 | DeckHTML | PPTX 或 PNG，以及诊断信息 |
+| 从应用数据生成演示文稿 | DeckHTML | 带映射诊断的 PPTX，或 PNG 图片 |
 | 校验、解析并预览同一上传文件 | DeckProbe → DeckOps → DeckRender | 策略、内容和视觉产物 |
 
 ## 常见 Agent 场景
@@ -110,12 +110,16 @@ DeckProbe、DeckRender 和 DeckOps 分别提供独立调用与结果契约。应
 
 <div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">根据模板、应用数据或生成内容编写的 HTML 或 SVG。</span></div>
 
-使用 DeckHTML 把浏览器布局尽可能映射为可编辑 PPTX 元素，并在必要时回退为栅格图像。输入必须留在本机时使用本地模式；需要字体嵌入等云端专属能力时选择云端模式。
+使用 DeckHTML 把浏览器布局尽可能映射为可编辑 PPTX 元素，并在必要时回退为栅格图像。源文件可以是一份多页 HTML，也可以是多个有序 HTML/SVG 文件。输入必须留在本机时使用本地模式；需要字体嵌入等云端专属能力时选择云端模式。
 
-<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">PPTX 或 PNG，以及标识原生、矢量、栅格、忽略和不支持映射的诊断信息。</span></div>
+<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">带有原生、矢量、栅格、忽略和不支持映射诊断的 PPTX，或按页排序的渲染 PNG 图片。</span></div>
 
 <Card title="从 DeckHTML 开始" href="/zh/deckhtml/quick-start">
   准备 Chromium、创建一页幻灯片、生成 PPTX，并检查转换决策。
+</Card>
+
+<Card title="生成多页演示文稿" href="/zh/deckhtml/guides/multi-page-and-batch">
+  在重复幻灯片容器、有序源文件和多个自包含 HTML URL 之间选择。
 </Card>
 
 ## 组合校验、内容和预览

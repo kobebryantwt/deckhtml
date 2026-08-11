@@ -8,7 +8,7 @@ description: "Consume DeckHTML output safely from scripts and CI pipelines."
 
 The default mode is intended for humans and may print progress, font notices, and artifact paths. Do not parse it as a stable stdout protocol. Multi-page PNG conversion prints each output path.
 
-DeckHTML refuses to overwrite an existing local artifact. Pass `--force` only when replacement is intended.
+Local conversion refuses to overwrite an existing artifact. Pass `--force` only when replacement is intended. The current cloud download path writes the downloaded result directly and can replace a same-named file, so isolate cloud output paths in automation.
 
 ## JSON output
 
@@ -30,6 +30,8 @@ deckhtml deck.html -o deck.pptx --mode local --json --quiet
 ```
 
 The envelope can also contain `outputs`, `stats`, `simplified`, and `report` depending on format and flags.
+
+For multi-page PNG, `output` is the first numbered file and `outputs` contains every generated file in slide order. Treat `outputs` as authoritative.
 
 ## Logging
 

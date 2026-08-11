@@ -1,10 +1,10 @@
 ---
 title: Node SDK
 sidebarTitle: 概览
-description: "将 @deckflow/deckhtml 作为 Node.js Library，在本地进行 HTML 转换和检查。"
+description: "将 @deckflow/deckhtml 作为 Node.js 库，在本地进行 HTML 转换和检查。"
 ---
 
-发布的 npm 包除了 CLI，还导出 Node.js API。它会返回 Buffer 和结构化元数据，不会替调用方写入文件。
+发布的 npm 包除了 CLI，还导出本地 Node.js API。它接收本地 HTML/SVG 路径或 HTTP(S) URL，返回 Buffer 和结构化元数据，不会替调用方写入文件。标准输入、云端任务、DeckFlow 认证和输出路径选择属于 CLI，而不是这些转换函数。
 
 ```bash
 npm install @deckflow/deckhtml pptxgenjs
@@ -16,9 +16,17 @@ npm install @deckflow/deckhtml pptxgenjs
 - `convertHtmlToPng()`
 - `inspectHtmlFonts()`
 
-Library 还导出转换报告辅助函数、页面转场目录与 Resolver、字体映射工具及公开转换类型。
+这个库还导出转换报告辅助函数、页面转场目录与解析器、字体映射工具及公开转换类型。
 
-应用需要注入浏览器、显式 Resource Policy、Strict Mode、回调，或直接访问结果 Buffer 和 Diagnostics 时，使用 SDK。
+应用需要注入浏览器、显式资源策略、严格转换门禁、自定义幻灯片选择，或直接访问结果 Buffer 和诊断时，使用 SDK。
+
+| 函数 | 返回内容 | 是否写文件 |
+| --- | --- | --- |
+| `convertHtmlToPptx()` | PPTX `Buffer`、页数、字体/元素统计、诊断和报告 | 否 |
+| `convertHtmlToPng()` | 有序 PNG Buffer 和页数 | 否 |
+| `inspectHtmlFonts()` | 使用字体、页数和聚合元素/字体统计 | 否 |
+
+单个文件路径或 URL 使用 `input`，有序列表使用 `inputs`。同时提供时，以 `inputs` 为准。URL 会由 Chromium 直接打开；可以使用 `resourcePolicy.network` 和浏览器注入控制网络访问与会话状态。
 
 <Card title="Node API" href="/zh/deckhtml/sdk/node">
   转换 Deck、写入输出，并配置高级转换参数。

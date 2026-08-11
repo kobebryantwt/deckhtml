@@ -35,7 +35,7 @@ description: "使用 DeckFlow 为 Agent 构建文档探测、渲染、解析、�
     <strong>DeckUse</strong> 替换指定文本、移动受支持的形状，最终生成仍可编辑的 PPTX。
   </Card>
   <Card title="使用 HTML 创作 Deck" icon="code" iconType="solid" color="#ec4899" href="/zh/deckhtml/overview" cta="了解 DeckHTML" arrow>
-    <strong>DeckHTML</strong> 将浏览器布局映射为 PPTX 或 PNG，并报告哪些元素保持可编辑、哪些会降级为图片。
+    <strong>DeckHTML</strong> 将一份多页 HTML 或多个有序 HTML/SVG 文件转换为 PPTX 或 PNG，并报告 PPTX 中哪些元素保持可编辑、哪些会降级为图片。
   </Card>
 </CardGroup>
 
@@ -76,13 +76,13 @@ description: "使用 DeckFlow 为 Agent 构建文档探测、渲染、解析、�
     <div className="product-map-source">
       <span className="product-map-label">输入</span>
       <strong>HTML 或 SVG</strong>
-      <span>使用浏览器布局创作</span>
+      <span>本地文件、标准输入或 HTML URL</span>
     </div>
     <div className="product-map-capabilities">
       <a className="product-map-card" href="/zh/deckhtml/overview">
         <span className="product-map-label">生成演示文稿</span>
         <strong>DeckHTML</strong>
-        <span>PPTX 或 PNG，以及映射诊断</span>
+        <span>PPTX 或 PNG，以及 PPTX 映射诊断</span>
       </a>
     </div>
   </section>
@@ -98,7 +98,7 @@ DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、�
 | 生成页面图片、PDF、缩略图或视频 | [DeckRender](/zh/deckrender/overview) | CLI 或 Node.js SDK | 云端路径可选；支持访客模式 |
 | 解析、提取、转换、生成或编排云端任务 | [DeckOps](/zh/deckops/overview) | 已发布 TypeScript 任务 SDK 或 CLI；源码中的 Python/Go 实现 | 高层 Parse 需要凭证；底层任务提供受限游客模式 |
 | 替换现有 PPTX 的文本或移动受支持的形状 | [DeckUse](/zh/deckuse/overview) | CLI；Node.js 软件包当前存在阻塞 | 不需要；文件留在本地 |
-| 从 HTML 或 SVG 生成 PPTX 或 PNG | [DeckHTML](/zh/deckhtml/overview) | CLI 或 Node.js SDK | 本地模式不需要；云端模式可选 |
+| 从 HTML 或 SVG 生成 PPTX 或 PNG | [DeckHTML](/zh/deckhtml/overview) | CLI 处理本地/云端文件；Node.js SDK 返回本地 Buffer | 本地不需要；云端支持游客或认证 |
 
 <Note>
   每个产品支持的格式和操作范围不同。某个产品能识别文件，不代表其他产品也能处理。请以各产品的支持格式或命令参考页作为当前版本契约。

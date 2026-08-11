@@ -8,13 +8,17 @@ HTML conversion executes page content in a browser. Treat resource access and if
 
 ## Local and remote resources
 
-The CLI enables local subresources for local input so relative images, CSS, and fonts can be loaded. The Node API additionally exposes an explicit resource policy for local paths and remote network requests, and returns resource diagnostics.
+The CLI enables local subresources for local input so relative images, CSS, and fonts can be loaded. This is a broad compatibility setting rather than a directory allowlist. The Node API additionally exposes an explicit resource policy for local roots and remote network requests, and returns resource diagnostics.
 
 Use strict mode when missing, escaped, or remote resources must fail conversion instead of degrading silently.
 
+<Warning>
+  DeckHTML executes the page in Chromium. Do not treat local conversion as a safe file-inspection sandbox for untrusted HTML. Run untrusted sources in an isolated process/container, or use the Node.js API with a restrictive `resourcePolicy` and a controlled browser context.
+</Warning>
+
 ## Iframes
 
-Local conversion supports three iframe modes:
+Local conversion supports three iframe modes. `inspect` is the default:
 
 | Mode | Behavior |
 | --- | --- |
@@ -29,6 +33,8 @@ deckhtml deck.html -o deck.pptx \
 ```
 
 Nested, parent-coupled, or unavailable frames may produce structured iframe diagnostics. Use `screenshot` when visual preservation is more important than editability.
+
+Iframe options apply to local conversion. The current cloud task path does not receive `--iframes` or `--iframe-load-timeout-ms`.
 
 ## Browser control
 

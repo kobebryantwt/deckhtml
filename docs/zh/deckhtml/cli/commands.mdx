@@ -14,24 +14,48 @@ deckhtml [global options] [inputs...]
 | --- | --- |
 | `-o, --output <path>` | 输出 `.pptx` 或 `.png`；扩展名决定格式 |
 | `--mode <mode>` | `auto`、`local` 或 `cloud`，默认 `auto` |
-| `--width <pixels>` | 覆盖 Viewport 宽度，CLI 按 16:9 计算高度 |
+| `--width <pixels>` | 覆盖视口宽度，CLI 按 16:9 计算高度 |
 | `--platform <platform>` | 字体映射目标：`win`、`mac`、`ios`、`android` 或 `linux` |
-| `--embed-fonts` | 嵌入字体，仅 Cloud |
-| `--report` | 在输出文件旁写入转换报告 |
-| `--executable-path <path>` | Local 模式使用指定 Chromium |
-| `--exclude <selector>` | 排除匹配的运行时或导航元素 |
-| `--identity-attribute <name>` | 自定义稳定元素标识属性 |
-| `--force` | 覆盖已有输出 |
-| `--no-animations` | 关闭元素入场动画导出 |
-| `--slide-transition <effects>` | 选择单个页面转场或逗号分隔循环列表 |
-| `--no-slide-transitions` | 关闭页面转场 |
-| `--iframes <mode>` | `inspect`、`screenshot` 或 `skip`，仅 Local |
+| `--embed-fonts` | 嵌入字体，仅云端模式 |
+| `--report` | 在输出旁写入转换报告；本地 PPTX 为逐元素报告，云端回退报告为聚合信息 |
+| `--executable-path <path>` | 本地模式使用指定 Chromium |
+| `--exclude <selector>` | 排除匹配的运行时或导航元素；仅本地模式 |
+| `--identity-attribute <name>` | 自定义稳定元素标识属性；仅本地模式 |
+| `--force` | 允许替换本地输出或报告文件 |
+| `--no-animations` | 关闭元素入场动画导出；仅本地 PPTX |
+| `--slide-transition <effects>` | 选择单个页面转场或逗号分隔循环列表；仅本地 PPTX |
+| `--no-slide-transitions` | 关闭页面转场；仅本地 PPTX |
+| `--iframes <mode>` | `inspect`（默认）、`screenshot` 或 `skip`，仅本地模式 |
 | `--iframe-load-timeout-ms <ms>` | 设置 iframe 加载超时 |
-| `--json` | 输出机器可读的最终 Envelope |
+| `--json` | 输出机器可读的最终结果对象 |
 | `--quiet` | 隐藏非必要输出 |
 | `-v, --verbose` | 把详细日志写入 stderr |
 | `-V, --version` | 输出版本 |
 | `-h, --help` | 输出帮助 |
+
+## 常用参数组合
+
+```bash
+# 按参数顺序合并多个文件
+deckhtml 01.html 02.html 03.svg -o deck.pptx --mode local
+
+# 排除应用控制器，并在报告中保留稳定标识
+deckhtml app.html -o deck.pptx \
+  --exclude '.controls, .progress' \
+  --identity-attribute data-element-id \
+  --report
+
+# 循环使用多种转场，或关闭所有动效导出
+deckhtml deck.html -o deck.pptx --slide-transition fade,push,wipe
+deckhtml deck.html -o deck.pptx --no-animations --no-slide-transitions
+
+# stdout 只返回最终 JSON
+deckhtml deck.html -o deck.pptx --json --quiet
+```
+
+<Warning>
+  `--exclude`、`--identity-attribute`、动画、转场和 iframe 等本地映射参数不会应用到当前云端任务路径。不要在 `--mode cloud` 下传入这些参数并期待得到同等行为。
+</Warning>
 
 ## 认证
 
@@ -49,3 +73,9 @@ deckhtml config set webhook <url>
 deckhtml config set retention-hours <0-99>
 deckhtml config show
 ```
+
+`api-key` 和 `space-id` 会影响当前云端客户端。`webhook` 与 `retention-hours` 虽然可以持久化，但当前转换命令创建云端任务时不会转发它们。
+
+<Warning>
+  人类可读的 `config show` 会遮盖已存储密钥；全局 `--json` 返回的配置对象不会应用这层展示遮盖。不要在 CI 中公开或记录该输出。
+</Warning>

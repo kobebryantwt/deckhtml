@@ -15,7 +15,7 @@ PPTX 默认启用动画转换。DeckHTML 可以捕获：
 - 由 Class 触发的 Opacity 或 Transform Transition
 - 全局 anime.js 调用
 
-支持的效果会归一化到稳定的 PPTX 子集，例如 Appear、Fade、Fly、Zoom、Spin 和 Wipe。超出支持范围的动画会保留最终视觉状态，并产生 `DECKHTML_ANIMATION_UNMAPPED` 诊断。
+声明式效果当前可映射：`appear`、`fade`/`fade-in`、四个方向的 `fly-in-*`、`zoom`/`zoom-in`、`spin` 变体和四个方向的 `wipe-*`。触发方式支持 `click`、`with`、`after` 及对应的 `*Previous` 别名。超出支持范围的动画会保留最终视觉状态，并产生 `DECKHTML_ANIMATION_UNMAPPED` 诊断。
 
 ```html
 <h1
@@ -30,9 +30,11 @@ PPTX 默认启用动画转换。DeckHTML 可以捕获：
 
 使用 `--no-animations` 或 `animations: false` 可以关闭入场动画导出。
 
+动画映射仅应用于本地 PPTX 生成。PNG 捕获页面稳定后的可见状态，当前云端 CLI 任务不会接收本地动画选项。
+
 ## 页面转场
 
-页面转场默认开启，每页会选择一个随机目录效果。可以固定一个效果、按逗号分隔的列表循环，也可以关闭。
+本地 PPTX 默认开启页面转场，每页会随机选择一个目录效果。可以固定一个效果、按逗号分隔的列表循环，也可以关闭。常用基础效果包括 `fade`、`push`、`wipe`、`cover`、`pull`、`split` 和 `dissolve`；传入未知名称时，CLI 会拒绝执行并在错误中列出可用目录。
 
 ```bash
 deckhtml deck.html -o deck.pptx --slide-transition fade

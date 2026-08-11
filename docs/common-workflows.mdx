@@ -12,7 +12,7 @@ Use this page after choosing the result your application needs. Each workflow id
 | Build search, RAG, or document understanding | DeckOps Parse | Markdown or structured content |
 | Add previews to a review interface | DeckRender | Images, PDF, or supported video |
 | Personalize an existing presentation | DeckUse | Updated editable PPTX |
-| Generate a presentation from application data | DeckHTML | PPTX or PNG with diagnostics |
+| Generate a presentation from application data | DeckHTML | PPTX with mapping diagnostics, or PNG images |
 | Validate, parse, and preview one upload | DeckProbe → DeckOps → DeckRender | Policy, content, and visual artifacts |
 
 ## Common agent scenarios
@@ -110,12 +110,16 @@ Use DeckUse to inspect selectors, replace or set existing text, and move support
 
 <div className="workflow-meta"><span className="workflow-meta-label">Start with</span><span className="workflow-meta-value">HTML or SVG authored from templates, application data, or generated content.</span></div>
 
-Use DeckHTML to map browser layout into editable PPTX elements where possible and raster fallback where necessary. Run locally when inputs must remain on the machine; choose cloud mode for cloud-only features such as font embedding.
+Use DeckHTML to map browser layout into editable PPTX elements where possible and raster fallback where necessary. A source can be one multi-slide HTML document or several ordered HTML/SVG files. Run locally when inputs must remain on the machine; choose cloud mode for cloud-only features such as font embedding.
 
-<div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">PPTX or PNG plus diagnostics that identify native, vector, raster, ignored, and unsupported mappings.</span></div>
+<div className="workflow-meta"><span className="workflow-meta-label">Final result</span><span className="workflow-meta-value">A PPTX with diagnostics that identify native, vector, raster, ignored, and unsupported mappings, or ordered PNG images of the rendered slides.</span></div>
 
 <Card title="Start with DeckHTML" href="/deckhtml/quick-start">
   Prepare Chromium, create one slide, generate a PPTX, and inspect conversion decisions.
+</Card>
+
+<Card title="Build a multi-page deck" href="/deckhtml/guides/multi-page-and-batch">
+  Choose repeated slide containers, ordered source files, or multiple self-contained HTML URLs.
 </Card>
 
 ## Combine validation, content, and previews

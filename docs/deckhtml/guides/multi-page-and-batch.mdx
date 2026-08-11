@@ -1,0 +1,103 @@
+---
+title: Multi-page and Batch Input
+sidebarTitle: Multi-page and Batch
+description: "Build one deck from repeated slide containers, ordered source files, or multiple HTML URLs."
+---
+
+DeckHTML can produce several slides from one HTML document or merge several inputs into one ordered artifact. These are input patterns of the main conversion command and Node.js API—there is no separate batch subcommand.
+
+## Choose an input pattern
+
+| Source layout | Use when | Result order |
+| --- | --- | --- |
+| Repeated slide containers in one HTML file | Slides share CSS, scripts, and assets | DOM order |
+| One HTML/SVG file per slide | A generator emits independent pages | Command-line or `inputs` array order |
+| One or more HTML URLs | Sources are hosted and should be processed in a known order | CLI arguments or API `inputs` order |
+
+## One HTML document with several slides
+
+Use repeated, presentation-sized containers. DeckHTML recognizes established names such as `.slide-container`, `.slide-wrap`, `.slide`, `section.slide`, and `[data-slide]`. It also recognizes semantic class tokens such as `.deck-slide` or `.slide-page` when multiple visible, slide-sized containers contain meaningful content.
+
+```html
+<main>
+  <section class="slide-container" data-slide-id="cover">
+    <h1 data-element-id="title">Quarterly review</h1>
+  </section>
+  <section class="slide-container" data-slide-id="metrics">
+    <h2 data-element-id="heading">Key metrics</h2>
+  </section>
+</main>
+```
+
+```bash
+deckhtml deck.html -o deck.pptx --mode local --report
+```
+
+Automatic container detection requires at least two qualifying hosts. If the source uses another selector, use the Node.js API:
+
+```ts
+import { convertHtmlToPptx } from '@deckflow/deckhtml';
+
+const result = await convertHtmlToPptx({
+  input: 'deck.html',
+  slideSelector: '.presentation-page',
+  autoDetectSlides: false,
+});
+```
+
+## Merge ordered files
+
+```bash
+deckhtml 01-cover.html 02-metrics.html 03-summary.svg \
+  -o report.pptx \
+  --mode local \
+  --report
+```
+
+```ts
+import { convertHtmlToPptx } from '@deckflow/deckhtml';
+
+const result = await convertHtmlToPptx({
+  inputs: ['01-cover.html', '02-metrics.html', '03-summary.svg'],
+  quiet: true,
+});
+```
+
+Each file may itself contain several detected slides. DeckHTML processes multiple files concurrently when the runtime has available capacity, then restores the original input order before generating the result. Do not infer output order from progress-log order.
+
+## PNG file naming
+
+One slide writes the requested PNG path. Multiple slides write numbered files and return every path in `outputs`:
+
+```bash
+deckhtml deck.html -o preview.png --mode local --json --quiet
+```
+
+```json
+{
+  "output": "/work/preview1.png",
+  "outputs": [
+    "/work/preview1.png",
+    "/work/preview2.png"
+  ],
+  "slideCount": 2
+}
+```
+
+Use the returned `outputs` array instead of constructing numbered paths in application code.
+
+## URL batches
+
+The CLI accepts one or more HTTP(S) HTML URLs, but URLs cannot be mixed with local paths in the same invocation:
+
+```bash
+deckhtml https://example.com/01.html https://example.com/02.html -o deck.pptx
+```
+
+The CLI fetches each response as text and saves it temporarily as HTML. It does not perform an authenticated browser navigation or automatically rewrite relative resource URLs. Make assets absolute or include a suitable `<base href="…">` in the returned HTML.
+
+The Node.js API can also place direct HTTP(S) URLs in `input` or `inputs`. Those URLs are opened in Chromium instead of downloaded as temporary HTML, so relative resources keep their page base and a caller-owned browser context can provide session state.
+
+<Card title="HTML input contract" href="/deckhtml/reference/input-html">
+  Review viewport detection, stable identities, excluded UI, assets, and URL limitations.
+</Card>

@@ -6,7 +6,7 @@ description: "Diagnose DeckHTML input, browser, mapping, resource, font, and out
 
 ## Only one slide was detected
 
-Use repeated `.slide-container` hosts, ensure each host is close to viewport size, or pass one HTML file per slide. Generate a report to confirm `slideCount`.
+Use at least two repeated `.slide-container`, `.slide`, `[data-slide]`, or other semantic slide hosts; make each visible host close to the viewport size and give it meaningful text or media content. Otherwise pass one file per slide or set `slideSelector` in the Node.js API. Generate a report to confirm `slideCount`.
 
 ## Content is clipped or positioned incorrectly
 
@@ -27,6 +27,12 @@ Install a compatible Chromium or pass `--executable-path`. In containers, make s
 ## Remote or iframe content is missing
 
 Review resource and iframe diagnostics. Confirm network access, choose the intended iframe mode, and increase `--iframe-load-timeout-ms` when the child document is slow.
+
+For CLI URL input, remember that DeckHTML downloads HTML text before conversion. Relative assets do not automatically resolve against the original URL; use absolute URLs or a `<base>` element. Authenticated pages requiring browser cookies cannot be fetched through this input path.
+
+## Cloud PPTX still reports a browser error
+
+The current CLI performs a local HTML inspection after the cloud PPTX task to collect slide and font statistics. Install Chromium or set `DECKHTML_CHROMIUM_EXECUTABLE_PATH`. Cloud PNG does not use this post-conversion inspection.
 
 ## CI produced an ambiguous result
 

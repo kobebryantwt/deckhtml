@@ -1,15 +1,15 @@
 ---
 title: DeckHTML
 sidebarTitle: Overview
-description: "Convert HTML or SVG into PPTX and PNG, preserving editable presentation elements where possible."
+description: "Turn browser-rendered HTML or SVG into PPTX or PNG, with explicit editability and fallback diagnostics."
 ---
 
-DeckHTML turns browser-laid-out HTML into PPTX or PNG. It maps text, images, tables, shapes, supported SVG, and equations to native or vector presentation elements where possible, and rasterizes content when visual fidelity is safer than editability.
+DeckHTML loads HTML or SVG in Chromium, measures the rendered layout, and produces PPTX or PNG. For PPTX, it rebuilds supported text, images, tables, shapes, SVG geometry, and equations as editable or vector objects. When no reliable PowerPoint mapping exists, it can preserve appearance with a raster fallback and record that decision in the conversion report.
 
 | | DeckHTML |
 | --- | --- |
 | Best for | HTML-native slide authoring and automated presentation generation |
-| Inputs | Local HTML or SVG, HTML from stdin, multiple ordered files, or an HTML URL |
+| Inputs | Local HTML/SVG, ordered files, HTML from stdin, or one or more HTML URLs |
 | Outputs | PPTX or PNG |
 | Runs | Locally with Chromium, or in DeckFlow cloud |
 | Interfaces | CLI and local Node.js API |
@@ -17,21 +17,24 @@ DeckHTML turns browser-laid-out HTML into PPTX or PNG. It maps text, images, tab
 
 ```mermaid
 flowchart LR
-  H["HTML or SVG"] --> B["Chromium layout"]
-  B --> M["Native, vector, or raster mapping"]
-  M --> P["PPTX or PNG"]
-  M --> R["Diagnostics and report"]
+  H["HTML / SVG"] --> B["Render and measure in Chromium"]
+  B --> M["Map each element"]
+  M --> P["PPTX: native, vector, or raster objects"]
+  B --> G["PNG: rendered slide images"]
+  M --> R["Per-element report and diagnostics"]
 ```
 
 ## When to use DeckHTML
 
 - Generate presentations from templates, application data, or AI-authored HTML.
 - Keep supported text, shapes, tables, images, SVG geometry, and equations editable in PowerPoint.
-- Convert several local HTML/SVG files into ordered slides.
+- Convert one multi-slide document or merge several ordered HTML/SVG files into one deck.
 - Produce PNG previews from the same source.
 - Consume per-element conversion diagnostics in your own automated checks.
 
-DeckHTML is not a promise of lossless browser-to-PowerPoint conversion. Canvas, complex SVG, filters, layered effects, iframes, and unsupported CSS may be rasterized, ignored, or reported as unsupported.
+<Note>
+  HTML/CSS and PowerPoint use different layout and rendering models. Canvas, complex SVG, filters, layered effects, iframes, and unsupported CSS may be rasterized, omitted, or reported as unsupported. Use the report when editability is part of the delivery contract.
+</Note>
 
 ## Execution modes
 
@@ -41,7 +44,16 @@ DeckHTML is not a promise of lossless browser-to-PowerPoint conversion. Canvas, 
 | Cloud | Input is uploaded to DeckFlow | Guest, login, or API key | Font embedding is cloud-only |
 | Auto | Selects cloud when credentials exist, otherwise local | Depends on selected mode | Be explicit in production workflows |
 
-The Node.js API is local-only and returns buffers rather than writing files. The CLI can run locally or submit a DeckOps cloud task.
+The Node.js API is local-only and returns buffers rather than writing files. The CLI can run locally or submit a cloud task. In `auto` mode, configured credentials select cloud execution; without credentials, `auto` stays local. Use an explicit mode in production so a credentials change cannot move processing across the data boundary.
+
+## Choose an interface
+
+| Interface | Use it when | Important boundary |
+| --- | --- | --- |
+| CLI | You need files on disk, shell automation, CI, stdin, or URL input | Supports local and cloud execution |
+| Node.js API | Your application owns browser lifecycle, buffers, policies, or strict checks | Runs locally, accepts file paths or direct URLs, and does not write files |
+
+The two interfaces handle URLs differently. The CLI fetches HTML text with Node.js before conversion, so it does not reuse browser cookies and does not automatically preserve the original base URL. The Node.js API navigates Chromium directly to a URL and can use a caller-provided browser context. See the [HTML input contract](/deckhtml/reference/input-html) before choosing a URL path.
 
 ## A first conversion
 
@@ -56,6 +68,7 @@ On success, the command exits with code `0`, writes the PPTX, and reports its re
 <CardGroup cols={2}>
   <Card title="Quickstart" href="/deckhtml/quick-start">Install, check Chromium, and build one PPTX.</Card>
   <Card title="Input contract" href="/deckhtml/reference/input-html">Author slides, sizes, identities, fonts, and resources.</Card>
+  <Card title="Multi-page and batch input" href="/deckhtml/guides/multi-page-and-batch">Combine slide containers or ordered source files.</Card>
   <Card title="Element mapping" href="/deckhtml/guides/element-mapping">Understand editability and raster fallback.</Card>
   <Card title="Authentication" href="/deckhtml/authentication">Configure cloud guest, login, or API-key use.</Card>
 </CardGroup>

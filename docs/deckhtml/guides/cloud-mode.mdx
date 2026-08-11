@@ -31,5 +31,10 @@ See [Authentication](/deckhtml/authentication) for credential precedence, storag
 - `--embed-fonts` is available for PPTX output.
 - Result files are downloaded after the asynchronous task completes.
 - Cloud report output currently uses aggregate conversion statistics when a per-element report is not returned.
+- Local mapping controls (`--exclude`, identity attributes, animations, transitions, and iframe handling) are not forwarded to the current cloud task.
+
+<Warning>
+  Cloud PPTX conversion is remote, but the current CLI performs a local post-conversion HTML inspection to report slide and font statistics. A usable local Chromium is therefore still required for the CLI's cloud PPTX path. Cloud PNG skips this post-inspection.
+</Warning>
 
 `auto` mode selects cloud only when credentials are already configured; otherwise it selects local mode.

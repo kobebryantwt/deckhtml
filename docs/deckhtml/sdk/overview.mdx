@@ -4,7 +4,7 @@ sidebarTitle: Overview
 description: "Use @deckflow/deckhtml as a Node.js library for local HTML conversion and inspection."
 ---
 
-The published package exports a Node.js API in addition to the CLI. It returns buffers and structured metadata without writing output files on your behalf.
+The published package exports a local Node.js API in addition to the CLI. It accepts local HTML/SVG paths or direct HTTP(S) URLs and returns buffers plus structured metadata without writing output files on your behalf. Stdin handling, cloud tasks, DeckFlow authentication, and output-path selection belong to the CLI rather than these conversion functions.
 
 ```bash
 npm install @deckflow/deckhtml pptxgenjs
@@ -18,7 +18,15 @@ Main conversion functions:
 
 The library also exports conversion report helpers, transition catalogs and resolvers, font mapping utilities, and public conversion types.
 
-Use the SDK when your application needs browser injection, explicit resource policy, strict conversion gates, callbacks, or direct access to result buffers and diagnostics.
+Use the SDK when your application needs browser injection, an explicit resource policy, strict conversion gates, custom slide selection, or direct access to result buffers and diagnostics.
+
+| Function | Returns | Writes files |
+| --- | --- | --- |
+| `convertHtmlToPptx()` | PPTX `Buffer`, slide count, font/element stats, diagnostics, report | No |
+| `convertHtmlToPng()` | Ordered PNG buffers and slide count | No |
+| `inspectHtmlFonts()` | Used fonts, slide count, and aggregate element/font statistics | No |
+
+Pass `input` for one file path or URL, or `inputs` for an ordered list. When both are provided, `inputs` takes precedence. URL inputs are opened directly in Chromium; use `resourcePolicy.network` and browser injection to control access and session state.
 
 <Card title="Node API" href="/deckhtml/sdk/node">
   Convert a deck, write its output, and configure advanced conversion options.

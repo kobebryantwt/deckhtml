@@ -27,7 +27,7 @@ cat deck.html | deckhtml - -o deck.pptx
 deckhtml https://example.com/deck.html -o deck.pptx
 ```
 
-stdin 必须指定 `--output`。一次调用可以使用本地文件或 URL，但不能混合两者。
+标准输入必须指定 `--output`。同一次命令可以使用本地文件或一个或多个 URL，但不能混合两者。URL 输入会先下载为 HTML 文本，不会继承 Cookie 或浏览器状态；相对资源需要显式 `<base>` 或绝对 URL。
 
 ## 输出格式
 
@@ -40,6 +40,8 @@ deckhtml deck.html -o frames.png
 
 省略 `-o` 时默认生成 PPTX。
 
+检测到多页时，PNG 输出会使用带编号的路径，并在 JSON 的 `outputs` 数组中返回全部文件。详见[多页与批量输入](/zh/deckhtml/guides/multi-page-and-batch)。
+
 ## 自动化推荐参数
 
 ```bash
@@ -48,7 +50,8 @@ deckhtml deck.html \
   --mode local \
   --json \
   --report \
-  --force
+  --force \
+  --quiet
 ```
 
-stdout、stderr、JSON、覆盖文件和报告行为请参考[输出与自动化](/zh/deckhtml/cli/output-modes)。
+stdout 只能包含最终 JSON 时，请同时使用 `--json --quiet`。关于 stdout、stderr、退出状态、文件覆盖和报告行为，请参阅[输出与自动化](/zh/deckhtml/cli/output-modes)。

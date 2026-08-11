@@ -22,6 +22,8 @@ deckhtml auth status
 
 登录流程会把 Token 和空间信息保存到 `~/.deckflow/credentials`（或 `DECKHTML_CONFIG_DIR/credentials`）。`auth status` 只报告本地是否存在配置，不会向服务端验证其有效性。
 
+浏览器登录是 CLI 获取并保存用户 Session Token 的方式，并不是第四种凭证类型。交互式开发可以使用登录；无人值守服务应使用 API Key。
+
 ## API Key
 
 CI 中优先使用环境密钥：
@@ -43,6 +45,8 @@ deckhtml auth status
 ## 游客模式
 
 未配置凭证时也可以显式使用 `--mode cloud`。CLI 会提供游客身份并启动限频任务。需要稳定生产限额或工作空间归属时，请使用认证模式。
+
+如果服务端拒绝游客访问或游客额度耗尽，CLI 可能打开浏览器登录流程。CI 和无界面智能体应配置 `DECKHTML_API_KEY`，避免任务等待交互式认证。
 
 <Info>
   `--embed-fonts` 仅在云端模式可用。使用时会上传 HTML 输入和所需字体资源。

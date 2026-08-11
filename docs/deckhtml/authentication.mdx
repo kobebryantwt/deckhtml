@@ -22,6 +22,8 @@ deckhtml auth status
 
 The login flow stores token and space information in `~/.deckflow/credentials` (or `DECKHTML_CONFIG_DIR/credentials`). `auth status` reports whether values are present; it does not validate them against the server.
 
+Browser login is how the CLI obtains and stores a user session token; it is not a fourth credential type. Use it for interactive development. Use an API key for unattended services.
+
 ## API key
 
 Prefer an environment secret in CI:
@@ -43,6 +45,8 @@ The environment variable takes precedence over the persisted API key. Do not com
 ## Guest mode
 
 Explicit `--mode cloud` works without configured credentials. The CLI supplies a guest identity and starts the rate-limited task. Use authenticated execution when you need stable production limits or workspace ownership.
+
+If the service rejects guest access or the guest limit is reached, the CLI can open the browser login flow. CI and headless agents should configure `DECKHTML_API_KEY` so a run never pauses for interactive authentication.
 
 <Info>
   `--embed-fonts` is available only in cloud mode. Its use uploads both the HTML input and required font resources.

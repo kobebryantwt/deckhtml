@@ -18,10 +18,14 @@ const result = await convertHtmlToPptx({
 });
 
 await writeFile('deck.pptx', result.data);
-console.log(result.slideCount, result.report, result.diagnostics);
+console.log({
+  slideCount: result.slideCount,
+  mapping: result.report?.summary,
+  diagnostics: result.diagnostics,
+});
 ```
 
-有序多文件输入使用 `inputs: ['01.html', '02.html']`。返回值包括 PPTX `Buffer`、Slide 数、使用字体、统计、资源与元素标识诊断，以及可用时的逐元素转换报告。
+有序多文件输入使用 `inputs: ['01.html', '02.html']`。返回值包括 PPTX `Buffer`、幻灯片数量、使用字体、统计、资源与元素标识诊断，以及可用时的逐元素转换报告。
 
 ## PNG 转换
 
@@ -35,11 +39,61 @@ const result = await convertHtmlToPng({
 });
 ```
 
-PNG 结果会为每个检测到的 Slide 返回一个图片 Buffer。
+PNG 结果会为每个检测到的幻灯片返回一个图片 Buffer。函数不会选择文件名或写入文件：
 
-## Strict Mode
+```ts
+await Promise.all(
+  result.images.map((image, index) =>
+    writeFile(`slide-${index + 1}.png`, image)
+  )
+);
+```
 
-传入 `strict` 即启用严格门禁。对象中省略的 Flag 默认采用最严格行为，除非显式放宽。
+## 多页与有序输入
+
+```ts
+const result = await convertHtmlToPptx({
+  inputs: ['01-cover.html', '02-metrics.html', '03-summary.svg'],
+  slideSelector: '.presentation-page',
+  autoDetectSlides: true,
+  excludeSelector: '.controls, .progress',
+  quiet: true,
+});
+```
+
+文件可能并行检查，但返回的演示文稿仍保持 `inputs` 顺序。`slideSelector` 会应用到每个输入内部。
+
+直接 URL 会由 Chromium 发起导航：
+
+```ts
+const result = await convertHtmlToPptx({
+  input: 'https://example.com/deck.html',
+  resourcePolicy: { network: 'allow' },
+});
+```
+
+页面需要受控会话状态时，请传入调用方持有的 `browserContext`。这与 CLI URL 路径不同：CLI 会先把 HTML 响应下载为文本。
+
+## 资源策略
+
+API 默认阻止未显式允许的本地子资源。相比宽松兼容开关 `allowLocalResources: true`，更建议使用限定目录的资源策略：
+
+```ts
+const result = await convertHtmlToPptx({
+  input: '/work/deck/deck.html',
+  resourcePolicy: {
+    network: 'deny',
+    allowedRoots: ['/work/deck/assets'],
+    followSymlinks: false,
+  },
+});
+```
+
+被阻止的资源会出现在 `resourceDiagnostics` 和统一的 `diagnostics` 列表中。
+
+## 严格模式
+
+传入 `strict` 即启用严格门禁。对象中省略的选项默认采用最严格行为，除非显式放宽。
 
 ```ts
 await convertHtmlToPptx({
@@ -55,8 +109,8 @@ await convertHtmlToPptx({
 });
 ```
 
-Strict 失败会抛出 `ConversionError`，其中包含主诊断和收集到的诊断列表。
+严格模式失败会抛出名为 `ConversionError` 的错误，其中包含主诊断和收集到的诊断列表。
 
 ## 高级选项
 
-API 还可以控制 Slide Selector、排除 Selector、标识属性、自动检测、Viewport、Resource Policy、目标字体平台、动画、页面转场、iframe 模式与超时，以及调用方提供的 Playwright Browser。
+API 还可以控制视口检测、目标字体平台、动画、页面转场、iframe 处理和调用方提供的 Playwright 运行环境。传入的 `browser` 或 `browserContext` 仍归调用方所有，DeckHTML 不会关闭它。

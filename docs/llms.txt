@@ -48,13 +48,16 @@ Use the English or Simplified Chinese section that matches the developer's langu
 
 ## DeckHTML
 
-- [DeckHTML Overview](https://docs.deckflow.com/deckhtml/overview.md): Generate PPTX or PNG from HTML and SVG.
+- [DeckHTML Overview](https://docs.deckflow.com/deckhtml/overview.md): Generate PPTX or PNG from browser-rendered HTML and SVG, locally or through the CLI cloud path.
 - [DeckHTML Quickstart](https://docs.deckflow.com/deckhtml/quick-start.md): Prepare Chromium and generate a first local PPTX.
+- [HTML Input Contract](https://docs.deckflow.com/deckhtml/reference/input-html.md): Author slide structure and sizes, and choose CLI-fetch versus direct-browser URL behavior.
+- [Multi-page and Batch Input](https://docs.deckflow.com/deckhtml/guides/multi-page-and-batch.md): Combine repeated slide containers, ordered files, or URL inputs.
 - [Local Mode](https://docs.deckflow.com/deckhtml/guides/local-mode.md): Keep source files on the local machine.
 - [Cloud Mode](https://docs.deckflow.com/deckhtml/guides/cloud-mode.md): Use cloud execution and cloud-only capabilities.
 - [Element Mapping](https://docs.deckflow.com/deckhtml/guides/element-mapping.md): Understand editable, vector, raster, ignored, and unsupported mappings.
 - [CLI Commands](https://docs.deckflow.com/deckhtml/cli/commands.md): Review command syntax and options.
 - [Node.js SDK](https://docs.deckflow.com/deckhtml/sdk/overview.md): Convert HTML programmatically and inspect diagnostics.
+- [Reports and Diagnostics](https://docs.deckflow.com/deckhtml/reference/report-schema.md): Consume per-element mapping reports, aggregate reports, and stable diagnostic rule IDs.
 
 ## Platform
 
@@ -72,7 +75,8 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [DeckRender](https://docs.deckflow.com/zh/deckrender/overview.md): 将支持的输入渲染为视觉产物。
 - [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 执行云端文档任务。
 - [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 在本地修改现有 PPTX。
-- [DeckHTML](https://docs.deckflow.com/zh/deckhtml/overview.md): 从 HTML 或 SVG 生成 PPTX 或 PNG。
+- [DeckHTML](https://docs.deckflow.com/zh/deckhtml/overview.md): 从浏览器渲染后的 HTML 或 SVG 生成 PPTX 或 PNG。
+- [DeckHTML 多页与批量输入](https://docs.deckflow.com/zh/deckhtml/guides/multi-page-and-batch.md): 组合重复幻灯片容器、有序文件或 URL 输入。
 
 ## Optional
 

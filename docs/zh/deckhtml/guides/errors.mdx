@@ -6,15 +6,15 @@ description: "排查 DeckHTML 输入、浏览器、映射、资源、字体和�
 
 ## 只检测到一页
 
-使用重复的 `.slide-container`，确保每个容器接近 Viewport 尺寸；也可以每页传一个 HTML 文件。通过报告确认 `slideCount`。
+至少使用两个重复的 `.slide-container`、`.slide`、`[data-slide]` 或其他语义化幻灯片容器；每个可见容器应接近视口尺寸，并包含有效文字或媒体内容。否则可以每页传入一个文件，或在 Node.js API 中设置 `slideSelector`。生成报告并确认 `slideCount`。
 
 ## 内容被裁切或位置不正确
 
-让声明的 Deck 尺寸、Slide 容器尺寸和浏览器 Viewport 保持一致。自动检测没有得到设计画布时，增加 `meta[name="deck-size"]` 或传 `--width`。
+让声明的演示文稿尺寸、幻灯片容器尺寸和浏览器视口保持一致。自动检测没有得到设计画布时，增加 `meta[name="deck-size"]` 或传 `--width`。
 
 ## 字体与浏览器不同
 
-确保字体在转换前加载完成，使用明确的 CSS Font Stack，选择目标 `--platform`，并检查缺失字体诊断。输出必须携带支持的字体文件时，使用 Cloud `--embed-fonts`。
+确保字体在转换前加载完成，使用明确的 CSS 字体栈，选择目标 `--platform`，并检查缺失字体诊断。输出必须携带支持的字体文件时，使用云端 `--embed-fonts`。
 
 ## 元素变成图片而不是可编辑对象
 
@@ -26,8 +26,14 @@ description: "排查 DeckHTML 输入、浏览器、映射、资源、字体和�
 
 ## 远程资源或 iframe 缺失
 
-检查 Resource 与 iframe Diagnostics，确认网络访问，选择正确的 iframe 模式；子文档加载较慢时增加 `--iframe-load-timeout-ms`。
+检查资源与 iframe 诊断，确认网络访问，选择正确的 iframe 模式；子文档加载较慢时增加 `--iframe-load-timeout-ms`。
+
+使用 CLI URL 输入时请注意，DeckHTML 会先下载 HTML 文本再转换。相对资源不会自动相对于原始 URL 解析，请使用绝对 URL 或 `<base>` 元素。依赖浏览器 Cookie 的认证页面无法通过这条输入路径获取。
+
+## 云端 PPTX 仍然报告浏览器错误
+
+当前 CLI 会在云端 PPTX 任务完成后，于本地再次检查 HTML，以收集页数和字体统计。请安装 Chromium 或设置 `DECKHTML_CHROMIUM_EXECUTABLE_PATH`。云端 PNG 不执行这一步。
 
 ## CI 结果不明确
 
-使用 `--json --report`，检查进程退出码，验证每个产物路径，并根据不允许的映射类型或 Diagnostic Rule ID 让任务失败。
+使用 `--json --report`，检查进程退出码，验证每个产物路径，并根据不允许的映射类型或诊断规则 ID 让任务失败。

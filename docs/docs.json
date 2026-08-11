@@ -262,6 +262,7 @@
                 "group": "Author HTML",
                 "pages": [
                   "deckhtml/reference/input-html",
+                  "deckhtml/guides/multi-page-and-batch",
                   "deckhtml/guides/element-mapping",
                   "deckhtml/guides/animations-and-transitions",
                   "deckhtml/guides/resources-and-iframes"
@@ -483,6 +484,7 @@
                 "group": "编写 HTML",
                 "pages": [
                   "zh/deckhtml/reference/input-html",
+                  "zh/deckhtml/guides/multi-page-and-batch",
                   "zh/deckhtml/guides/element-mapping",
                   "zh/deckhtml/guides/animations-and-transitions",
                   "zh/deckhtml/guides/resources-and-iframes"

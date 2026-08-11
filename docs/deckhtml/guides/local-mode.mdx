@@ -27,4 +27,6 @@ Use local mode for fast iteration, controlled data handling, CI jobs with Chromi
 
 Local execution needs a usable Chromium installation. Set `--executable-path` or `DECKHTML_CHROMIUM_EXECUTABLE_PATH` when automatic discovery cannot find it.
 
+Browser resolution order is: an explicit `--executable-path`, `DECKHTML_CHROMIUM_EXECUTABLE_PATH`, a Playwright-managed Chromium, then a supported system Chrome or Edge installation. The Node.js API can additionally provide a persistent profile, a caller-owned browser, or a browser context.
+
 Local mode does not support `--embed-fonts`. It can map CSS font stacks to the selected target platform, but embedding the font binaries is a cloud operation.

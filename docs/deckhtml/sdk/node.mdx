@@ -18,7 +18,11 @@ const result = await convertHtmlToPptx({
 });
 
 await writeFile('deck.pptx', result.data);
-console.log(result.slideCount, result.report, result.diagnostics);
+console.log({
+  slideCount: result.slideCount,
+  mapping: result.report?.summary,
+  diagnostics: result.diagnostics,
+});
 ```
 
 Pass `inputs: ['01.html', '02.html']` for ordered files. The function returns a PPTX `Buffer`, slide count, used fonts, statistics, resource and identity diagnostics, and a per-element conversion report when available.
@@ -35,7 +39,57 @@ const result = await convertHtmlToPng({
 });
 ```
 
-The PNG result contains one image buffer per detected slide.
+The PNG result contains one image buffer per detected slide. The function does not choose filenames or write them:
+
+```ts
+await Promise.all(
+  result.images.map((image, index) =>
+    writeFile(`slide-${index + 1}.png`, image)
+  )
+);
+```
+
+## Multi-page and ordered inputs
+
+```ts
+const result = await convertHtmlToPptx({
+  inputs: ['01-cover.html', '02-metrics.html', '03-summary.svg'],
+  slideSelector: '.presentation-page',
+  autoDetectSlides: true,
+  excludeSelector: '.controls, .progress',
+  quiet: true,
+});
+```
+
+Files may be inspected concurrently, but the returned presentation preserves `inputs` order. `slideSelector` applies within each input.
+
+For a direct URL, Chromium performs the navigation:
+
+```ts
+const result = await convertHtmlToPptx({
+  input: 'https://example.com/deck.html',
+  resourcePolicy: { network: 'allow' },
+});
+```
+
+Pass a caller-owned `browserContext` when the page requires controlled session state. This differs from the CLI URL path, which downloads the HTML response as text first.
+
+## Resource policy
+
+The API blocks local subresources by default unless they are explicitly allowed. Prefer a scoped resource policy over the broad `allowLocalResources: true` compatibility switch:
+
+```ts
+const result = await convertHtmlToPptx({
+  input: '/work/deck/deck.html',
+  resourcePolicy: {
+    network: 'deny',
+    allowedRoots: ['/work/deck/assets'],
+    followSymlinks: false,
+  },
+});
+```
+
+Blocked resources appear in `resourceDiagnostics` and the unified `diagnostics` list.
 
 ## Strict conversion
 
@@ -59,4 +113,4 @@ Strict failures throw a `ConversionError` containing a primary diagnostic and th
 
 ## Advanced options
 
-The API also controls slide selectors, excluded selectors, identity attributes, auto-detection, viewport, resource policy, target font platform, animations, slide transitions, iframe mode, iframe timeout, and caller-provided Playwright browser execution.
+The API also controls viewport detection, target font platform, animations, slide transitions, iframe handling, and caller-provided Playwright execution. A supplied `browser` or `browserContext` remains owned by the caller; DeckHTML does not close it.

@@ -1,17 +1,17 @@
 ---
-title: Local 模式
-sidebarTitle: Local 模式
+title: 本地模式
+sidebarTitle: 本地模式
 description: "在当前机器使用 Playwright 运行 DeckHTML，无需云端凭证。"
 ---
 
-Local 模式通过 Playwright 加载输入、检查浏览器布局，并在当前机器生成 PPTX 或 PNG。
+本地模式通过 Playwright 加载输入、检查浏览器布局，并在当前机器生成 PPTX 或 PNG。
 
 ```bash
 deckhtml deck.html -o deck.pptx --mode local
 deckhtml deck.html -o frames.png --mode local
 ```
 
-快速迭代、受控数据处理、带 Chromium 的 CI，以及需要 Node 转换 API 的应用工作流都适合使用 Local 模式。
+快速迭代、受控数据处理、带 Chromium 的 CI，以及需要 Node.js 转换 API 的应用工作流都适合使用本地模式。
 
 ## 本地能力
 
@@ -25,6 +25,8 @@ deckhtml deck.html -o frames.png --mode local
 
 ## 运行要求
 
-Local 执行需要可用的 Chromium。自动发现失败时，设置 `--executable-path` 或 `DECKHTML_CHROMIUM_EXECUTABLE_PATH`。
+本地执行需要可用的 Chromium。自动发现失败时，设置 `--executable-path` 或 `DECKHTML_CHROMIUM_EXECUTABLE_PATH`。
 
-Local 模式不支持 `--embed-fonts`。它可以按目标平台映射 CSS Font Stack，但嵌入字体文件属于 Cloud 操作。
+浏览器查找顺序为：显式 `--executable-path`、`DECKHTML_CHROMIUM_EXECUTABLE_PATH`、Playwright 管理的 Chromium，最后是受支持的系统 Chrome 或 Edge。Node.js API 还可以传入持久化用户目录、由调用方管理的 `Browser` 或 `BrowserContext`。
+
+本地模式不支持 `--embed-fonts`。它可以按目标平台映射 CSS 字体栈，但嵌入字体文件属于云端操作。

@@ -21,6 +21,6 @@ Local conversion maps CSS font stacks for the selected target platform. Cloud co
 
 ## Output safety
 
-The CLI refuses to replace an existing file unless `--force` is passed. The Node API returns a buffer and never writes to disk automatically.
+Local CLI conversion refuses to replace an existing file unless `--force` is passed. The current cloud download path writes its result directly, so automation should use an isolated output path. The Node API returns a buffer and never writes to disk automatically.
 
 Use strict mode and per-element reports when editability is a delivery requirement rather than a preference.

@@ -20,6 +20,34 @@ Local PPTX conversion can return:
 
 This report answers which source elements remained editable and where simplification occurred.
 
+```json
+{
+  "schema_version": 1,
+  "engine": { "name": "@deckflow/deckhtml", "version": "0.6.2" },
+  "status": "succeeded",
+  "slides": [
+    {
+      "slide_id": "cover",
+      "index": 1,
+      "elements": [
+        {
+          "element_id": "title",
+          "kind": "text",
+          "mapping_mode": "native",
+          "object_ref": "ppt/slides/slide1.xml#name:title",
+          "geometry": { "x": 0.75, "y": 0.8, "w": 6.5, "h": 0.7, "unit": "inch" },
+          "warnings": []
+        }
+      ]
+    }
+  ],
+  "summary": { "native": 1, "vector": 0, "raster": 0, "ignored": 0, "unsupported": 0 },
+  "diagnostics": []
+}
+```
+
+`element_id` is `null` unless the source declares `data-element-id` or the configured identity attribute. Add stable identities before using reports for regression checks.
+
 ## Aggregate report
 
 When no per-element report is available, such as the current cloud fallback, the CLI writes aggregate information including input, output, mode, format, slide count, element counts, fonts, rasterization statistics, viewport, platform, and duration.
@@ -31,3 +59,15 @@ Do not assume the two shapes are identical. Check `schema_version` for the per-e
 Diagnostics contain a stable `rule_id`, severity, optional slide and element IDs, message, and recovery guidance. Rule families cover identity, unsupported kinds or styles, resources, browser failures, missing fonts, raster fallback, geometry, OOXML verification, animations, and iframes.
 
 Applications should branch on `rule_id`, not localized message text.
+
+```json
+{
+  "rule_id": "DECKHTML_ANIMATION_UNMAPPED",
+  "severity": "warning",
+  "element_id": "hero",
+  "message": "<human-readable detail>",
+  "recovery": "<suggested source change>"
+}
+```
+
+Use `summary.raster` and `summary.unsupported` for a fast gate, then inspect element records and diagnostics to explain the failure. Use Node API strict mode when the conversion itself must fail instead of returning a report for application-side evaluation.

@@ -4,11 +4,11 @@ sidebarTitle: HTML Input
 description: "Author HTML and SVG inputs that DeckHTML can segment, lay out, and convert reliably."
 ---
 
-DeckHTML accepts a local HTML or SVG file, multiple ordered files, HTML from stdin, or HTTP/HTTPS URLs. URLs and local paths cannot be mixed in one CLI invocation.
+The CLI accepts local HTML/SVG files, ordered files, HTML from stdin, or one or more HTTP(S) HTML URLs. URLs and local paths cannot be mixed in one invocation. The Node.js API accepts local paths or direct HTTP(S) URLs through `input` or `inputs`; it does not read stdin.
 
 ## Slide structure
 
-For a multi-slide HTML document, use a repeated slide host such as `.slide-container`, `.slide-wrap`, `.slide`, `section[class*="slide"]`, or `[data-slide]`. At least two qualified hosts are required for automatic multi-slide detection.
+For a multi-slide HTML document, use repeated, slide-sized hosts. Established selectors include `.slide-container`, `.slide-wrap`, `.slide`, `section.slide`, and `[data-slide]`. Semantic class tokens such as `.deck-slide` and `.slide-page` can also be detected when the hosts are visible, suitably sized, and contain meaningful content. At least two qualified hosts are required for automatic multi-slide detection.
 
 ```html
 <main>
@@ -17,15 +17,27 @@ For a multi-slide HTML document, use a repeated slide host such as `.slide-conta
 </main>
 ```
 
-Alternatively, pass one HTML file per slide. DeckHTML preserves command-line order.
+Alternatively, pass one HTML or SVG file per slide. DeckHTML preserves argument order even when files are inspected concurrently.
 
 ```bash
 deckhtml 01-title.html 02-metrics.html 03-summary.html -o deck.pptx
 ```
 
+The Node.js API can select nonstandard slide hosts explicitly:
+
+```ts
+await convertHtmlToPptx({
+  input: 'deck.html',
+  slideSelector: '.presentation-page',
+  autoDetectSlides: false,
+});
+```
+
+See [Multi-page and Batch Input](/deckhtml/guides/multi-page-and-batch) for ordered files, URL batches, concurrency, and multi-page PNG naming.
+
 ## Size and viewport
 
-DeckHTML can detect size from a `meta[name="deck-size"]` declaration, supported CSS size variables, viewport metadata, fixed slide hosts, or an SVG `viewBox`. Otherwise it falls back to `1280 × 720`. Use `--width` to override width; height is derived at 16:9 by the CLI.
+DeckHTML can detect size from `meta[name="deck-size"]`, supported CSS size variables, numeric viewport metadata, fixed slide hosts, local linked CSS, stage configuration, or an SVG `viewBox`. Otherwise it falls back to `1280 × 720`. Use `--width` to override width; the CLI derives height at 16:9.
 
 The slide host and browser viewport should use the same aspect ratio. Fixed-size slide layouts are more predictable than scrolling document layouts.
 
@@ -56,3 +68,35 @@ deckhtml deck.html -o deck.pptx --exclude '.controls, .progress'
 - Do not depend on hover-only state for critical content.
 - Use DOM text and shapes when editability matters; screenshot-like canvas content is normally rasterized.
 - URL inputs download the returned HTML before conversion; they do not preserve an interactive browser session.
+
+## URL input boundary
+
+The CLI and Node.js API use different URL paths.
+
+### CLI URL
+
+The CLI uses Node.js `fetch`, reads the response as text, and saves it to a temporary `.html` file before local or cloud conversion.
+
+- Request headers, cookies, and the user's browser login state are not forwarded.
+- Relative assets are resolved from the temporary local file, not automatically from the original URL.
+- Use absolute asset URLs or include an appropriate `<base href="https://example.com/path/">` in the HTML response.
+- A URL is treated as HTML text even if its path has another extension; use URL input for HTML pages, not remote SVG files or arbitrary binary content.
+
+### Node.js API URL
+
+The Node.js API passes an HTTP(S) input directly to Chromium. Relative resources resolve from the page URL, and a caller-injected `browserContext` can carry cookies or other session state.
+
+```ts
+import { convertHtmlToPptx } from '@deckflow/deckhtml';
+
+const result = await convertHtmlToPptx({
+  input: 'https://example.com/deck.html',
+  resourcePolicy: { network: 'allow' },
+});
+```
+
+To use an authenticated session, pass a caller-owned Playwright `browserContext` through `browser: { browserContext }`. The calling application is responsible for establishing and protecting that context. Use the CLI path when a public, self-contained HTML response is sufficient; use the API path when direct browser navigation or controlled session state is required.
+
+## SVG input
+
+Local file input can include `.svg`. DeckHTML validates that it contains a usable SVG root, then maps supported geometry and text while rasterizing complex cases when necessary. SVG support does not mean every SVG filter, script, or browser effect has an editable PowerPoint equivalent.

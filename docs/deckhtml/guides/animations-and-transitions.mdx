@@ -15,7 +15,7 @@ Animation conversion is enabled by default for PPTX. DeckHTML can capture:
 - class-gated opacity or transform transitions
 - intercepted global anime.js calls
 
-Supported effects are normalized to a stable PPTX subset such as appear, fade, fly, zoom, spin, and wipe. An animation outside the supported subset keeps its final visual state and produces an `DECKHTML_ANIMATION_UNMAPPED` diagnostic.
+Declared effects currently map these names: `appear`, `fade`/`fade-in`, four `fly-in-*` directions, `zoom`/`zoom-in`, `spin` variants, and four `wipe-*` directions. Triggers accept `click`, `with`, or `after` (and their `*Previous` aliases). An animation outside the supported subset keeps its final visual state and produces a `DECKHTML_ANIMATION_UNMAPPED` diagnostic.
 
 ```html
 <h1
@@ -30,9 +30,11 @@ Supported effects are normalized to a stable PPTX subset such as appear, fade, f
 
 Disable entrance-animation export with `--no-animations` or `animations: false`.
 
+Animation mapping applies to local PPTX generation. PNG captures the settled visible state, and the current cloud CLI task does not receive local animation options.
+
 ## Slide transitions
 
-Transitions are enabled by default and use a random catalog effect per slide. Select one effect, cycle through a comma-separated list, or disable transitions.
+Transitions are enabled by default for local PPTX and use a random catalog effect per slide. Select one effect, cycle through a comma-separated list, or disable transitions. Common base effects include `fade`, `push`, `wipe`, `cover`, `pull`, `split`, and `dissolve`; an unknown name is rejected and the CLI error lists the available catalog.
 
 ```bash
 deckhtml deck.html -o deck.pptx --slide-transition fade

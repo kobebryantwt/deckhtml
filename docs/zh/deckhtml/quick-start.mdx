@@ -56,7 +56,13 @@ description: "安装 DeckHTML、验证浏览器运行时，并在本地生成 PP
     test -s deck.pptx && echo "deck.pptx created"
     ```
 
-    PowerShell 中使用 `if (!(Test-Path deck.pptx) -or (Get-Item deck.pptx).Length -eq 0) { exit 1 }`。
+    PowerShell：
+
+    ```powershell
+    if (!(Test-Path deck.pptx) -or (Get-Item deck.pptx).Length -eq 0) {
+      exit 1
+    }
+    ```
 
     `--quiet` 会让标准输出保持机器可读。JSON 结果使用规范化后的绝对路径，因此具体值取决于当前工作目录：
 

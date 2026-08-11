@@ -56,7 +56,13 @@ This path keeps the source on your machine. You need Node.js 18 or later and a c
     test -s deck.pptx && echo "deck.pptx created"
     ```
 
-    In PowerShell, use `if (!(Test-Path deck.pptx) -or (Get-Item deck.pptx).Length -eq 0) { exit 1 }`.
+    In PowerShell:
+
+    ```powershell
+    if (!(Test-Path deck.pptx) -or (Get-Item deck.pptx).Length -eq 0) {
+      exit 1
+    }
+    ```
 
     `--quiet` keeps stdout machine-readable. The JSON result contains normalized absolute paths, so the exact values depend on your working directory:
 

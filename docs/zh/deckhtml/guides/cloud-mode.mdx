@@ -1,10 +1,10 @@
 ---
-title: Cloud 模式
-sidebarTitle: Cloud 模式
+title: 云端模式
+sidebarTitle: 云端模式
 description: "上传 DeckHTML 输入，并通过 DeckOps 云端任务运行转换。"
 ---
 
-Cloud 模式会上传已经物化的 HTML 输入，创建 HTML 转换任务，等待任务完成，下载结果并写入指定输出路径。
+云端模式会上传已准备好的 HTML 输入，创建 HTML 转换任务，等待任务完成，下载结果并写入指定输出路径。
 
 ```bash
 deckhtml deck.html -o deck.pptx --mode cloud
@@ -13,7 +13,7 @@ deckhtml deck.html -o deck.pptx --mode cloud --embed-fonts
 
 ## 认证行为
 
-Cloud 模式支持稳定的访客 UUID。访客请求会被限频；DeckHTML CLI 会自动启动游客任务。生产环境建议登录或配置 API Key。
+云端模式支持稳定的访客 UUID。访客请求会被限频；DeckHTML CLI 会自动启动游客任务。生产环境建议登录或配置 API Key。
 
 ```bash
 deckhtml auth login
@@ -25,11 +25,16 @@ CI 环境使用 `DECKHTML_API_KEY`，无需交互式存储凭证。
 
 凭证优先级、存储方式和状态行为见[认证](/zh/deckhtml/authentication)。
 
-## 与 Local 模式的区别
+## 与本地模式的区别
 
 - 转换通过 DeckOps 任务远程执行。
 - PPTX 输出支持 `--embed-fonts`。
 - 异步任务完成后才下载结果文件。
 - 当前云端没有返回逐元素报告时，Report 会使用聚合转换统计。
+- 本地映射控制项（`--exclude`、元素标识、动画、转场和 iframe 处理）不会传递到当前云端任务。
 
-`auto` 只在已经配置凭证时选择 Cloud，否则选择 Local。
+<Warning>
+  PPTX 的主体转换在云端执行，但当前 CLI 会在下载后于本地再次检查 HTML，以生成页数和字体统计。因此 CLI 的云端 PPTX 路径仍需要本机存在可用 Chromium；云端 PNG 不执行这一步。
+</Warning>
+
+`auto` 只在已经配置凭证时选择云端，否则选择本地。

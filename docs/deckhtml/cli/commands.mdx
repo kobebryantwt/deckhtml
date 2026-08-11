@@ -17,21 +17,45 @@ deckhtml [global options] [inputs...]
 | `--width <pixels>` | Override viewport width; CLI derives 16:9 height |
 | `--platform <platform>` | `win`, `mac`, `ios`, `android`, or `linux` font mapping target |
 | `--embed-fonts` | Embed fonts; cloud only |
-| `--report` | Write a conversion report next to the output |
+| `--report` | Write a conversion report next to the output; local PPTX is per-element, cloud fallback is aggregate |
 | `--executable-path <path>` | Use a specific Chromium executable locally |
-| `--exclude <selector>` | Exclude matching runtime or navigation elements |
-| `--identity-attribute <name>` | Use a custom stable element identity attribute |
-| `--force` | Overwrite existing output |
-| `--no-animations` | Disable element entrance-animation export |
-| `--slide-transition <effects>` | Select one transition or a comma-separated cycle |
-| `--no-slide-transitions` | Disable slide transitions |
-| `--iframes <mode>` | `inspect`, `screenshot`, or `skip`; local only |
+| `--exclude <selector>` | Exclude matching runtime or navigation elements; local mode |
+| `--identity-attribute <name>` | Use a custom stable element identity attribute; local mode |
+| `--force` | Permit replacement of local output/report files |
+| `--no-animations` | Disable element entrance-animation export; local PPTX |
+| `--slide-transition <effects>` | Select one transition or a comma-separated cycle; local PPTX |
+| `--no-slide-transitions` | Disable slide transitions; local PPTX |
+| `--iframes <mode>` | `inspect` (default), `screenshot`, or `skip`; local only |
 | `--iframe-load-timeout-ms <ms>` | Set iframe load timeout |
 | `--json` | Print a machine-readable final envelope |
 | `--quiet` | Suppress nonessential output |
 | `-v, --verbose` | Print detailed logs to stderr |
 | `-V, --version` | Print version |
 | `-h, --help` | Print help |
+
+## Common option combinations
+
+```bash
+# Merge files in argument order
+deckhtml 01.html 02.html 03.svg -o deck.pptx --mode local
+
+# Exclude application controls and keep stable report identities
+deckhtml app.html -o deck.pptx \
+  --exclude '.controls, .progress' \
+  --identity-attribute data-element-id \
+  --report
+
+# Cycle slide transitions, or disable all motion export
+deckhtml deck.html -o deck.pptx --slide-transition fade,push,wipe
+deckhtml deck.html -o deck.pptx --no-animations --no-slide-transitions
+
+# Return only the final JSON envelope on stdout
+deckhtml deck.html -o deck.pptx --json --quiet
+```
+
+<Warning>
+  Local mapping flags such as `--exclude`, `--identity-attribute`, animation, transition, and iframe options are not applied by the current cloud task path. Do not pass them with `--mode cloud` expecting equivalent behavior.
+</Warning>
 
 ## Authentication
 
@@ -49,3 +73,9 @@ deckhtml config set webhook <url>
 deckhtml config set retention-hours <0-99>
 deckhtml config show
 ```
+
+`api-key` and `space-id` affect the current cloud client. `webhook` and `retention-hours` are persisted configuration fields, but the current conversion command does not forward them when creating its cloud task.
+
+<Warning>
+  Human-readable `config show` masks stored secrets. Global `--json` returns the configuration object without that display masking; do not publish or log its output in CI.
+</Warning>

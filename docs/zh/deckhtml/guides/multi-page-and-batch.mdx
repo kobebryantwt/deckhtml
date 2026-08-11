@@ -1,0 +1,103 @@
+---
+title: 多页与批量输入
+sidebarTitle: 多页与批量
+description: "从重复幻灯片容器、有序源文件或多个 HTML URL 生成一份演示文稿。"
+---
+
+DeckHTML 可以从一份 HTML 文档生成多页，也可以把多个输入合并成一份有序产物。这些都是主转换命令和 Node.js API 的输入方式，并不存在单独的批处理子命令。
+
+## 选择输入组织方式
+
+| 源文件组织方式 | 适用情况 | 结果顺序 |
+| --- | --- | --- |
+| 一份 HTML 中重复出现幻灯片容器 | 多页共用 CSS、脚本和资源 | DOM 顺序 |
+| 每页一个 HTML/SVG 文件 | 生成器分别产出独立页面 | 命令参数或 `inputs` 数组顺序 |
+| 一个或多个 HTML URL | 源文件已经托管并需要保持顺序 | CLI 参数或 API `inputs` 顺序 |
+
+## 一份 HTML 包含多页
+
+使用重复且符合演示文稿尺寸的容器。DeckHTML 能识别 `.slide-container`、`.slide-wrap`、`.slide`、`section.slide`、`[data-slide]` 等常用命名；当页面中存在多个可见、接近幻灯片尺寸且包含有效内容的容器时，也能识别 `.deck-slide`、`.slide-page` 等语义化类名。
+
+```html
+<main>
+  <section class="slide-container" data-slide-id="cover">
+    <h1 data-element-id="title">季度复盘</h1>
+  </section>
+  <section class="slide-container" data-slide-id="metrics">
+    <h2 data-element-id="heading">关键指标</h2>
+  </section>
+</main>
+```
+
+```bash
+deckhtml deck.html -o deck.pptx --mode local --report
+```
+
+自动识别至少需要两个符合条件的容器。如果源文件使用其他选择器，请使用 Node.js API：
+
+```ts
+import { convertHtmlToPptx } from '@deckflow/deckhtml';
+
+const result = await convertHtmlToPptx({
+  input: 'deck.html',
+  slideSelector: '.presentation-page',
+  autoDetectSlides: false,
+});
+```
+
+## 合并有序文件
+
+```bash
+deckhtml 01-cover.html 02-metrics.html 03-summary.svg \
+  -o report.pptx \
+  --mode local \
+  --report
+```
+
+```ts
+import { convertHtmlToPptx } from '@deckflow/deckhtml';
+
+const result = await convertHtmlToPptx({
+  inputs: ['01-cover.html', '02-metrics.html', '03-summary.svg'],
+  quiet: true,
+});
+```
+
+每个文件本身也可以包含多页。运行环境有可用资源时，DeckHTML 会并行处理多个文件，再按原始输入顺序生成结果。不要根据进度日志的出现顺序推断最终页序。
+
+## PNG 文件命名
+
+单页输入写入指定的 PNG 路径；多页输入会写入带编号的文件，并在 `outputs` 中返回所有路径：
+
+```bash
+deckhtml deck.html -o preview.png --mode local --json --quiet
+```
+
+```json
+{
+  "output": "/work/preview1.png",
+  "outputs": [
+    "/work/preview1.png",
+    "/work/preview2.png"
+  ],
+  "slideCount": 2
+}
+```
+
+应用应读取返回的 `outputs` 数组，不要自行拼接编号路径。
+
+## 批量 URL
+
+CLI 可以接收一个或多个 HTTP(S) HTML URL，但同一次调用不能混用 URL 和本地路径：
+
+```bash
+deckhtml https://example.com/01.html https://example.com/02.html -o deck.pptx
+```
+
+CLI 会以文本形式获取响应，并把它临时保存为 HTML；这个过程不是带认证状态的浏览器导航，也不会自动重写相对资源 URL。请使用绝对资源地址，或在返回的 HTML 中提供合适的 `<base href="…">`。
+
+Node.js API 也可以在 `input` 或 `inputs` 中放入直接 HTTP(S) URL。API 会在 Chromium 中打开这些 URL，而不是下载为临时 HTML，因此相对资源可以保留页面基准地址，调用方持有的浏览器上下文也可以提供会话状态。
+
+<Card title="HTML 输入约定" href="/zh/deckhtml/reference/input-html">
+  继续了解视口识别、稳定标识、运行时 UI 排除、资源和 URL 限制。
+</Card>

@@ -1,15 +1,15 @@
 ---
 title: DeckHTML
 sidebarTitle: 概览
-description: "把 HTML 或 SVG 转换为 PPTX 和 PNG，并尽可能保留可编辑的演示文稿元素。"
+description: "把浏览器渲染后的 HTML 或 SVG 转为 PPTX 或 PNG，并明确记录可编辑映射与降级结果。"
 ---
 
-DeckHTML 把经过浏览器布局的 HTML 转换为 PPTX 或 PNG。它会尽可能把文字、图片、表格、形状、受支持的 SVG 和公式映射为原生或矢量演示文稿元素；当视觉一致性比可编辑性更可靠时，则回退为栅格图像。
+DeckHTML 会在 Chromium 中加载 HTML 或 SVG、测量实际渲染布局，再生成 PPTX 或 PNG。生成 PPTX 时，它会把支持的文字、图片、表格、形状、SVG 几何和公式重建为可编辑或矢量对象；没有可靠 PowerPoint 映射时，则用栅格图保留外观，并在转换报告中记录这一决定。
 
 | | DeckHTML |
 | --- | --- |
 | 适用场景 | HTML 原生幻灯片创作和自动生成演示文稿 |
-| 输入 | 本地 HTML 或 SVG、stdin 中的 HTML、多个有序文件，或 HTML URL |
+| 输入 | 本地 HTML/SVG、有序文件、标准输入中的 HTML，或一个或多个 HTML URL |
 | 输出 | PPTX 或 PNG |
 | 执行位置 | 本地 Chromium，或 DeckFlow 云端 |
 | 接入方式 | CLI 和本地 Node.js API |
@@ -17,21 +17,24 @@ DeckHTML 把经过浏览器布局的 HTML 转换为 PPTX 或 PNG。它会尽可�
 
 ```mermaid
 flowchart LR
-  H["HTML 或 SVG"] --> B["Chromium 布局"]
-  B --> M["原生、矢量或栅格映射"]
-  M --> P["PPTX 或 PNG"]
-  M --> R["诊断和报告"]
+  H["HTML / SVG"] --> B["在 Chromium 中渲染并测量"]
+  B --> M["逐元素映射"]
+  M --> P["PPTX：原生、矢量或栅格对象"]
+  B --> G["PNG：渲染后的幻灯片图片"]
+  M --> R["逐元素报告与诊断"]
 ```
 
 ## 适合使用 DeckHTML 的场景
 
 - 从模板、应用数据或 AI 生成的 HTML 创建演示文稿。
 - 在 PowerPoint 中保留受支持文字、形状、表格、图片、SVG 几何和公式的可编辑性。
-- 把多个本地 HTML/SVG 文件按顺序合并为幻灯片。
+- 把一份多页文档或多个有序 HTML/SVG 文件合并为一份演示文稿。
 - 从同一份输入生成 PNG 预览。
 - 在自己的自动化检查中使用逐元素转换诊断。
 
-DeckHTML 不承诺浏览器到 PowerPoint 的无损转换。Canvas、复杂 SVG、滤镜、分层效果、iframe 和不支持的 CSS 可能被栅格化、忽略或标记为不支持。
+<Note>
+  HTML/CSS 与 PowerPoint 使用不同的布局和渲染模型。Canvas、复杂 SVG、滤镜、分层效果、iframe 和不支持的 CSS 可能被栅格化、省略，或报告为不支持。如果交付要求包含可编辑性，请务必检查转换报告。
+</Note>
 
 ## 执行模式
 
@@ -41,7 +44,16 @@ DeckHTML 不承诺浏览器到 PowerPoint 的无损转换。Canvas、复杂 SVG�
 | 云端 | 输入上传到 DeckFlow | 游客、登录或 API Key | 字体嵌入仅云端可用 |
 | 自动 | 有凭证时使用云端，否则本地 | 取决于最终模式 | 生产工作流建议显式指定 |
 
-Node.js API 只在本地运行并返回 Buffer，不会写文件。CLI 可以本地运行，也可以提交 DeckOps 云端任务。
+Node.js API 只在本地运行并返回 Buffer，不会写文件。CLI 既可在本地运行，也可提交云端任务。`auto` 模式在已配置凭证时选择云端，否则留在本地。生产环境建议显式指定模式，避免凭证变化意外改变数据边界。
+
+## 选择接入方式
+
+| 接口 | 适用情况 | 关键边界 |
+| --- | --- | --- |
+| CLI | 需要落盘文件、Shell 自动化、CI、标准输入或 URL 输入 | 同时支持本地与云端执行 |
+| Node.js API | 应用需要管理浏览器、Buffer、资源策略或严格校验 | 在本地执行，可接收文件路径或直接 URL，不会自动写文件 |
+
+两种接口对 URL 的处理不同。CLI 先通过 Node.js 获取 HTML 文本再转换，不会复用浏览器 Cookie，也不会自动保留原始 Base URL；Node.js API 则让 Chromium 直接导航到 URL，并可使用调用方提供的浏览器上下文。选择 URL 接入方式前，请先阅读 [HTML 输入约定](/zh/deckhtml/reference/input-html)。
 
 ## 第一次转换
 
@@ -56,6 +68,7 @@ deckhtml deck.html -o deck.pptx --mode local --json
 <CardGroup cols={2}>
   <Card title="快速开始" href="/zh/deckhtml/quick-start">安装、检查 Chromium 并生成一个 PPTX。</Card>
   <Card title="输入契约" href="/zh/deckhtml/reference/input-html">定义幻灯片、尺寸、标识、字体和资源。</Card>
+  <Card title="多页与批量输入" href="/zh/deckhtml/guides/multi-page-and-batch">组合多页容器或有序源文件。</Card>
   <Card title="元素映射" href="/zh/deckhtml/guides/element-mapping">了解可编辑性和栅格回退。</Card>
   <Card title="认证" href="/zh/deckhtml/authentication">配置云端游客、登录或 API Key。</Card>
 </CardGroup>

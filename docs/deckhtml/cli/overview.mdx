@@ -27,7 +27,7 @@ cat deck.html | deckhtml - -o deck.pptx
 deckhtml https://example.com/deck.html -o deck.pptx
 ```
 
-Stdin requires `--output`. A single command can use local files or URLs, but cannot mix both.
+Stdin requires `--output`. A single command can use local files or one or more URLs, but cannot mix both. URL input is downloaded as HTML text; it does not inherit cookies or browser state, and relative assets require an explicit `<base>` or absolute URLs.
 
 ## Output format
 
@@ -40,6 +40,8 @@ deckhtml deck.html -o frames.png
 
 PPTX is the default when `-o` is omitted.
 
+For more than one detected slide, PNG output uses numbered paths and returns all of them in the JSON `outputs` array. See [Multi-page and Batch Input](/deckhtml/guides/multi-page-and-batch).
+
 ## Reliable automation defaults
 
 ```bash
@@ -48,7 +50,8 @@ deckhtml deck.html \
   --mode local \
   --json \
   --report \
-  --force
+  --force \
+  --quiet
 ```
 
-Use [Output and Automation](/deckhtml/cli/output-modes) for stdout, stderr, JSON, file overwrite, and report behavior.
+Use `--json --quiet` together when stdout must contain only the final JSON envelope. Use [Output and Automation](/deckhtml/cli/output-modes) for stdout, stderr, exit status, overwrite, and report behavior.

@@ -10,7 +10,7 @@ Select PNG output through the `-o` extension:
 deckhtml deck.html -o frames.png --mode local
 ```
 
-A one-slide input writes the requested path. A multi-slide input writes numbered PNG files and reports all output paths.
+A one-slide local input writes the requested path. A multi-slide local input inserts a one-based number before `.png`: `preview1.png` through `preview9.png`, or zero-padded names such as `preview01.png` when the result has at least ten pages. The JSON envelope reports the first path in `output` and every path in `outputs`.
 
 PNG is useful for previews, thumbnails, visual review, and downstream image workflows. It preserves rendered appearance but does not retain editable slide objects.
 

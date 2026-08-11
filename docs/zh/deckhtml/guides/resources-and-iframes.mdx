@@ -8,13 +8,17 @@ HTML 转换会在浏览器中执行页面内容，因此资源访问和 iframe �
 
 ## 本地和远程资源
 
-CLI 在 Local 模式下允许加载本地子资源，因此相对图片、CSS 和字体可以正常读取。Node API 还提供显式 Resource Policy，用于限制本地路径与远程网络请求，并返回资源诊断。
+CLI 在本地模式下允许加载本地子资源，因此相对图片、CSS 和字体可以正常读取。这是范围较宽的兼容设置，并不是目录白名单。Node.js API 还提供显式资源策略，用于限制本地根目录与远程网络请求，并返回资源诊断。
 
-缺少资源、路径逃逸或远程资源必须让转换失败时，使用 Strict Mode。
+缺少资源、路径逃逸或远程资源必须让转换失败时，使用严格模式。
+
+<Warning>
+  DeckHTML 会在 Chromium 中执行页面。不要把本地转换当作检查不受信任 HTML 的安全沙箱。不受信任的输入应在隔离进程或容器中运行，或通过 Node.js API 配置严格的 `resourcePolicy` 和受控 BrowserContext。
+</Warning>
 
 ## iframe
 
-Local 转换支持三种 iframe 模式：
+本地转换支持三种 iframe 模式，默认为 `inspect`：
 
 | 模式 | 行为 |
 | --- | --- |
@@ -30,6 +34,8 @@ deckhtml deck.html -o deck.pptx \
 
 嵌套、依赖父页面或无法访问的 Frame 可能产生结构化 iframe 诊断。视觉保留比可编辑性更重要时可使用 `screenshot`。
 
+iframe 参数只应用于本地转换。当前云端任务路径不会接收 `--iframes` 或 `--iframe-load-timeout-ms`。
+
 ## 浏览器控制
 
-CLI 接受 `--executable-path` 指定 Chromium。Node API 可以注入 Executable Path、持久化 Profile、Browser 或 Browser Context，适合容器和已经统一管理 Playwright 的宿主。
+CLI 接受 `--executable-path` 指定 Chromium。Node.js API 可以传入可执行文件路径、持久化用户目录、`Browser` 或 `BrowserContext`，适合容器和已经统一管理 Playwright 的宿主。

@@ -35,7 +35,7 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
     <strong>DeckUse</strong> replaces selected text and moves supported shapes while producing another editable PPTX.
   </Card>
   <Card title="Author a deck in HTML" icon="code" iconType="solid" color="#ec4899" href="/deckhtml/overview" cta="Explore DeckHTML" arrow>
-    <strong>DeckHTML</strong> maps browser layout to PPTX or PNG and reports which elements stay editable or fall back to pixels.
+    <strong>DeckHTML</strong> turns one multi-page HTML document or ordered HTML/SVG files into PPTX or PNG, and reports which PPTX elements stay editable or fall back to pixels.
   </Card>
 </CardGroup>
 
@@ -76,13 +76,13 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
     <div className="product-map-source">
       <span className="product-map-label">Input</span>
       <strong>HTML or SVG</strong>
-      <span>Browser-authored layout</span>
+      <span>Local files, stdin, or HTML URL</span>
     </div>
     <div className="product-map-capabilities">
       <a className="product-map-card" href="/deckhtml/overview">
         <span className="product-map-label">Generate a deck</span>
         <strong>DeckHTML</strong>
-        <span>PPTX or PNG with mapping diagnostics</span>
+        <span>PPTX or PNG, with PPTX mapping diagnostics</span>
       </a>
     </div>
   </section>
@@ -98,7 +98,7 @@ DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and D
 | Produce page images, PDF, thumbnails, or video | [DeckRender](/deckrender/overview) | CLI or Node.js SDK | Optional for cloud routes; guest mode is available |
 | Parse, extract, convert, generate, or orchestrate cloud tasks | [DeckOps](/deckops/overview) | Published TypeScript task SDK or CLI; source Python/Go implementations | Credentials for high-level Parse; limited guest low-level tasks |
 | Replace text or move supported shapes in an existing PPTX | [DeckUse](/deckuse/overview) | CLI; Node.js package currently blocked | Not required; processing stays local |
-| Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI or Node.js SDK | Not required locally; optional for cloud mode |
+| Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI for local/cloud files; Node.js SDK for local buffers | Not required locally; guest or authenticated cloud mode |
 
 <Note>
   Supported formats and operations differ by product. A file being recognized by one product does not mean every other product can process it. Use each product's supported-format or command reference as the version-specific contract.
