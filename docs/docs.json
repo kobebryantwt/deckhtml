@@ -149,7 +149,8 @@
                 "pages": [
                   "examples/overview",
                   "examples/inspect-and-route",
-                  "examples/html-to-pptx"
+                  "examples/html-to-pptx",
+                  "examples/render-html-preview"
                 ]
               }
             ]
@@ -368,7 +369,8 @@
                 "pages": [
                   "zh/examples/overview",
                   "zh/examples/inspect-and-route",
-                  "zh/examples/html-to-pptx"
+                  "zh/examples/html-to-pptx",
+                  "zh/examples/render-html-preview"
                 ]
               }
             ]

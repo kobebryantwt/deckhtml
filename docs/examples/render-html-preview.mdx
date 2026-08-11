@@ -1,0 +1,133 @@
+---
+title: Render HTML to a PNG Preview
+sidebarTitle: HTML to PNG Preview
+description: "Create a known HTML page, render it to PNG with DeckRender, and verify both the visual artifact and JSON result."
+---
+
+This example creates a presentation-sized HTML page, sends it through a DeckFlow cloud render, and verifies the resulting PNG and `RenderResult` without adding another npm dependency.
+
+<div className="workflow-meta"><span className="workflow-meta-label">Produces</span><span className="workflow-meta-value"><code>preview.png</code> plus <code>render-result.json</code> containing the route, page count, output metadata, and duration.</span></div>
+
+## Requirements
+
+- Node.js 18 or later
+- Network access to DeckFlow cloud
+- Guest quota, a browser login, or an API key
+
+<Warning>
+  DeckRender uploads the HTML source to DeckFlow cloud for this route. For local HTML-to-PNG conversion, use [DeckHTML local mode](/deckhtml/guides/local-mode).
+</Warning>
+
+## Run the example
+
+<Steps>
+  <Step title="Install and verify DeckRender">
+
+```bash
+npm install -g @deckflow/deckrender
+deckrender --version
+deckrender formats
+deckrender config list
+```
+
+Check the credential source reported by `config list`. An expired environment variable or inherited DeckOps token can override guest mode and return `auth_error`.
+
+  </Step>
+  <Step title="Create a known HTML input">
+
+Save as `preview.html`:
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * { box-sizing: border-box; }
+      html, body {
+        width: 1280px;
+        height: 720px;
+        margin: 0;
+      }
+      body {
+        display: grid;
+        place-items: center;
+        background: #0b1715;
+        color: #f5fffc;
+        font-family: Arial, sans-serif;
+      }
+      main { width: 920px; }
+      h1 { margin: 0 0 20px; font-size: 68px; }
+      p { margin: 0; color: #6ee7d2; font-size: 30px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>DeckRender preview</h1>
+      <p>A known HTML input rendered through DeckFlow cloud.</p>
+    </main>
+  </body>
+</html>
+```
+
+  </Step>
+  <Step title="Render the PNG and capture JSON">
+
+```bash
+deckrender preview.html -o preview.png --json --quiet > render-result.json
+```
+
+`--quiet` prevents human-readable progress logs from mixing with JSON on stdout. The command writes the image separately to `preview.png`.
+
+  </Step>
+  <Step title="Verify the artifact and result">
+
+Save as `verify.mjs`:
+
+```js
+import { readFile } from 'node:fs/promises';
+
+const result = JSON.parse(await readFile('render-result.json', 'utf8'));
+const png = await readFile('preview.png');
+const pngSignature = '89504e470d0a1a0a';
+
+if (!result.ok || result.format !== 'image' || result.pages !== 1) {
+  throw new Error('Unexpected RenderResult');
+}
+if (!result.outputs?.some((output) => output.file.endsWith('preview.png'))) {
+  throw new Error('preview.png is missing from outputs');
+}
+if (png.subarray(0, 8).toString('hex') !== pngSignature) {
+  throw new Error('preview.png is not a valid PNG');
+}
+
+console.log(`OK: ${result.pages} page, ${png.length} bytes`);
+console.log(`Route: ${result.route.join(' -> ')}`);
+```
+
+Run it:
+
+```bash
+node verify.mjs
+```
+
+  </Step>
+</Steps>
+
+## Expected result
+
+The exact byte count and duration vary. A successful verification prints:
+
+```text
+OK: 1 page, <byte-count> bytes
+Route: convertor.html2png
+```
+
+<CardGroup cols={2}>
+  <Card title="Render another format" icon="images" iconType="solid" href="/deckrender/formats">
+    Check the current input/output matrix and format-specific limitations.
+  </Card>
+  <Card title="Configure authentication" icon="key" iconType="solid" href="/deckrender/authentication">
+    Move from guest quota to browser login, token, or API-key execution.
+  </Card>
+</CardGroup>

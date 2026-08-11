@@ -1,0 +1,133 @@
+---
+title: 将 HTML 渲染为 PNG 预览
+sidebarTitle: HTML 转 PNG 预览
+description: "创建一份已知 HTML，使用 DeckRender 渲染为 PNG，并验证视觉产物和 JSON 结果。"
+---
+
+本示例会创建一张演示文稿尺寸的 HTML 页面，通过 DeckFlow 云端完成渲染，并在不增加其他 npm 依赖的情况下验证 PNG 和 `RenderResult`。
+
+<div className="workflow-meta"><span className="workflow-meta-label">生成结果</span><span className="workflow-meta-value"><code>preview.png</code>，以及包含路线、页数、输出元数据和耗时的 <code>render-result.json</code>。</span></div>
+
+## 环境要求
+
+- Node.js 18 或更高版本
+- 可以访问 DeckFlow 云端
+- 可用的游客额度、浏览器登录或 API Key
+
+<Warning>
+  这条 DeckRender 路线会把 HTML 源文件上传到 DeckFlow 云端。需要在本地完成 HTML 转 PNG 时，请使用 [DeckHTML 本地模式](/zh/deckhtml/guides/local-mode)。
+</Warning>
+
+## 运行示例
+
+<Steps>
+  <Step title="安装并验证 DeckRender">
+
+```bash
+npm install -g @deckflow/deckrender
+deckrender --version
+deckrender formats
+deckrender config list
+```
+
+检查 `config list` 返回的凭证来源。过期的环境变量或继承自 DeckOps 的 Token 可能覆盖游客模式并返回 `auth_error`。
+
+  </Step>
+  <Step title="创建已知 HTML 输入">
+
+保存为 `preview.html`：
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * { box-sizing: border-box; }
+      html, body {
+        width: 1280px;
+        height: 720px;
+        margin: 0;
+      }
+      body {
+        display: grid;
+        place-items: center;
+        background: #0b1715;
+        color: #f5fffc;
+        font-family: Arial, sans-serif;
+      }
+      main { width: 920px; }
+      h1 { margin: 0 0 20px; font-size: 68px; }
+      p { margin: 0; color: #6ee7d2; font-size: 30px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>DeckRender preview</h1>
+      <p>A known HTML input rendered through DeckFlow cloud.</p>
+    </main>
+  </body>
+</html>
+```
+
+  </Step>
+  <Step title="渲染 PNG 并保存 JSON">
+
+```bash
+deckrender preview.html -o preview.png --json --quiet > render-result.json
+```
+
+`--quiet` 可以避免面向用户的进度日志混入 stdout 中的 JSON。图片会单独写入 `preview.png`。
+
+  </Step>
+  <Step title="验证产物和结果">
+
+保存为 `verify.mjs`：
+
+```js
+import { readFile } from 'node:fs/promises';
+
+const result = JSON.parse(await readFile('render-result.json', 'utf8'));
+const png = await readFile('preview.png');
+const pngSignature = '89504e470d0a1a0a';
+
+if (!result.ok || result.format !== 'image' || result.pages !== 1) {
+  throw new Error('Unexpected RenderResult');
+}
+if (!result.outputs?.some((output) => output.file.endsWith('preview.png'))) {
+  throw new Error('preview.png is missing from outputs');
+}
+if (png.subarray(0, 8).toString('hex') !== pngSignature) {
+  throw new Error('preview.png is not a valid PNG');
+}
+
+console.log(`OK: ${result.pages} page, ${png.length} bytes`);
+console.log(`Route: ${result.route.join(' -> ')}`);
+```
+
+运行验证：
+
+```bash
+node verify.mjs
+```
+
+  </Step>
+</Steps>
+
+## 预期结果
+
+实际字节数和耗时会有所不同。验证成功时会输出：
+
+```text
+OK: 1 page, <byte-count> bytes
+Route: convertor.html2png
+```
+
+<CardGroup cols={2}>
+  <Card title="渲染其他格式" icon="images" iconType="solid" href="/zh/deckrender/formats">
+    查看当前输入输出矩阵和各格式的限制。
+  </Card>
+  <Card title="配置认证" icon="key" iconType="solid" href="/zh/deckrender/authentication">
+    从游客额度切换到浏览器登录、Token 或 API Key。
+  </Card>
+</CardGroup>
