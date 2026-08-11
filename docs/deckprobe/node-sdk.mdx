@@ -1,18 +1,32 @@
 ---
 title: Node.js API
-sidebarTitle: Node.js API (Source)
+sidebarTitle: Node.js API
 description: "Probe local files or byte arrays from Node.js through the @deckflow/deckprobe WebAssembly package."
 ---
 
 The Node.js API requires Node.js 20 or later. It uses the same Rust engine and Schema v2 contract as the native CLI.
 
-<Warning>
-  Source contract only for the current release: `@deckflow/deckprobe@2.3.0` was published without the required `dist/` and `wasm/` files, so the Node.js import fails. Use the native or npm CLI until a corrected artifact is available.
-</Warning>
+Check that the Registry exposes the corrected package:
 
 ```bash
-npm install @deckflow/deckprobe
+npm view @deckflow/deckprobe version
+npm install @deckflow/deckprobe@^2.3.1
 ```
+
+Version 2.3.1 and later include the Node.js entry and WebAssembly runtime required by this API.
+
+If the Registry still reports 2.3.0, build and install the tagged source package:
+
+```bash
+git clone --branch v2.3.1 --depth 1 https://github.com/deckflow/deckprobe.git
+cd deckprobe/packages/deckprobe-js
+npm ci
+npm run build
+npm run check:pack
+npm pack
+```
+
+Then install the generated tarball from the Node.js application, for example `npm install /absolute/path/to/deckflow-deckprobe-2.3.1.tgz`.
 
 ## Probe a file
 

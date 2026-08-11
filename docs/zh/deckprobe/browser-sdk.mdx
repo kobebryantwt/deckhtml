@@ -1,20 +1,34 @@
 ---
 title: DeckProbe Browser SDK
-sidebarTitle: Browser SDK（源码）
+sidebarTitle: Browser SDK
 description: "安装 DeckProbe npm 包，并通过主线程或 Worker 在浏览器本地运行 WebAssembly 文档嗅探。"
 ---
 
 `@deckflow/deckprobe` 包通过 WebAssembly 运行同一套目标驱动 Rust 引擎，接受 `File`、`Blob`、`ArrayBuffer` 和 `Uint8Array`，文档字节始终留在浏览器中。
 
-<Warning>
-  当前版本仅可作为源码契约参考：`@deckflow/deckprobe@2.3.0` 发布时缺少所需的 `dist/` 和 `wasm/` 文件，因此这些导入会失败。修正后的 npm 产物发布前请使用 CLI。
-</Warning>
-
 ## 安装
 
+先确认 Registry 已经提供修正后的软件包：
+
 ```bash
-npm install @deckflow/deckprobe
+npm view @deckflow/deckprobe version
+npm install @deckflow/deckprobe@^2.3.1
 ```
+
+2.3.1 及以上版本包含这些导入所需的 JavaScript 编译产物和 WebAssembly 运行文件。
+
+如果 Registry 仍显示 2.3.0，请根据对应 Tag 构建完整的本地软件包，不要安装该不完整产物：
+
+```bash
+git clone --branch v2.3.1 --depth 1 https://github.com/deckflow/deckprobe.git
+cd deckprobe/packages/deckprobe-js
+npm ci
+npm run build
+npm run check:pack
+npm pack
+```
+
+随后在浏览器应用中安装生成的 `deckflow-deckprobe-2.3.1.tgz`。
 
 ## 在主线程中 Probe
 

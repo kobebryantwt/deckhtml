@@ -1,58 +1,104 @@
 ---
-title: Node.js API 状态
-sidebarTitle: Node.js API（阻塞）
-description: "在 Node.js 中使用 DeckUse 的 Workspace、Selector、Reader、Writer 和命令导出。"
+title: DeckUse Node.js API
+sidebarTitle: Node.js API
+description: "在 Node.js 24 或更高版本中执行 DeckUse 的带版本工作区命令协议。"
 ---
 
-```bash
-npm install deckuse
-```
+`@deckflow/deckuse` 软件包提供两个高层入口：
+
+- `createDefaultExecutor()` 创建注册了 PPTX 适配器和预留适配器的执行器。
+- `runCommand(input)` 创建执行器并执行一条完整命令。
 
 <Warning>
-  当前 `deckuse@0.2.0` ESM 入口在 Node.js 22 下会报错：`Dynamic require of "child_process" is not supported`。软件包构建修正前，生产环境请使用已经验证的 CLI。下文描述源码导出，不代表当前已验证的安装包契约。
+  源码 API 已实现并通过测试，但当前 Registry 中的 `@deckflow/deckuse@0.2.0` 因声明的适配器依赖没有全部发布而无法安装。公开依赖修正前，请在克隆的源码工作区中开发和验证。
 </Warning>
 
-软件包导出了 CLI 使用的同一组命令函数，以及更底层的 Workspace、Selector、Reader、Writer、错误类和类型 API。
+## 结果契约
 
-## 执行文件原生命令
+对于预期内的命令、格式、工作区、校验或事务错误，命令会返回 Result Envelope，而不是抛出异常：
 
 ```ts
-import { replaceTextCommand } from 'deckuse';
-
-await replaceTextCommand(
-  './input.pptx',
-  '2025',
-  '2026',
-  { output: './updated.pptx' },
-);
+type Result<T> =
+  | { ok: true; value: T; diagnostics: Diagnostic[] }
+  | { ok: false; error: DeckuseError; diagnostics: Diagnostic[] };
 ```
 
-命令函数会输出与 CLI 相同的进度信息。直接修改 PPTX 时必须提供输出路径。
+稳定错误码包括 `INVALID_COMMAND`、`WORKSPACE_NOT_FOUND`、`ELEMENT_NOT_FOUND`、`FORMAT_NOT_IMPLEMENTED`、`VALIDATION_FAILED`、`TRANSACTION_CONFLICT` 和 `IO_ERROR`。
 
-## 管理 Workspace
+## 初始化并检查
 
 ```ts
-import {
-  Workspace,
-  SelectorParser,
-  SelectorResolver,
-} from 'deckuse';
+import { runCommand } from '@deckflow/deckuse';
 
-const workspace = await Workspace.load('./working.deck');
-const selector = SelectorParser.parse("slide:1/text[contains('Revenue')]");
-const paragraphs = await SelectorResolver.resolveParagraphs(
-  selector,
-  workspace.metadata,
-  workspace.workspaceDir,
-);
+const workspaceId = '/absolute/path/customer-deck';
 
-for (const paragraph of paragraphs) {
-  console.log(paragraph.idPath, paragraph.paragraphIndex, paragraph.text);
+const initialized = await runCommand({
+  version: '1.0',
+  type: 'init',
+  workspaceId,
+  format: 'pptx',
+  source: '/absolute/path/input.pptx',
+});
+
+if (!initialized.ok) throw new Error(initialized.error.message);
+
+const inspected = await runCommand({
+  version: '1.0',
+  type: 'inspect',
+  workspaceId,
+  depth: 2,
+});
+
+if (!inspected.ok) throw new Error(inspected.error.message);
+console.log(inspected.value);
+```
+
+## 查询、修改并提交
+
+从 `inspect` 读取当前版本，选择查询返回的引用，并把两者用于修改命令：
+
+```ts
+const query = await runCommand({
+  version: '1.0',
+  type: 'query',
+  workspaceId,
+  selector: { kind: 'textbox', text: 'Revenue 2025' },
+  limit: 10,
+});
+
+if (!query.ok || !Array.isArray(query.value) || query.value.length !== 1) {
+  throw new Error('Expected one approved text box');
 }
+
+const target = query.value[0] as { ref: Record<string, unknown> };
+const revision = (inspected.value as { document: { revision: string } }).document.revision;
+
+const changed = await runCommand({
+  version: '1.0',
+  type: 'setText',
+  workspaceId,
+  transactionId: revision,
+  ref: target.ref,
+  text: 'Revenue 2026',
+});
+
+if (!changed.ok) throw new Error(changed.error.message);
+
+const committed = await runCommand({
+  version: '1.0',
+  type: 'commit',
+  workspaceId,
+  transactionId: (changed.value as { revision: string }).revision,
+  destination: '/absolute/path/updated.pptx',
+});
+
+if (!committed.ok) throw new Error(committed.error.message);
 ```
 
-公开导出包括 `Workspace`、`SelectorParser`、`SelectorResolver`、`PptxReader`、`PptxWriter`、命令函数、DeckUse 错误类，以及 Workspace/Selector 结果类型。
+`runCommand()` 可以读取 `.deckuse/manifest.json`，重新打开已有工作区，因此这些调用不必共享同一个执行器实例。应用需要显式管理同一套注册表和执行上下文时，再复用 `createDefaultExecutor()`。
 
-<Warning>
-  底层 Reader 与 Writer 暴露的是实现相关的 PPTX 结构，并不提供宽泛兼容性保证。当前已支持的操作优先使用命令函数，同时保留源文件并检查输出演示文稿。
-</Warning>
+## 底层软件包
+
+源码工作区还提供 `@deckflow/deckuse-core`、`@deckflow/deckuse-opc` 和 `@deckflow/deckuse-pptx`，其中包含命令 Schema、`Executor`、适配器注册表、OPC 文件包原语、PPTX 能力、索引构建器和格式适配器。除非要实现适配器或在更底层接入协议，否则优先使用聚合 API。
+
+全部命令结构请查看[命令参考](/zh/deckuse/commands)，查询行为请查看[选择器](/zh/deckuse/selectors)。

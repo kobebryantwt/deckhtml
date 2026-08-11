@@ -28,7 +28,7 @@ deckprobe --version
   <Step title="Download a known input">
 
 ```bash
-curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+curl -fL https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf -o sample.pdf
 ```
 
   </Step>
@@ -55,7 +55,7 @@ if (report.status !== 'ok' || format !== 'pdf' || pages > 25) {
   process.exit(1);
 }
 
-console.log(`ACCEPT: ${format}, ${pages} page`);
+console.log(`ACCEPT: ${format}, ${pages} pages`);
 ```
 
 Run it:
@@ -70,7 +70,7 @@ node route.mjs
 ## Expected result
 
 ```text
-ACCEPT: pdf, 1 page
+ACCEPT: pdf, 14 pages
 ```
 
 The native CLI reads the file locally. The sample download uses the network, but DeckProbe does not upload `sample.pdf` during inspection.

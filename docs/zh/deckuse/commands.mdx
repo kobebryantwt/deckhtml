@@ -1,0 +1,232 @@
+---
+title: JSON 命令参考
+sidebarTitle: JSON 命令
+description: "构造 DeckUse 的检查、文本、属性、几何、幻灯片、元素、图片、图表、批处理和导出命令。"
+---
+
+DeckUse 当前使用 `1.0` 协议。CLI 为 `init`、`inspect`、`query`、`validate` 和 `commit` 提供便捷子命令；所有修改操作都通过 `deckuse apply` 或 Node.js `runCommand()` API 发送 JSON。
+
+## 命令总览
+
+| 类型 | 用途 |
+| --- | --- |
+| `init` | 根据源文档创建工作区 |
+| `inspect` | 返回能力与元素索引，或检查一个引用 |
+| `query` | 使用字符串或结构化选择器筛选索引元素 |
+| `getText` | 通过 API 读取一个引用的文本、几何信息和 Payload |
+| `setText` | 替换一个引用节点中的全部文本 |
+| `replaceText` | 在匹配的索引元素中执行字面量或正则替换 |
+| `setProperties` | 修改支持的形状、文字或图表属性 |
+| `setTransform` | 设置一个元素的位置、大小或旋转 |
+| `add` | 添加幻灯片、文本框/形状、连接线、组合、图片或表格 |
+| `remove` | 删除引用的幻灯片或元素 |
+| `replacePicture` | 替换内嵌图片，同时保留元素引用与图层顺序 |
+| `duplicate` | 复制引用的幻灯片或元素 |
+| `batch` | 原子执行最多 1000 条修改，或明确允许部分完成 |
+| `validate` | 检查当前工作区文件包 |
+| `commit` | 把当前文件包导出到目标 PPTX |
+
+## CLI 修改 Envelope
+
+把单条顶层命令传给 `deckuse apply` 时，可以省略 `version`、`workspaceId` 和 `transactionId`；CLI 会根据工作区补充：
+
+```json
+{
+  "type": "replaceText",
+  "find": "FY2025",
+  "replace": "FY2026",
+  "selector": "kind=textbox",
+  "limit": 100
+}
+```
+
+Node.js API 需要完整 Envelope：
+
+```json
+{
+  "version": "1.0",
+  "type": "replaceText",
+  "workspaceId": "/absolute/path/workspace",
+  "transactionId": "<current-revision>",
+  "find": "FY2025",
+  "replace": "FY2026"
+}
+```
+
+设置 `regex: true` 后执行 Unicode 全局正则替换；默认执行字面量替换。`limit` 接受 `1` 到 `10000`，内部默认最多匹配 `1000` 个元素。
+
+## 精确修改一个元素
+
+先通过 `query` 或 `inspect` 得到 `ref`，只要引用版本仍是当前版本，就可以原样使用：
+
+```json
+{
+  "type": "setText",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:10",
+    "revision": "<current-revision>"
+  },
+  "text": "Enterprise Strategy"
+}
+```
+
+`setText` 与 `replaceText` 会重写目标文本节点，并可能把多个文本 Run 合并为一个，同时保留第一个 Run 的样式。需要明确控制文字样式时，请在文本修改后使用 `setProperties`。
+
+## 属性与几何信息
+
+```json
+{
+  "type": "setProperties",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:10"
+  },
+  "properties": {
+    "name": "Approved title",
+    "fill": "F3F4F6",
+    "stroke": { "color": "2563EB", "width": 1.5 },
+    "textColor": "111827",
+    "fontFamily": "Arial",
+    "fontSize": 28,
+    "bold": true,
+    "italic": false,
+    "underline": false,
+    "hidden": false
+  }
+}
+```
+
+十六进制颜色为六位字符串，可以带 `#` 前缀。`fill` 和 `stroke` 还接受 `none`、`false` 或 `null`。支持的别名包括：用 `border`/`outline`/`line` 表示 `stroke`，用 `font`/`typeface` 表示 `fontFamily`，用 `size` 表示 `fontSize`，用 `fontColor` 表示 `textColor`。未知字段会返回 `INVALID_COMMAND`。
+
+```json
+{
+  "type": "setTransform",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:10"
+  },
+  "transform": {
+    "x": 914400,
+    "y": 731520,
+    "width": 8229600,
+    "height": 685800,
+    "rotation": 5
+  }
+}
+```
+
+位置和尺寸使用 OOXML EMU（914400 EMU = 1 英寸），旋转使用角度。省略的字段保持当前值。
+
+## 添加元素
+
+`parent` 使用幻灯片引用，几何信息使用 EMU。
+
+```json
+{
+  "type": "add",
+  "parent": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "slide:256"
+  },
+  "element": {
+    "kind": "textbox",
+    "name": "Agent summary",
+    "text": "Generated summary",
+    "x": 914400,
+    "y": 914400,
+    "width": 5486400,
+    "height": 685800
+  }
+}
+```
+
+支持的 `kind` 包括 `textbox`/`shape`、`connector`、`group`、`picture` 和 `table`：
+
+- 图片传入 `path` 或 `base64`，以及几何信息。
+- 表格传入二维字符串数组 `rows`，以及几何信息。
+- 形状可以通过 `preset` 指定 PowerPoint 预设几何名称，默认为 `rect`。
+- 组合会先创建一个空 Group Container；在当前文件中继续添加子元素前，请先确认父级行为符合预期。
+
+可以添加空白幻灯片；需要保留已有版式与内容时，优先使用 `duplicate` 复制已知幻灯片。底层 `add` 幻灯片命令需要把 `element.kind` 设为 `slide`，还可以传入检查得到的 `templatePart` 或 `layoutPart`。
+
+## 复制、删除与替换图片
+
+下面的命令都使用当前版本的引用：
+
+```json
+{ "type": "duplicate", "ref": { "documentId": "/absolute/path/workspace", "elementId": "slide:256" } }
+```
+
+```json
+{ "type": "remove", "ref": { "documentId": "/absolute/path/workspace", "elementId": "256:10" } }
+```
+
+```json
+{
+  "type": "replacePicture",
+  "ref": { "documentId": "/absolute/path/workspace", "elementId": "256:12" },
+  "path": "/absolute/path/replacement.png"
+}
+```
+
+为 `replacePicture` 提供 `path` 或 `base64`；同时存在时优先读取文件路径。删除图片和幻灯片时，只清理由其他关系不再引用的媒体。复制幻灯片时会克隆可变的备注和图表 Part，版式和媒体可能继续共享。
+
+## 表格、备注与图表
+
+- 查询 `kind=table` 会返回表格及带有行、列位置的 `tableCell` 子元素。
+- 演讲者备注的类型为 `notes`；`getText` 可以读取，`setText` 可以替换备注 Part 中的文本。
+- 图表查询结果包含标题、缓存的系列名称和值、Chart Part，以及是否存在内嵌工作簿。
+
+使用 `setProperties` 修改图表：
+
+```json
+{
+  "type": "setProperties",
+  "ref": { "documentId": "/absolute/path/workspace", "elementId": "256:14" },
+  "properties": {
+    "title": "Revenue",
+    "series": [{ "name": "FY2026", "values": [10, 20, 30] }]
+  }
+}
+```
+
+DeckUse 修改的是 OOXML 图表缓存，不会更新内嵌 Excel 工作簿。存在工作簿时，结果包含 `EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED`；接入方不能据此声称工作簿数据已经同步。
+
+## 批处理与试运行
+
+当前 Schema 要求每条嵌套批处理命令都包含完整协议与修改 Envelope，即使外层批处理通过 CLI 执行也一样：
+
+```json
+{
+  "type": "batch",
+  "atomic": true,
+  "commands": [
+    {
+      "version": "1.0",
+      "type": "replaceText",
+      "workspaceId": "/absolute/path/workspace",
+      "transactionId": "<current-revision>",
+      "find": "FY2025",
+      "replace": "FY2026"
+    },
+    {
+      "version": "1.0",
+      "type": "setProperties",
+      "workspaceId": "/absolute/path/workspace",
+      "transactionId": "<current-revision>",
+      "ref": {
+        "documentId": "/absolute/path/workspace",
+        "elementId": "256:10"
+      },
+      "properties": { "fontSize": 28, "bold": true }
+    }
+  ]
+}
+```
+
+CLI 会自动补充外层命令的工作区和事务字段。`atomic` 默认为 `true`；任一嵌套命令失败时，不持久化任何修改。在外层批处理添加 `dryRun: true`，可以只返回执行结果而不修改工作区。
+
+## 协议 Schema
+
+源码软件包通过 `@deckflow/deckuse-core/schema/command.json` 导出 Draft 2020-12 命令 Schema。可以用它校验生成的工具调用，但执行后仍需检查运行时的 `ok` 字段和诊断信息。

@@ -22,7 +22,7 @@ Choose the first result your application needs. Each section provides installati
 npm install -g @deckflow/deckprobe
 deckprobe --version
 
-curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+curl -fL https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf -o sample.pdf
 deckprobe -t format,page_count --view values --pretty sample.pdf
 ```
 
@@ -35,7 +35,7 @@ The npm package's CLI uses the platform-specific native binary. Success means ex
   "driver": { "id": "pdf", "profile": "pdf" },
   "values": {
     "document.format": "pdf",
-    "pdf.page_count": 1
+    "pdf.page_count": 14
   }
 }
 ```
@@ -115,12 +115,17 @@ Continue with the [DeckOps Quickstart](/deckops/quick-start) for progress handli
 <span className="product-kicker">Local · existing PPTX · editable output</span>
 
 ```bash
-npm install -g deckuse
-deckuse replace input.pptx '2025' '2026' -o updated.pptx
-deckuse get text updated.pptx "text[contains('2026')]"
+git clone https://github.com/deckflow/deckuse.git && cd deckuse
+pnpm install && pnpm install:global
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o input.pptx
+deckuse init input.pptx ./workspace --json
+printf '%s\n' '{"type":"replaceText","find":"2025","replace":"2026"}' \
+  | deckuse apply ./workspace --json
+deckuse validate ./workspace --json
+deckuse commit ./workspace -o updated.pptx --json
 ```
 
-DeckUse works locally and currently supports modifying existing PPTX content. It does not add or delete elements and does not support other Office formats. Follow the [DeckUse Quickstart](/deckuse/quick-start) to inspect selectors and verify the output.
+DeckUse works locally through a versioned workspace. The source build can inspect and query PPTX structure, update text, properties and geometry, add/duplicate/remove supported slides and elements, work with pictures, tables and chart caches, then export another PPTX. Other document adapters remain unimplemented. Follow the [DeckUse Quickstart](/deckuse/quick-start) for prerequisites, expected query output, and final verification.
 
 ## DeckHTML: generate a PPTX locally
 

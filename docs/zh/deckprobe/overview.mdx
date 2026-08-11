@@ -11,8 +11,12 @@ DeckProbe 在不打开或渲染文件、不运行宏，也不启动 Microsoft Of
 | 输入 | PDF；现代与旧版 Word、Excel、PowerPoint；现代 Keynote、Numbers、Pages |
 | 结果 | Schema v2 JSON，包含 Target 值、证据、置信度、诊断和实际 I/O 成本 |
 | 执行位置 | 本地原生进程或本地 WebAssembly；文档字节不会发送给 DeckFlow |
-| 接入方式 | 原生 CLI 和 npm CLI；<span className="release-blocked">⚠ Browser、Worker、Node.js npm 发布阻塞</span> |
+| 接入方式 | 原生 CLI、npm CLI、Browser SDK、Web Worker SDK 和 Node.js API |
 | 认证 | 不需要 |
+
+<Note>
+  2.3.1 已修复 JavaScript 软件包内容，并通过 Browser 与软件包完整性检查。如果 `npm view @deckflow/deckprobe version` 仍返回 2.3.0，请暂时使用原生 CLI，或按照 SDK 页面从源码构建 2.3.1 软件包，等待 Registry 同步。
+</Note>
 
 ## DeckProbe 适合什么
 
@@ -30,21 +34,17 @@ flowchart LR
   P --> J["Schema v2 事实与证据"]
 ```
 
-<Warning>
-  当前 `@deckflow/deckprobe@2.3.0` npm 产物缺少 JavaScript 导入所需的 `dist/` 和 `wasm/` 运行文件。原生 CLI 和 npm 提供的 CLI 可以使用，但该产物中的 Browser、Worker 和 Node.js API 无法运行。
-</Warning>
-
 ## 选择接入方式
 
 <CardGroup cols={2}>
   <Card title="原生 CLI" href="/zh/deckprobe/quick-start">
     适合大文件、批处理、stdin、JSONL 服务和严格的进程退出处理。
   </Card>
-  <Card title="Browser SDK 源码契约" href="/zh/deckprobe/browser-sdk">
-    查看已实现 API 和当前 npm 发布阻塞。
+  <Card title="Browser 与 Worker SDK" href="/zh/deckprobe/browser-sdk">
+    在浏览器主线程本地探测文件，或把较大的任务交给 Web Worker。
   </Card>
-  <Card title="Node.js 源码契约" href="/zh/deckprobe/node-sdk">
-    查看已实现 API 和当前 npm 发布阻塞。
+  <Card title="Node.js API" href="/zh/deckprobe/node-sdk">
+    在 Node.js 20+ 应用中探测文件路径或字节数组。
   </Card>
   <Card title="格式与 Target" href="/zh/deckprobe/formats-and-targets">
     查看文档类型、当前例外、Target 发现和 Probe Level。

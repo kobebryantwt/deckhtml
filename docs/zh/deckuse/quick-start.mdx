@@ -1,82 +1,104 @@
 ---
-title: 快速开始
+title: DeckUse 快速开始
 sidebarTitle: 快速开始
-description: "安装 DeckUse、检查 PPTX、替换文本，并验证修改后的演示文稿。"
+description: "从源码安装 DeckUse，检查并替换已知 PPTX 中的文本，校验工作区并导出结果。"
 ---
 
-可以把已有 PPTX 复制为 `input.pptx`，也可以生成下面的可复现样例。样例包含 `Revenue 2025`，后续每条命令都有已知匹配。
+本流程全部在本机执行，不需要 DeckFlow 账号或 API Key。当前公开包的依赖尚未完整发布，因此这里使用源码安装。
 
 <Steps>
-  <Step title="检查前置条件">
-    DeckUse 需要 Node.js 18 或更高版本，以及 `zip`、`unzip` 命令行工具。
+  <Step title="检查运行环境">
+    请安装 Node.js 24 或更高版本、pnpm 10 和 Git。
 
     ```bash
     node --version
-    zip -v
-    unzip -v
+    pnpm --version
+    git --version
     ```
-
-    Windows 需要安装 `zip.exe`、`unzip.exe` 并加入 `Path`；PowerShell 自带的压缩 Cmdlet 不能替代当前 CLI 所调用的命令名。
   </Step>
-  <Step title="安装并验证 CLI">
+  <Step title="构建并链接 CLI">
     ```bash
-    npm install -g deckuse
+    git clone https://github.com/deckflow/deckuse.git
+    cd deckuse
+    pnpm install
+    pnpm install:global
     deckuse --help
     ```
-  </Step>
-  <Step title="准备一个已知 PPTX">
-    如果还没有 `input.pptx`，把以下内容保存为 `sample.html`：
 
-    ```html
-    <!doctype html>
-    <html><body><section class="slide-container"><h1>Revenue 2025</h1></section></body></html>
+    `pnpm install:global` 会构建全部工作区软件包、部署自包含的生产依赖树，并链接 `deckuse` 可执行程序。当前 `--version` 输出仍是内部占位值，请使用 `deckuse --help` 验证安装，不要根据显示的版本号判断依赖版本。
+  </Step>
+  <Step title="下载已知 PPTX">
+    ```bash
+    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+      -o input.pptx
     ```
 
-    然后通过 DeckHTML 在本地生成测试文件：
+    示例中包含 `Revenue 2025`，所以下面的查询和替换都有已知匹配。首次跑通后，可以换成自己的 PPTX。
+  </Step>
+  <Step title="创建工作区">
+    ```bash
+    deckuse init input.pptx ./workspace --json
+    ```
+
+    成功时返回 `{ "ok": true, ... }`，并创建 `workspace/package.pptx`，以及 `.deckuse` 下的清单、索引、媒体缓存和操作日志。
+  </Step>
+  <Step title="检查匹配元素">
+    ```bash
+    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    ```
+
+    确认结果中有一个 `text` 为 `Revenue 2025` 的文本框。后续命令需要精确修改单个对象时，请保留查询返回的 `ref`。
+  </Step>
+  <Step title="执行确认后的替换">
+    把下面的命令保存为 `replace.json`：
+
+    ```json
+    {
+      "type": "replaceText",
+      "find": "2025",
+      "replace": "2026",
+      "selector": "kind=textbox"
+    }
+    ```
+
+    在工作区中执行：
 
     ```bash
-    npx -y @deckflow/deckhtml@latest sample.html \
-      -o input.pptx --mode local --quiet
+    deckuse apply ./workspace --input replace.json --json
     ```
 
-    DeckHTML 需要本地 Chromium、Chrome 或 Edge 可执行文件；浏览器发现失败时请查看其[快速开始](/zh/deckhtml/quick-start)。
+    CLI 会为这条顶层命令补充协议版本、工作区 ID 和当前事务版本。请确认 `ok` 为 `true`，并且 `value.matched` 大于零。
   </Step>
-  <Step title="检查页面与文本">
+  <Step title="校验并导出">
     ```bash
-    deckuse list slides input.pptx
-    deckuse get text input.pptx 'slide:1/text'
+    deckuse validate ./workspace --json
+    deckuse commit ./workspace -o updated.pptx --json
     ```
 
-    `get text` 会输出匹配到的段落，以及可复用的规范 Selector，例如 `slide:1/#22/p:0`。下一步请从该输出中选择一个实际存在的完整文本。
+    目标文件已存在时，`commit` 会拒绝覆盖；明确需要覆盖时再添加 `--force`。
   </Step>
-  <Step title="生成修改后的 PPTX">
-    替换上一步输出中实际存在的值。生成的样例包含 `2025`；使用自己的文件时请替换为其中的真实文本。直接修改 `.pptx` 时必须传入 `-o`，以免覆盖源文件。
-
+  <Step title="验证导出文件">
     ```bash
-    deckuse replace input.pptx '2025' '2026' -o updated.pptx
+    deckuse init updated.pptx ./verification --json
+    deckuse query ./verification 'text=2026' --limit 10 --json
+    test -s updated.pptx
     ```
 
-    确认命令报告至少一次替换。零匹配时仍可能生成输出文件，但文本没有变化。
-  </Step>
-  <Step title="验证结果">
-    ```bash
-    test -f updated.pptx
-    deckuse get text updated.pptx "text[contains('2026')]"
+    PowerShell 中请把最后一行替换为：
+
+    ```powershell
+    if (!(Test-Path updated.pptx) -or (Get-Item updated.pptx).Length -eq 0) { exit 1 }
     ```
 
-    PowerShell 中请把 `test -f updated.pptx` 替换为 `if (!(Test-Path updated.pptx)) { exit 1 }`。
-
-    交付前，请在 PowerPoint 或其他兼容软件中打开 `updated.pptx`，检查视觉布局。
+    文件包校验不检查视觉布局。交付前请打开或渲染 `updated.pptx`。
   </Step>
 </Steps>
 
-需要执行多次修改时，请使用[持久化 Workspace](/zh/deckuse/workspace)，让 PPTX 只解包和打包一次。
-
 <CardGroup cols={2}>
-  <Card title="命令参考" href="/zh/deckuse/cli">
-    设置文本、替换文本、移动 Shape、检查状态并提交 Workspace。
+  <Card title="JSON 命令参考" href="/zh/deckuse/commands">
+    修改单个元素、增删内容、替换图片或组合多项操作。
   </Card>
-  <Card title="Selector 语法" href="/zh/deckuse/selectors">
-    从宽泛文本匹配逐步定位到稳定的 ID Path Selector。
+  <Card title="工作区流程" href="/zh/deckuse/workspace">
+    管理版本、试运行、操作日志、校验和并发修改。
   </Card>
 </CardGroup>

@@ -1,44 +1,74 @@
 ---
 title: Workspace Workflow
 sidebarTitle: Workspace Workflow
-description: "Initialize, inspect, update, validate, and commit a persistent DeckUse PPTX workspace."
+description: "Manage DeckUse workspace files, revisions, operation logs, dry runs, validation, and commits."
 ---
 
-A persistent workspace is useful when several commands will update the same PPTX. DeckUse extracts the package, stores parsed presentation metadata under `.deckuse/metadata.json`, applies changes to the extracted OOXML files, and rebuilds a PPTX at commit time.
-
-```bash
-deckuse init input.pptx --dir working.deck
-deckuse status working.deck
-deckuse get text working.deck 'slide:1/text'
-deckuse replace working.deck '2025' '2026'
-deckuse set text working.deck 'slide:1/#22/p:0' 'Updated title'
-deckuse commit working.deck -o updated.pptx
-```
-
-## Workspace contents
+DeckUse always operates through a persistent workspace. `init` copies the source PPTX into an OPC-aware package, builds a searchable index, records the active adapter and revision, and extracts embedded media for local inspection.
 
 ```text
-working.deck/
-├── [Content_Types].xml
-├── _rels/
-├── docProps/
-├── ppt/
+workspace/
+├── package.pptx
 └── .deckuse/
-    └── metadata.json
+    ├── manifest.json
+    ├── index.json
+    ├── operations.jsonl
+    └── media/
 ```
 
-Do not edit or remove `.deckuse/metadata.json`; selectors resolve against its cached presentation structure. `commit` validates the workspace metadata and basic package structure before creating the output.
+| File | Purpose |
+| --- | --- |
+| `package.pptx` | Current editable package state |
+| `manifest.json` | Source path, format, adapter version, revision, checksum, and capabilities |
+| `index.json` | Indexed element references, text, geometry, location, and payloads |
+| `operations.jsonl` | Append-only record of initialized and persisted commands |
+| `media/` | Locally extracted embedded media referenced by picture query results |
 
-## Direct mode versus workspace mode
+Do not edit these files while DeckUse is running. Use the command protocol so the package, index, revision, checksum, and operation log remain aligned.
 
-| Behavior | Direct `.pptx` input | Persistent workspace |
-| --- | --- | --- |
-| Extraction | Temporary for every command | Once during `init` |
-| Read commands | Supported | Supported |
-| Write commands | Require `-o` | Modify workspace; `-o` is optional |
-| Final file | Written by each write command | Written by `commit` or optional `-o` |
-| Best for | One inspection or change | Several related changes |
+## Revision and transaction rules
+
+Every persisted mutation generates a new revision. A mutation's `transactionId` must equal the current manifest revision or the literal `latest`; a reference can also carry the revision from which it was read.
+
+- The CLI `apply` command reads the current manifest and supplies the top-level transaction ID automatically.
+- The Node.js API requires the caller to provide the complete command envelope.
+- A stale transaction or revision-bound reference returns `TRANSACTION_CONFLICT` instead of silently writing over newer work.
+- Separate workspaces isolate customer, locale, or audience variants derived from one master PPTX.
+
+## Dry run
+
+Set `dryRun: true` on a mutation or batch to execute its validation and return the intended result without persisting package, index, revision, or operation-log changes:
+
+```json
+{
+  "type": "replaceText",
+  "find": "FY2025",
+  "replace": "FY2026",
+  "dryRun": true
+}
+```
+
+The CLI adds the remaining top-level protocol fields when this object is passed to `apply`.
+
+## Atomic and non-atomic batches
+
+`batch` accepts up to 1000 mutation commands. The default `atomic: true` applies all changes to an in-memory copy and persists only if every nested command succeeds. With `atomic: false`, changes before a failure are persisted and the result includes `PARTIAL_BATCH_APPLIED`; use this only when partial completion is acceptable.
+
+See [Command Reference](/deckuse/commands#batch-and-dry-run) for the complete nested-command envelope required by the current schema.
+
+## Validate and commit
+
+```bash
+deckuse validate ./workspace --json
+deckuse commit ./workspace -o updated.pptx --json
+```
+
+Validation currently detects missing targets for internal PPTX relationships. Commit writes through a temporary file, reopens the produced package, and then renames it into place. It refuses to overwrite an existing destination unless `--force` is supplied.
 
 <Warning>
-  Workspace validation checks DeckUse metadata and basic package files; it is not a visual or full OOXML conformance test. Always retain the original PPTX and inspect the committed result.
+  Validation is structural and deliberately limited. It does not render slides, verify every OOXML rule, check fonts, detect overlap, or confirm that chart workbooks agree with chart caches. Retain the original and visually inspect the exported PPTX.
 </Warning>
+
+## Preservation behavior
+
+Untouched XML and unknown package parts are preserved where possible. ZIP entries are recompressed, so byte-for-byte archive identity is not promised. Slide duplication clones mutable notes and chart parts while layouts and media may be shared. Removing pictures or slides cleans up media only when it is no longer referenced.

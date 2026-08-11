@@ -98,12 +98,12 @@ DeckProbe、DeckRender 和 DeckOps 分别提供独立调用与结果契约。应
 
 <div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">必须继续作为事实源的可编辑 <code>.pptx</code>。</span></div>
 
-使用 DeckUse 检查 Selector、替换或设置现有文本，并移动受支持的 Shape。一次输出包含多项修改时，使用持久化 Workspace。
+使用 DeckUse 为现有 PPTX 建立索引、检查查询结果，并通过明确命令修改文本、属性、几何信息、幻灯片、图片、表格或图表缓存。每个输出版本使用独立的带版本工作区，完成校验后再目视检查导出的演示文稿。
 
-<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">在本地生成的另一个可编辑 PPTX。当前版本不能新增或删除元素，也不能编辑 DOCX、XLSX 或 Keynote。</span></div>
+<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">在本地生成的另一个可编辑 PPTX，以及可复现的命令和操作记录。PPTX 是当前唯一实现的编辑适配器。</span></div>
 
 <Card title="从 DeckUse 开始" href="/zh/deckuse/quick-start">
-  生成或提供一个已知 PPTX，替换文本并验证修改后的文件。
+  从源码安装，通过 JSON 修改已知 PPTX，校验工作区并验证导出文件。
 </Card>
 
 ## 从应用数据生成 Deck

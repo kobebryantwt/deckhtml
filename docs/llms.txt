@@ -40,11 +40,12 @@ Use the English or Simplified Chinese section that matches the developer's langu
 
 ## DeckUse
 
-- [DeckUse Overview](https://docs.deckflow.com/deckuse/overview.md): Modify supported content in an existing PPTX locally.
-- [DeckUse Quickstart](https://docs.deckflow.com/deckuse/quick-start.md): Inspect, replace, commit, and verify an updated PPTX.
-- [CLI](https://docs.deckflow.com/deckuse/cli.md): Use available read and write commands.
-- [Selectors](https://docs.deckflow.com/deckuse/selectors.md): Target slides, shapes, and text.
-- [Workspace Workflow](https://docs.deckflow.com/deckuse/workspace.md): Group several local changes before committing an updated PPTX.
+- [DeckUse Overview](https://docs.deckflow.com/deckuse/overview.md): Inspect and modify an existing PPTX locally through a versioned command workspace.
+- [DeckUse Quickstart](https://docs.deckflow.com/deckuse/quick-start.md): Install from source, query and replace known text, validate, commit, and verify an updated PPTX.
+- [CLI](https://docs.deckflow.com/deckuse/cli.md): Use init, inspect, query, apply, validate, and commit safely.
+- [JSON Commands](https://docs.deckflow.com/deckuse/commands.md): Build commands for text, properties, geometry, slides, elements, pictures, charts, and batches.
+- [Selectors](https://docs.deckflow.com/deckuse/selectors.md): Query the index and reuse revision-aware element references.
+- [Workspace Workflow](https://docs.deckflow.com/deckuse/workspace.md): Manage revisions, dry runs, operation logs, validation, and commits.
 
 ## DeckHTML
 
@@ -74,7 +75,8 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [DeckProbe](https://docs.deckflow.com/zh/deckprobe/overview.md): 在本地嗅探文档事实。
 - [DeckRender](https://docs.deckflow.com/zh/deckrender/overview.md): 将支持的输入渲染为视觉产物。
 - [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 执行云端文档任务。
-- [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 在本地修改现有 PPTX。
+- [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 通过带版本命令工作区在本地检查并修改现有 PPTX。
+- [DeckUse JSON 命令](https://docs.deckflow.com/zh/deckuse/commands.md): 构造文本、属性、几何、幻灯片、元素、图片、图表和批处理命令。
 - [DeckHTML](https://docs.deckflow.com/zh/deckhtml/overview.md): 从浏览器渲染后的 HTML 或 SVG 生成 PPTX 或 PNG。
 - [DeckHTML 多页与批量输入](https://docs.deckflow.com/zh/deckhtml/guides/multi-page-and-batch.md): 组合重复幻灯片容器、有序文件或 URL 输入。
 

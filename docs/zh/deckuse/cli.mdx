@@ -1,56 +1,121 @@
 ---
-title: CLI
+title: DeckUse CLI
 sidebarTitle: CLI
-description: "查看 DeckUse 已实现的 PPTX 检查与修改命令。"
+description: "在命令行中初始化、检查、查询、修改、校验并导出 DeckUse 工作区。"
 ---
 
-```bash
+CLI 提供六个工作流命令。`replaceText`、`setProperties`、`add`、`remove` 等修改操作不是单独的 Shell 子命令，而是通过 `apply` 执行的 JSON 命令。
+
+```text
 deckuse <command> [arguments] [options]
 ```
 
-多数读取命令可以接收 `.pptx` 或已初始化的 Workspace。写命令也支持这两种输入，但直接写 `.pptx` 时必须传入 `-o <output.pptx>`。
+当前可验证的源码安装方式请查看[快速开始](/zh/deckuse/quick-start)。
 
-## Workspace 命令
-
-| 命令 | 用途 |
-| --- | --- |
-| `deckuse init <pptx> [-d <dir>]` | 解包 PPTX 并创建持久化 Workspace 元数据 |
-| `deckuse status <workspace-or-pptx>` | 输出 Workspace、校验、幻灯片、Master 和 Layout 状态 |
-| `deckuse commit <workspace> [-o <pptx>]` | 校验并把 Workspace 打包为 PPTX |
-
-## 检查命令
-
-```bash
-deckuse list slides input.pptx
-deckuse show slide input.pptx 1
-deckuse get text input.pptx 'slide:1/text'
-```
+## 命令
 
 | 命令 | 用途 |
 | --- | --- |
-| `list slides` | 列出页面引用、Layout、Master、Shape 数量和内容状态 |
-| `show slide` | 输出一页的引用和顶层 Shape Tree |
-| `get text` | 解析 Selector，并输出段落文本和规范 Selector |
+| `init <input> <workspace>` | 把文档导入持久化工作区 |
+| `inspect <workspace>` | 返回文档能力和元素索引 |
+| `query <workspace> [selector]` | 筛选索引元素；默认使用 `*` |
+| `apply <workspace>` | 执行一个 JSON 对象、JSON 数组或 JSON Lines |
+| `validate <workspace>` | 检查文件包内部关系 |
+| `commit <workspace>` | 把当前文件包导出为 PPTX |
 
-## 修改命令
+不带子命令或针对具体命令都可以查看帮助：
 
 ```bash
-deckuse set text working.deck 'slide:1/#22/p:0' 'New title'
-deckuse replace working.deck 'Old name' 'New name'
-deckuse replace working.deck '^Q[1-4]' 'FY2026' --regex --slide 3
-deckuse move working.deck 'slide:1/#22' --left 0.1 --top 0.2
-deckuse commit working.deck -o updated.pptx
+deckuse --help
+deckuse query --help
+deckuse help apply
 ```
 
-| 命令 | 重要行为 |
-| --- | --- |
-| `set text <target> <selector> <text> [-o <pptx>]` | 使用指定文本替换 Selector 匹配到的全部段落 |
-| `replace <target> <search> <replacement> [--slide N] [--regex] [-o <pptx>]` | 在全局或指定页面中查找替换文本 |
-| `move <target> <selector> --left N --top N [-o <pptx>]` | 移动已选页面 Shape；位置是 `0` 到 `1` 的归一化值 |
-| `set font-size <target> <selector> <points> [-o <pptx>]` | CLI 中已提供，但 Selector 到 Shape 的覆盖有限；必须检查每个目标 |
+<Note>
+  当前 `deckuse --version` 输出的是 CLI 内部的 `0.0.0` 占位值，而不是软件包版本。该值接入软件包元数据前，不要用它判断最低版本。
+</Note>
 
-<Warning>
-  当前 CLI 没有添加或删除幻灯片、元素的命令。Selector 没有匹配时可能只输出提示而不修改文件，因此需要检查命令输出和生成后的 PPTX。
-</Warning>
+## `init`
 
-命令失败且需要堆栈信息时，可以设置 `DEBUG=1`。
+```bash
+deckuse init input.pptx ./workspace --json
+```
+
+两个位置参数分别是源文件和目标工作区。命令解析器可以识别 `.pptx`、`.docx`、`.xlsx`、`.key` 和 `.numbers`，但目前只有 PPTX 实现了适配器；其他格式返回 `FORMAT_NOT_IMPLEMENTED`。
+
+## `inspect`
+
+```bash
+deckuse inspect ./workspace --depth 2 --json
+```
+
+结果包含 `document.revision`、当前 PPTX 能力，以及带有 `ref`、类型、幻灯片 ID、文本、几何信息、位置和格式专属 Payload 的元素索引。`--depth` 接受 `0` 到 `100`；当前 PPTX 适配器返回完整的扁平索引，不会按该参数裁剪列表。
+
+## `query`
+
+```bash
+deckuse query ./workspace 'kind=textbox hasText=true' --limit 200 --json
+deckuse query ./workspace 'text~=FY20[0-9]{2}' --limit 1000 --json
+```
+
+`--limit` 默认为 `100`，最大值为 `10000`。准确语法和引用生命周期请查看[选择器](/zh/deckuse/selectors)。
+
+## `apply`
+
+从文件读取一条命令：
+
+```bash
+deckuse apply ./workspace --input change.json --json
+```
+
+从标准输入读取；这也是默认方式：
+
+```bash
+printf '%s\n' '{"type":"replaceText","find":"FY2025","replace":"FY2026"}' \
+  | deckuse apply ./workspace --json
+```
+
+输入可以是：
+
+- 一个 JSON 命令对象。
+- 一个 JSON 数组，按顺序执行其中的命令对象。
+- JSON Lines，每个非空行是一条命令对象。
+
+对于每个顶层对象，CLI 会读取工作区最新版本，并补充 `version`、`workspaceId` 和 `transactionId`。遇到第一条失败命令后停止。`batch` 内嵌套的命令仍需提供完整协议字段，请使用[命令参考](/zh/deckuse/commands#批处理与试运行)中的模板。
+
+## `validate`
+
+```bash
+deckuse validate ./workspace --level full --json
+```
+
+`--level` 接受 `fast` 或 `full`，默认为 `full`。当前 PPTX 校验器会检查内部关系是否指向现有 Part；它不是渲染器、视觉检查工具或完整 OOXML 一致性校验器。
+
+## `commit`
+
+```bash
+deckuse commit ./workspace -o updated.pptx --json
+deckuse commit ./workspace -o updated.pptx --force --json
+```
+
+不传 `-o` 时，默认在源文件旁生成 `<source-name>.deckuse.pptx`。目标文件已存在时会失败，除非传入 `--force`。
+
+## 输出与退出状态
+
+DeckUse 的成功或失败操作都使用 Result Envelope：
+
+```json
+{
+  "ok": true,
+  "value": {},
+  "diagnostics": []
+}
+```
+
+| 退出状态 | 含义 |
+| ---: | --- |
+| `0` | 命令完成，且 `ok: true` |
+| `1` | 合法的 DeckUse 命令返回 `ok: false` |
+| `2` | 执行前发生 CLI 用法、文件读取或 JSON 解析错误 |
+
+默认输出带缩进的 JSON。`--json` 改为适合自动化处理的单行紧凑 JSON。命令用法错误写入标准错误。

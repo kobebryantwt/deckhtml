@@ -22,7 +22,7 @@ description: "对比每个 DeckFlow 产品的最小输入、命令和可验证�
 npm install -g @deckflow/deckprobe
 deckprobe --version
 
-curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+curl -fL https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf -o sample.pdf
 deckprobe -t format,page_count --view values --pretty sample.pdf
 ```
 
@@ -35,7 +35,7 @@ npm 软件包中的 CLI 会调用对应平台的原生二进制。成功时退�
   "driver": { "id": "pdf", "profile": "pdf" },
   "values": {
     "document.format": "pdf",
-    "pdf.page_count": 1
+    "pdf.page_count": 14
   }
 }
 ```
@@ -115,12 +115,17 @@ HTML 会上传到 DeckFlow 云端。成功结果会标识任务，并返回 PNG 
 <span className="product-kicker">本地 · 现有 PPTX · 可编辑输出</span>
 
 ```bash
-npm install -g deckuse
-deckuse replace input.pptx '2025' '2026' -o updated.pptx
-deckuse get text updated.pptx "text[contains('2026')]"
+git clone https://github.com/deckflow/deckuse.git && cd deckuse
+pnpm install && pnpm install:global
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o input.pptx
+deckuse init input.pptx ./workspace --json
+printf '%s\n' '{"type":"replaceText","find":"2025","replace":"2026"}' \
+  | deckuse apply ./workspace --json
+deckuse validate ./workspace --json
+deckuse commit ./workspace -o updated.pptx --json
 ```
 
-DeckUse 在本地执行，当前支持修改现有 PPTX 内容。它不能新增或删除元素，也不支持其他 Office 格式。请按 [DeckUse 快速开始](/zh/deckuse/quick-start)检查选择器并验证输出。
+DeckUse 通过带版本的工作区在本地执行。源码版本可以检查和查询 PPTX 结构，修改文本、属性与几何信息，添加、复制或删除支持的幻灯片和元素，处理图片、表格与图表缓存，最后导出另一个 PPTX。其他文档适配器仍未实现。前置条件、预期查询结果和最终验证请查看 [DeckUse 快速开始](/zh/deckuse/quick-start)。
 
 ## DeckHTML：在本地生成 PPTX
 

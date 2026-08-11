@@ -1,18 +1,32 @@
 ---
 title: Node.js API
-sidebarTitle: Node.js API（源码）
+sidebarTitle: Node.js API
 description: "通过 @deckflow/deckprobe WebAssembly 软件包，在 Node.js 中嗅探本地文件或字节数组。"
 ---
 
 Node.js API 需要 Node.js 20 或更高版本，使用与原生 CLI 相同的 Rust 引擎和 Schema v2 契约。
 
-<Warning>
-  当前版本仅可作为源码契约参考：`@deckflow/deckprobe@2.3.0` 发布时缺少所需的 `dist/` 和 `wasm/` 文件，因此 Node.js 导入会失败。修正后的产物发布前请使用原生或 npm CLI。
-</Warning>
+先确认 Registry 已经提供修正后的软件包：
 
 ```bash
-npm install @deckflow/deckprobe
+npm view @deckflow/deckprobe version
+npm install @deckflow/deckprobe@^2.3.1
 ```
+
+2.3.1 及以上版本包含此 API 所需的 Node.js 入口和 WebAssembly 运行文件。
+
+如果 Registry 仍显示 2.3.0，请构建并安装对应 Tag 的源码软件包：
+
+```bash
+git clone --branch v2.3.1 --depth 1 https://github.com/deckflow/deckprobe.git
+cd deckprobe/packages/deckprobe-js
+npm ci
+npm run build
+npm run check:pack
+npm pack
+```
+
+随后在 Node.js 应用中安装生成的 Tarball，例如 `npm install /absolute/path/to/deckflow-deckprobe-2.3.1.tgz`。
 
 ## 嗅探文件
 

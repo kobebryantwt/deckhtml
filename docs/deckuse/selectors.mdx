@@ -1,38 +1,74 @@
 ---
-title: Selectors
+title: Selectors and Element References
 sidebarTitle: Selectors
-description: "Target DeckUse slides, shapes, text, and paragraphs with broad or canonical selectors."
+description: "Query DeckUse's PPTX index and turn matched elements into precise, revision-aware command references."
 ---
 
-Selectors identify existing PPTX content. Start with broad selectors to inspect a deck, then reuse the canonical ID-path selectors printed by `get text` for precise changes.
+Selectors filter the workspace index. Use a broad query to discover candidates, review their text and geometry, then pass a returned `ref` to commands that must change one exact element.
 
-## Supported forms
+## String selector syntax
 
-| Form | Example | Meaning |
+Space-separated terms are combined with AND.
+
+| Form | Example | Match behavior |
 | --- | --- | --- |
-| Type | `text` | All matching elements of a type |
-| Indexed | `slide:3` | The third slide; indices are 1-based |
-| Path | `slide:3/text` | Text on the third slide |
-| Key/value filter | `shape[type=textbox]` | Shapes with a matching property |
-| Function filter | `text[contains('Revenue')]` | Text containing a string |
-| Canonical ID path | `slide:1/#22` | Shape with the reported OOXML ID path |
-| Paragraph path | `slide:1/#22/p:0` | One zero-based paragraph inside that shape |
+| Everything | `*` or `all` | Every indexed element |
+| Free text | `Quarter` | Case-insensitive substring across kind, name, text, element ID, and slide ID |
+| Kind | `kind=textbox` | Case-insensitive substring of the indexed kind |
+| Name | `name=Title` | Case-insensitive substring of the object name |
+| Literal text | `text=Revenue` | Case-insensitive substring of element text |
+| Regular expression | `text~=^FY20[0-9]{2}$` | Unicode regular expression evaluated against element text |
+| Text presence | `hasText=true` | Elements with non-empty indexed text |
+| Slide ID | `slide=256` | Elements whose stable presentation slide ID contains `256` |
+| Element ID | `id=256:10` | Elements whose ID contains the supplied value |
 
 ```bash
-deckuse get text input.pptx "text[contains('Revenue')]"
-deckuse get text input.pptx 'slide:1/text'
-deckuse set text input.pptx 'slide:1/#22/p:0' 'Revenue overview' -o updated.pptx
+deckuse query ./workspace 'kind=textbox hasText=true' --limit 500 --json
+deckuse query ./workspace 'text=Revenue' --json
+deckuse query ./workspace 'text~=https?://' --limit 1000 --json
+deckuse query ./workspace 'slide=256 kind=picture' --json
 ```
 
-## Quoting
+String selector values cannot contain spaces because spaces separate terms. Use a shorter unambiguous substring, a regular expression without literal spaces, or a structured selector through the Node.js API when the value itself must contain spaces.
 
-Wrap the whole selector in shell quotes. When a `contains()` value includes a quote, use the other quote type for the shell or selector value.
+## Structured selectors
 
-## Selection limits
+JSON commands and the Node.js API also accept an object with these optional fields:
 
-- Broad filters depend on properties available in DeckUse's parsed PPTX model.
-- Canonical paths are specific to the source deck and can change after other tools rebuild the file.
-- Grouped and deeply nested shapes may not be reached by every broad selector.
-- `move` applies only to shapes on ordinary slides, not slide masters or layouts.
+```json
+{
+  "kind": "textbox",
+  "name": "Title",
+  "text": "Quarterly Revenue",
+  "textRegex": "^FY20[0-9]{2}$",
+  "id": "256:10",
+  "slide": "256",
+  "hasText": true
+}
+```
 
-Use `get text` again after a change when the next operation depends on an exact paragraph path.
+All supplied fields must match. Invalid regular expressions simply match no elements in a query; validate user-authored expressions before relying on an empty result.
+
+## Read and reuse a reference
+
+A query result includes a reference similar to:
+
+```json
+{
+  "documentId": "/absolute/path/workspace",
+  "elementId": "256:10",
+  "path": "/ppt/slides/slide1.xml#256:10",
+  "revision": "msok74co-006861c9"
+}
+```
+
+- `documentId` identifies the workspace.
+- `elementId` combines the presentation slide ID with the element's OOXML non-visual ID path.
+- `path` provides a structural alternative.
+- `revision` protects a targeted mutation from using a stale reference.
+
+Every persisted mutation creates a new workspace revision. Query again after a mutation before issuing another revision-bound targeted edit, or put related edits into one atomic batch built from the same inspected revision. Do not copy example IDs into another presentation.
+
+<Note>
+  Slide IDs are PowerPoint presentation IDs, not one-based page numbers. Query `kind=slide` to discover the IDs in the current file.
+</Note>

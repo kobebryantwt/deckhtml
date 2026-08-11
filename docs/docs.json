@@ -243,7 +243,7 @@
             "tab": "DeckUse",
             "groups": [
               { "group": "Get Started", "pages": ["deckuse/overview", "deckuse/quick-start", "deckuse/workspace"] },
-              { "group": "CLI", "pages": ["deckuse/cli", "deckuse/selectors"] },
+              { "group": "CLI", "pages": ["deckuse/cli", "deckuse/commands", "deckuse/selectors"] },
               { "group": "SDK", "pages": ["deckuse/sdk"] }
             ]
           },
@@ -465,7 +465,7 @@
             "tab": "DeckUse",
             "groups": [
               { "group": "开始使用", "pages": ["zh/deckuse/overview", "zh/deckuse/quick-start", "zh/deckuse/workspace"] },
-              { "group": "CLI", "pages": ["zh/deckuse/cli", "zh/deckuse/selectors"] },
+              { "group": "CLI", "pages": ["zh/deckuse/cli", "zh/deckuse/commands", "zh/deckuse/selectors"] },
               { "group": "SDK", "pages": ["zh/deckuse/sdk"] }
             ]
           },

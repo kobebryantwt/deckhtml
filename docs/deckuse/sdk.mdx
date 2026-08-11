@@ -1,58 +1,104 @@
 ---
-title: Node.js API Status
-sidebarTitle: Node.js API (Blocked)
-description: "Use DeckUse workspace, selector, reader, writer, and command exports from Node.js."
+title: DeckUse Node.js API
+sidebarTitle: Node.js API
+description: "Execute DeckUse's versioned workspace command protocol from Node.js 24 or later."
 ---
 
-```bash
-npm install deckuse
-```
+The `@deckflow/deckuse` package exports two high-level entry points:
+
+- `createDefaultExecutor()` creates an executor with the PPTX adapter and reserved adapters registered.
+- `runCommand(input)` creates an executor and executes one complete command.
 
 <Warning>
-  The current `deckuse@0.2.0` ESM entry fails under Node.js 22 with `Dynamic require of "child_process" is not supported`. Use the verified CLI for production until the package build is corrected. The remainder of this page documents source exports, not a currently verified installed-package contract.
+  The source API is implemented and tested, but the current `@deckflow/deckuse@0.2.0` registry package cannot be installed because not all declared adapter dependencies are published. Develop against the cloned workspace until the public dependency set is corrected.
 </Warning>
 
-The package exports the same command functions used by the CLI, plus lower-level workspace, selector, reader, writer, error, and type APIs.
+## Result contract
 
-## Run a file-native command
+Commands resolve to a result envelope rather than throwing for expected command, format, workspace, validation, or transaction errors:
 
 ```ts
-import { replaceTextCommand } from 'deckuse';
-
-await replaceTextCommand(
-  './input.pptx',
-  '2025',
-  '2026',
-  { output: './updated.pptx' },
-);
+type Result<T> =
+  | { ok: true; value: T; diagnostics: Diagnostic[] }
+  | { ok: false; error: DeckuseError; diagnostics: Diagnostic[] };
 ```
 
-Command functions print the same progress messages as the CLI. A direct PPTX mutation requires an output path.
+Stable error codes include `INVALID_COMMAND`, `WORKSPACE_NOT_FOUND`, `ELEMENT_NOT_FOUND`, `FORMAT_NOT_IMPLEMENTED`, `VALIDATION_FAILED`, `TRANSACTION_CONFLICT`, and `IO_ERROR`.
 
-## Manage a workspace
+## Initialize and inspect
 
 ```ts
-import {
-  Workspace,
-  SelectorParser,
-  SelectorResolver,
-} from 'deckuse';
+import { runCommand } from '@deckflow/deckuse';
 
-const workspace = await Workspace.load('./working.deck');
-const selector = SelectorParser.parse("slide:1/text[contains('Revenue')]");
-const paragraphs = await SelectorResolver.resolveParagraphs(
-  selector,
-  workspace.metadata,
-  workspace.workspaceDir,
-);
+const workspaceId = '/absolute/path/customer-deck';
 
-for (const paragraph of paragraphs) {
-  console.log(paragraph.idPath, paragraph.paragraphIndex, paragraph.text);
+const initialized = await runCommand({
+  version: '1.0',
+  type: 'init',
+  workspaceId,
+  format: 'pptx',
+  source: '/absolute/path/input.pptx',
+});
+
+if (!initialized.ok) throw new Error(initialized.error.message);
+
+const inspected = await runCommand({
+  version: '1.0',
+  type: 'inspect',
+  workspaceId,
+  depth: 2,
+});
+
+if (!inspected.ok) throw new Error(inspected.error.message);
+console.log(inspected.value);
+```
+
+## Query, mutate, and commit
+
+Read the current revision from `inspect`, select a returned reference, and use both in the mutation:
+
+```ts
+const query = await runCommand({
+  version: '1.0',
+  type: 'query',
+  workspaceId,
+  selector: { kind: 'textbox', text: 'Revenue 2025' },
+  limit: 10,
+});
+
+if (!query.ok || !Array.isArray(query.value) || query.value.length !== 1) {
+  throw new Error('Expected one approved text box');
 }
+
+const target = query.value[0] as { ref: Record<string, unknown> };
+const revision = (inspected.value as { document: { revision: string } }).document.revision;
+
+const changed = await runCommand({
+  version: '1.0',
+  type: 'setText',
+  workspaceId,
+  transactionId: revision,
+  ref: target.ref,
+  text: 'Revenue 2026',
+});
+
+if (!changed.ok) throw new Error(changed.error.message);
+
+const committed = await runCommand({
+  version: '1.0',
+  type: 'commit',
+  workspaceId,
+  transactionId: (changed.value as { revision: string }).revision,
+  destination: '/absolute/path/updated.pptx',
+});
+
+if (!committed.ok) throw new Error(committed.error.message);
 ```
 
-Public exports include `Workspace`, `SelectorParser`, `SelectorResolver`, `PptxReader`, `PptxWriter`, command functions, DeckUse error classes, and workspace/selector result types.
+`runCommand()` can reopen an existing workspace by reading `.deckuse/manifest.json`, so these calls do not have to share one executor instance. Reuse `createDefaultExecutor()` when an application wants one explicit registry and execution context.
 
-<Warning>
-  The low-level reader and writer APIs expose implementation-oriented PPTX structures and do not provide a broad compatibility guarantee. Prefer command functions for currently supported operations, retain the source file, and verify the output presentation.
-</Warning>
+## Lower-level packages
+
+The source workspace also exposes `@deckflow/deckuse-core`, `@deckflow/deckuse-opc`, and `@deckflow/deckuse-pptx`. They provide the command schema, `Executor`, adapter registry, OPC archive primitives, PPTX capabilities, index builder, and format adapter. Prefer the aggregate API unless you are implementing an adapter or integrating the protocol at a lower level.
+
+Use [Command Reference](/deckuse/commands) for every command shape and [Selectors](/deckuse/selectors) for query behavior.

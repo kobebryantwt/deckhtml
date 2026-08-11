@@ -10,10 +10,10 @@ description: "按照输入、操作、执行位置和最终产物比较 DeckFlow
 
 | 产品 | 输入 | 产物 | 执行位置 | 不替代什么 |
 | --- | --- | --- | --- | --- |
-| DeckProbe | 已有 PDF、Office 或现代 iWork 文档 | Schema v2 Target 证据和实际探测成本 | 原生 Rust CLI；WebAssembly 源码等待修正 npm 产物 | 完整内容解析、渲染或编辑 |
+| DeckProbe | 已有 PDF、Office 或现代 iWork 文档 | Schema v2 Target 证据和实际探测成本 | 原生 Rust CLI 或本地 WebAssembly | 完整内容解析、渲染或编辑 |
 | DeckRender | 支持的文档、URL 或标准输入 | 图片、PDF 或视频 | 本地、透传或云端路径 | 结构化内容提取或源文件编辑 |
 | DeckOps | 文件、URL 或已上传的 File ID | 格式专属解析结果、Markdown 或生成文件 | DeckFlow 云端任务 | 纯本地检查或可编辑源文件修改 |
-| DeckUse | 现有 PPTX | 修改后的 PPTX | 本地 Node.js 工作流 | DOCX/XLSX/Keynote 编辑或新建 Deck |
+| DeckUse | 现有 PPTX | 带版本工作区和修改后的 PPTX | 本地 Node.js 命令工作流 | DOCX/XLSX/Keynote 编辑、渲染或视觉检查 |
 | DeckHTML | 本地 HTML/SVG、有序文件、标准输入或 HTML URL | PPTX 或 PNG；PPTX 映射诊断 | CLI 使用本地浏览器或云端任务；Node.js API 仅本地 | 对现有 Office 文件的通用转换 |
 
 ## 常见选择
@@ -39,6 +39,6 @@ description: "按照输入、操作、执行位置和最终产物比较 DeckFlow
   按最终结果查看上传校验、搜索与 RAG、评审预览、PPTX 个性化、HTML 创作和多产品接入流程。
 </Card>
 
-<Warning>
-  产品名称表示职责，并不表示格式覆盖或软件包可用性完全相同。设计工作流前，请查看所选产品的格式矩阵和可用性警告；DeckProbe JavaScript 与 DeckOps Parse 源码 API 当前仍在等待修正后的公开产物。
-</Warning>
+<Note>
+  产品名称表示职责，并不表示格式覆盖或软件包可用性完全相同。设计工作流前，请检查所选产品的格式矩阵和安装状态。DeckProbe JavaScript 需要完整的 2.3.1 或更高版本产物；DeckUse 的公开依赖修正前暂时使用源码安装。
+</Note>

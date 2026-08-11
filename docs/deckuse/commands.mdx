@@ -1,0 +1,232 @@
+---
+title: JSON Command Reference
+sidebarTitle: JSON Commands
+description: "Build DeckUse protocol commands for inspection, text, properties, geometry, slides, elements, pictures, charts, batches, and export."
+---
+
+DeckUse uses protocol version `1.0`. The CLI has convenience subcommands for `init`, `inspect`, `query`, `validate`, and `commit`; every mutation is sent as JSON through `deckuse apply` or the Node.js `runCommand()` API.
+
+## Command overview
+
+| Type | Purpose |
+| --- | --- |
+| `init` | Create a workspace from a source document |
+| `inspect` | Return capabilities and indexed elements, or inspect one reference |
+| `query` | Filter indexed elements with a string or structured selector |
+| `getText` | Read text, geometry, and payload for one reference through the API |
+| `setText` | Replace all text in one referenced node |
+| `replaceText` | Literal or regular-expression replacement across matching indexed elements |
+| `setProperties` | Update supported shape, text, or chart properties |
+| `setTransform` | Set position, size, or rotation on one element |
+| `add` | Add a slide, text box/shape, connector, group, picture, or table |
+| `remove` | Remove a referenced slide or element |
+| `replacePicture` | Replace embedded picture media while retaining the element reference and layer order |
+| `duplicate` | Duplicate a referenced slide or element |
+| `batch` | Run up to 1000 mutations atomically or with explicit partial completion |
+| `validate` | Check the current workspace package |
+| `commit` | Export the current package to a destination PPTX |
+
+## CLI mutation envelope
+
+For one top-level command passed to `deckuse apply`, omit `version`, `workspaceId`, and `transactionId`; the CLI fills them from the workspace:
+
+```json
+{
+  "type": "replaceText",
+  "find": "FY2025",
+  "replace": "FY2026",
+  "selector": "kind=textbox",
+  "limit": 100
+}
+```
+
+The Node.js API requires the complete envelope:
+
+```json
+{
+  "version": "1.0",
+  "type": "replaceText",
+  "workspaceId": "/absolute/path/workspace",
+  "transactionId": "<current-revision>",
+  "find": "FY2025",
+  "replace": "FY2026"
+}
+```
+
+Set `regex: true` for a Unicode global regular-expression replacement. Literal replacement is the default. `limit` accepts `1` through `10000` and defaults internally to `1000` matches.
+
+## Target one element
+
+Obtain `ref` from `query` or `inspect`, then use it unchanged while its revision remains current:
+
+```json
+{
+  "type": "setText",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:10",
+    "revision": "<current-revision>"
+  },
+  "text": "Enterprise Strategy"
+}
+```
+
+`setText` and `replaceText` rewrite the targeted text node and can collapse several text runs into one run, retaining the first run's style. Use `setProperties` after the text change when typography must be made explicit.
+
+## Properties and geometry
+
+```json
+{
+  "type": "setProperties",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:10"
+  },
+  "properties": {
+    "name": "Approved title",
+    "fill": "F3F4F6",
+    "stroke": { "color": "2563EB", "width": 1.5 },
+    "textColor": "111827",
+    "fontFamily": "Arial",
+    "fontSize": 28,
+    "bold": true,
+    "italic": false,
+    "underline": false,
+    "hidden": false
+  }
+}
+```
+
+Hex colors use six digits with an optional leading `#`. `fill` and `stroke` also accept `none`, `false`, or `null`. Supported aliases include `border`/`outline`/`line` for `stroke`, `font`/`typeface` for `fontFamily`, `size` for `fontSize`, and `fontColor` for `textColor`. Unknown keys return `INVALID_COMMAND`.
+
+```json
+{
+  "type": "setTransform",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:10"
+  },
+  "transform": {
+    "x": 914400,
+    "y": 731520,
+    "width": 8229600,
+    "height": 685800,
+    "rotation": 5
+  }
+}
+```
+
+Position and size use OOXML English Metric Units (914400 EMU = 1 inch). Rotation uses degrees. Omitted fields retain their current value.
+
+## Add elements
+
+Use a slide reference as `parent`. Geometry is expressed in EMU.
+
+```json
+{
+  "type": "add",
+  "parent": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "slide:256"
+  },
+  "element": {
+    "kind": "textbox",
+    "name": "Agent summary",
+    "text": "Generated summary",
+    "x": 914400,
+    "y": 914400,
+    "width": 5486400,
+    "height": 685800
+  }
+}
+```
+
+Supported `kind` values are `textbox`/`shape`, `connector`, `group`, `picture`, and `table`:
+
+- Pictures accept either `path` or `base64` plus geometry.
+- Tables accept `rows`, an array of string arrays, plus geometry.
+- Shapes accept an optional PowerPoint preset geometry name through `preset`; the default is `rect`.
+- Groups are created as empty group containers; add child content only after confirming the intended parent behavior for the current file.
+
+Add a blank slide, or clone a known slide with `duplicate` when its layout and contents should be retained. For a low-level `add` slide command, set `element.kind` to `slide` and optionally provide `templatePart` or `layoutPart` from inspected package paths.
+
+## Duplicate, remove, and replace pictures
+
+These commands all use a current reference:
+
+```json
+{ "type": "duplicate", "ref": { "documentId": "/absolute/path/workspace", "elementId": "slide:256" } }
+```
+
+```json
+{ "type": "remove", "ref": { "documentId": "/absolute/path/workspace", "elementId": "256:10" } }
+```
+
+```json
+{
+  "type": "replacePicture",
+  "ref": { "documentId": "/absolute/path/workspace", "elementId": "256:12" },
+  "path": "/absolute/path/replacement.png"
+}
+```
+
+Provide either `path` or `base64` to `replacePicture`; when both are present, the file path takes precedence. Removing pictures and slides cleans media parts only when no remaining relationship references them. Duplicated slides clone mutable notes and chart parts while layouts and media can remain shared.
+
+## Tables, notes, and charts
+
+- `query 'kind=table'` returns the table and indexed `tableCell` children with row and column locations.
+- Speaker notes are indexed as `kind=notes`; `getText` reads them, and `setText` can replace the text in the notes part.
+- A chart query result includes its title, cached series names and values, chart part, and whether an embedded workbook exists.
+
+Update a chart with `setProperties`:
+
+```json
+{
+  "type": "setProperties",
+  "ref": { "documentId": "/absolute/path/workspace", "elementId": "256:14" },
+  "properties": {
+    "title": "Revenue",
+    "series": [{ "name": "FY2026", "values": [10, 20, 30] }]
+  }
+}
+```
+
+DeckUse changes the OOXML chart cache, not an embedded Excel workbook. If a workbook is present, the result includes `EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED`; consumers must not claim that the workbook data was updated.
+
+## Batch and dry run
+
+The current schema requires every nested batch command to include its complete protocol and mutation envelope, even when the outer batch is sent through the CLI:
+
+```json
+{
+  "type": "batch",
+  "atomic": true,
+  "commands": [
+    {
+      "version": "1.0",
+      "type": "replaceText",
+      "workspaceId": "/absolute/path/workspace",
+      "transactionId": "<current-revision>",
+      "find": "FY2025",
+      "replace": "FY2026"
+    },
+    {
+      "version": "1.0",
+      "type": "setProperties",
+      "workspaceId": "/absolute/path/workspace",
+      "transactionId": "<current-revision>",
+      "ref": {
+        "documentId": "/absolute/path/workspace",
+        "elementId": "256:10"
+      },
+      "properties": { "fontSize": 28, "bold": true }
+    }
+  ]
+}
+```
+
+The outer CLI command receives its own workspace and transaction fields automatically. `atomic` defaults to `true`; if any nested command fails, no change is persisted. Add `dryRun: true` to the outer batch to return results without changing the workspace.
+
+## Protocol schema
+
+The source package exports the Draft 2020-12 command schema as `@deckflow/deckuse-core/schema/command.json`. Use it to validate generated tool calls, but still evaluate the runtime `ok` field and diagnostics after execution.

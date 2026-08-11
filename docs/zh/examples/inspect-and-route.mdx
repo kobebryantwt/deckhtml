@@ -28,7 +28,7 @@ deckprobe --version
   <Step title="下载已知输入">
 
 ```bash
-curl -L https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -o sample.pdf
+curl -fL https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf -o sample.pdf
 ```
 
   </Step>
@@ -55,7 +55,7 @@ if (report.status !== 'ok' || format !== 'pdf' || pages > 25) {
   process.exit(1);
 }
 
-console.log(`ACCEPT: ${format}, ${pages} page`);
+console.log(`ACCEPT: ${format}, ${pages} pages`);
 ```
 
 运行：
@@ -70,7 +70,7 @@ node route.mjs
 ## 预期结果
 
 ```text
-ACCEPT: pdf, 1 page
+ACCEPT: pdf, 14 pages
 ```
 
 原生 CLI 在本地读取文件。下载示例需要网络，但 DeckProbe 在检查过程中不会上传 `sample.pdf`。

@@ -1,38 +1,74 @@
 ---
-title: Selectors
-sidebarTitle: Selectors
-description: "通过宽泛或规范 Selector 定位 DeckUse 中的幻灯片、Shape、文本和段落。"
+title: 选择器与元素引用
+sidebarTitle: 选择器
+description: "查询 DeckUse 的 PPTX 索引，并把匹配元素转换为精确、带版本保护的命令引用。"
 ---
 
-Selector 用于定位 PPTX 中已有的内容。可以先使用宽泛 Selector 检查演示文稿，再复用 `get text` 输出的规范 ID Path Selector 进行精确修改。
+选择器用于筛选工作区索引。先用宽泛查询找到候选元素，检查其文本和几何信息，再把返回的 `ref` 交给需要精确修改单个元素的命令。
 
-## 支持的形式
+## 字符串选择器语法
 
-| 形式 | 示例 | 含义 |
+用空格分隔的多个条件按照 AND 组合。
+
+| 形式 | 示例 | 匹配方式 |
 | --- | --- | --- |
-| 类型 | `text` | 所有匹配类型的元素 |
-| 索引 | `slide:3` | 第三页；索引从 1 开始 |
-| 路径 | `slide:3/text` | 第三页中的文本 |
-| 键值筛选 | `shape[type=textbox]` | 属性匹配的 Shape |
-| 函数筛选 | `text[contains('Revenue')]` | 包含指定字符串的文本 |
-| 规范 ID Path | `slide:1/#22` | 使用输出 OOXML ID Path 定位 Shape |
-| 段落路径 | `slide:1/#22/p:0` | Shape 中一个从 0 开始的段落 |
+| 全部 | `*` 或 `all` | 所有索引元素 |
+| 自由文本 | `Quarter` | 在类型、名称、文本、元素 ID 和幻灯片 ID 中做不区分大小写的包含匹配 |
+| 类型 | `kind=textbox` | 对索引类型做不区分大小写的包含匹配 |
+| 名称 | `name=Title` | 对对象名称做不区分大小写的包含匹配 |
+| 文本 | `text=Revenue` | 对元素文本做不区分大小写的包含匹配 |
+| 正则表达式 | `text~=^FY20[0-9]{2}$` | 对元素文本执行 Unicode 正则表达式 |
+| 是否有文本 | `hasText=true` | 文本索引非空的元素 |
+| 幻灯片 ID | `slide=256` | 稳定的演示文稿幻灯片 ID 中包含 `256` 的元素 |
+| 元素 ID | `id=256:10` | 元素 ID 中包含指定值的元素 |
 
 ```bash
-deckuse get text input.pptx "text[contains('Revenue')]"
-deckuse get text input.pptx 'slide:1/text'
-deckuse set text input.pptx 'slide:1/#22/p:0' 'Revenue overview' -o updated.pptx
+deckuse query ./workspace 'kind=textbox hasText=true' --limit 500 --json
+deckuse query ./workspace 'text=Revenue' --json
+deckuse query ./workspace 'text~=https?://' --limit 1000 --json
+deckuse query ./workspace 'slide=256 kind=picture' --json
 ```
 
-## 引号
+字符串选择器中的值不能包含空格，因为空格用于分隔条件。值本身必须包含空格时，请改用较短且无歧义的子串、不含字面空格的正则表达式，或在 Node.js API 中使用结构化选择器。
 
-请给整个 Selector 添加 Shell 引号。`contains()` 的内容包含引号时，可以在 Shell 或 Selector 值中切换使用另一种引号。
+## 结构化选择器
 
-## 选择限制
+JSON 命令和 Node.js API 还可以传入包含以下可选字段的对象：
 
-- 宽泛 Filter 依赖 DeckUse 解析后的 PPTX 模型中是否存在相应属性。
-- 规范 Path 属于当前源文件，其他工具重建文件后可能发生变化。
-- 部分宽泛 Selector 无法到达 Group 中深层嵌套的 Shape。
-- `move` 只适用于普通幻灯片中的 Shape，不适用于 Slide Master 或 Layout。
+```json
+{
+  "kind": "textbox",
+  "name": "Title",
+  "text": "Quarterly Revenue",
+  "textRegex": "^FY20[0-9]{2}$",
+  "id": "256:10",
+  "slide": "256",
+  "hasText": true
+}
+```
 
-下一次操作依赖精确段落路径时，请在修改后重新执行 `get text`。
+所有已提供字段都必须匹配。查询中的无效正则表达式只会得到空结果；如果表达式来自用户输入，请在依赖空结果作出判断前自行校验。
+
+## 读取并复用引用
+
+查询结果包含类似下面的引用：
+
+```json
+{
+  "documentId": "/absolute/path/workspace",
+  "elementId": "256:10",
+  "path": "/ppt/slides/slide1.xml#256:10",
+  "revision": "msok74co-006861c9"
+}
+```
+
+- `documentId` 标识工作区。
+- `elementId` 由演示文稿幻灯片 ID 和元素的 OOXML 非视觉 ID Path 组成。
+- `path` 提供结构路径形式的定位方式。
+- `revision` 防止精确修改使用已经过期的引用。
+
+每次持久化修改都会生成新的工作区版本。一次修改完成后，请重新查询，再执行下一项带版本引用的精确修改；或者把同一版本上准备好的相关修改放入一个原子批处理。不要把示例 ID 复制到其他演示文稿中。
+
+<Note>
+  幻灯片 ID 是 PowerPoint 文件内部的演示文稿 ID，不是从 1 开始的页码。请查询 `kind=slide`，获取当前文件中的实际 ID。
+</Note>

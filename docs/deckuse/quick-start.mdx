@@ -1,82 +1,104 @@
 ---
-title: Quickstart
+title: DeckUse Quickstart
 sidebarTitle: Quickstart
-description: "Install DeckUse, inspect a PPTX, replace text, and verify the updated presentation."
+description: "Install DeckUse from source, inspect and replace text in a known PPTX, validate the workspace, and export the result."
 ---
 
-Use an existing PPTX copied to `input.pptx`, or generate the reproducible sample below. The sample contains `Revenue 2025`, so every subsequent command has a known match.
+This path runs entirely on your machine and requires no DeckFlow account or API key. It uses the source installation because the current public package has an incomplete published dependency set.
 
 <Steps>
-  <Step title="Check prerequisites">
-    DeckUse requires Node.js 18 or later and the `zip` and `unzip` command-line tools.
+  <Step title="Check the runtime">
+    Install Node.js 24 or later, pnpm 10, and Git.
 
     ```bash
     node --version
-    zip -v
-    unzip -v
+    pnpm --version
+    git --version
     ```
-
-    On Windows, install `zip.exe` and `unzip.exe` and ensure both are on `Path`; PowerShell's archive cmdlets are not command-name substitutes for the current CLI.
   </Step>
-  <Step title="Install and verify the CLI">
+  <Step title="Build and link the CLI">
     ```bash
-    npm install -g deckuse
+    git clone https://github.com/deckflow/deckuse.git
+    cd deckuse
+    pnpm install
+    pnpm install:global
     deckuse --help
     ```
-  </Step>
-  <Step title="Prepare a known PPTX">
-    If you do not already have `input.pptx`, save this as `sample.html`:
 
-    ```html
-    <!doctype html>
-    <html><body><section class="slide-container"><h1>Revenue 2025</h1></section></body></html>
+    `pnpm install:global` builds every workspace package, deploys a self-contained production tree, and links the `deckuse` executable. The current `--version` output is an internal placeholder, so verify this build with `deckuse --help` rather than using the displayed version for dependency checks.
+  </Step>
+  <Step title="Download a known PPTX">
+    ```bash
+    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+      -o input.pptx
     ```
 
-    Then generate the fixture locally with DeckHTML:
+    The sample contains the text `Revenue 2025`, so the following query and replacement have a known match. You can substitute your own PPTX after completing this path once.
+  </Step>
+  <Step title="Create a workspace">
+    ```bash
+    deckuse init input.pptx ./workspace --json
+    ```
+
+    Success returns `{ "ok": true, ... }` and creates `workspace/package.pptx` plus the `.deckuse` manifest, index, media cache, and operation log.
+  </Step>
+  <Step title="Inspect the matching element">
+    ```bash
+    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    ```
+
+    Confirm that the result contains a text box whose `text` is `Revenue 2025`. Keep the returned `ref` when a later command must change one exact object.
+  </Step>
+  <Step title="Apply a reviewed replacement">
+    Save this command as `replace.json`:
+
+    ```json
+    {
+      "type": "replaceText",
+      "find": "2025",
+      "replace": "2026",
+      "selector": "kind=textbox"
+    }
+    ```
+
+    Apply it to the workspace:
 
     ```bash
-    npx -y @deckflow/deckhtml@latest sample.html \
-      -o input.pptx --mode local --quiet
+    deckuse apply ./workspace --input replace.json --json
     ```
 
-    DeckHTML requires a local Chromium/Chrome/Edge executable; see its [Quickstart](/deckhtml/quick-start) if browser discovery fails.
+    The CLI supplies the protocol version, workspace ID, and current transaction revision for this top-level command. Check that `ok` is `true` and `value.matched` is greater than zero.
   </Step>
-  <Step title="Inspect slides and text">
+  <Step title="Validate and export">
     ```bash
-    deckuse list slides input.pptx
-    deckuse get text input.pptx 'slide:1/text'
+    deckuse validate ./workspace --json
+    deckuse commit ./workspace -o updated.pptx --json
     ```
 
-    `get text` prints every resolved paragraph together with a reusable canonical selector such as `slide:1/#22/p:0`. Choose an exact phrase that appears in this output for the next step.
+    `commit` refuses to replace an existing destination unless `--force` is present.
   </Step>
-  <Step title="Create an updated PPTX">
-    Replace a value that actually appears in the preceding output. The generated sample contains `2025`; substitute a real value when using your own file. A direct write against a `.pptx` requires `-o` so the source is not overwritten.
-
+  <Step title="Verify the exported file">
     ```bash
-    deckuse replace input.pptx '2025' '2026' -o updated.pptx
+    deckuse init updated.pptx ./verification --json
+    deckuse query ./verification 'text=2026' --limit 10 --json
+    test -s updated.pptx
     ```
 
-    Confirm that the command reports at least one replacement. A zero-match command can still produce an output file without changing text.
-  </Step>
-  <Step title="Verify the result">
-    ```bash
-    test -f updated.pptx
-    deckuse get text updated.pptx "text[contains('2026')]"
+    In PowerShell, replace the final line with:
+
+    ```powershell
+    if (!(Test-Path updated.pptx) -or (Get-Item updated.pptx).Length -eq 0) { exit 1 }
     ```
 
-    In PowerShell, replace `test -f updated.pptx` with `if (!(Test-Path updated.pptx)) { exit 1 }`.
-
-    Open `updated.pptx` in PowerPoint or another compatible application to verify its visual layout before shipping it.
+    Package validation does not check visual layout. Open or render `updated.pptx` before shipping it.
   </Step>
 </Steps>
 
-If you need several changes, use a [persistent workspace](/deckuse/workspace) so the PPTX is unpacked and repackaged only once.
-
 <CardGroup cols={2}>
-  <Card title="Command reference" href="/deckuse/cli">
-    Set text, replace text, move shapes, inspect status, and commit workspaces.
+  <Card title="JSON command reference" href="/deckuse/commands">
+    Change one element, add or remove content, update pictures, or group operations.
   </Card>
-  <Card title="Selector syntax" href="/deckuse/selectors">
-    Move from broad text matches to stable ID-path selectors.
+  <Card title="Workspace workflow" href="/deckuse/workspace">
+    Manage revisions, dry runs, operation logs, validation, and concurrent edits.
   </Card>
 </CardGroup>

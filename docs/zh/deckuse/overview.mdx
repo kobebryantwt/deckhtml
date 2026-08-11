@@ -1,63 +1,73 @@
 ---
 title: DeckUse
 sidebarTitle: 概览
-description: "通过 Selector 和 Workspace 工作流，在本地检查、修改现有 PPTX，并生成仍可编辑的 PPTX。"
+description: "通过带版本的工作区、结构化选择器和 JSON 命令，在本地检查并修改现有 PPTX。"
 ---
 
-DeckUse 用于对现有 PowerPoint 演示文稿进行聚焦、文件原生的修改。它把 PPTX 打开为临时或持久化 Workspace，根据 Selector 定位幻灯片和 Shape，更新支持的属性，再把 Workspace 打包为另一个可编辑 PPTX。
+DeckUse 是面向 Coding Agent 的本地、Schema 驱动文档操作引擎。它把现有演示文稿导入带版本的工作区，建立结构索引，执行明确的 JSON 命令，校验文件包，最后导出另一个仍可编辑的 PPTX。
 
 | 项目 | 当前契约 |
 | --- | --- |
-| 输入 | 一个 `.pptx` 文件或已初始化的 DeckUse Workspace |
-| 输出 | 修改后的 `.pptx`；读取命令会输出结构信息 |
-| 执行位置 | 本地 Node.js 进程；不上传文件、不需要认证 |
-| 接入方式 | 已验证的 `deckuse` CLI；Node.js API 已有源码，但 `0.2.0` ESM 构建存在运行时导入问题 |
-| 运行环境 | Node.js 18 或更高版本；Workspace 打包需要 `zip` 与 `unzip` 命令 |
-
-## DeckUse 适合什么
-
-- 列出幻灯片并查看页面结构。
-- 通过页面、Shape、文本或规范 ID Path Selector 读取文本。
-- 设置段落文本，或在全局、指定页面中替换文本。
-- 使用归一化的 `left`、`top` 坐标移动已有 Shape。
-- 在一个 Workspace 中完成多次修改，再统一提交输出文件。
+| 输入 | 一个现有 `.pptx` 文件 |
+| 输出 | 带版本的本地工作区，以及修改后的 `.pptx` |
+| 执行位置 | 本地 Node.js 进程；不会上传文档 |
+| 接入方式 | `deckuse` CLI 和 Node.js `runCommand()` API |
+| 运行环境 | Node.js 24 或更高版本；源码开发使用 pnpm 10 |
+| 认证 | 不需要 |
 
 ```text
-input.pptx → 打开或初始化 Workspace → 选择已有内容 → 修改 → Commit → updated.pptx
+existing.pptx → 初始化工作区 → 检查 / 查询 → 执行 JSON 命令
+              → 校验 → 提交 → updated.pptx
 ```
 
+## 可以完成什么
+
+- 检查 PPTX 索引中的幻灯片、文本框、形状、组合、图片、表格、图表、演讲者备注、版式、母版和主题。
+- 按类型、名称、文本、正则表达式、幻灯片 ID、元素 ID 或是否包含文本来查询元素。
+- 设置或替换文本；修改位置、尺寸、旋转、填充、描边、文字样式、名称和隐藏状态。
+- 添加、复制或删除幻灯片和支持的元素；添加图片与表格；替换内嵌图片。
+- 读取演讲者备注和表格单元格；修改图表标题、系列名称和缓存值。
+- 把多项修改组成试运行或原子批处理，并保留操作日志。
+
+<Note>
+  DeckUse 处理结构，不处理视觉判断。它不会渲染幻灯片、检测元素重叠、评价版式，也不会替 Agent 决定该修改什么。交付前仍需打开或渲染导出的 PPTX。
+</Note>
+
+## 当前格式边界
+
+目前只实现了 PPTX 编辑适配器。命令层预留了 DOCX、XLSX、Keynote 和 Numbers 名称，但初始化会返回 `FORMAT_NOT_IMPLEMENTED`；它们还不是可编辑目标。
+
+DeckUse 会尽量保留未知的文件包 Part 和未修改的 XML。ZIP 条目会被重新压缩，因此未修改内容按解压后的数据保持一致，不保证 ZIP 字节完全相同。文本替换可能把多个文本 Run 合并成一个 Run，并保留第一个 Run 的样式。
+
+## 软件包可用状态
+
 <Warning>
-  当前版本只支持 PPTX。它没有添加或删除幻灯片、元素的命令，也不能编辑 DOCX、XLSX 或 Keynote。请保留原始文件，并使用 PowerPoint 或其他兼容软件检查输出。
+  当前 Registry 中的 `@deckflow/deckuse@0.2.0` 依赖了一组尚未全部发布的适配器包，因此普通的 `npm install @deckflow/deckuse` 目前会失败。源码工作区可以构建，PPTX 测试也已通过；公开依赖修正前，请按照快速开始从源码安装。
 </Warning>
 
-## 两种工作模式
-
-<CardGroup cols={2}>
-  <Card title="直接文件模式" href="/zh/deckuse/quick-start">
-    读取命令直接传入 `.pptx`；写命令同时传入 `-o updated.pptx`。DeckUse 会自动创建并删除临时 Workspace。
-  </Card>
-  <Card title="持久化 Workspace" href="/zh/deckuse/workspace">
-    初始化 `.deck` 目录，完成多次修改、检查状态，最后统一 Commit。
-  </Card>
-</CardGroup>
-
-## 下一步
+## 继续接入
 
 <CardGroup cols={2}>
   <Card title="快速开始" href="/zh/deckuse/quick-start">
-    检查并替换 PPTX 中的文本，再验证生成文件。
+    从源码安装、修改已知 PPTX、校验工作区并导出新文件。
+  </Card>
+  <Card title="工作区流程" href="/zh/deckuse/workspace">
+    了解版本、操作日志、校验、试运行和提交。
   </Card>
   <Card title="CLI" href="/zh/deckuse/cli">
-    查看全部已实现命令及其输出行为。
+    使用六个 CLI 子命令，并把修改命令交给 `apply`。
   </Card>
-  <Card title="Selectors" href="/zh/deckuse/selectors">
-    定位幻灯片、文本、Shape 和规范段落 ID。
+  <Card title="命令参考" href="/zh/deckuse/commands">
+    构造文本、属性、几何、幻灯片、元素、图片和批处理 JSON 命令。
   </Card>
-  <Card title="Node.js API 状态" href="/zh/deckuse/sdk">
-    查看源码导出和当前已发布 ESM 入口阻塞。
+  <Card title="选择器" href="/zh/deckuse/selectors">
+    查询索引，并安全复用返回的元素引用。
+  </Card>
+  <Card title="Node.js API" href="/zh/deckuse/sdk">
+    在应用中执行同一套带版本命令协议。
   </Card>
 </CardGroup>
 
-需要解析、提取或生成云端派生结果时，使用 [DeckOps](/zh/deckops/overview)。HTML 是新 Deck 的创作源时，使用 [DeckHTML](/zh/deckhtml/overview)。
-
-DeckUse 是开源项目。版本与实现细节请查看 [DeckUse 仓库](https://github.com/deckflow/deckuse)。
+- 需要图片、PDF 或视频时，使用 [DeckRender](/zh/deckrender/overview)。
+- 需要解析、提取、转换或其他云端任务时，使用 [DeckOps](/zh/deckops/overview)。
+- HTML 或 SVG 是新 Deck 的创作源时，使用 [DeckHTML](/zh/deckhtml/overview)。
