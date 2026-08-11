@@ -1,0 +1,153 @@
+---
+title: Render Page Images
+sidebarTitle: Render Images
+description: "Render all or selected document pages to PNG, JPEG, or WebP files, control their size, and choose a file, directory, or ZIP output."
+---
+
+Use image output for page previews, thumbnails, review interfaces, and multimodal model input. The available encodings and sizing controls depend on the source format, so confirm the route in [Supported Formats](/deckrender/formats) before exposing these options to application users.
+
+<Note>
+  Most image routes upload the source to DeckFlow cloud. Pages and Numbers use a local embedded preview instead of a full cloud render.
+</Note>
+
+## Render every page
+
+Pass a multi-page document and an output directory:
+
+```bash
+deckrender presentation.pptx -o frames/
+```
+
+The directory contains numbered files in page order:
+
+```text
+frames/
+├── 001.png
+├── 002.png
+└── 003.png
+```
+
+Without `-o`, DeckRender derives a directory from the input name. For example, `presentation.pptx` writes to `presentation/` when it produces multiple images.
+
+## Select pages
+
+`--pages` accepts 1-based, inclusive ranges and comma-separated selections:
+
+```bash
+deckrender presentation.pptx \
+  --pages 1,3,5-7 \
+  -o selected/
+```
+
+Use `--page` when only one page is needed:
+
+```bash
+deckrender report.pdf --page 1 -o cover.png
+```
+
+The selection controls which images are downloaded and written. The base cloud task still renders the complete source, so page selection reduces transferred and stored artifacts rather than the base render work. A page beyond the document's range returns an error.
+
+## Set image size
+
+Use `--width` to request the output's long edge:
+
+```bash
+deckrender report.pdf \
+  --page 1 \
+  --width 640 \
+  -o thumbnail.png
+```
+
+Use `--scale` to multiply the route's default long edge:
+
+```bash
+deckrender report.pdf --pages 1-3 --scale 1.5 -o large-pages/
+```
+
+Sizing behavior differs by route:
+
+- PowerPoint snaps the requested long edge to `1080`, `1920`, or `2560` pixels.
+- PDF and the PDF-to-image step used by Word accept a positive long-edge value.
+- HTML and Markdown accept width or scale and produce one image.
+- Keynote and local Pages/Numbers previews do not provide resolution control.
+
+DeckRender reports an adjustment when a PowerPoint width is snapped to a supported tier.
+
+## Choose PNG, JPEG, or WebP
+
+The output extension normally selects the encoding:
+
+```bash
+deckrender presentation.pptx --page 2 -o slide-2.jpg
+deckrender presentation.pptx --page 2 -o slide-2.webp
+```
+
+For directory or ZIP output, use `--image-format` explicitly:
+
+```bash
+deckrender presentation.pptx \
+  --pages 1-5 \
+  --image-format webp \
+  --width 1920 \
+  -o web-frames/
+```
+
+WebP is produced by an additional per-image cloud conversion step. When pages are selected, only the retained frames enter that WebP step. JPEG is not available on every source route; check the format matrix before choosing it.
+
+## Package selected pages as ZIP
+
+A `.zip` output packs numbered images into one archive:
+
+```bash
+deckrender presentation.pptx \
+  --pages 1-5 \
+  --image-format webp \
+  -o preview.zip
+```
+
+Use a directory when another process consumes the individual files immediately; use ZIP when the application needs one downloadable artifact.
+
+## Use a render profile
+
+Profiles provide named defaults that can still be overridden by explicit options:
+
+```bash
+deckrender presentation.pptx --profile web -o web-frames/
+deckrender report.pdf --profile thumbnail -o cover.jpg
+deckrender presentation.pptx --profile presentation --width 2560 -o review/
+```
+
+| Profile | Image defaults |
+| --- | --- |
+| `web` | WebP, 1920 px, medium quality |
+| `presentation` | PNG, 1920 px, high quality |
+| `thumbnail` | First page, JPEG, 640 px, low quality |
+
+An option typed on the command line overrides the profile. A profile default that does not apply to the chosen route is dropped with a warning.
+
+## Capture and verify the result
+
+Save machine-readable metadata while DeckRender writes the images:
+
+```bash
+deckrender presentation.pptx \
+  --pages 1-3 \
+  --image-format png \
+  -o frames/ \
+  --json --quiet > result.json
+```
+
+In `RenderResult`, `pages` is the source page count before filtering, while `outputs` contains only files written by this invocation. Verify a file without relying on POSIX-only commands:
+
+```bash
+node -e "const fs=require('fs'); const s=fs.statSync('frames/001.png'); if(!s.size) process.exit(1); console.log(s.size + ' bytes')"
+```
+
+<CardGroup cols={2}>
+  <Card title="Render PDF or video" icon="film" iconType="solid" href="/deckrender/guides/render-pdf-and-video">
+    Produce a single PDF or MP4 artifact from a supported source.
+  </Card>
+  <Card title="Automate DeckRender" icon="terminal" iconType="solid" href="/deckrender/cli/automation">
+    Consume JSON, separate stdout and stderr, and handle exit codes.
+  </Card>
+</CardGroup>

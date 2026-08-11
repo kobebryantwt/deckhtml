@@ -1,0 +1,95 @@
+---
+title: Render PDF and Video
+sidebarTitle: Render PDF and Video
+description: "Render supported presentations, documents, and HTML to a single PDF or MP4 artifact and verify the result."
+---
+
+PDF and video routes produce one file rather than a numbered image sequence. The output extension normally selects the target format.
+
+## Render a presentation to PDF
+
+```bash
+deckrender presentation.pptx -o presentation.pdf
+```
+
+PowerPoint, Keynote, Word, and HTML have implemented PDF routes. A local PDF-to-PDF request is a local passthrough: DeckRender copies the input without uploading or re-rendering it.
+
+```bash
+deckrender report.docx -o report.pdf
+deckrender keynote.key -o keynote.pdf
+deckrender existing.pdf -o copy.pdf
+```
+
+Pages and Numbers PDF output wraps their embedded first-page JPEG preview in a one-page PDF. It is not a full render of the document.
+
+## Render a presentation to MP4
+
+PowerPoint can be rendered to one MP4 file:
+
+```bash
+deckrender presentation.pptx -o presentation.mp4
+```
+
+The equivalent explicit form is:
+
+```bash
+deckrender presentation.pptx --format video -o presentation.mp4
+```
+
+DeckRender uploads the presentation and runs the implemented cloud video route. The result is a slideshow artifact produced by that route.
+
+## Render HTML to PDF or video
+
+```bash
+deckrender page.html -o page.pdf
+deckrender page.html -o page.mp4
+```
+
+For both targets, DeckRender first rebuilds the HTML as PPTX and then exports that presentation. PDF follows a slide canvas rather than browser print pagination. Video is based on the reconstructed deck rather than a recording of a live browser page. The `RenderResult` includes a `caveat` for these routes.
+
+An HTTP(S) URL defaults to HTML:
+
+```bash
+deckrender https://example.com/presentation.html -o presentation.pdf
+```
+
+The URL is fetched by the local Node.js process, receives a base URL for relative assets, and is then uploaded as HTML source. It does not inherit cookies, custom request headers, or a logged-in browser session.
+
+## Single-file option rules
+
+PDF and video outputs do not use image encoding, image sizing, quality, or page-selection options. Choose image output when the application needs selected pages or resolution control.
+
+```bash
+# Selected pages as images
+deckrender presentation.pptx --pages 1-3 --width 1920 -o frames/
+
+# Complete presentation as one PDF
+deckrender presentation.pptx -o presentation.pdf
+```
+
+Use [Supported Formats](/deckrender/formats) to confirm that the source and target combination is available in the installed version.
+
+## Capture and verify the result
+
+```bash
+deckrender presentation.pptx \
+  -o presentation.mp4 \
+  --json --quiet > video-result.json
+```
+
+Verify the artifact and the essential result fields with Node.js:
+
+```bash
+node -e "const fs=require('fs'); const r=JSON.parse(fs.readFileSync('video-result.json','utf8')); const s=fs.statSync('presentation.mp4'); if(!r.ok||r.format!=='video'||!s.size) process.exit(1); console.log(r.route.join(' -> '), s.size + ' bytes')"
+```
+
+For PDF, use the same pattern with `format === 'pdf'` and the PDF output path. Byte count and duration depend on the source and selected route.
+
+<CardGroup cols={2}>
+  <Card title="Render page images" icon="images" iconType="solid" href="/deckrender/guides/render-images">
+    Select pages, size images, choose an encoding, or write a ZIP archive.
+  </Card>
+  <Card title="Read the result contract" icon="code" iconType="solid" href="/deckrender/reference/result-contract">
+    Consume routes, files, page counts, caveats, and typed errors.
+  </Card>
+</CardGroup>

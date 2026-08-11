@@ -11,6 +11,15 @@ deckrender <command> [options]
 
 Each invocation renders one file path, HTTP(S) URL, or stdin stream.
 
+<CardGroup cols={2}>
+  <Card title="Render page images" icon="images" iconType="solid" href="/deckrender/guides/render-images">
+    Follow task examples for page ranges, long-edge sizing, image encoding, profiles, directories, and ZIP output.
+  </Card>
+  <Card title="Render PDF and video" icon="film" iconType="solid" href="/deckrender/guides/render-pdf-and-video">
+    Follow task examples for PPTX, Word, Keynote, HTML, PDF, and MP4 output.
+  </Card>
+</CardGroup>
+
 ## Input forms
 
 ```bash
@@ -95,14 +104,28 @@ deckrender report.pdf --profile thumbnail -o cover.jpg
 
 ## Utility commands
 
+| Command | Purpose |
+| --- | --- |
+| `deckrender formats [--json]` | Show the installed input/output route matrix |
+| `deckrender auth login [--port N]` | Open browser login and store the returned session token |
+| `deckrender auth status` | Validate effective credentials and display their source |
+| `deckrender auth logout` | Remove credentials from the shared DeckFlow file |
+| `deckrender auth path` | Print the shared credential path |
+| `deckrender config set <key> <value>` | Save an API key or render default |
+| `deckrender config unset <key>` | Remove one saved value |
+| `deckrender config list` | Show effective settings, credentials, and their sources |
+| `deckrender config path` | Print render and shared configuration paths |
+
 ```bash
 deckrender formats
 deckrender auth login
 deckrender auth status
 deckrender auth logout
+deckrender auth path
 deckrender config list
 deckrender config set profile web
 deckrender config unset profile
+deckrender config path
 ```
 
 Continue with [automation and errors](/deckrender/cli/automation) for stable stdout/stderr behavior, JSON failures, and exit codes.

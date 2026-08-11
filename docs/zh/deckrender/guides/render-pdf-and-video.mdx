@@ -1,0 +1,95 @@
+---
+title: 渲染 PDF 和视频
+sidebarTitle: 渲染 PDF 和视频
+description: "把受支持的演示文稿、文档和 HTML 渲染为单个 PDF 或 MP4，并验证结果。"
+---
+
+PDF 和视频路线会生成一个文件，而不是连续编号的图片。输出扩展名通常可以直接选择目标格式。
+
+## 把演示文稿渲染为 PDF
+
+```bash
+deckrender presentation.pptx -o presentation.pdf
+```
+
+PowerPoint、Keynote、Word 和 HTML 已实现 PDF 路线。本地 PDF 转 PDF 使用本地透传：DeckRender 直接复制输入，不上传也不重新渲染。
+
+```bash
+deckrender report.docx -o report.pdf
+deckrender keynote.key -o keynote.pdf
+deckrender existing.pdf -o copy.pdf
+```
+
+Pages 和 Numbers 的 PDF 输出会把内嵌的第一页 JPEG 预览封装为单页 PDF，并不是完整文档渲染。
+
+## 把演示文稿渲染为 MP4
+
+PowerPoint 可以渲染为一个 MP4 文件：
+
+```bash
+deckrender presentation.pptx -o presentation.mp4
+```
+
+对应的显式写法是：
+
+```bash
+deckrender presentation.pptx --format video -o presentation.mp4
+```
+
+DeckRender 会上传演示文稿并执行已实现的云端视频路线，最终得到由该路线生成的幻灯片视频产物。
+
+## 把 HTML 渲染为 PDF 或视频
+
+```bash
+deckrender page.html -o page.pdf
+deckrender page.html -o page.mp4
+```
+
+这两个目标都会先把 HTML 重建为 PPTX，再导出演示文稿。PDF 遵循幻灯片画布，而不是浏览器打印分页；视频基于重建后的 Deck，并不是实时浏览器页面录屏。对应 `RenderResult` 会包含 `caveat`。
+
+HTTP(S) URL 默认按 HTML 处理：
+
+```bash
+deckrender https://example.com/presentation.html -o presentation.pdf
+```
+
+URL 会先由本地 Node.js 进程获取，为相对资源补充 Base URL，再作为 HTML 源文件上传。它不会继承 Cookie、自定义请求头或已登录的浏览器会话。
+
+## 单文件输出的参数规则
+
+PDF 和视频输出不使用图片编码、图片尺寸、图片质量或页面筛选参数。应用需要指定页面或分辨率控制时，应选择图片输出。
+
+```bash
+# 把指定页面输出为图片
+deckrender presentation.pptx --pages 1-3 --width 1920 -o frames/
+
+# 把完整演示文稿输出为一个 PDF
+deckrender presentation.pptx -o presentation.pdf
+```
+
+使用[支持格式](/zh/deckrender/formats)确认当前安装版本是否提供对应的输入与输出组合。
+
+## 保存并验证结果
+
+```bash
+deckrender presentation.pptx \
+  -o presentation.mp4 \
+  --json --quiet > video-result.json
+```
+
+使用 Node.js 验证产物和关键结果字段：
+
+```bash
+node -e "const fs=require('fs'); const r=JSON.parse(fs.readFileSync('video-result.json','utf8')); const s=fs.statSync('presentation.mp4'); if(!r.ok||r.format!=='video'||!s.size) process.exit(1); console.log(r.route.join(' -> '), s.size + ' bytes')"
+```
+
+PDF 可以使用相同方式验证，把判断条件换成 `format === 'pdf'` 并使用 PDF 输出路径即可。实际字节数和耗时取决于源文件与执行路线。
+
+<CardGroup cols={2}>
+  <Card title="渲染页面图片" icon="images" iconType="solid" href="/zh/deckrender/guides/render-images">
+    选择页面、设置图片尺寸和编码，或写出 ZIP 压缩包。
+  </Card>
+  <Card title="查看结果契约" icon="code" iconType="solid" href="/zh/deckrender/reference/result-contract">
+    处理路线、文件、页数、限制和类型化错误。
+  </Card>
+</CardGroup>

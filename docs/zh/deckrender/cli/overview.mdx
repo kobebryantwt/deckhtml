@@ -11,6 +11,15 @@ deckrender <command> [options]
 
 每次调用处理一个文件路径、HTTP(S) URL 或标准输入流。
 
+<CardGroup cols={2}>
+  <Card title="渲染页面图片" icon="images" iconType="solid" href="/zh/deckrender/guides/render-images">
+    查看页面范围、长边尺寸、图片编码、Profile、目录和 ZIP 输出的任务示例。
+  </Card>
+  <Card title="渲染 PDF 和视频" icon="film" iconType="solid" href="/zh/deckrender/guides/render-pdf-and-video">
+    查看 PPTX、Word、Keynote、HTML、PDF 和 MP4 输出的任务示例。
+  </Card>
+</CardGroup>
+
 ## 输入形式
 
 ```bash
@@ -95,14 +104,28 @@ deckrender report.pdf --profile thumbnail -o cover.jpg
 
 ## 辅助命令
 
+| 命令 | 作用 |
+| --- | --- |
+| `deckrender formats [--json]` | 查看当前安装版本的输入输出路线矩阵 |
+| `deckrender auth login [--port N]` | 打开浏览器登录并保存返回的 Session Token |
+| `deckrender auth status` | 验证当前凭证并显示来源 |
+| `deckrender auth logout` | 删除 DeckFlow 共享文件中的凭证 |
+| `deckrender auth path` | 输出共享凭证路径 |
+| `deckrender config set <key> <value>` | 保存 API Key 或渲染默认值 |
+| `deckrender config unset <key>` | 删除一项已保存的值 |
+| `deckrender config list` | 显示实际生效的设置、凭证和来源 |
+| `deckrender config path` | 输出渲染配置与共享配置路径 |
+
 ```bash
 deckrender formats
 deckrender auth login
 deckrender auth status
 deckrender auth logout
+deckrender auth path
 deckrender config list
 deckrender config set profile web
 deckrender config unset profile
+deckrender config path
 ```
 
 继续阅读[自动化与错误处理](/zh/deckrender/cli/automation)，了解稳定的 stdout/stderr 行为、JSON 错误和退出码。

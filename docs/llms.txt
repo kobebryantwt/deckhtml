@@ -25,7 +25,9 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [DeckRender Overview](https://docs.deckflow.com/deckrender/overview.md): Render supported inputs to images, PDF, or video.
 - [DeckRender Quickstart](https://docs.deckflow.com/deckrender/quick-start.md): Create and verify a first render artifact.
 - [Supported Formats](https://docs.deckflow.com/deckrender/formats.md): Review direct, derived, passthrough, and unavailable routes.
-- [Authentication](https://docs.deckflow.com/deckrender/authentication.md): Choose guest, browser login, token, or API key access.
+- [Render Page Images](https://docs.deckflow.com/deckrender/guides/render-images.md): Select pages, control image size and encoding, and write directories or ZIP files.
+- [Render PDF and Video](https://docs.deckflow.com/deckrender/guides/render-pdf-and-video.md): Produce and verify single PDF or MP4 artifacts.
+- [Authentication](https://docs.deckflow.com/deckrender/authentication.md): Start in guest mode or authenticate with an API key or browser-obtained session token.
 - [Result Contract](https://docs.deckflow.com/deckrender/reference/result-contract.md): Interpret files, routes, pages, duration, and caveats.
 
 ## DeckOps

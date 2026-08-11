@@ -12,7 +12,7 @@ This example creates a presentation-sized HTML page, sends it through a DeckFlow
 
 - Node.js 18 or later
 - Network access to DeckFlow cloud
-- Guest quota, a browser login, or an API key
+- Guest quota or authenticated access with an API key or a browser-obtained session token
 
 <Warning>
   DeckRender uploads the HTML source to DeckFlow cloud for this route. For local HTML-to-PNG conversion, use [DeckHTML local mode](/deckhtml/guides/local-mode).
@@ -128,6 +128,6 @@ Route: convertor.html2png
     Check the current input/output matrix and format-specific limitations.
   </Card>
   <Card title="Configure authentication" icon="key" iconType="solid" href="/deckrender/authentication">
-    Move from guest quota to browser login, token, or API-key execution.
+    Move from guest quota to an API key or a session token obtained through browser login.
   </Card>
 </CardGroup>

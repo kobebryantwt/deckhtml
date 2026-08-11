@@ -85,11 +85,11 @@ description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 
 访客渲染存在额度限制。如果命令返回 `auth_error`，先运行 `deckrender auth status` 检查实际选中的凭证，再登录或配置 API Key 后重试。已过期的环境变量或 DeckOps 回退凭证可能会覆盖游客模式。详见[认证](/zh/deckrender/authentication)。
 
 <CardGroup cols={2}>
-  <Card title="渲染其他格式" href="/zh/deckrender/formats">
-    查询源格式对应的图片、PDF 和视频路径。
+  <Card title="渲染页面图片" href="/zh/deckrender/guides/render-images">
+    选择页面、控制图片尺寸和编码，或写出 ZIP。
   </Card>
-  <Card title="控制输出" href="/zh/deckrender/cli/overview">
-    写出连续图片、ZIP、原始 stdout、页面范围和 Profile。
+  <Card title="渲染 PDF 或视频" href="/zh/deckrender/guides/render-pdf-and-video">
+    生成并验证单个 PDF 或 MP4 产物。
   </Card>
   <Card title="稳定自动化" href="/zh/deckrender/cli/automation">
     分离 stdout 与诊断，并根据稳定错误码处理失败。

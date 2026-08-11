@@ -85,11 +85,11 @@ This example creates its own input and runs through a DeckFlow cloud render in g
 Guest rendering is quota-limited. If the command returns `auth_error`, run `deckrender auth status` to inspect the selected credential. Sign in or configure an API key and retry; an expired environment variable or DeckOps fallback credential can override guest mode. See [Authentication](/deckrender/authentication).
 
 <CardGroup cols={2}>
-  <Card title="Render another format" href="/deckrender/formats">
-    Find the supported image, PDF, and video route for your source.
+  <Card title="Render page images" href="/deckrender/guides/render-images">
+    Select pages, control image size and encoding, or write a ZIP.
   </Card>
-  <Card title="Control output" href="/deckrender/cli/overview">
-    Write numbered frames, ZIP files, raw stdout, page ranges, and profiles.
+  <Card title="Render PDF or video" href="/deckrender/guides/render-pdf-and-video">
+    Produce and verify a single PDF or MP4 artifact.
   </Card>
   <Card title="Automate safely" href="/deckrender/cli/automation">
     Separate stdout from diagnostics and branch on stable error codes.

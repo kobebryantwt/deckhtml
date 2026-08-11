@@ -1,0 +1,153 @@
+---
+title: 渲染页面图片
+sidebarTitle: 渲染图片
+description: "把文档的全部或指定页面渲染为 PNG、JPEG 或 WebP，控制图片尺寸，并选择文件、目录或 ZIP 输出。"
+---
+
+页面预览、缩略图、评审界面和多模态模型输入都可以使用图片输出。不同源格式支持的编码和尺寸参数并不相同；把这些选项暴露给应用用户前，请先查看[支持格式](/zh/deckrender/formats)确认路线。
+
+<Note>
+  多数图片路线会把源文件上传到 DeckFlow 云端。Pages 和 Numbers 使用本地内嵌预览，不会执行完整云端渲染。
+</Note>
+
+## 渲染所有页面
+
+传入多页文档和输出目录：
+
+```bash
+deckrender presentation.pptx -o frames/
+```
+
+目录中会按页面顺序生成连续编号文件：
+
+```text
+frames/
+├── 001.png
+├── 002.png
+└── 003.png
+```
+
+不传 `-o` 时，DeckRender 会根据输入名称推导输出位置。例如 `presentation.pptx` 产生多张图片时会写入 `presentation/`。
+
+## 选择指定页面
+
+`--pages` 使用从 1 开始、包含两端的范围，也支持逗号分隔的组合：
+
+```bash
+deckrender presentation.pptx \
+  --pages 1,3,5-7 \
+  -o selected/
+```
+
+只需要一页时使用 `--page`：
+
+```bash
+deckrender report.pdf --page 1 -o cover.png
+```
+
+页面筛选控制下载和写出的图片。基础云端任务仍然会渲染完整源文件，因此它减少的是传输和保存的产物，而不是基础渲染工作。请求超过文档范围的页面会返回错误。
+
+## 设置图片尺寸
+
+使用 `--width` 请求图片长边尺寸：
+
+```bash
+deckrender report.pdf \
+  --page 1 \
+  --width 640 \
+  -o thumbnail.png
+```
+
+使用 `--scale` 按路线默认长边进行倍数缩放：
+
+```bash
+deckrender report.pdf --pages 1-3 --scale 1.5 -o large-pages/
+```
+
+不同路线的尺寸行为有所区别：
+
+- PowerPoint 会把长边吸附到 `1080`、`1920` 或 `2560` 像素。
+- PDF，以及 Word 使用的 PDF 转图片步骤，接受正数长边尺寸。
+- HTML 和 Markdown 支持宽度或缩放，并生成一张图片。
+- Keynote 与本地 Pages/Numbers 预览不提供分辨率控制。
+
+PowerPoint 请求值被吸附到支持档位时，DeckRender 会输出调整信息。
+
+## 选择 PNG、JPEG 或 WebP
+
+输出扩展名通常可以决定图片编码：
+
+```bash
+deckrender presentation.pptx --page 2 -o slide-2.jpg
+deckrender presentation.pptx --page 2 -o slide-2.webp
+```
+
+输出到目录或 ZIP 时，显式使用 `--image-format`：
+
+```bash
+deckrender presentation.pptx \
+  --pages 1-5 \
+  --image-format webp \
+  --width 1920 \
+  -o web-frames/
+```
+
+WebP 通过额外的逐图云端转换步骤生成。选择页面后，只有保留的图片会进入 WebP 步骤。并非所有源格式都支持 JPEG，选择前请查看格式矩阵。
+
+## 把指定页面打包为 ZIP
+
+使用 `.zip` 输出可以把连续编号图片打包为一个文件：
+
+```bash
+deckrender presentation.pptx \
+  --pages 1-5 \
+  --image-format webp \
+  -o preview.zip
+```
+
+其他进程需要立即消费单张文件时使用目录；应用需要一个可下载产物时使用 ZIP。
+
+## 使用渲染 Profile
+
+Profile 提供带名称的默认参数，命令行仍然可以覆盖其中的选项：
+
+```bash
+deckrender presentation.pptx --profile web -o web-frames/
+deckrender report.pdf --profile thumbnail -o cover.jpg
+deckrender presentation.pptx --profile presentation --width 2560 -o review/
+```
+
+| Profile | 图片默认值 |
+| --- | --- |
+| `web` | WebP、1920 px、中等质量 |
+| `presentation` | PNG、1920 px、高质量 |
+| `thumbnail` | 第一页、JPEG、640 px、低质量 |
+
+命令行显式选项优先于 Profile。Profile 中不适用于当前路线的默认值会被忽略并给出警告。
+
+## 保存并验证结果
+
+在 DeckRender 写出图片的同时保存机器可读元数据：
+
+```bash
+deckrender presentation.pptx \
+  --pages 1-3 \
+  --image-format png \
+  -o frames/ \
+  --json --quiet > result.json
+```
+
+`RenderResult` 中的 `pages` 是筛选前的源文档页数，`outputs` 只包含本次写出的文件。可以使用 Node.js 跨平台验证文件：
+
+```bash
+node -e "const fs=require('fs'); const s=fs.statSync('frames/001.png'); if(!s.size) process.exit(1); console.log(s.size + ' bytes')"
+```
+
+<CardGroup cols={2}>
+  <Card title="渲染 PDF 或视频" icon="film" iconType="solid" href="/zh/deckrender/guides/render-pdf-and-video">
+    从受支持的源格式生成单个 PDF 或 MP4 产物。
+  </Card>
+  <Card title="自动化 DeckRender" icon="terminal" iconType="solid" href="/zh/deckrender/cli/automation">
+    消费 JSON、分离 stdout 与 stderr，并处理退出码。
+  </Card>
+</CardGroup>

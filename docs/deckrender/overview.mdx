@@ -12,7 +12,7 @@ DeckRender turns supported documents into image, PDF, or video files through one
 | Outputs | PNG, JPEG, or WebP images; PDF; MP4 video |
 | Interfaces | `deckrender` CLI and `@deckflow/deckrender` Node.js API |
 | Execution | Mostly DeckFlow cloud tasks, plus local PDF passthrough and iWork preview extraction |
-| Authentication | Optional guest mode, browser login, token, or API key |
+| Authentication | Guest mode without credentials; authenticated execution with an API key or a session token obtained through browser login |
 
 ## Use DeckRender for
 
@@ -39,7 +39,9 @@ DeckRender turns supported documents into image, PDF, or video files through one
   </Step>
 </Steps>
 
-DeckRender does not parse text or document elements, return Document IR, or edit source content. Its internal `RenderPlan` describes execution only.
+<Tip>
+  DeckRender does not parse text or document elements, return Document IR, or edit source content. Its internal `RenderPlan` describes the execution route only.
+</Tip>
 
 ## Data and execution boundary
 
@@ -60,8 +62,14 @@ An HTTP(S) URL is fetched by the local Node.js process. HTML receives a base URL
   <Card title="Supported formats" href="/deckrender/formats">
     Check implemented routes, output encodings, and fidelity caveats.
   </Card>
+  <Card title="Render page images" href="/deckrender/guides/render-images">
+    Select pages, control long-edge size and encoding, and write a directory or ZIP.
+  </Card>
+  <Card title="Render PDF and video" href="/deckrender/guides/render-pdf-and-video">
+    Produce and verify a single PDF or MP4 artifact from supported inputs.
+  </Card>
   <Card title="Authentication" href="/deckrender/authentication">
-    Choose guest mode, browser login, an API key, or CI environment variables.
+    Start without credentials, or authenticate with an API key or a session token obtained through browser login.
   </Card>
   <Card title="CLI" href="/deckrender/cli/overview">
     Control input forms, output naming, page selection, sizing, and profiles.
