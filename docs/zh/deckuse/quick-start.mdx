@@ -8,7 +8,7 @@ description: "从源码安装 DeckUse，检查并替换已知 PPTX 中的文本�
 
 <Steps>
   <Step title="检查运行环境">
-    请安装 Node.js 24 或更高版本、pnpm 10 和 Git。
+    请安装 Node.js 18 或更高版本、pnpm 10 和 Git。
 
     ```bash
     node --version
@@ -17,6 +17,8 @@ description: "从源码安装 DeckUse，检查并替换已知 PPTX 中的文本�
     ```
   </Step>
   <Step title="构建并链接 CLI">
+    DeckUse 确实提供 CLI。标准安装方式应为 `npm install -g @deckflow/deckuse`，但当前 1.0.0 软件包无法解析其中的私有占位适配器。在依赖列表修正前，请从源码构建并全局链接同一个 CLI：
+
     ```bash
     git clone https://github.com/deckflow/deckuse.git
     cd deckuse

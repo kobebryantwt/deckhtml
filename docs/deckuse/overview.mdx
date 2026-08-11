@@ -12,7 +12,7 @@ DeckUse is a local, schema-driven document operation engine for coding agents. I
 | Output | A versioned local workspace and an updated `.pptx` |
 | Execution | Local Node.js process; documents are not uploaded |
 | Interfaces | `deckuse` CLI and Node.js `runCommand()` API |
-| Runtime | Node.js 24 or later; source development uses pnpm 10 |
+| Runtime | Node.js 18 or later; source development uses pnpm 10 |
 | Authentication | None |
 
 ```text
@@ -42,7 +42,7 @@ DeckUse preserves unknown package parts and untouched XML where possible. ZIP en
 ## Package availability
 
 <Warning>
-  The current `@deckflow/deckuse@0.2.0` registry package depends on adapter packages that are not all published, so a normal `npm install @deckflow/deckuse` currently fails. The source workspace builds and its PPTX tests pass; use the source installation in the Quickstart until the public dependency set is corrected.
+  The repository provides both the `deckuse` CLI and Node.js API. However, the current `@deckflow/deckuse@1.0.0` registry package declares four private placeholder adapters as dependencies, so `npm install -g @deckflow/deckuse` currently fails while resolving them. Use the same CLI through the source installation in the Quickstart until the published dependency list is corrected.
 </Warning>
 
 ## Continue
@@ -65,6 +65,12 @@ DeckUse preserves unknown package parts and untouched XML where possible. ZIP en
   </Card>
   <Card title="Node.js API" href="/deckuse/sdk">
     Run the same versioned command protocol from an application.
+  </Card>
+  <Card title="PPTX capabilities" href="/deckuse/reference/pptx-capabilities">
+    Check the exact indexed objects, supported mutations, preservation rules, and boundaries.
+  </Card>
+  <Card title="Results and errors" href="/deckuse/reference/results-and-errors">
+    Consume result envelopes, diagnostics, error codes, revisions, and CLI exit status.
   </Card>
 </CardGroup>
 

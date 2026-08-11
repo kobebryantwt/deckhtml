@@ -1,0 +1,102 @@
+---
+title: 修改 PPTX 中已确认的内容
+sidebarTitle: 修改 PPTX 内容
+description: "使用 DeckUse 查询已知 PPTX，执行确认后的文本替换，校验工作区并验证导出的演示文稿。"
+---
+
+本示例把一份已知演示文稿中的 `Revenue 2025` 修改为 `Revenue 2026`。源文件与输出文件都留在本地，并且不会覆盖原始 PPTX。
+
+## 前置条件
+
+- Node.js 18 或更高版本
+- 当前源码安装需要 pnpm 10 和 Git
+- 不需要 DeckFlow 账号或 API Key
+
+<Note>
+  DeckUse 包含 CLI，标准安装命令应为 `npm install -g @deckflow/deckuse`。但是当前 1.0.0 软件包无法解析依赖列表中的私有占位适配器；软件包元数据修正前，下面的步骤会从源码构建并链接同一个 CLI。
+</Note>
+
+## 运行示例
+
+<Steps>
+  <Step title="安装 CLI">
+    ```bash
+    git clone https://github.com/deckflow/deckuse.git
+    cd deckuse
+    pnpm install
+    pnpm install:global
+    deckuse --help
+    ```
+  </Step>
+  <Step title="下载已知演示文稿">
+    ```bash
+    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+      -o input.pptx
+    ```
+
+    文件包含两个可编辑文本框，其中一个文本为 `Revenue 2025`。
+  </Step>
+  <Step title="初始化并检查匹配结果">
+    ```bash
+    deckuse init input.pptx ./workspace --json
+    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    ```
+
+    只有查询返回预期文本框时才继续。先检查再修改，可以避免对未知文件执行意外的全局替换。
+  </Step>
+  <Step title="创建确认后的操作">
+    保存为 `replace.json`：
+
+    ```json
+    {
+      "type": "replaceText",
+      "find": "Revenue 2025",
+      "replace": "Revenue 2026",
+      "selector": "kind=textbox",
+      "limit": 1
+    }
+    ```
+  </Step>
+  <Step title="执行、校验并导出">
+    ```bash
+    deckuse apply ./workspace --input replace.json --json
+    deckuse validate ./workspace --json
+    deckuse commit ./workspace -o updated.pptx --json
+    ```
+
+    请确认 `apply` 结果包含 `ok: true`、`matched: 1` 和一个新版本。提交前，校验也必须返回 `ok: true`。
+  </Step>
+  <Step title="把输出作为新输入验证">
+    ```bash
+    deckuse init updated.pptx ./verification --json
+    deckuse query ./verification 'text=Revenue' --limit 10 --json
+    test -s updated.pptx
+    ```
+
+    验证查询应返回 `Revenue 2026`，并且不再包含 `Revenue 2025`。PowerShell 中使用以下命令检查文件：
+
+    ```powershell
+    if (!(Test-Path updated.pptx) -or (Get-Item updated.pptx).Length -eq 0) { exit 1 }
+    ```
+  </Step>
+</Steps>
+
+## 本示例验证了什么
+
+- DeckUse 在修改前索引到了预期的源对象。
+- JSON 命令只匹配了一个文本框。
+- 工作区通过结构校验。
+- `commit` 生成了非空、可以重新读取的独立 PPTX。
+
+<Warning>
+  结构校验不等于视觉校验。把 `updated.pptx` 用于交付流程前，请打开或渲染检查。
+</Warning>
+
+<CardGroup cols={2}>
+  <Card title="继续修改属性或几何信息" href="/zh/deckuse/commands">
+    使用精确元素引用扩展样式、位置或原子批处理操作。
+  </Card>
+  <Card title="处理结果与错误" href="/zh/deckuse/reference/results-and-errors">
+    把结果封装、诊断信息、冲突和退出状态接入应用逻辑。
+  </Card>
+</CardGroup>

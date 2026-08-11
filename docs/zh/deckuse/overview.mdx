@@ -12,7 +12,7 @@ DeckUse 是面向 Coding Agent 的本地、Schema 驱动文档操作引擎。它
 | 输出 | 带版本的本地工作区，以及修改后的 `.pptx` |
 | 执行位置 | 本地 Node.js 进程；不会上传文档 |
 | 接入方式 | `deckuse` CLI 和 Node.js `runCommand()` API |
-| 运行环境 | Node.js 24 或更高版本；源码开发使用 pnpm 10 |
+| 运行环境 | Node.js 18 或更高版本；源码开发使用 pnpm 10 |
 | 认证 | 不需要 |
 
 ```text
@@ -42,7 +42,7 @@ DeckUse 会尽量保留未知的文件包 Part 和未修改的 XML。ZIP 条目�
 ## 软件包可用状态
 
 <Warning>
-  当前 Registry 中的 `@deckflow/deckuse@0.2.0` 依赖了一组尚未全部发布的适配器包，因此普通的 `npm install @deckflow/deckuse` 目前会失败。源码工作区可以构建，PPTX 测试也已通过；公开依赖修正前，请按照快速开始从源码安装。
+  仓库同时提供 `deckuse` CLI 和 Node.js API。但是当前 Registry 中的 `@deckflow/deckuse@1.0.0` 把四个私有占位适配器声明为依赖，导致 `npm install -g @deckflow/deckuse` 在解析依赖时失败。公开依赖列表修正前，请按照快速开始从源码安装同一个 CLI。
 </Warning>
 
 ## 继续接入
@@ -65,6 +65,12 @@ DeckUse 会尽量保留未知的文件包 Part 和未修改的 XML。ZIP 条目�
   </Card>
   <Card title="Node.js API" href="/zh/deckuse/sdk">
     在应用中执行同一套带版本命令协议。
+  </Card>
+  <Card title="PPTX 能力" href="/zh/deckuse/reference/pptx-capabilities">
+    查看准确的索引对象、支持的修改、保留规则和能力边界。
+  </Card>
+  <Card title="结果与错误" href="/zh/deckuse/reference/results-and-errors">
+    处理结果封装、诊断信息、错误码、版本和 CLI 退出状态。
   </Card>
 </CardGroup>
 

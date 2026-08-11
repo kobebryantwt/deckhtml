@@ -8,7 +8,7 @@ This path runs entirely on your machine and requires no DeckFlow account or API 
 
 <Steps>
   <Step title="Check the runtime">
-    Install Node.js 24 or later, pnpm 10, and Git.
+    Install Node.js 18 or later, pnpm 10, and Git.
 
     ```bash
     node --version
@@ -17,6 +17,8 @@ This path runs entirely on your machine and requires no DeckFlow account or API 
     ```
   </Step>
   <Step title="Build and link the CLI">
+    DeckUse does provide a CLI. The intended installation is `npm install -g @deckflow/deckuse`, but the current 1.0.0 package cannot resolve its private placeholder adapters. Until that dependency list is corrected, build and globally link the same CLI from source:
+
     ```bash
     git clone https://github.com/deckflow/deckuse.git
     cd deckuse

@@ -1,0 +1,89 @@
+---
+title: Results, Diagnostics, and Errors
+sidebarTitle: Results and Errors
+description: "Consume DeckUse result envelopes, diagnostics, error codes, workspace revisions, and CLI exit status."
+---
+
+Every executed DeckUse command returns one JSON result envelope. Expected command or document failures are represented as `ok: false`; callers should not depend on thrown exceptions for normal error handling.
+
+## Success result
+
+```json
+{
+  "ok": true,
+  "value": {
+    "changed": true,
+    "matched": 1,
+    "revision": "msoki2ix-f329b330"
+  },
+  "diagnostics": []
+}
+```
+
+The shape of `value` depends on the command. Mutations that persist changes return the new workspace revision. Query returns an array of indexed elements; validate returns validity, revision, and capabilities; commit returns the destination and revision.
+
+## Failure result
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "TRANSACTION_CONFLICT",
+    "message": "Expected transactionId msoki2ix-f329b330"
+  },
+  "diagnostics": []
+}
+```
+
+| Error code | Meaning and caller action |
+| --- | --- |
+| `INVALID_COMMAND` | The command failed Schema or operation validation; correct the payload |
+| `WORKSPACE_NOT_FOUND` | The workspace cannot be resolved; initialize it or correct the path |
+| `ELEMENT_NOT_FOUND` | The reference no longer resolves; query the current index again |
+| `FORMAT_NOT_SUPPORTED` | No adapter is registered for the format |
+| `FORMAT_NOT_IMPLEMENTED` | A reserved adapter exists but its editing implementation is unavailable |
+| `VALIDATION_FAILED` | Package validation or an atomic operation failed; inspect diagnostics |
+| `TRANSACTION_CONFLICT` | The workspace or reference revision is stale; reload and retry deliberately |
+| `IO_ERROR` | Reading, writing, packaging, or destination handling failed |
+
+## Diagnostics
+
+Diagnostics can accompany both success and failure:
+
+```json
+{
+  "severity": "warning",
+  "code": "EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED",
+  "message": "Chart cache changed; embedded workbook was not modified"
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `severity` | `info`, `warning`, or `error` |
+| `code` | Stable machine-oriented diagnostic identifier |
+| `message` | Human-readable explanation |
+| `path` | Optional command or document location |
+| `details` | Optional structured context |
+
+Do not discard warnings when `ok` is true. In particular, a completed chart mutation can still report that its embedded workbook was not synchronized.
+
+## Revisions and retries
+
+- Persisted mutations create a new revision.
+- A mutation must use the current `transactionId` or the literal `latest`.
+- A reference with an older `revision` can trigger `TRANSACTION_CONFLICT` even when its element ID still exists.
+- After a conflict, inspect or query again and rebuild the intended command; do not blindly replace the transaction ID on an unreviewed stale command.
+- `dryRun: true` returns the intended result without changing the revision.
+
+## CLI exit status and streams
+
+| Status | Meaning |
+| ---: | --- |
+| `0` | The DeckUse result has `ok: true` |
+| `1` | The command executed and returned `ok: false` |
+| `2` | CLI arguments, input file, or JSON parsing failed before command execution |
+
+Command result JSON is written to standard output. CLI usage and parsing errors are written to standard error. `--json` selects compact one-line JSON; without it, the same envelope is indented.
+
+Use the exported Draft 2020-12 command Schema for input validation, then evaluate `ok`, `error.code`, and every diagnostic at runtime.

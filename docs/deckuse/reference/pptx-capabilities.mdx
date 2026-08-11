@@ -1,0 +1,56 @@
+---
+title: PPTX Capabilities and Boundaries
+sidebarTitle: PPTX Capabilities
+description: "Check exactly which PPTX structures DeckUse indexes, modifies, preserves, and validates."
+---
+
+PPTX is DeckUse's only implemented editing adapter. This page separates indexed content from writable content so an integration does not assume that every object returned by `inspect` supports every mutation.
+
+## Indexed structures
+
+| Structure | Indexed information |
+| --- | --- |
+| Slides | Stable presentation slide ID and slide part path |
+| Text boxes and shapes | Element reference, name, text, geometry, and OOXML location |
+| Connectors and groups | Element reference, name, geometry, and ancestor path |
+| Pictures | Element reference, geometry, media part, local media path, file name, media type, and external-link status |
+| Tables | Table reference plus cell references, row/column positions, and cell text |
+| Charts | Chart part, title, cached series names and values, and embedded-workbook status |
+| Speaker notes | Notes part, slide ID, and indexed text |
+| Masters, layouts, and themes | Part reference, text, and discovered `srgbClr` values |
+
+Use `deckuse inspect` to return the full index, or `deckuse query` to filter it. A returned reference is specific to the workspace and revision from which it was read.
+
+## Writable operations
+
+| Area | Implemented operations |
+| --- | --- |
+| Text | Set one referenced node; literal or regular-expression replacement with optional selector and limit |
+| Geometry | Set `x`, `y`, `width`, `height`, and rotation |
+| Shape and text properties | Name, fill, stroke, text color, font family, font size, bold, italic, underline, hidden state, and direct `srgbClr` replacement |
+| Slides | Add, duplicate, and remove |
+| Elements | Add text boxes/shapes, connectors, groups, pictures, and tables; duplicate or remove referenced elements |
+| Pictures | Add from a file or Base64 payload; replace embedded media; clean media that is no longer referenced |
+| Tables | Add a table; address and replace text in indexed cells |
+| Speaker notes | Read indexed notes and replace text in a referenced notes part |
+| Charts | Set title, cached series names, and cached numeric values |
+| Workflow | Dry run, atomic or non-atomic batch, validation, revision conflict detection, operation log, and export |
+
+See [JSON Command Reference](/deckuse/commands) for the exact payloads and units.
+
+## Preservation behavior
+
+- Unknown package parts and untouched XML are retained where possible.
+- ZIP entries are recompressed, so preservation refers to uncompressed content rather than byte-identical archives.
+- Duplicating a slide clones mutable notes and chart parts; layouts, themes, and media can remain shared.
+- Removing a picture or slide removes media only when no remaining relationship references it.
+- Text replacement can collapse multiple text runs into one run while retaining the first run's style.
+
+## Integration boundaries
+
+DeckUse is not a renderer or visual QA engine. Package validation checks unresolved internal relationships; it does not evaluate appearance, overlap, font substitution, every OOXML rule, or design quality.
+
+Chart commands update the OOXML chart cache. When an embedded workbook exists, DeckUse returns `EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED` because the workbook is not rewritten.
+
+DOCX, XLSX, Keynote, and Numbers adapters currently return `FORMAT_NOT_IMPLEMENTED`. Use [DeckRender](/deckrender/overview) for visual output and [DeckOps](/deckops/overview) for parsing or conversion.
+

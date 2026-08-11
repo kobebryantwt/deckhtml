@@ -1,0 +1,89 @@
+---
+title: 结果、诊断与错误
+sidebarTitle: 结果与错误
+description: "处理 DeckUse 结果封装、诊断信息、错误码、工作区版本和 CLI 退出状态。"
+---
+
+每条 DeckUse 命令都会返回一个 JSON 结果封装。预期内的命令或文档失败使用 `ok: false` 表示；接入方不应依赖抛出异常来处理常规错误。
+
+## 成功结果
+
+```json
+{
+  "ok": true,
+  "value": {
+    "changed": true,
+    "matched": 1,
+    "revision": "msoki2ix-f329b330"
+  },
+  "diagnostics": []
+}
+```
+
+`value` 的结构取决于命令。持久化修改会返回新的工作区版本；查询返回索引元素数组；校验返回有效状态、版本和能力；提交返回目标路径与版本。
+
+## 失败结果
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "TRANSACTION_CONFLICT",
+    "message": "Expected transactionId msoki2ix-f329b330"
+  },
+  "diagnostics": []
+}
+```
+
+| 错误码 | 含义与处理方式 |
+| --- | --- |
+| `INVALID_COMMAND` | 命令未通过 Schema 或操作校验；修正请求内容 |
+| `WORKSPACE_NOT_FOUND` | 无法解析工作区；先初始化或修正路径 |
+| `ELEMENT_NOT_FOUND` | 引用已经无法解析；重新查询当前索引 |
+| `FORMAT_NOT_SUPPORTED` | 没有为该格式注册适配器 |
+| `FORMAT_NOT_IMPLEMENTED` | 已预留适配器，但编辑实现尚不可用 |
+| `VALIDATION_FAILED` | 文件包校验或原子操作失败；检查诊断信息 |
+| `TRANSACTION_CONFLICT` | 工作区或引用版本已经过期；重新读取后再决定是否重试 |
+| `IO_ERROR` | 读取、写入、打包或目标文件处理失败 |
+
+## 诊断信息
+
+成功和失败都可能附带诊断：
+
+```json
+{
+  "severity": "warning",
+  "code": "EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED",
+  "message": "Chart cache changed; embedded workbook was not modified"
+}
+```
+
+| 字段 | 含义 |
+| --- | --- |
+| `severity` | `info`、`warning` 或 `error` |
+| `code` | 稳定、供程序判断的诊断标识 |
+| `message` | 供开发者阅读的说明 |
+| `path` | 可选的命令或文档位置 |
+| `details` | 可选的结构化上下文 |
+
+即使 `ok` 为 `true`，也不要丢弃警告。特别是图表修改已经完成时，仍可能提示内嵌工作簿没有同步。
+
+## 版本与重试
+
+- 持久化修改会生成新版本。
+- 修改命令必须使用当前 `transactionId`，或使用字面值 `latest`。
+- 引用携带旧 `revision` 时，即使 Element ID 仍存在，也可能触发 `TRANSACTION_CONFLICT`。
+- 发生冲突后，请重新检查或查询，再重新构造目标命令；不要直接替换未复核旧命令中的事务版本。
+- `dryRun: true` 返回预期结果，但不会修改版本。
+
+## CLI 退出状态与输出流
+
+| 状态 | 含义 |
+| ---: | --- |
+| `0` | DeckUse 结果为 `ok: true` |
+| `1` | 命令已经执行，但返回 `ok: false` |
+| `2` | 命令执行前发生参数、输入文件或 JSON 解析错误 |
+
+命令结果 JSON 写入标准输出；CLI 用法和解析错误写入标准错误。`--json` 使用单行紧凑 JSON；不添加该参数时，同一个结果封装使用缩进格式。
+
+可以使用导出的 Draft 2020-12 命令 Schema 校验输入，但运行时仍需检查 `ok`、`error.code` 和每一条诊断。

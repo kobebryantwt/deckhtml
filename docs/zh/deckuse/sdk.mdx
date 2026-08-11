@@ -1,7 +1,7 @@
 ---
 title: DeckUse Node.js API
 sidebarTitle: Node.js API
-description: "在 Node.js 24 或更高版本中执行 DeckUse 的带版本工作区命令协议。"
+description: "在 Node.js 18 或更高版本中执行 DeckUse 的带版本工作区命令协议。"
 ---
 
 `@deckflow/deckuse` 软件包提供两个高层入口：
@@ -10,7 +10,7 @@ description: "在 Node.js 24 或更高版本中执行 DeckUse 的带版本工作
 - `runCommand(input)` 创建执行器并执行一条完整命令。
 
 <Warning>
-  源码 API 已实现并通过测试，但当前 Registry 中的 `@deckflow/deckuse@0.2.0` 因声明的适配器依赖没有全部发布而无法安装。公开依赖修正前，请在克隆的源码工作区中开发和验证。
+  源码 API 已实现并通过测试，但当前 Registry 中的 `@deckflow/deckuse@1.0.0` 无法解析依赖列表中的四个私有占位适配器。公开依赖修正前，请在克隆的源码工作区中开发和验证。
 </Warning>
 
 ## 结果契约

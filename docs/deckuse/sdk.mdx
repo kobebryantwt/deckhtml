@@ -1,7 +1,7 @@
 ---
 title: DeckUse Node.js API
 sidebarTitle: Node.js API
-description: "Execute DeckUse's versioned workspace command protocol from Node.js 24 or later."
+description: "Execute DeckUse's versioned workspace command protocol from Node.js 18 or later."
 ---
 
 The `@deckflow/deckuse` package exports two high-level entry points:
@@ -10,7 +10,7 @@ The `@deckflow/deckuse` package exports two high-level entry points:
 - `runCommand(input)` creates an executor and executes one complete command.
 
 <Warning>
-  The source API is implemented and tested, but the current `@deckflow/deckuse@0.2.0` registry package cannot be installed because not all declared adapter dependencies are published. Develop against the cloned workspace until the public dependency set is corrected.
+  The source API is implemented and tested, but the current `@deckflow/deckuse@1.0.0` registry package cannot resolve four private placeholder adapters in its dependency list. Develop against the cloned workspace until the published dependency set is corrected.
 </Warning>
 
 ## Result contract

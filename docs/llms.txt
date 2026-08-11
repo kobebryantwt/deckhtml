@@ -11,6 +11,7 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [Choose a Product](https://docs.deckflow.com/product-guide.md): Compare inputs, outputs, execution location, and overlap.
 - [Common Workflows](https://docs.deckflow.com/common-workflows.md): Map application goals to one or more DeckFlow products.
 - [Examples](https://docs.deckflow.com/examples/overview.md): Browse complete recipes with known inputs and expected results.
+- [Update PPTX Content](https://docs.deckflow.com/examples/update-pptx-content.md): Query, modify, validate, export, and verify a known PPTX with DeckUse.
 
 ## DeckProbe
 
@@ -46,6 +47,8 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [JSON Commands](https://docs.deckflow.com/deckuse/commands.md): Build commands for text, properties, geometry, slides, elements, pictures, charts, and batches.
 - [Selectors](https://docs.deckflow.com/deckuse/selectors.md): Query the index and reuse revision-aware element references.
 - [Workspace Workflow](https://docs.deckflow.com/deckuse/workspace.md): Manage revisions, dry runs, operation logs, validation, and commits.
+- [PPTX Capabilities](https://docs.deckflow.com/deckuse/reference/pptx-capabilities.md): Review indexed objects, writable operations, preservation behavior, and current boundaries.
+- [Results and Errors](https://docs.deckflow.com/deckuse/reference/results-and-errors.md): Handle result envelopes, diagnostics, conflicts, and CLI exit status.
 
 ## DeckHTML
 
@@ -77,6 +80,9 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 执行云端文档任务。
 - [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 通过带版本命令工作区在本地检查并修改现有 PPTX。
 - [DeckUse JSON 命令](https://docs.deckflow.com/zh/deckuse/commands.md): 构造文本、属性、几何、幻灯片、元素、图片、图表和批处理命令。
+- [DeckUse PPTX 能力](https://docs.deckflow.com/zh/deckuse/reference/pptx-capabilities.md): 查看可索引对象、可写操作、保留行为和当前边界。
+- [DeckUse 结果与错误](https://docs.deckflow.com/zh/deckuse/reference/results-and-errors.md): 处理结果封装、诊断、冲突和 CLI 退出状态。
+- [DeckUse 修改示例](https://docs.deckflow.com/zh/examples/update-pptx-content.md): 查询、修改、校验、导出并验证一份已知 PPTX。
 - [DeckHTML](https://docs.deckflow.com/zh/deckhtml/overview.md): 从浏览器渲染后的 HTML 或 SVG 生成 PPTX 或 PNG。
 - [DeckHTML 多页与批量输入](https://docs.deckflow.com/zh/deckhtml/guides/multi-page-and-batch.md): 组合重复幻灯片容器、有序文件或 URL 输入。
 

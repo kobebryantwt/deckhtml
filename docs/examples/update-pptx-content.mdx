@@ -1,0 +1,103 @@
+---
+title: Update Approved Content in a PPTX
+sidebarTitle: Update PPTX Content
+description: "Use DeckUse to query a known PPTX, apply a reviewed text replacement, validate the workspace, and verify the exported presentation."
+---
+
+This example changes `Revenue 2025` to `Revenue 2026` in a known presentation. The source and output remain local, and the original PPTX is never overwritten.
+
+## Prerequisites
+
+- Node.js 18 or later
+- pnpm 10 and Git for the current source installation
+- No DeckFlow account or API key
+
+<Note>
+  DeckUse includes a CLI. Its intended install command is `npm install -g @deckflow/deckuse`, but the current 1.0.0 package cannot resolve private placeholder adapters in its dependency list. The following step builds and links the same CLI from source until that package metadata is corrected.
+</Note>
+
+## Run the example
+
+<Steps>
+  <Step title="Install the CLI">
+    ```bash
+    git clone https://github.com/deckflow/deckuse.git
+    cd deckuse
+    pnpm install
+    pnpm install:global
+    deckuse --help
+    ```
+  </Step>
+  <Step title="Download the known presentation">
+    ```bash
+    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+      -o input.pptx
+    ```
+
+    The file contains two editable text boxes, including `Revenue 2025`.
+  </Step>
+  <Step title="Initialize and review the match">
+    ```bash
+    deckuse init input.pptx ./workspace --json
+    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    ```
+
+    Continue only when the query returns the expected text box. A reviewed query prevents an accidental global change against an unknown file.
+  </Step>
+  <Step title="Create the approved operation">
+    Save as `replace.json`:
+
+    ```json
+    {
+      "type": "replaceText",
+      "find": "Revenue 2025",
+      "replace": "Revenue 2026",
+      "selector": "kind=textbox",
+      "limit": 1
+    }
+    ```
+  </Step>
+  <Step title="Apply, validate, and export">
+    ```bash
+    deckuse apply ./workspace --input replace.json --json
+    deckuse validate ./workspace --json
+    deckuse commit ./workspace -o updated.pptx --json
+    ```
+
+    Check that the apply result has `ok: true`, `matched: 1`, and a new revision. Validation must also return `ok: true` before commit.
+  </Step>
+  <Step title="Verify the output as a new input">
+    ```bash
+    deckuse init updated.pptx ./verification --json
+    deckuse query ./verification 'text=Revenue' --limit 10 --json
+    test -s updated.pptx
+    ```
+
+    The verification query should return `Revenue 2026` and no `Revenue 2025`. In PowerShell, verify the file with:
+
+    ```powershell
+    if (!(Test-Path updated.pptx) -or (Get-Item updated.pptx).Length -eq 0) { exit 1 }
+    ```
+  </Step>
+</Steps>
+
+## What this verifies
+
+- DeckUse indexed the expected source object before changing it.
+- The JSON command matched exactly one text box.
+- The workspace passed structural validation.
+- Commit produced a non-empty, independently readable PPTX.
+
+<Warning>
+  Structural validation is not visual validation. Open or render `updated.pptx` before using it in a delivery workflow.
+</Warning>
+
+<CardGroup cols={2}>
+  <Card title="Add properties or geometry" href="/deckuse/commands">
+    Extend the operation with exact element references, styling, positioning, or atomic batches.
+  </Card>
+  <Card title="Handle results and errors" href="/deckuse/reference/results-and-errors">
+    Map result envelopes, diagnostics, conflicts, and exit status into application logic.
+  </Card>
+</CardGroup>
+
