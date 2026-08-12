@@ -8,7 +8,7 @@ DeckRender turns supported documents into image, PDF, or video files through one
 
 | Item | Current contract |
 | --- | --- |
-| Inputs | PowerPoint, PDF, Keynote, Word, HTML, Markdown, Pages, and Numbers on supported routes |
+| Inputs | `.pptx`, `.pdf`, `.key`, `.docx`, HTML, Markdown, `.pages`, and `.numbers` on supported routes |
 | Outputs | PNG, JPEG, or WebP images; PDF; MP4 video |
 | Interfaces | `deckrender` CLI and `@deckflow/deckrender` Node.js API |
 | Execution | Mostly DeckFlow cloud tasks, plus local PDF passthrough and iWork preview extraction |
@@ -46,6 +46,10 @@ DeckRender turns supported documents into image, PDF, or video files through one
 ## Data and execution boundary
 
 Most formats are uploaded to DeckFlow cloud tasks. A local PDF-to-PDF request is passed through without upload. Pages and Numbers are handled locally by extracting the embedded first-page JPEG preview; this is not a full iWork render.
+
+<Note>
+  Legacy Office formats such as `.ppt`, `.doc`, and `.xls` are not supported. Excel `.xlsx` does not currently have an implemented render route. See [Supported formats](/deckrender/formats) before accepting files from users.
+</Note>
 
 An HTTP(S) URL is fetched by the local Node.js process. HTML receives a base URL for relative assets and is then uploaded as source content. DeckRender does not capture the current state, cookies, or authenticated session of the user's browser.
 

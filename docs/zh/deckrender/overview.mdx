@@ -8,7 +8,7 @@ DeckRender 通过同一套 CLI 和 Node.js API，把受支持的文档转为图�
 
 | 项目 | 当前契约 |
 | --- | --- |
-| 输入 | PowerPoint、PDF、Keynote、Word、HTML、Markdown、Pages、Numbers 的已支持路径 |
+| 输入 | `.pptx`、`.pdf`、`.key`、`.docx`、HTML、Markdown、`.pages`、`.numbers` 的已支持路径 |
 | 输出 | PNG、JPEG、WebP 图片；PDF；MP4 视频 |
 | 接入方式 | `deckrender` CLI 和 `@deckflow/deckrender` Node.js API |
 | 执行位置 | 多数使用 DeckFlow 云端任务，另有本地 PDF 透传和 iWork 预览提取 |
@@ -46,6 +46,10 @@ DeckRender 通过同一套 CLI 和 Node.js API，把受支持的文档转为图�
 ## 数据与执行边界
 
 多数格式会上传到 DeckFlow 云端任务。本地 PDF 转 PDF 会直接透传，不上传文件。Pages 与 Numbers 在本地提取内嵌的第一页 JPEG 预览，并不是完整的 iWork 渲染。
+
+<Note>
+  DeckRender 不支持 `.ppt`、`.doc`、`.xls` 等旧版 Office 格式；Excel `.xlsx` 当前也没有可执行的渲染路线。接收用户文件前，请先查看[支持的格式](/zh/deckrender/formats)。
+</Note>
 
 HTTP(S) URL 由本地 Node.js 进程获取。HTML 会补充用于解析相对资源的 Base URL，再作为源内容上传。DeckRender 不会捕获用户浏览器当前的状态、Cookie 或认证会话。
 

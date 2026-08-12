@@ -10,10 +10,10 @@ DeckRender routes one source format to one output family. Recognizing an input d
 
 | Input | Image | PDF | Video |
 | --- | --- | --- | --- |
-| PowerPoint `.pptx`, `.ppt` | PNG, JPEG, WebP | Yes | MP4 |
+| PowerPoint `.pptx` | PNG, JPEG, WebP | Yes | MP4 |
 | PDF `.pdf` | PNG, JPEG, WebP | Local passthrough | — |
 | Keynote `.key` | PNG, WebP | Yes | — |
-| Word `.docx`, `.doc` | PNG, JPEG, WebP | Yes | — |
+| Word `.docx` | PNG, JPEG, WebP | Yes | — |
 | HTML `.html`, `.htm`, URL | PNG, WebP | Yes | MP4 |
 | Markdown `.md`, `.markdown` | PNG, WebP | — | — |
 | Pages `.pages` | Embedded JPEG preview | One-page PDF wrapper | — |
@@ -21,6 +21,10 @@ DeckRender routes one source format to one output family. Recognizing an input d
 
 - **Yes** means the route is implemented in the current release.
 - **—** means the current release does not provide that source/output combination.
+
+<Warning>
+  DeckRender currently supports only the modern Office formats listed above. Legacy binary Office files such as `.ppt`, `.doc`, and `.xls` are not supported. Excel `.xlsx` may be recognized as an input format, but it does not currently have an implemented render route. Convert these files to `.pptx`, `.docx`, or PDF before rendering.
+</Warning>
 
 Query the installed version instead of hard-coding this table:
 
@@ -37,9 +41,9 @@ Image controls belong to the task that creates the image, so they differ by rout
 
 | Image source | `--width` / `--scale` | `--image-format` | `--pages` |
 | --- | --- | --- | --- |
-| PowerPoint | Snaps to 1080, 1920, or 2560 px | `png`, `jpg`, `webp` | Yes |
+| PowerPoint `.pptx` | Snaps to 1080, 1920, or 2560 px | `png`, `jpg`, `webp` | Yes |
 | PDF | Any positive long-edge value | `png`, `jpg`, `webp` | Yes |
-| Word | Any positive value on the PDF-to-image step | `png`, `jpg`, `webp` | Yes |
+| Word `.docx` | Any positive value on the PDF-to-image step | `png`, `jpg`, `webp` | Yes |
 | Keynote | Not available | `png`, `webp` | Yes |
 | HTML or URL as HTML | Width and scale | `png`, `webp` | No; one full-page image |
 | Markdown | Page width and scale | `png`, `webp` | No; one image |

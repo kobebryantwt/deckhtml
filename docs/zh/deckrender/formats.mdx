@@ -10,10 +10,10 @@ DeckRender 将一种源格式路由到一种输出类型。能够识别输入，
 
 | 输入 | 图片 | PDF | 视频 |
 | --- | --- | --- | --- |
-| PowerPoint `.pptx`、`.ppt` | PNG、JPEG、WebP | 支持 | MP4 |
+| PowerPoint `.pptx` | PNG、JPEG、WebP | 支持 | MP4 |
 | PDF `.pdf` | PNG、JPEG、WebP | 本地透传 | — |
 | Keynote `.key` | PNG、WebP | 支持 | — |
-| Word `.docx`、`.doc` | PNG、JPEG、WebP | 支持 | — |
+| Word `.docx` | PNG、JPEG、WebP | 支持 | — |
 | HTML `.html`、`.htm`、URL | PNG、WebP | 支持 | MP4 |
 | Markdown `.md`、`.markdown` | PNG、WebP | — | — |
 | Pages `.pages` | 内嵌 JPEG 预览 | 单页 PDF 封装 | — |
@@ -21,6 +21,10 @@ DeckRender 将一种源格式路由到一种输出类型。能够识别输入，
 
 - **支持**表示当前版本已经实现该路线。
 - **—**表示当前版本不提供该输入与输出组合。
+
+<Warning>
+  DeckRender 当前只支持上表列出的现代 Office 格式，不支持 `.ppt`、`.doc`、`.xls` 等旧版二进制 Office 文件。`.xlsx` 可能会被识别为输入格式，但当前没有可执行的渲染路线。请先将这些文件转换为 `.pptx`、`.docx` 或 PDF，再进行渲染。
+</Warning>
 
 不要在程序中硬编码这张表，应查询当前安装版本：
 
@@ -37,9 +41,9 @@ JSON 结果会为各输入和输出组合返回路线可用性、路线 `kind`�
 
 | 图片来源 | `--width` / `--scale` | `--image-format` | `--pages` |
 | --- | --- | --- | --- |
-| PowerPoint | 吸附到 1080、1920 或 2560 px | `png`、`jpg`、`webp` | 支持 |
+| PowerPoint `.pptx` | 吸附到 1080、1920 或 2560 px | `png`、`jpg`、`webp` | 支持 |
 | PDF | 任意正数长边尺寸 | `png`、`jpg`、`webp` | 支持 |
-| Word | 在 PDF 转图片步骤接受任意正数 | `png`、`jpg`、`webp` | 支持 |
+| Word `.docx` | 在 PDF 转图片步骤接受任意正数 | `png`、`jpg`、`webp` | 支持 |
 | Keynote | 不支持 | `png`、`webp` | 支持 |
 | HTML 或按 HTML 处理的 URL | 支持宽度和缩放 | `png`、`webp` | 不支持；只生成一张长图 |
 | Markdown | 支持页面宽度和缩放 | `png`、`webp` | 不支持；只生成一张图片 |
