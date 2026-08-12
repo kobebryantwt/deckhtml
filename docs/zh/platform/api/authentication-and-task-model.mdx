@@ -57,7 +57,7 @@ curl 'https://app.deckflow.com/api/tools/tasks/TASK_ID' \
     保存返回的任务 ID，随后通过 `GET /tools/tasks/{id}` 轮询，或通过 `response-event-stream: yes` 订阅 SSE 实时流。
   </Step>
   <Step title="下载结果">
-    任务完成后，可以直接读取返回结果中的 `result.url`，也可以调用专用下载接口获取最终文件。
+    任务进入 `completed` 后，调用 `GET /tools/tasks/{id}/download`，并从 `target` 中读取结果地址。
   </Step>
 </Steps>
 
@@ -68,7 +68,8 @@ curl 'https://app.deckflow.com/api/tools/tasks/TASK_ID' \
 | 字段 | 是否必填 | 含义 |
 |---|---|---|
 | `spaceId` | 否 | 目标工作空间或空间 ID。 |
-| `files` | 取决于场景 | 待处理源文件。不同场景对文件数量要求不同，合并类任务通常至少需要两个文件。 |
+| `files` | 与 `fileIds` 二选一 | 本次请求上传的源文件。上传多个文件时重复提交该 Multipart 字段。 |
+| `fileIds` | 与 `files` 二选一 | DeckFlow 中已有文件的 ID。需要使用能够保留重复 Multipart 值的客户端传入数组。 |
 | `type` | 是 | 业务场景或工具类型标识，例如 `generation`、`translation`、`revamp`、`convertor.html2pptx`。 |
 | `name` | 否 | 任务显示名称。 |
 | `notifyURL` | 否 | 任务状态变更时的 Webhook 回调地址。 |
@@ -78,8 +79,13 @@ curl 'https://app.deckflow.com/api/tools/tasks/TASK_ID' \
 
 - 任务创建后，通常会先进入 `pending` 或其他非终态。
 - 继续查询，直到任务进入 `completed` 或 `failed`。
-- 成功任务会返回结果元数据和下载链接。
-- 失败任务会返回错误信息，便于排查。
+- 创建接口返回 `201` 只表示任务已被接受，不代表处理成功。
+- 任务完成后，通过结果接口获取输出地址和元数据。
+- 失败任务的详情中可能没有独立错误信息。排查时需要保留任务 ID 和终态。
+
+<Warning>
+  实测无剩余额度时，接口仍以 `201` 接受任务，返回 `credits: 0`，随后任务进入 `failed`；服务并未返回 `429`。因此必须检查任务终态，不能把创建成功当作处理成功。
+</Warning>
 
 ## 相关页面
 
@@ -90,7 +96,7 @@ curl 'https://app.deckflow.com/api/tools/tasks/TASK_ID' \
   <Card title="查询任务状态" href="/zh/platform/api/query-task-status">
     打开 `GET /tools/tasks/{id}` 的核心接口页。
   </Card>
-  <Card title="下载任务结果" href="/zh/platform/api/download-task-result">
-    打开专用结果下载接口页。
+  <Card title="获取任务结果" href="/zh/platform/api/download-task-result">
+    获取结果地址和场景特定元数据。
   </Card>
 </CardGroup>

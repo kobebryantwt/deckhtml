@@ -20,7 +20,7 @@ Revamp jobs still use the unified async task API. The difference is that the `ty
 | Field | Type | Required | Meaning |
 |---|---|---|---|
 | `spaceId` | `String` | No | Target workspace Space ID. |
-| `files` | `File` | Yes | PPTX files to restyle. Multiple files are supported by the official docs. |
+| `files` | `File` | Yes | PPTX files to restyle. Multiple files are supported. |
 | `type` | `String` | Yes | Fixed value: `revamp`. |
 | `name` | `String` | No | Human-readable task name, such as `"AI revamp task"`. |
 | `params` | `String (JSON)` | Yes | JSON string containing the revamp parameters below. |

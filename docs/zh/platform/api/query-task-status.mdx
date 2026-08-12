@@ -10,9 +10,10 @@ openapi: "/platform/api/default-module.openapi.json GET /tools/tasks/{id}"
 ## 这个接口会返回什么
 
 - 当前 `status`
-- 原始任务元数据
-- 可用时返回的 `result`
-- 任务完成后的 `result.url`
+- 已接受的 `type`、解析后的 `params`、源 `files` 和任务名称
+- 生命周期时间，以及 `consumedMS` 等执行耗时字段
+- 表示结果接口是否可用的 `allowGetResult`
+- `credits`、`downloadNum`、`lastDownloadAt` 等计费与交付字段
 
 ## 标准轮询流程
 
@@ -24,9 +25,27 @@ openapi: "/platform/api/default-module.openapi.json GET /tools/tasks/{id}"
     使用 `GET /tools/tasks/{id}` 重复查询，直到任务进入 `completed` 或 `failed`。
   </Step>
   <Step title="读取结果链接">
-    任务完成后，从返回结果中的 `result.url` 读取最终下载地址。
+    任务进入 `completed` 后，调用 `GET /tools/tasks/{id}/download`，并从 `target` 中读取结果地址。
   </Step>
 </Steps>
+
+<Warning>
+  新创建的任务可能短暂返回没有响应体、没有 `Content-Type` 的 `200` 响应。请把它视为尚未进入终态的一次轮询并重试，不要直接把空响应交给 JSON 解析器。
+</Warning>
+
+## 已验证的响应状态
+
+| 状态码 | 出现场景 | 响应特征 |
+| ---: | --- | --- |
+| `200` | API Key 属于该任务 | 返回完整任务记录；刚创建时可能短暂没有响应体 |
+| `401` | Bearer Token 无效 | `code: "noAuth"` |
+| `403` | API Key 属于另一个 Space | `code: "notAllowed"`，并包含 `The secret key is invalid on this space` |
+| `404` | Task ID 不存在，包括格式异常的 ID | `code: "notFound"` |
+| `500` | 未提供 Authorization 请求头 | `code: "unexpectedError"`，并包含 `Profile uuid is required` |
+
+<Note>
+  实测无剩余额度的任务被接受后，详情接口正常返回 `200`，任务记录包含 `status: "failed"`、`credits: 0` 和 `allowGetResult: false`，但没有单独的额度错误对象。
+</Note>
 
 ## 轮询示例
 
@@ -50,7 +69,7 @@ const response = await fetch('https://app.deckflow.com/api/tools/tasks/task-uuid
 });
 
 const task = await response.json();
-console.log(task.status, task.result?.url);
+console.log(task.status, task.allowGetResult);
 ```
 
   </Tab>
@@ -66,7 +85,7 @@ response = requests.get(
 
 task = response.json()
 print(task["status"])
-print(task.get("result", {}).get("url"))
+print(task.get("allowGetResult"))
 ```
 
   </Tab>

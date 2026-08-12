@@ -5,7 +5,7 @@ description: "Submit any DeckFlow business scenario through the shared POST /too
 openapi: "/platform/api/default-module.openapi.json POST /tools/tasks"
 ---
 
-This is the single entrypoint for creating DeckFlow jobs. Generation, translation, revamp, and tool workflows all reuse this endpoint and differentiate themselves through `type` and `params`.
+This is the single entrypoint for creating DeckFlow jobs. Generation, translation, revamp, and tool workflows all reuse this endpoint and differentiate themselves through `type` and `params`. A request must also upload `files` or refer to existing `fileIds`.
 
 <Note>
   Think of this endpoint as the universal task submitter. Scenario guides tell you which `type` and `params` combination to send for each workflow.
@@ -23,15 +23,48 @@ This is the single entrypoint for creating DeckFlow jobs. Generation, translatio
 ## Common request pattern
 
 - Send `multipart/form-data`
-- Put uploaded binaries in `files`
+- Put uploaded binaries in `files`, or pass existing DeckFlow file identifiers through `fileIds`
 - Put scenario metadata in `type`
 - Put scenario options in `params` as a JSON string
 - Optionally include `name`, `notifyURL`, and `spaceId`
 
+```bash
+curl 'https://app.deckflow.com/api/tools/tasks' \
+  --header "Authorization: Bearer $DECKFLOW_API_KEY" \
+  --form 'files=@deck.html' \
+  --form 'type=convertor.html2pptx' \
+  --form 'params={"needEmbedFonts":false}'
+```
+
+## Interpret the create response
+
+A valid task is created with `201 Created`. The response includes the complete initial task record, including:
+
+- `id`: store this value for polling and result retrieval
+- `status`: normally `pending` or `running` immediately after creation
+- `type` and parsed `params`: the workflow the service accepted
+- `files`: uploaded file name, byte length, storage key, and hash
+- `credits`: credits assigned to this task; this field does not prove successful completion
+- `createdAt`, `updatedAt`, and `expiredAt`: task lifecycle timestamps
+
+## Verified error responses
+
+| Status | When it occurs | Response signal |
+| ---: | --- | --- |
+| `401` | Bearer token is invalid | `code: "noAuth"` |
+| `404` | A `fileIds` entry does not exist or is not owned by the caller | `code: "notFound"` and `File not found or not owned by user` |
+| `422` | `files`/`fileIds` or `type` is missing, or `type` is unsupported | `code: "domainMethodCallArgsInvalid"` with validation details in `data` |
+| `500` | `params` is malformed JSON | JSON parser message |
+| `500` | Authorization header is omitted | `code: "unexpectedError"` and `Profile uuid is required` |
+
+<Warning>
+  Credit exhaustion does not currently return `429`. The API accepts the task with `201`, then the task reaches `failed`. Handle insufficient credits through the terminal task state.
+</Warning>
+
 ## After submission
 
-The response gives you a task ID. Use it with the query endpoint until the task reaches a terminal state.
+The response gives you a task ID. Use it with the query endpoint until the task reaches `completed` or `failed`; `201` alone does not mean the requested operation succeeded.
 
 <Card title="Query Task Status" href="/platform/api/query-task-status">
-  Poll the task endpoint to retrieve progress, result metadata, and the final download URL.
+  Poll the task until it reaches a terminal state, then retrieve the result separately.
 </Card>

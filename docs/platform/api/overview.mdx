@@ -22,7 +22,7 @@ DeckFlow uses the same lifecycle across business scenarios:
 - Submit files, task type, and JSON options as `multipart/form-data`.
 - Receive a task identifier immediately.
 - Poll the task endpoint or subscribe through SSE until the job is complete or failed.
-- Download the final file from `result.url` or from the dedicated download endpoint.
+- Call the result endpoint and download the file from the URL in its `target` field.
 
 ## Choose the next step
 
@@ -36,8 +36,8 @@ DeckFlow uses the same lifecycle across business scenarios:
   <Card title="Query Task Status" href="/platform/api/query-task-status">
     Inspect the unified `GET /tools/tasks/{id}` contract, including polling and SSE usage.
   </Card>
-  <Card title="Download Task Result" href="/platform/api/download-task-result">
-    Inspect the direct download endpoint used after a task has completed successfully.
+  <Card title="Get Task Result" href="/platform/api/download-task-result">
+    Retrieve the result URL, byte length, digest, and route-specific metadata after completion.
   </Card>
   <Card title="Generation Scenarios" href="/platform/api/generation-scenarios">
     Review every generation field, including the full `params` table.

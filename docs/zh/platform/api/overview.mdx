@@ -22,7 +22,7 @@ DeckFlow 在不同业务场景下都遵循相同生命周期：
 - 以 `multipart/form-data` 提交文件、任务类型和 JSON 参数
 - 立即拿到任务 ID
 - 通过轮询或 SSE 订阅持续跟踪任务状态
-- 任务成功后，通过 `result.url` 或专用下载接口获取最终文件
+- 任务成功后，调用结果接口，并从返回的 `target` 字段读取文件地址
 
 ## 选择下一步
 
@@ -36,8 +36,8 @@ DeckFlow 在不同业务场景下都遵循相同生命周期：
   <Card title="查询任务状态" href="/zh/platform/api/query-task-status">
     查看统一的 `GET /tools/tasks/{id}` 接口，包括轮询和 SSE 用法。
   </Card>
-  <Card title="下载任务结果" href="/zh/platform/api/download-task-result">
-    查看任务完成后如何通过专用下载接口获取输出文件。
+  <Card title="获取任务结果" href="/zh/platform/api/download-task-result">
+    查看任务完成后如何获取结果地址、字节数、摘要和场景特定信息。
   </Card>
   <Card title="文档生成场景" href="/zh/platform/api/generation-scenarios">
     查看生成场景的完整字段和 `params` 说明。

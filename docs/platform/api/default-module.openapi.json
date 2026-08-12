@@ -1,14 +1,14 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Default Module",
-    "description": "DeckFlow task API for submitting async jobs, querying task state, and downloading completed results.",
+    "title": "DeckFlow Task API",
+    "description": "Submit asynchronous DeckFlow jobs, query their execution state, and retrieve completed result metadata.",
     "version": "1.0.0"
   },
   "tags": [
     {
       "name": "Tasks",
-      "description": "Submit DeckFlow jobs, inspect their execution state, and download completed results."
+      "description": "Submit DeckFlow jobs, inspect their execution state, and retrieve completed results."
     }
   ],
   "servers": [
@@ -26,10 +26,8 @@
     "/tools/tasks": {
       "post": {
         "summary": "Submit async task",
-        "description": "Submit an asynchronous DeckFlow task. Different business scenarios reuse this same endpoint and are selected through the `type` field plus the JSON string in `params`.",
-        "tags": [
-          "Tasks"
-        ],
+        "description": "Create an asynchronous DeckFlow task. Select the workflow with `type` and pass workflow options as a JSON string in `params`.",
+        "tags": ["Tasks"],
         "operationId": "submitAsyncTask",
         "requestBody": {
           "required": true,
@@ -40,89 +38,161 @@
                 "properties": {
                   "spaceId": {
                     "type": "string",
-                    "description": "Optional target workspace or space identifier.",
-                    "example": "workspace_123"
+                    "description": "Optional target space identifier."
                   },
                   "files": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "One or more source files uploaded as multipart form data.",
-                    "example": "file:///Users/example/Documents/source.pptx"
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "One or more source files. Repeat the multipart field for multiple files."
+                  },
+                  "fileIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Identifiers of files already available in DeckFlow. Use instead of uploading `files`."
                   },
                   "type": {
                     "type": "string",
-                    "description": "Business scenario or tool type identifier.",
-                    "example": "generation"
+                    "description": "Business scenario or tool task identifier.",
+                    "example": "convertor.html2pptx"
                   },
                   "name": {
                     "type": "string",
-                    "description": "Optional display name for the task.",
-                    "example": "Partner deck generation"
+                    "description": "Optional display name for the task."
                   },
                   "notifyURL": {
                     "type": "string",
-                    "description": "Optional webhook callback URL for task status changes.",
-                    "example": "https://your.domain/callback"
+                    "format": "uri",
+                    "description": "Optional webhook URL for task status changes."
                   },
                   "params": {
                     "type": "string",
-                    "description": "Scenario-specific options encoded as a JSON string.",
-                    "example": "{\"inputText\":\"Create a 10-slide partner deck\",\"pageCount\":10}"
+                    "description": "Workflow options encoded as a valid JSON string.",
+                    "example": "{\"needEmbedFonts\":false}"
                   }
                 },
-                "required": [
-                  "type"
+                "oneOf": [
+                  { "required": ["type", "files"] },
+                  { "required": ["type", "fileIds"] }
                 ]
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Task accepted successfully.",
+          "201": {
+            "description": "Task created. Store `id` and query the task until it reaches a terminal state.",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "Task identifier returned by the service."
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Task display name."
-                    },
-                    "type": {
-                      "type": "string",
-                      "description": "Task scenario or tool type."
-                    },
-                    "status": {
-                      "type": "string",
-                      "description": "Initial task status after creation."
-                    },
-                    "createdAt": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "format": "date-time"
+                "schema": { "$ref": "#/components/schemas/Task" },
+                "example": {
+                  "createdAt": "2026-08-12T07:04:12.330Z",
+                  "creatorId": "SPACE_ID",
+                  "credits": 5,
+                  "downloadNum": 0,
+                  "expiredAt": "2026-08-13T07:04:12.330Z",
+                  "files": [
+                    {
+                      "bytes": 121,
+                      "hash": "4556eb5d56475fe5787bf83f3aeee7e1",
+                      "key": "2026-08/path/contract-probe.html",
+                      "name": "contract-probe.html"
+                    }
+                  ],
+                  "id": "TASK_ID",
+                  "name": "contract-probe.html",
+                  "notifyCount": 0,
+                  "params": { "needEmbedFonts": false },
+                  "preview": null,
+                  "spaceId": "SPACE_ID",
+                  "sparks": 0,
+                  "startedAfterMS": 0,
+                  "status": "pending",
+                  "type": "convertor.html2pptx",
+                  "updatedAt": "2026-08-12T07:04:12.334Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer token is invalid.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "noAuth",
+                  "data": ["Authorization is invalid"],
+                  "message": "Not authentication"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A file ID does not exist or does not belong to the caller.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "notFound",
+                  "data": ["File not found or not owned by user"],
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Required fields are missing or a field does not match the task contract.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "domainMethodCallArgsInvalid",
+                  "data": [
+                    2,
+                    [
+                      {
+                        "instancePath": "",
+                        "keyword": "required",
+                        "message": "must have required property 'type'",
+                        "params": { "missingProperty": "type" },
+                        "schemaPath": "#/oneOf/0/required"
+                      }
+                    ],
+                    {},
+                    "ttask.add"
+                  ],
+                  "message": "domain method Illegal parameter"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The server could not create the task. The current service also uses this status for malformed `params` JSON or a missing Authorization header.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalidParamsJson": {
+                    "summary": "Malformed params JSON",
+                    "value": {
+                      "message": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+                    }
+                  },
+                  "missingAuthorization": {
+                    "summary": "Authorization header omitted",
+                    "value": {
+                      "code": "unexpectedError",
+                      "data": ["Profile uuid is required"],
+                      "message": "Unexpected error"
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "The request payload is invalid or missing required fields."
-          },
-          "401": {
-            "description": "The bearer token is missing or invalid."
-          },
-          "500": {
-            "description": "The server could not create the task."
           }
         }
       }
@@ -130,84 +200,131 @@
     "/tools/tasks/{id}": {
       "get": {
         "summary": "Query task status",
-        "description": "Retrieve the latest execution state for a previously submitted DeckFlow task. This same endpoint also supports SSE mode when the `response-event-stream: yes` header is present.",
-        "tags": [
-          "Tasks"
-        ],
+        "description": "Retrieve the latest state of a submitted task. Send `response-event-stream: yes` to use SSE instead of JSON polling.",
+        "tags": ["Tasks"],
         "operationId": "queryTaskStatus",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Identifier of the task returned when the job was created.",
+            "description": "Task identifier returned by the create response.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "response-event-stream",
             "in": "header",
-            "description": "Set to `yes` to request a `text/event-stream` SSE response instead of standard JSON polling.",
+            "description": "Set to `yes` to receive `text/event-stream` updates.",
             "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "yes"
+            "schema": { "type": "string", "enum": ["yes"] }
           }
         ],
         "responses": {
           "200": {
-            "description": "Task details returned successfully.",
+            "description": "Task details returned. A newly accepted task can temporarily return an empty 200 response; retry before parsing JSON.",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "Task identifier."
-                    },
-                    "status": {
-                      "type": "string",
-                      "description": "Current task status."
-                    },
-                    "result": {
-                      "type": "object",
-                      "additionalProperties": true,
-                      "description": "Task result payload when processing is complete."
+                "schema": { "$ref": "#/components/schemas/Task" },
+                "example": {
+                  "allowGetResult": true,
+                  "completedAt": "2026-08-12T07:04:16.000Z",
+                  "consumedMS": 4240,
+                  "createdAt": "2026-08-12T07:04:12.000Z",
+                  "creatorId": "SPACE_ID",
+                  "credits": 5,
+                  "downloadNum": 0,
+                  "expiredAt": "2026-08-13T07:04:16.000Z",
+                  "files": [
+                    {
+                      "bytes": 121,
+                      "hash": "4556eb5d56475fe5787bf83f3aeee7e1",
+                      "key": "2026-08/path/contract-probe.html",
+                      "name": "contract-probe.html"
                     }
-                  }
+                  ],
+                  "id": "TASK_ID",
+                  "lastDownloadAt": null,
+                  "name": "contract-probe.html",
+                  "notifyCount": 0,
+                  "notifyURL": null,
+                  "params": { "needEmbedFonts": false },
+                  "preview": null,
+                  "spaceId": "SPACE_ID",
+                  "sparks": 0,
+                  "startedAfterMS": 19,
+                  "status": "completed",
+                  "type": "convertor.html2pptx",
+                  "updatedAt": "2026-08-12T07:04:16.000Z"
                 }
               },
               "text/event-stream": {
                 "schema": {
                   "type": "string",
-                  "description": "SSE stream of `data: { ...taskJSON }` events until the task reaches a terminal state."
+                  "description": "SSE stream of `data: { ...taskJSON }` events until a terminal state."
                 }
               }
             }
           },
           "401": {
-            "description": "The bearer token is missing or invalid."
+            "description": "The bearer token is invalid.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "noAuth",
+                  "data": ["Authorization is invalid"],
+                  "message": "Not authentication"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The API key does not have access to the task's space.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "notAllowed",
+                  "data": ["The secret key is invalid on this space", { "spaceId": "SPACE_ID" }],
+                  "message": "No access"
+                }
+              }
+            }
           },
           "404": {
-            "description": "No task exists for the provided identifier."
+            "description": "No task exists for the provided identifier.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "notFound",
+                  "data": ["TTask: TASK_ID"],
+                  "message": "Resource not found"
+                }
+              }
+            }
           },
           "500": {
-            "description": "The server could not return the task details."
+            "description": "The server could not resolve the caller profile. The current service uses this response when Authorization is omitted.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "unexpectedError",
+                  "data": ["Profile uuid is required"],
+                  "message": "Unexpected error"
+                }
+              }
+            }
           }
         }
       }
     },
     "/tools/tasks/{id}/download": {
       "get": {
-        "summary": "Download task result",
-        "description": "Download the final result file for a completed task.",
-        "tags": [
-          "Tasks"
-        ],
+        "summary": "Get task result",
+        "description": "Return result metadata for a completed task. Download the file from the URL contained in the result payload.",
+        "tags": ["Tasks"],
         "operationId": "downloadTaskResult",
         "parameters": [
           {
@@ -215,37 +332,167 @@
             "in": "path",
             "description": "Identifier of a completed task.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
           "200": {
-            "description": "Binary result stream returned successfully.",
+            "description": "Result metadata returned. For the verified html2pptx route, `target` contains the file URL, byte length, and digest.",
             "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DownloadResult" },
+                "example": {
+                  "target": [
+                    "https://files.example.com/result.pptx",
+                    10870,
+                    "dd206bad03fce37c3c753b57ecf32c26"
+                  ],
+                  "usedFonts": ["Times New Roman"]
                 }
               }
             }
           },
           "401": {
-            "description": "The bearer token is missing or invalid."
+            "description": "The bearer token is invalid.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "noAuth",
+                  "data": ["Authorization is invalid"],
+                  "message": "Not authentication"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The API key cannot access the task, or the task has no completed result.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "wrongSpace": {
+                    "summary": "API key belongs to another space",
+                    "value": {
+                      "code": "notAllowed",
+                      "data": ["The secret key is invalid on this space", { "spaceId": "SPACE_ID" }],
+                      "message": "No access"
+                    }
+                  },
+                  "notCompleted": {
+                    "summary": "Task is pending, running, or failed",
+                    "value": {
+                      "code": "notAllowed",
+                      "data": ["Task is not completed"],
+                      "message": "No access"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "No completed task result exists for the provided identifier."
+            "description": "No task exists for the provided identifier.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "notFound",
+                  "data": ["TTask: TASK_ID"],
+                  "message": "Resource not found"
+                }
+              }
+            }
           },
-          "409": {
-            "description": "The task has not completed yet, so no downloadable result is available."
+          "500": {
+            "description": "The server could not resolve the caller profile. The current service uses this response when Authorization is omitted.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "unexpectedError",
+                  "data": ["Profile uuid is required"],
+                  "message": "Unexpected error"
+                }
+              }
+            }
           }
         }
       }
     }
   },
   "components": {
+    "schemas": {
+      "TaskFile": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "bytes": { "type": "integer" },
+          "hash": { "type": "string" },
+          "key": { "type": "string" },
+          "name": { "type": "string" }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "allowGetResult": { "type": "boolean" },
+          "completedAt": { "type": ["string", "null"], "format": "date-time" },
+          "consumedMS": { "type": "integer" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "creatorId": { "type": "string" },
+          "credits": { "type": "integer" },
+          "downloadNum": { "type": "integer" },
+          "expiredAt": { "type": "string", "format": "date-time" },
+          "files": { "type": "array", "items": { "$ref": "#/components/schemas/TaskFile" } },
+          "id": { "type": "string" },
+          "lastDownloadAt": { "type": ["string", "null"], "format": "date-time" },
+          "name": { "type": "string" },
+          "notifyCount": { "type": "integer" },
+          "notifyURL": { "type": ["string", "null"] },
+          "params": { "type": "object", "additionalProperties": true },
+          "preview": {},
+          "spaceId": { "type": "string" },
+          "sparks": { "type": "integer" },
+          "startedAfterMS": { "type": "integer" },
+          "status": { "type": "string", "enum": ["pending", "running", "completed", "failed"] },
+          "type": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "status", "type"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "code": { "type": "string" },
+          "data": { "type": "array", "items": {} },
+          "message": { "type": "string" }
+        }
+      },
+      "DownloadResult": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "target": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "string", "format": "uri", "description": "Result download URL." },
+              { "type": "integer", "description": "Result byte length." },
+              { "type": "string", "description": "Result digest returned by the service." }
+            ],
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "usedFonts": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["target"]
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",

@@ -10,9 +10,10 @@ Use this endpoint after submitting any DeckFlow job. It is the shared status end
 ## What this endpoint returns
 
 - the current `status`
-- the original task metadata
-- the `result` payload when available
-- the final `result.url` once the job is complete
+- the accepted `type`, parsed `params`, source `files`, and task name
+- lifecycle timestamps and elapsed execution fields such as `consumedMS`
+- `allowGetResult`, which indicates whether the result endpoint can be used
+- accounting and delivery fields such as `credits`, `downloadNum`, and `lastDownloadAt`
 
 ## Standard polling flow
 
@@ -24,9 +25,27 @@ Use this endpoint after submitting any DeckFlow job. It is the shared status end
     Repeat `GET /tools/tasks/{id}` until the task becomes `completed` or `failed`.
   </Step>
   <Step title="Read the result URL">
-    Once the task completes, extract the signed file URL from `result.url`.
+    Once the task becomes `completed`, call `GET /tools/tasks/{id}/download` and read the URL from `target`.
   </Step>
 </Steps>
+
+<Warning>
+  A newly accepted task can briefly return `200` with an empty body and no `Content-Type`. Treat that as a non-terminal poll result and retry; do not pass an empty response directly to a JSON parser.
+</Warning>
+
+## Verified response statuses
+
+| Status | When it occurs | Response signal |
+| ---: | --- | --- |
+| `200` | The API key owns the task | Full task record; a just-created task can briefly have an empty body |
+| `401` | Bearer token is invalid | `code: "noAuth"` |
+| `403` | The API key belongs to another Space | `code: "notAllowed"` and `The secret key is invalid on this space` |
+| `404` | Task ID does not exist, including malformed IDs | `code: "notFound"` |
+| `500` | Authorization header is omitted | `code: "unexpectedError"` and `Profile uuid is required` |
+
+<Note>
+  A zero-credit task was accepted, then returned a normal `200` task record with `status: "failed"`, `credits: 0`, and `allowGetResult: false`. The task detail did not include a separate credit error object.
+</Note>
 
 ## Polling examples
 
@@ -50,7 +69,7 @@ const response = await fetch('https://app.deckflow.com/api/tools/tasks/task-uuid
 });
 
 const task = await response.json();
-console.log(task.status, task.result?.url);
+console.log(task.status, task.allowGetResult);
 ```
 
   </Tab>
@@ -66,7 +85,7 @@ response = requests.get(
 
 task = response.json()
 print(task["status"])
-print(task.get("result", {}).get("url"))
+print(task.get("allowGetResult"))
 ```
 
   </Tab>

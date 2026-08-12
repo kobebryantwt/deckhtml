@@ -5,7 +5,7 @@ description: "通过统一的 POST /tools/tasks 接口提交 DeckFlow 的各类�
 openapi: "/platform/api/default-module.openapi.json POST /tools/tasks"
 ---
 
-这是 DeckFlow 所有任务的统一提交入口。文档生成、文档翻译、文档焕新和工具 API 都复用这个接口，差异主要体现在 `type` 和 `params` 的组合上。
+这是 DeckFlow 所有任务的统一提交入口。文档生成、文档翻译、文档焕新和工具 API 都复用这个接口，差异主要体现在 `type` 和 `params` 的组合上。请求还必须上传 `files`，或通过 `fileIds` 引用已有文件。
 
 <Note>
   可以把这个接口理解为统一的任务提交器。不同场景页负责告诉你应该传什么 `type` 和 `params`。
@@ -23,15 +23,48 @@ openapi: "/platform/api/default-module.openapi.json POST /tools/tasks"
 ## 共用请求模式
 
 - 使用 `multipart/form-data`
-- 把上传文件放到 `files`
+- 把上传文件放到 `files`，或通过 `fileIds` 传入 DeckFlow 中已有文件的 ID
 - 把业务类型放到 `type`
 - 把具体业务参数序列化为 `params` JSON 字符串
 - 可选传入 `name`、`notifyURL`、`spaceId`
 
+```bash
+curl 'https://app.deckflow.com/api/tools/tasks' \
+  --header "Authorization: Bearer $DECKFLOW_API_KEY" \
+  --form 'files=@deck.html' \
+  --form 'type=convertor.html2pptx' \
+  --form 'params={"needEmbedFonts":false}'
+```
+
+## 理解创建结果
+
+有效任务使用 `201 Created` 创建。响应会返回完整的初始任务记录，其中包括：
+
+- `id`：保存该值，用于后续查询和获取结果
+- `status`：创建后通常为 `pending` 或 `running`
+- `type` 和解析后的 `params`：服务接受的工作流与参数
+- `files`：上传文件的名称、字节数、存储 Key 和 Hash
+- `credits`：本任务记录的额度；该字段不能证明任务已经处理成功
+- `createdAt`、`updatedAt`、`expiredAt`：任务生命周期时间
+
+## 已验证的错误响应
+
+| 状态码 | 出现场景 | 响应特征 |
+| ---: | --- | --- |
+| `401` | Bearer Token 无效 | `code: "noAuth"` |
+| `404` | `fileIds` 中的文件不存在，或不属于当前调用方 | `code: "notFound"`，并包含 `File not found or not owned by user` |
+| `422` | 缺少 `files`/`fileIds` 或 `type`，或者 `type` 不受支持 | `code: "domainMethodCallArgsInvalid"`，`data` 包含校验细节 |
+| `500` | `params` 不是合法 JSON | 返回 JSON 解析错误信息 |
+| `500` | 未提供 Authorization 请求头 | `code: "unexpectedError"`，并包含 `Profile uuid is required` |
+
+<Warning>
+  额度不足目前不会返回 `429`。服务会先以 `201` 接受任务，随后任务进入 `failed`；接入方应通过任务终态处理额度不足。
+</Warning>
+
 ## 提交之后做什么
 
-接口成功返回后会给你一个任务 ID。接下来使用查询接口持续轮询，直到任务完成。
+接口返回后会给出任务 ID。使用查询接口持续轮询，直到任务进入 `completed` 或 `failed`；仅收到 `201` 不代表业务处理成功。
 
 <Card title="查询任务状态" href="/zh/platform/api/query-task-status">
-  使用同一个任务 ID 持续查询执行进度与下载结果。
+  使用同一个任务 ID 查询到终态，再单独获取结果。
 </Card>

@@ -12,7 +12,7 @@ Generation jobs still use the unified `POST /tools/tasks` endpoint. The only dif
 |---|---|
 | Endpoint | `POST /tools/tasks` |
 | `type` | `generation` |
-| Files | Optional reference files such as PDF, Word, or Markdown; multiple files are supported |
+| Files | The current task endpoint requires uploaded `files` or existing `fileIds` |
 | Query endpoint | `GET /tools/tasks/{id}` |
 
 ## Form-data fields
@@ -20,7 +20,8 @@ Generation jobs still use the unified `POST /tools/tasks` endpoint. The only dif
 | Field | Type | Required | Meaning |
 |---|---|---|---|
 | `spaceId` | `String` | No | Target workspace Space ID. |
-| `files` | `File` | No | Reference source files. The official docs list PDF, Word, and Markdown as supported examples. Multiple files are allowed. |
+| `files` | `File` | One of `files` or `fileIds` | Reference files such as PDF, Word, or Markdown. Repeat the field for multiple files. |
+| `fileIds` | `String[]` | One of `files` or `fileIds` | IDs of reference files already stored in DeckFlow. |
 | `type` | `String` | Yes | Fixed value: `generation`. |
 | `name` | `String` | No | Human-readable task name, such as `"AI generation task"`. |
 | `params` | `String (JSON)` | Yes | JSON string containing the generation parameters below. |
@@ -63,7 +64,7 @@ Generation jobs still use the unified `POST /tools/tasks` endpoint. The only dif
   <Card title="Query Task Status" href="/platform/api/query-task-status">
     Track the generation job until the result is ready.
   </Card>
-  <Card title="Download Task Result" href="/platform/api/download-task-result">
-    Download the completed output directly.
+  <Card title="Get Task Result" href="/platform/api/download-task-result">
+    Retrieve the completed output URL and metadata.
   </Card>
 </CardGroup>

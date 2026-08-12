@@ -37,7 +37,7 @@ DeckFlow's tool APIs still submit through the same `POST /tools/tasks` endpoint.
 
 | Tool | `type` | Accepted input | Max file size | `params` |
 |---|---|---|---|---|
-| Image OCR | `image.ocr` | `image/*` | 50 MB | `{"language":"zh-hans"}`. Supported values from the official docs: `zh-hans`, `zh-hant`, `en`, `ja`, `ko`, `fr`, `de`, `es` |
+| Image OCR | `image.ocr` | `image/*` | 50 MB | `{"language":"zh-hans"}`. Supported values: `zh-hans`, `zh-hant`, `en`, `ja`, `ko`, `fr`, `de`, `es` |
 | PPTX Font Finder | `pptx.getFontInfo` | `.pptx` | 300 MB | `{}` |
 | PPTX Text Extractor | `pptx.getTextShapes` | `.pptx` | 300 MB | `{"hasChildren":false,"pickPages":[1,2,5],"imageFilter":0.2,"includeLayout":false,"includeMaster":false,"includeNotes":false,"ignoreEmptyText":true,"onlyBrief":true}` |
 
@@ -54,7 +54,7 @@ DeckFlow's tool APIs still submit through the same `POST /tools/tasks` endpoint.
 | Tool | `type` | Accepted input | Max file size | `params` |
 |---|---|---|---|---|
 | File Compressor | `file.compress` | `.zip`, `.pptx`, `.key`, `.docx`, `.xlsx` | 300 MB | `{}` |
-| Image Resizer | `image.resize` | `image/*` | 100 MB | `{"maxWidth":800,"maxHeight":600}`; `maxWidth` and `maxHeight` are mutually exclusive in the official docs |
+| Image Resizer | `image.resize` | `image/*` | 100 MB | `{"maxWidth":800,"maxHeight":600}`; `maxWidth` and `maxHeight` are mutually exclusive |
 | PPTX Font Embedder | `pptx.embedFonts` | `.pptx` | 300 MB | `{"usedFonts":["Inter","Roboto"]}` |
 | Video Compressor | `video.compress` | `video/*` | 300 MB | `{}` |
 
@@ -65,4 +65,4 @@ No matter which tool group you choose:
 - submit through `POST /tools/tasks`
 - encode tool-specific settings in `params`
 - poll through `GET /tools/tasks/{id}`
-- optionally download the result through `GET /tools/tasks/{id}/download`
+- retrieve the result URL and metadata through `GET /tools/tasks/{id}/download`

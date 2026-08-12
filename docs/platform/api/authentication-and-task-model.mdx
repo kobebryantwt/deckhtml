@@ -57,7 +57,7 @@ curl 'https://app.deckflow.com/api/tools/tasks/TASK_ID' \
     Store the returned task ID and query it through `GET /tools/tasks/{id}`, or subscribe through SSE by sending `response-event-stream: yes`.
   </Step>
   <Step title="Download the result">
-    Once the task is complete, either use the `result.url` returned in the task payload or call the dedicated download endpoint directly.
+    Once the task is `completed`, call `GET /tools/tasks/{id}/download` and read the result URL from `target`.
   </Step>
 </Steps>
 
@@ -68,7 +68,8 @@ These fields are reused across generation, translation, revamp, and tool APIs:
 | Field | Required | Meaning |
 |---|---|---|
 | `spaceId` | No | Target workspace or space identifier. |
-| `files` | Scenario-dependent | Source files to process. Some workflows require one file, some allow multiple, and some merge workflows require at least two. |
+| `files` | One of `files` or `fileIds` | Source files uploaded in this request. Repeat the multipart field to send multiple files. |
+| `fileIds` | One of `files` or `fileIds` | IDs of files already available in DeckFlow. Send an array through a client that preserves repeated multipart values. |
 | `type` | Yes | Business scenario or tool identifier such as `generation`, `translation`, `revamp`, or `convertor.html2pptx`. |
 | `name` | No | Human-readable task name shown in task history or dashboards. |
 | `notifyURL` | No | Webhook callback URL for task status changes. |
@@ -78,8 +79,13 @@ These fields are reused across generation, translation, revamp, and tool APIs:
 
 - Newly created tasks typically start in `pending` or another non-terminal state.
 - Continue polling until the task becomes `completed` or `failed`.
-- Successful tasks return result metadata and a download URL.
-- Failed tasks return error information that should be logged or surfaced upstream.
+- A `201` create response only means the task was accepted; it does not mean processing succeeded.
+- A completed task can be passed to the result endpoint to obtain the output URL and metadata.
+- A failed task can have no separate error payload in its detail response. Record the task ID and terminal status for diagnosis.
+
+<Warning>
+  In the verified zero-credit behavior, the API accepted the request with `201`, reported `credits: 0`, and later changed the task to `failed`. It did not return `429`. Always evaluate the terminal task status instead of treating task creation as completion.
+</Warning>
 
 ## Related pages
 
@@ -90,7 +96,7 @@ These fields are reused across generation, translation, revamp, and tool APIs:
   <Card title="Query Task Status" href="/platform/api/query-task-status">
     Open the `GET /tools/tasks/{id}` endpoint reference.
   </Card>
-  <Card title="Download Task Result" href="/platform/api/download-task-result">
-    Open the direct result download endpoint reference.
+  <Card title="Get Task Result" href="/platform/api/download-task-result">
+    Retrieve the result URL and route-specific metadata.
   </Card>
 </CardGroup>

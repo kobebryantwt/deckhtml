@@ -12,7 +12,7 @@ description: "通过统一任务接口提交生成类任务，并查看生成场
 |---|---|
 | 接口 | `POST /tools/tasks` |
 | `type` | `generation` |
-| 文件 | 可选参考文件，例如 PDF、Word、Markdown，支持多个 |
+| 文件 | 当前任务接口要求上传 `files`，或传入已有文件的 `fileIds` |
 | 查询接口 | `GET /tools/tasks/{id}` |
 
 ## Form Data 字段
@@ -20,7 +20,8 @@ description: "通过统一任务接口提交生成类任务，并查看生成场
 | 字段 | 类型 | 是否必填 | 说明 |
 |---|---|---|---|
 | `spaceId` | `String` | 否 | 目标工作空间 Space ID。 |
-| `files` | `File` | 否 | 参考源文件，例如 PDF、Word 或 Markdown；支持上传多个文件。 |
+| `files` | `File` | 与 `fileIds` 二选一 | PDF、Word 或 Markdown 等参考文件；多个文件重复提交该字段。 |
+| `fileIds` | `String[]` | 与 `files` 二选一 | DeckFlow 中已有参考文件的 ID。 |
 | `type` | `String` | 是 | 固定值：`generation`。 |
 | `name` | `String` | 否 | 任务显示名称，例如 `"AI 生成文档任务"`。 |
 | `params` | `String (JSON)` | 是 | 包含生成参数的 JSON 字符串。 |
@@ -54,6 +55,8 @@ description: "通过统一任务接口提交生成类任务，并查看生成场
 }
 ```
 
+## 相关页面
+
 <CardGroup cols={3}>
   <Card title="提交异步任务" href="/zh/platform/api/submit-async-task">
     打开统一的提交接口。
@@ -61,7 +64,7 @@ description: "通过统一任务接口提交生成类任务，并查看生成场
   <Card title="查询任务状态" href="/zh/platform/api/query-task-status">
     跟踪生成任务直到完成。
   </Card>
-  <Card title="下载任务结果" href="/zh/platform/api/download-task-result">
-    直接下载生成完成后的输出文件。
+  <Card title="获取任务结果" href="/zh/platform/api/download-task-result">
+    获取生成结果地址和元数据。
   </Card>
 </CardGroup>
