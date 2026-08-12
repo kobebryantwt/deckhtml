@@ -150,6 +150,60 @@ pre {
   box-shadow: 0 16px 36px rgba(192, 74, 61, 0.14);
 }
 
+/* The OpenAPI response viewer defaults to a status-code dropdown. Keep every
+   documented response visible so developers can compare success and errors. */
+.api-response-status-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.3rem 0.45rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.api-response-status-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.api-response-status-tabs button {
+  flex: 0 0 auto;
+  min-width: 2.6rem;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--deck-text-muted);
+  font-family: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.api-response-status-tabs button:hover {
+  color: var(--deck-text);
+  background: var(--deck-surface-muted);
+}
+
+.api-response-status-tabs button[aria-selected="true"] {
+  border-color: var(--deck-accent-border);
+  background: var(--deck-accent-soft);
+  color: var(--deck-accent);
+}
+
+.api-response-status-tabs button:focus-visible {
+  outline: 2px solid var(--deck-accent);
+  outline-offset: 1px;
+}
+
+.api-response-status-select-fallback {
+  display: none !important;
+}
+
 /* Editorial building blocks used only where they clarify page structure. */
 .deckflow-hero {
   position: relative;
