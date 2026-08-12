@@ -94,11 +94,11 @@ DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、�
 
 | 使用目标 | 产品 | 主要接入方式 | 认证 |
 | --- | --- | --- | --- |
-| 验证格式、数量、元数据、结构或风险信号 | [DeckProbe](/zh/deckprobe/overview) | 原生或 npm CLI；完整 2.3.1 产物中的 Browser、Worker 和 Node.js SDK | 不需要；文件留在本地 |
-| 生成页面图片、PDF、缩略图或视频 | [DeckRender](/zh/deckrender/overview) | CLI 或 Node.js SDK | 云端路径可选；支持访客模式 |
-| 解析、提取、转换、生成或编排云端任务 | [DeckOps](/zh/deckops/overview) | 已发布 TypeScript 任务 SDK 或 CLI；源码中的 Python/Go 实现 | 高层 Parse 需要凭证；底层任务提供受限游客模式 |
-| 检查现有 PPTX 并执行结构化修改 | [DeckUse](/zh/deckuse/overview) | 从源码构建的 CLI 或 Node.js API；公开包依赖当前不完整 | 不需要；文件留在本地 |
-| 从 HTML 或 SVG 生成 PPTX 或 PNG | [DeckHTML](/zh/deckhtml/overview) | CLI 处理本地/云端文件；Node.js SDK 返回本地 Buffer | 本地不需要；云端支持游客或认证 |
+| 验证格式、数量、元数据、结构或风险信号 | [DeckProbe](/zh/deckprobe/overview) | CLI 和 JavaScript SDK | 不需要；文件留在本地 |
+| 生成页面图片、PDF、缩略图或视频 | [DeckRender](/zh/deckrender/overview) | CLI 和 Node.js SDK | 云端路径可选；支持访客模式 |
+| 解析、提取、转换、生成或编排云端任务 | [DeckOps](/zh/deckops/overview) | CLI 和 SDK | 高层 Parse 需要凭证；底层任务提供受限游客模式 |
+| 检查现有 PPTX 并执行结构化修改 | [DeckUse](/zh/deckuse/overview) | CLI 和 Node.js SDK | 不需要；文件留在本地 |
+| 从 HTML 或 SVG 生成 PPTX 或 PNG | [DeckHTML](/zh/deckhtml/overview) | CLI 和 Node.js SDK | 本地不需要；云端支持游客或认证 |
 
 <Note>
   每个产品支持的格式和操作范围不同。某个产品能识别文件，不代表其他产品也能处理。请以各产品的支持格式或命令参考页作为当前版本契约。

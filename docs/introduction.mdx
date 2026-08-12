@@ -94,11 +94,11 @@ DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and D
 
 | Goal | Product | Primary interface | Authentication |
 | --- | --- | --- | --- |
-| Verify format, counts, metadata, structure, or risk signals | [DeckProbe](/deckprobe/overview) | Native or npm CLI; Browser, Worker, and Node.js SDK in the complete 2.3.1 artifact | Not required; processing stays local |
-| Produce page images, PDF, thumbnails, or video | [DeckRender](/deckrender/overview) | CLI or Node.js SDK | Optional for cloud routes; guest mode is available |
-| Parse, extract, convert, generate, or orchestrate cloud tasks | [DeckOps](/deckops/overview) | Published TypeScript task SDK or CLI; source Python/Go implementations | Credentials for high-level Parse; limited guest low-level tasks |
-| Inspect and apply structured changes to an existing PPTX | [DeckUse](/deckuse/overview) | Source-built CLI or Node.js API; public package dependencies currently incomplete | Not required; processing stays local |
-| Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI for local/cloud files; Node.js SDK for local buffers | Not required locally; guest or authenticated cloud mode |
+| Verify format, counts, metadata, structure, or risk signals | [DeckProbe](/deckprobe/overview) | CLI and JavaScript SDK | Not required; processing stays local |
+| Produce page images, PDF, thumbnails, or video | [DeckRender](/deckrender/overview) | CLI and Node.js SDK | Optional for cloud routes; guest mode is available |
+| Parse, extract, convert, generate, or orchestrate cloud tasks | [DeckOps](/deckops/overview) | CLI and SDK | Credentials for high-level Parse; limited guest low-level tasks |
+| Inspect and apply structured changes to an existing PPTX | [DeckUse](/deckuse/overview) | CLI and Node.js SDK | Not required; processing stays local |
+| Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI and Node.js SDK | Not required locally; guest or authenticated cloud mode |
 
 <Note>
   Supported formats and operations differ by product. A file being recognized by one product does not mean every other product can process it. Use each product's supported-format or command reference as the version-specific contract.
