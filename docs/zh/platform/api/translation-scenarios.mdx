@@ -20,7 +20,7 @@ description: "通过统一任务接口提交翻译类任务，并查看翻译场
 | 字段 | 类型 | 是否必填 | 说明 |
 |---|---|---|---|
 | `spaceId` | `String` | 否 | 目标工作空间 Space ID。 |
-| `files` | `File` | 是 | 待翻译的源文档。官方文档列出 PPTX、Keynote、PDF、Word、Excel，支持上传多个文件。 |
+| `files` | `File` | 是 | 待翻译的源文档，支持 PPTX、Keynote、PDF、Word 和 Excel；可以上传多个文件。 |
 | `type` | `String` | 是 | 固定值：`translation`。 |
 | `name` | `String` | 否 | 任务显示名称，例如 `"AI 翻译文档任务"`。 |
 | `params` | `String (JSON)` | 是 | 包含翻译参数的 JSON 字符串。 |
@@ -77,5 +77,5 @@ description: "通过统一任务接口提交翻译类任务，并查看翻译场
 ```
 
 <Tip>
-  官方文档明确将这个工作流定位为面向演示型文档的翻译流程，并强调尽量保留原始版式和视觉结构。
+  翻译流程会尽量保留原始版式和视觉结构。
 </Tip>

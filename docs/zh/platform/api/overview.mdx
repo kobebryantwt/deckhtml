@@ -6,24 +6,13 @@ description: "查看 DeckFlow API 的通用异步任务流程、公共任务接�
 
 DeckFlow API 的底层组织方式，其实就是一套通用的异步任务流程。无论是文档生成、翻译、焕新，还是工具类文件处理，都会复用同一套任务提交、任务查询和结果下载模式。
 
-<Note>
-  在各场景的新产品归属确认前，这套共享 API 暂时保留在平台层。产品契约和归属明确后，产品专属 API 应下沉到对应产品目录。
-</Note>
-
-在参考文档这一层，最重要的公共接口是：
+使用以下接口提交任务、跟踪任务直至结束，并获取输出：
 
 - `POST /tools/tasks`
 - `GET /tools/tasks/{id}`
 - `GET /tools/tasks/{id}/download`
 
-因此，这一节会分成两层来讲：
-
-- <strong>核心接口</strong>：如何提交任务、查询状态、下载结果
-- <strong>场景文档</strong>：不同业务场景下该传什么 `type`、`files` 和 `params`
-
-<Note>
-  你刚才提到的 `shared model` 不是 DeckFlow 官方原词。这里更准确的说法应该是“通用异步任务流程”或“统一任务模型”，对应官方文档里的“接口调用模型 / 通用 API 与认证”。
-</Note>
+核心接口定义如何提交、查询和下载任务；场景指南说明具体工作流需要传入哪些 `type`、`files` 和 `params`。
 
 ## 通用异步任务流程
 
@@ -35,7 +24,7 @@ DeckFlow 在不同业务场景下都遵循相同生命周期：
 - 通过轮询或 SSE 订阅持续跟踪任务状态
 - 任务成功后，通过 `result.url` 或专用下载接口获取最终文件
 
-## 先读这一组
+## 选择下一步
 
 <CardGroup cols={3}>
   <Card title="认证与任务模型" href="/zh/platform/api/authentication-and-task-model">

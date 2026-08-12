@@ -6,24 +6,13 @@ description: "Use the DeckFlow API reference to understand the common async task
 
 DeckFlow's API is organized around a common async task flow. Business scenarios such as generation, translation, revamp, and tool APIs all reuse the same submission and task-management pattern.
 
-<Note>
-  This shared API remains in the platform layer until each scenario has a confirmed owner in the new product model. Product-specific APIs should move under that product once their contracts and ownership are explicit.
-</Note>
-
-At the reference level, the most important shared endpoints are:
+Use these endpoints to submit work, track it to a terminal state, and retrieve the output:
 
 - `POST /tools/tasks`
 - `GET /tools/tasks/{id}`
 - `GET /tools/tasks/{id}/download`
 
-This section is therefore split into two layers:
-
-- <strong>Core APIs</strong>: submit a task, query its status, and download the finished result
-- <strong>Scenario guides</strong>: understand which `type`, `files`, and `params` fields to send for each business workflow
-
-<Note>
-  The phrase "common async task flow" is a descriptive label used in this guide for the shared task lifecycle and authentication model. It is not a separate product term.
-</Note>
+The core endpoints define how a task is submitted, queried, and downloaded. Scenario guides define the `type`, `files`, and `params` required for a specific workflow.
 
 ## Common async task flow
 
@@ -35,7 +24,7 @@ DeckFlow uses the same lifecycle across business scenarios:
 - Poll the task endpoint or subscribe through SSE until the job is complete or failed.
 - Download the final file from `result.url` or from the dedicated download endpoint.
 
-## Read this section by group
+## Choose the next step
 
 <CardGroup cols={3}>
   <Card title="Authentication & Task Model" href="/platform/api/authentication-and-task-model">

@@ -12,18 +12,43 @@ All DeckFlow business scenarios reuse the same API foundation. Before looking at
 https://app.deckflow.com/api
 ```
 
+## Get an API key
+
+<Steps>
+  <Step title="Open DeckFlow Settings">
+    Sign in to DeckFlow and open [API Key Settings](https://app.deckflow.com/start#settings).
+  </Step>
+  <Step title="Create and copy an API key">
+    Configure an API key in Settings, then copy it to a secure secret store used by your server or development environment.
+  </Step>
+  <Step title="Set the environment variable">
+    ```bash
+    export DECKFLOW_API_KEY="YOUR_API_KEY"
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  Treat the API key as a server-side secret. Do not embed it in browser code, commit it to a repository, or expose it in logs.
+</Warning>
+
 ## Required headers
 
 | Header | Required | Purpose |
 |---|---|---|
 | `Authorization` | Yes | Use `Bearer <YOUR_API_KEY>` for every authenticated API request. |
-| `Content-Type` | Yes for submit | Use `multipart/form-data` when creating a task through `POST /tools/tasks`. |
+| `Content-Type` | Yes for submit | Use `multipart/form-data` for `POST /tools/tasks`; let the HTTP client add the multipart boundary. |
+
+```bash
+curl 'https://app.deckflow.com/api/tools/tasks/TASK_ID' \
+  --header "Authorization: Bearer $DECKFLOW_API_KEY"
+```
 
 ## Common async task flow
 
 <Steps>
   <Step title="Authenticate">
-    Send your API key in the `Authorization` header.
+    Read the API key from your secret store and send it in the `Authorization` header.
   </Step>
   <Step title="Submit a task">
     Upload one or more files, choose a `type`, and provide any scenario-specific JSON through `params`.
