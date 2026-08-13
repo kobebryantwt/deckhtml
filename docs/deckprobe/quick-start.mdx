@@ -79,9 +79,10 @@ This path uses the native CLI. It runs entirely on your machine and requires no 
   </Step>
 </Steps>
 
-<Tip>
-  Before hard-coding format-specific targets, run `deckprobe targets pdf --pretty` to confirm their IDs, minimum probe levels, and applicability. If an automated workflow requires every requested target to resolve, add `--strict`: DeckProbe still writes the complete JSON report, then exits with status `5` when a target is unresolved.
-</Tip>
+## Before automating the command
+
+- Run `deckprobe targets pdf --pretty` before storing format-specific Target IDs in code. It reports each Target's minimum Probe Level and applicability.
+- Add `--strict` when every requested Target must resolve. DeckProbe still writes the complete JSON report, then exits with status `5` if any requested Target is unresolved.
 
 <CardGroup cols={2}>
   <Card title="Output model" href="/deckprobe/output-model">

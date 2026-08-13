@@ -12,14 +12,11 @@ DeckProbe 根据逻辑文件名选择 Driver，再验证容器和必需的内部
 | --- | --- | --- |
 | PDF | `.pdf` | Header、Info 元数据、页面和对象数量、xref 类型、签名、链接、附件、JavaScript、表单、批注和 XMP |
 | Word OOXML | `.docx`、`.docm`、`.dotx`、`.dotm` | 元数据、保存统计、段落和表格结构、安全信号、评论和图片资源 |
-| Excel OOXML | `.xlsx`、`.xlsm`、`.xltx`、`.xltm`、`.xlsb` | 工作表、名称、可见性、共享字符串、表格、图表、Pivot、安全信号和图片资源 |
+| Excel OOXML | `.xlsx`、`.xlsm`、`.xltx`、`.xltm` | 工作表、名称、可见性、共享字符串、表格、图表、Pivot、安全信号和图片资源 |
+| Excel Binary | `.xlsb` | 文档身份 |
 | PowerPoint OOXML | `.pptx`、`.pptm`、`.ppsx`、`.ppsm`、`.potx`、`.potm` | 幻灯片、隐藏页、Master、Layout、备注、尺寸、图表、评论、图片、媒体和安全信号 |
 | 旧版 Office | `.doc`、`.dot`、`.xls`、`.xlt`、`.ppt`、`.pps`、`.pot` | 已验证的 CFB Stream、SummaryInformation、宏、嵌入对象信号和核心统计 |
 | 现代 iWork | `.key`、`.numbers`、`.pages` | IWA 身份与完整性，以及文件中存在的结构、数量、几何、公式、表格、备注、Build 或 Transition |
-
-<Tip>
-  `.xlsb` 当前只支持文档身份探测。旧版 XML iWork 包可以被识别，但会返回结构化 `UNSUPPORTED_FORMAT` 错误。
-</Tip>
 
 ## 查询当前安装版本的契约
 

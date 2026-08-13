@@ -14,16 +14,12 @@ DeckProbe 在不打开或渲染文件、不运行宏，也不启动 Microsoft Of
 | 接入方式 | 原生 CLI、npm CLI、Browser SDK、Web Worker SDK 和 Node.js API |
 | 认证 | 不需要 |
 
-<Note>
-  2.3.1 已修复 JavaScript 软件包内容，并通过 Browser 与软件包完整性检查。如果 `npm view @deckflow/deckprobe version` 仍返回 2.3.0，请暂时使用原生 CLI，或按照 SDK 页面从源码构建 2.3.1 软件包，等待 Registry 同步。
-</Note>
-
 ## DeckProbe 适合什么
 
 - 接收上传文件前，验证它声明的格式。
 - 读取数量、元数据、结构事实、安全信号或资源清单。
 - 根据证据而不是扩展名，把文档路由给 DeckOps 或 DeckRender。
-- 限制物理读取、解压、归档条目和时间预算。
+- 限制物理读取、解压和归档条目，并设置协作式时间预算。
 - 为策略引擎、批量盘点或 Agent 工具生成稳定 JSON。
 
 ```mermaid
@@ -47,7 +43,7 @@ flowchart LR
     在 Node.js 20+ 应用中探测文件路径或字节数组。
   </Card>
   <Card title="格式与 Target" href="/zh/deckprobe/formats-and-targets">
-    查看文档类型、当前例外、Target 发现和 Probe Level。
+    查看支持的文档类型、Target 发现和 Probe Level。
   </Card>
 </CardGroup>
 

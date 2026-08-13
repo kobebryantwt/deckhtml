@@ -12,14 +12,11 @@ DeckProbe uses the logical filename to choose a driver, then verifies the contai
 | --- | --- | --- |
 | PDF | `.pdf` | Header and Info metadata, page and object counts, xref type, signatures, links, attachments, JavaScript, forms, annotations, and XMP presence |
 | Word OOXML | `.docx`, `.docm`, `.dotx`, `.dotm` | Metadata, saved statistics, paragraph and table structure, security signals, comments, and image assets |
-| Excel OOXML | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xlsb` | Worksheets, names, visibility, shared strings, tables, charts, pivots, security signals, and image assets |
+| Excel OOXML | `.xlsx`, `.xlsm`, `.xltx`, `.xltm` | Worksheets, names, visibility, shared strings, tables, charts, pivots, security signals, and image assets |
+| Excel Binary | `.xlsb` | Document identity |
 | PowerPoint OOXML | `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm` | Slides, hidden slides, masters, layouts, notes, size, charts, comments, images, media, and security signals |
 | Legacy Office | `.doc`, `.dot`, `.xls`, `.xlt`, `.ppt`, `.pps`, `.pot` | Validated CFB streams, SummaryInformation, macros, embedded-object signals, and core statistics |
 | Modern iWork | `.key`, `.numbers`, `.pages` | IWA identity and integrity plus application-specific structure, counts, geometry, formulas, tables, notes, builds, or transitions when present |
-
-<Tip>
-  `.xlsb` currently stops at document identity. Legacy XML iWork packages can be recognized, but return a structured `UNSUPPORTED_FORMAT` error.
-</Tip>
 
 ## Inspect the installed contract
 

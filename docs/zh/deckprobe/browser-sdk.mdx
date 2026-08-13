@@ -8,27 +8,11 @@ description: "安装 DeckProbe npm 包，并通过主线程或 Worker 在浏览�
 
 ## 安装
 
-先确认 Registry 已经提供修正后的软件包：
-
 ```bash
-npm view @deckflow/deckprobe version
-npm install @deckflow/deckprobe@^2.3.1
+npm install @deckflow/deckprobe
 ```
 
-2.3.1 及以上版本包含这些导入所需的 JavaScript 编译产物和 WebAssembly 运行文件。
-
-如果 Registry 仍显示 2.3.0，请根据对应 Tag 构建完整的本地软件包，不要安装该不完整产物：
-
-```bash
-git clone --branch v2.3.1 --depth 1 https://github.com/deckflow/deckprobe.git
-cd deckprobe/packages/deckprobe-js
-npm ci
-npm run build
-npm run check:pack
-npm pack
-```
-
-随后在浏览器应用中安装生成的 `deckflow-deckprobe-2.3.1.tgz`。
+软件包已经包含下文使用的 JavaScript 入口、TypeScript 类型定义和 WebAssembly 运行文件。
 
 ## 在主线程中 Probe
 
@@ -113,7 +97,7 @@ export default defineConfig({
 主线程和 Worker 入口都需要此设置。
 
 <Tip>
-  `File` 与 `Blob` 输入会进入 WebAssembly 内存。较大文件和 Deep Probe 建议放入 Worker，避免阻塞页面 UI。
+  `probe()` 与 Worker API 都会把完整输入加载到内存。Worker 可以让字节转换和解析避开 UI 线程，但不会减少内存占用；超大文件或大批量任务应优先使用原生 CLI。
 </Tip>
 
 ## 继续处理报告

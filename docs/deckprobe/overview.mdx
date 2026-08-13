@@ -14,16 +14,12 @@ DeckProbe inspects predefined facts about a document without opening or renderin
 | Interfaces | Native CLI, npm CLI, Browser SDK, Web Worker SDK, and Node.js API |
 | Authentication | None |
 
-<Note>
-  Version 2.3.1 fixes the JavaScript package contents and passes the Browser and package-completeness checks. If `npm view @deckflow/deckprobe version` still resolves to 2.3.0, use the native CLI or build the 2.3.1 package from source as shown on the SDK pages until the Registry catches up.
-</Note>
-
 ## Use DeckProbe for
 
 - Verifying a claimed file type before accepting an upload.
 - Reading counts, metadata, structural facts, security signals, or asset inventory.
 - Routing a document to DeckOps or DeckRender based on evidence instead of extension alone.
-- Enforcing predictable read, decompression, archive-entry, and time budgets.
+- Applying bounded read, decompression, and archive-entry limits plus a cooperative time budget.
 - Producing stable JSON for policy engines, batch inventory, or agent tools.
 
 ```mermaid
@@ -47,7 +43,7 @@ flowchart LR
     Probe file paths or byte arrays from a Node.js 20+ application.
   </Card>
   <Card title="Formats and targets" href="/deckprobe/formats-and-targets">
-    Review document families, current exceptions, target discovery, and probe levels.
+    Review supported document families, target discovery, and probe levels.
   </Card>
 </CardGroup>
 

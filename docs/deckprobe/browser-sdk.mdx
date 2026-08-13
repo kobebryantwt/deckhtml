@@ -8,27 +8,11 @@ The `@deckflow/deckprobe` package runs the same target-driven Rust engine in Web
 
 ## Install
 
-Check that the Registry exposes the corrected package:
-
 ```bash
-npm view @deckflow/deckprobe version
-npm install @deckflow/deckprobe@^2.3.1
+npm install @deckflow/deckprobe
 ```
 
-Version 2.3.1 and later include the compiled JavaScript and WebAssembly runtime files required by these imports.
-
-If the Registry still reports 2.3.0, build a complete local package from the tagged source instead of installing that incomplete artifact:
-
-```bash
-git clone --branch v2.3.1 --depth 1 https://github.com/deckflow/deckprobe.git
-cd deckprobe/packages/deckprobe-js
-npm ci
-npm run build
-npm run check:pack
-npm pack
-```
-
-Install the generated `deckflow-deckprobe-2.3.1.tgz` in the browser application.
+The package includes the JavaScript entry points, TypeScript definitions, and WebAssembly runtime used below.
 
 ## Probe on the main thread
 
@@ -113,7 +97,7 @@ export default defineConfig({
 This applies to both the main-thread and Worker entries.
 
 <Tip>
-  `File` and `Blob` inputs are materialized in WebAssembly memory. Move larger files and deep probes into a Worker to keep the UI responsive.
+  Both `probe()` and the Worker API load the complete input into memory. A Worker keeps conversion and parsing off the UI thread, but does not reduce memory use. Prefer the native CLI for very large files or large batches.
 </Tip>
 
 ## Continue with the report

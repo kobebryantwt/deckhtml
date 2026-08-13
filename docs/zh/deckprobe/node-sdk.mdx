@@ -6,27 +6,11 @@ description: "通过 @deckflow/deckprobe WebAssembly 软件包，在 Node.js 中
 
 Node.js API 需要 Node.js 20 或更高版本，使用与原生 CLI 相同的 Rust 引擎和 Schema v2 契约。
 
-先确认 Registry 已经提供修正后的软件包：
-
 ```bash
-npm view @deckflow/deckprobe version
-npm install @deckflow/deckprobe@^2.3.1
+npm install @deckflow/deckprobe
 ```
 
-2.3.1 及以上版本包含此 API 所需的 Node.js 入口和 WebAssembly 运行文件。
-
-如果 Registry 仍显示 2.3.0，请构建并安装对应 Tag 的源码软件包：
-
-```bash
-git clone --branch v2.3.1 --depth 1 https://github.com/deckflow/deckprobe.git
-cd deckprobe/packages/deckprobe-js
-npm ci
-npm run build
-npm run check:pack
-npm pack
-```
-
-随后在 Node.js 应用中安装生成的 Tarball，例如 `npm install /absolute/path/to/deckflow-deckprobe-2.3.1.tgz`。
+软件包会在 Node.js 中自动加载随包提供的 WebAssembly 运行文件。
 
 ## 嗅探文件
 
@@ -75,6 +59,4 @@ console.log(await schema());
 
 以上四个查询 API 都是异步方法。
 
-<Note>
-  Node.js 处理仍在本地完成，不需要 DeckFlow 凭证。自定义运行时打包时，也可以使用软件包导出的绝对路径 `deckProbeWasmPath`。
-</Note>
+Node.js 处理仍在本地完成，不需要 DeckFlow 凭证。应用需要获取实际加载的 WebAssembly 文件绝对路径时，可以使用软件包导出的 `deckProbeWasmPath`。
