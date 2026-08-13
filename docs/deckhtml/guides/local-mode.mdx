@@ -1,32 +1,108 @@
 ---
 title: Local Mode
 sidebarTitle: Local Mode
-description: "Run DeckHTML on the current machine with Playwright and no cloud credentials."
+description: "Convert HTML or SVG on the current machine, with no upload and full access to DeckHTML's local mapping controls."
 ---
 
-Local mode loads the input with Playwright, inspects the browser layout, and generates PPTX or PNG on the current machine.
+Choose local mode when the source must stay on your machine, your application needs the Node.js API, or you need element-level controls and a detailed conversion report. DeckHTML opens the source in local Chromium and creates the PPTX or PNG without submitting a cloud task.
+
+```text
+HTML / SVG → local Chromium → inspect and map elements → PPTX / PNG
+                                           └────────→ per-element report
+```
+
+## Local or cloud?
+
+| | Local mode | Cloud mode |
+| --- | --- | --- |
+| Source data | Remains on the current machine | Uploaded to DeckFlow |
+| Authentication | Not required | Rate-limited guest, browser login, or API key |
+| Interfaces | CLI and Node.js API | CLI |
+| Browser requirement | Local Chromium is required | Cloud PNG does not need it; the current cloud PPTX CLI still uses it for post-conversion statistics |
+| PPTX font embedding | Font Awesome only; other fonts are not embedded | `--embed-fonts` can embed matched fonts |
+| Mapping controls | Element exclusion and identity, animations, transitions, iframe handling, strict checks through the Node.js API | These local controls are not forwarded to the cloud task |
+| Report | Detailed slide- and element-level report | Aggregate report when the task does not return element details |
+
+<Tip>
+  Use `--mode local` explicitly when keeping files on the current machine is a requirement. `auto` can switch to cloud execution after credentials are configured.
+</Tip>
+
+## What runs locally
+
+1. DeckHTML resolves local files, stdin, or downloaded URL content.
+2. Playwright opens the source in Chromium and measures its rendered layout.
+3. Supported content is rebuilt as editable or vector PowerPoint objects; visual fallbacks are rasterized where necessary.
+4. The CLI writes the PPTX or PNG and can write a per-element conversion report beside it.
+
+No DeckFlow account or API key is involved in this path.
+
+## Use the CLI
+
+Generate an editable PPTX:
 
 ```bash
 deckhtml deck.html -o deck.pptx --mode local
-deckhtml deck.html -o frames.png --mode local
 ```
 
-Use local mode for fast iteration, controlled data handling, CI jobs with Chromium, and application workflows that need the Node conversion API.
+Generate one PNG per detected slide:
 
-## Local capabilities
+```bash
+deckhtml deck.html -o preview.png --mode local
+```
 
-- HTML or SVG to PPTX
-- HTML or SVG to one or more PNG images
-- multi-file and multi-slide inputs
-- editable element mapping and raster fallbacks
-- animations and slide transitions for PPTX
-- iframe inspection, screenshot, or omission
-- per-element report and structured diagnostics
+Keep the element mapping report:
 
-## Requirements
+```bash
+deckhtml deck.html -o deck.pptx --mode local --report --json --quiet
+```
 
-Local execution needs a usable Chromium installation. Set `--executable-path` or `DECKHTML_CHROMIUM_EXECUTABLE_PATH` when automatic discovery cannot find it.
+For multi-slide input, PNG output names are numbered automatically. PPTX output combines the detected slides into one deck.
 
-Browser resolution order is: an explicit `--executable-path`, `DECKHTML_CHROMIUM_EXECUTABLE_PATH`, a Playwright-managed Chromium, then a supported system Chrome or Edge installation. The Node.js API can additionally provide a persistent profile, a caller-owned browser, or a browser context.
+## Use the Node.js API
 
-Local mode does not support `--embed-fonts`. It can map CSS font stacks to the selected target platform, but embedding the font binaries is a cloud operation.
+The public conversion functions run the local engine and return buffers instead of writing files:
+
+```ts
+import { writeFile } from 'node:fs/promises';
+import { convertHtmlToPptx } from '@deckflow/deckhtml';
+
+const result = await convertHtmlToPptx({
+  input: './deck.html',
+  quiet: true,
+});
+
+await writeFile('./deck.pptx', result.data);
+console.log(result.slideCount, result.report?.summary);
+```
+
+Use the API when the application needs to inject an existing Playwright browser or context, enforce strict conversion gates, or retain the result in memory. See the [Node.js API](/deckhtml/sdk/node) for the complete options.
+
+## Local mapping controls
+
+The local CLI exposes controls that are applied while inspecting and rebuilding the document:
+
+- `--exclude <selector>` omits matched runtime or navigation elements.
+- `--identity-attribute <name>` selects the stable element identity attribute.
+- `--no-animations` controls supported element entrance-animation export.
+- `--slide-transition`, `--no-slide-transitions` control slide transitions.
+- `--iframes inspect|screenshot|skip` chooses how iframe content is handled.
+- `--executable-path <path>` selects a particular Chromium executable.
+
+The Node.js API additionally exposes resource policies, caller-owned browser objects, and strict checks for raster fallbacks, unsupported elements, missing identities, remote resources, and fonts.
+
+## Chromium and fonts
+
+Browser resolution order is:
+
+1. `--executable-path`
+2. `DECKHTML_CHROMIUM_EXECUTABLE_PATH`
+3. Playwright-managed Chromium
+4. A supported system Chrome or Edge installation
+
+Install Playwright Chromium when automatic discovery finds no usable browser:
+
+```bash
+npx playwright install chromium
+```
+
+Local mode maps CSS font stacks for the selected target platform, but it does not generally embed font files. The generated presentation therefore depends on fonts available where the PPTX is opened. Choose [Cloud Mode](/deckhtml/guides/cloud-mode) when matched font embedding is required.

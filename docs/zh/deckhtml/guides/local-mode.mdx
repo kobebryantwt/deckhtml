@@ -1,32 +1,108 @@
 ---
 title: 本地模式
 sidebarTitle: 本地模式
-description: "在当前机器使用 Playwright 运行 DeckHTML，无需云端凭证。"
+description: "在当前机器转换 HTML 或 SVG，不上传源文件，并使用完整的本地映射控制。"
 ---
 
-本地模式通过 Playwright 加载输入、检查浏览器布局，并在当前机器生成 PPTX 或 PNG。
+如果源文件必须保留在本机、应用需要使用 Node.js API，或者转换过程需要元素级控制和详细报告，请选择本地模式。DeckHTML 在本机 Chromium 中打开源文件，直接生成 PPTX 或 PNG，不会提交云端任务。
+
+```text
+HTML / SVG → 本机 Chromium → 检查并映射元素 → PPTX / PNG
+                                              └────→ 逐元素报告
+```
+
+## 本地还是云端？
+
+| | 本地模式 | 云端模式 |
+| --- | --- | --- |
+| 源文件 | 保留在当前机器 | 上传至 DeckFlow |
+| 认证 | 不需要 | 限频游客、浏览器登录或 API Key |
+| 接入方式 | CLI 和 Node.js API | CLI |
+| 浏览器要求 | 需要本机 Chromium | 云端 PNG 不需要；当前云端 PPTX CLI 仍会使用它完成转换后统计 |
+| PPTX 字体嵌入 | 仅自动处理 Font Awesome，其他字体不会嵌入 | 可通过 `--embed-fonts` 嵌入匹配字体 |
+| 映射控制 | 元素排除与标识、动画、转场、iframe；Node.js API 还支持严格检查 | 这些本地控制不会传给云端任务 |
+| 转换报告 | 详细的幻灯片级和元素级报告 | 任务未返回元素明细时生成聚合报告 |
+
+<Tip>
+  如果“文件不能离开当前机器”是明确要求，请显式使用 `--mode local`。配置凭证后，`auto` 可能改为云端执行。
+</Tip>
+
+## 本地执行过程
+
+1. DeckHTML 解析本地文件、标准输入，或已经下载的 URL 内容。
+2. Playwright 在 Chromium 中打开源文件，测量浏览器渲染后的布局。
+3. 支持的内容会重建为可编辑或矢量的 PowerPoint 对象；必要时使用栅格图保留视觉效果。
+4. CLI 写入 PPTX 或 PNG，并可在旁边生成逐元素转换报告。
+
+这条路径不需要 DeckFlow 账号或 API Key。
+
+## 使用 CLI
+
+生成可编辑 PPTX：
 
 ```bash
 deckhtml deck.html -o deck.pptx --mode local
-deckhtml deck.html -o frames.png --mode local
 ```
 
-快速迭代、受控数据处理、带 Chromium 的 CI，以及需要 Node.js 转换 API 的应用工作流都适合使用本地模式。
+为每张识别出的幻灯片生成 PNG：
 
-## 本地能力
+```bash
+deckhtml deck.html -o preview.png --mode local
+```
 
-- HTML 或 SVG 转 PPTX
-- HTML 或 SVG 转一张或多张 PNG
-- 多文件和单文件多页输入
-- 可编辑元素映射与栅格降级
-- PPTX 元素动画与页面转场
-- iframe 检查、截图或忽略
-- 逐元素报告和结构化诊断
+保留元素映射报告：
 
-## 运行要求
+```bash
+deckhtml deck.html -o deck.pptx --mode local --report --json --quiet
+```
 
-本地执行需要可用的 Chromium。自动发现失败时，设置 `--executable-path` 或 `DECKHTML_CHROMIUM_EXECUTABLE_PATH`。
+多页输入生成 PNG 时，输出文件会自动编号；生成 PPTX 时，识别出的页面会合并到一个演示文稿中。
 
-浏览器查找顺序为：显式 `--executable-path`、`DECKHTML_CHROMIUM_EXECUTABLE_PATH`、Playwright 管理的 Chromium，最后是受支持的系统 Chrome 或 Edge。Node.js API 还可以传入持久化用户目录、由调用方管理的 `Browser` 或 `BrowserContext`。
+## 使用 Node.js API
 
-本地模式不支持 `--embed-fonts`。它可以按目标平台映射 CSS 字体栈，但嵌入字体文件属于云端操作。
+公开的转换函数运行本地引擎并返回 Buffer，不会自行写入文件：
+
+```ts
+import { writeFile } from 'node:fs/promises';
+import { convertHtmlToPptx } from '@deckflow/deckhtml';
+
+const result = await convertHtmlToPptx({
+  input: './deck.html',
+  quiet: true,
+});
+
+await writeFile('./deck.pptx', result.data);
+console.log(result.slideCount, result.report?.summary);
+```
+
+需要注入已有 Playwright Browser 或 BrowserContext、执行严格转换检查，或者在内存中处理结果时，请使用 API。完整选项见 [Node.js API](/zh/deckhtml/sdk/node)。
+
+## 本地映射控制
+
+本地 CLI 会在检查和重建文档时应用以下控制：
+
+- `--exclude <selector>`：忽略匹配的运行时或导航元素。
+- `--identity-attribute <name>`：指定稳定的元素标识属性。
+- `--no-animations`：控制受支持元素进入动画的导出。
+- `--slide-transition`、`--no-slide-transitions`：控制页面转场。
+- `--iframes inspect|screenshot|skip`：选择 iframe 的处理方式。
+- `--executable-path <path>`：指定 Chromium 可执行文件。
+
+Node.js API 还提供资源加载策略、调用方管理的浏览器对象，以及针对栅格降级、不支持元素、缺少标识、远程资源和字体的严格检查。
+
+## Chromium 与字体
+
+浏览器查找顺序为：
+
+1. `--executable-path`
+2. `DECKHTML_CHROMIUM_EXECUTABLE_PATH`
+3. Playwright 管理的 Chromium
+4. 受支持的系统 Chrome 或 Edge
+
+自动发现不到可用浏览器时，安装 Playwright Chromium：
+
+```bash
+npx playwright install chromium
+```
+
+本地模式会按照目标平台映射 CSS 字体栈，但通常不会把字体文件嵌入 PPTX。因此，演示文稿的最终字体效果取决于打开文件的机器。需要嵌入匹配字体时，请选择[云端模式](/zh/deckhtml/guides/cloud-mode)。

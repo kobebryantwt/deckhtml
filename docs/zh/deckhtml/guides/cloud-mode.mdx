@@ -1,40 +1,100 @@
 ---
 title: 云端模式
 sidebarTitle: 云端模式
-description: "上传 DeckHTML 输入，并通过 DeckOps 云端任务运行转换。"
+description: "把 HTML 或 SVG 上传至 DeckFlow，运行异步转换任务，并可嵌入匹配字体。"
 ---
 
-云端模式会上传已准备好的 HTML 输入，创建 HTML 转换任务，等待任务完成，下载结果并写入指定输出路径。
+如果希望由 DeckFlow 执行转换，或者生成的 PPTX 需要嵌入匹配字体，请选择云端模式。CLI 会在本地准备输入，上传文件，等待 DeckFlow 异步任务完成，然后下载结果并写入指定路径。
+
+```text
+HTML / SVG → 上传 → DeckFlow 任务 → 下载 → PPTX / PNG
+                          └────────────→ 聚合任务结果
+```
+
+## 本地还是云端？
+
+| | 本地模式 | 云端模式 |
+| --- | --- | --- |
+| 源文件 | 保留在当前机器 | 上传至 DeckFlow |
+| 认证 | 不需要 | 限频游客、浏览器登录或 API Key |
+| 接入方式 | CLI 和 Node.js API | CLI |
+| 浏览器要求 | 需要本机 Chromium | 云端 PNG 不需要；当前云端 PPTX CLI 仍会使用它完成转换后统计 |
+| PPTX 字体嵌入 | 仅自动处理 Font Awesome，其他字体不会嵌入 | 可通过 `--embed-fonts` 嵌入匹配字体 |
+| 映射控制 | 元素排除与标识、动画、转场、iframe；Node.js API 还支持严格检查 | 这些本地控制不会传给云端任务 |
+| 转换报告 | 详细的幻灯片级和元素级报告 | 任务未返回元素明细时生成聚合报告 |
+
+<Tip>
+  云端模式并不是更快的本地模式。两者的数据边界和映射控制范围不同。需要托管执行或字体嵌入时选择云端，不要把两种模式当作可以随时互换的默认项。
+</Tip>
+
+## 哪些内容会被上传
+
+CLI 会在创建任务前把输入准备为本地文件：
+
+- 本地 HTML 或 SVG 直接从磁盘上传。
+- 标准输入先写入临时 HTML 文件，再上传。
+- HTTP(S) URL 由本机 Node.js 进程下载为 HTML 文本，临时保存后上传。
+- 多个输入按照命令中的顺序上传，并由任务合并。
+
+URL 下载不会继承 Cookie、自定义请求头、当前浏览器 DOM 或浏览器登录会话。对于需要认证的 HTML，请先在应用中完成下载，再把本地文件交给 DeckHTML。
+
+## 执行云端转换
+
+直接使用限频游客任务：
 
 ```bash
 deckhtml deck.html -o deck.pptx --mode cloud
+```
+
+为 PPTX 嵌入匹配字体：
+
+```bash
 deckhtml deck.html -o deck.pptx --mode cloud --embed-fonts
 ```
 
-## 认证行为
-
-云端模式支持稳定的访客 UUID。访客请求会被限频；DeckHTML CLI 会自动启动游客任务。生产环境建议登录或配置 API Key。
+生成 PNG：
 
 ```bash
-deckhtml auth login
+deckhtml deck.html -o preview.png --mode cloud
+```
+
+没有凭证时，CLI 会创建并显式启动游客任务；通过认证的任务会自动启动。
+
+## 选择认证方式
+
+| 方式 | 配置 | 适用场景 |
+| --- | --- | --- |
+| 游客 | 无需配置 | 体验和有限调用 |
+| 浏览器登录 | `deckhtml auth login` | 使用 DeckFlow 账号的交互式开发 |
+| API Key | `deckhtml config set api-key <key>` 或 `DECKHTML_API_KEY` | CI、服务端和生产自动化 |
+
+```bash
 deckhtml auth status
+deckhtml auth login
 deckhtml config set api-key <key>
 ```
 
-CI 环境使用 `DECKHTML_API_KEY`，无需交互式存储凭证。
+凭证优先级、存储位置、退出行为和 API Key 获取路径见[认证](/zh/deckhtml/authentication)。
 
-凭证优先级、存储方式和状态行为见[认证](/zh/deckhtml/authentication)。
+## 云端转换参数
 
-## 与本地模式的区别
+当前云端任务会接收：
 
-- 转换通过 DeckOps 任务远程执行。
-- PPTX 输出支持 `--embed-fonts`。
-- 异步任务完成后才下载结果文件。
-- 当前云端没有返回逐元素报告时，Report 会使用聚合转换统计。
-- 本地映射控制项（`--exclude`、元素标识、动画、转场和 iframe 处理）不会传递到当前云端任务。
+- 根据 `.pptx` 或 `.png` 推断的输出格式；
+- 归一化为 `mac` 或 `win` 的目标平台；
+- 显式指定或从源文件检测出的视口宽度和高度；
+- 是否嵌入匹配字体。
+
+用于控制本地检查的选项——元素排除与标识、动画、页面转场、iframe 处理、浏览器注入和 Node.js 严格检查——不会传给云端任务。如果这些控制属于交付要求，请使用[本地模式](/zh/deckhtml/guides/local-mode)。
+
+## 结果与报告
+
+任务完成后，CLI 下载结果并写入指定路径。使用 `--report` 时，如果云端任务没有返回逐元素报告，DeckHTML 会生成聚合信息，包括输入、输出、模式、格式、幻灯片数量、元素统计、字体、视口、目标平台和耗时。
 
 <Warning>
-  PPTX 的主体转换在云端执行，但当前 CLI 会在下载后于本地再次检查 HTML，以生成页数和字体统计。因此 CLI 的云端 PPTX 路径仍需要本机存在可用 Chromium；云端 PNG 不执行这一步。
+  PPTX 主体由 DeckFlow 云端生成，但当前 CLI 下载结果后还会在本机检查源文件，用于计算幻灯片和字体统计。因此，云端 PPTX 路径仍需要本机存在可用 Chromium；云端 PNG 不执行这一步。
 </Warning>
 
-`auto` 只在已经配置凭证时选择云端，否则选择本地。
+## 固定执行模式
+
+`--mode auto` 在已经配置 API Key 或浏览器登录 Token 时选择云端，否则选择本地。生产环境和数据敏感流程应显式传入 `--mode cloud` 或 `--mode local`，避免凭证变化导致文件跨越不同的数据边界。

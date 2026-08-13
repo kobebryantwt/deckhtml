@@ -1,40 +1,100 @@
 ---
 title: Cloud Mode
 sidebarTitle: Cloud Mode
-description: "Upload DeckHTML inputs and run conversion through the DeckOps cloud task runtime."
+description: "Upload HTML or SVG to DeckFlow, run an asynchronous conversion task, and optionally embed matched fonts."
 ---
 
-Cloud mode uploads the materialized HTML inputs, creates an HTML conversion task, waits for task completion, downloads the result, and writes it to the requested output path.
+Choose cloud mode when you want DeckFlow to run the conversion or the PPTX must embed matched fonts. The CLI prepares the inputs locally, uploads them, waits for an asynchronous DeckFlow task, downloads the result, and writes it to the requested path.
+
+```text
+HTML / SVG → upload → DeckFlow task → download → PPTX / PNG
+                           └───────────────→ aggregate task result
+```
+
+## Local or cloud?
+
+| | Local mode | Cloud mode |
+| --- | --- | --- |
+| Source data | Remains on the current machine | Uploaded to DeckFlow |
+| Authentication | Not required | Rate-limited guest, browser login, or API key |
+| Interfaces | CLI and Node.js API | CLI |
+| Browser requirement | Local Chromium is required | Cloud PNG does not need it; the current cloud PPTX CLI still uses it for post-conversion statistics |
+| PPTX font embedding | Font Awesome only; other fonts are not embedded | `--embed-fonts` can embed matched fonts |
+| Mapping controls | Element exclusion and identity, animations, transitions, iframe handling, strict checks through the Node.js API | These local controls are not forwarded to the cloud task |
+| Report | Detailed slide- and element-level report | Aggregate report when the task does not return element details |
+
+<Tip>
+  Cloud mode is not simply a faster version of local mode. It has a different data boundary and currently exposes a smaller set of mapping controls. Choose it for managed execution or font embedding, not as an interchangeable default.
+</Tip>
+
+## What is uploaded
+
+The CLI always materializes the input before creating the task:
+
+- Local HTML or SVG files are uploaded from disk.
+- Standard input is first written to a temporary HTML file, then uploaded.
+- An HTTP(S) URL is fetched by the local Node.js process as HTML text, saved temporarily, then uploaded.
+- Multiple inputs are uploaded in the order supplied and combined by the task.
+
+URL fetching does not inherit cookies, custom headers, the current browser DOM, or an authenticated browser session. Download protected HTML in your application first and pass the resulting local file.
+
+## Run a cloud conversion
+
+Start with a rate-limited guest task:
 
 ```bash
 deckhtml deck.html -o deck.pptx --mode cloud
+```
+
+Embed matched fonts in a PPTX:
+
+```bash
 deckhtml deck.html -o deck.pptx --mode cloud --embed-fonts
 ```
 
-## Authentication behavior
-
-Cloud mode supports a stable guest UUID. Guest requests are rate-limited; the DeckHTML CLI starts the guest task automatically. For production use, sign in or configure an API key.
+Generate PNG output:
 
 ```bash
-deckhtml auth login
+deckhtml deck.html -o preview.png --mode cloud
+```
+
+The CLI creates and explicitly starts a guest task when no credentials are present. Authenticated tasks start automatically.
+
+## Authentication choices
+
+| Mode | Setup | Intended use |
+| --- | --- | --- |
+| Guest | No setup | Evaluation and limited use |
+| Browser login | `deckhtml auth login` | Interactive development with a DeckFlow account |
+| API key | `deckhtml config set api-key <key>` or `DECKHTML_API_KEY` | CI, servers, and production automation |
+
+```bash
 deckhtml auth status
+deckhtml auth login
 deckhtml config set api-key <key>
 ```
 
-For CI, set `DECKHTML_API_KEY` instead of storing credentials interactively.
+See [Authentication](/deckhtml/authentication) for credential precedence, storage, logout behavior, and the API-key settings path.
 
-See [Authentication](/deckhtml/authentication) for credential precedence, storage, and status behavior.
+## Cloud conversion controls
 
-## Differences from local mode
+The current cloud task receives:
 
-- Conversion runs remotely through a DeckOps task.
-- `--embed-fonts` is available for PPTX output.
-- Result files are downloaded after the asynchronous task completes.
-- Cloud report output currently uses aggregate conversion statistics when a per-element report is not returned.
-- Local mapping controls (`--exclude`, identity attributes, animations, transitions, and iframe handling) are not forwarded to the current cloud task.
+- output format inferred from `.pptx` or `.png`;
+- target platform, normalized to `mac` or `win`;
+- explicit or source-detected viewport width and height;
+- whether matched fonts should be embedded.
+
+Options that control local inspection—element exclusion and identity, animations, slide transitions, iframe handling, browser injection, and Node.js strict checks—are not forwarded to the cloud task. Run [Local Mode](/deckhtml/guides/local-mode) when those controls are part of the conversion contract.
+
+## Results and reports
+
+After the task completes, the CLI downloads the returned file and writes it to the requested output path. With `--report`, cloud mode writes aggregate information such as input, output, mode, format, slide count, element totals, fonts, viewport, platform, and duration when a per-element report is not returned.
 
 <Warning>
-  Cloud PPTX conversion is remote, but the current CLI performs a local post-conversion HTML inspection to report slide and font statistics. A usable local Chromium is therefore still required for the CLI's cloud PPTX path. Cloud PNG skips this post-inspection.
+  The PPTX itself is generated in DeckFlow cloud, but the current CLI inspects the source locally after download to calculate slide and font statistics. The cloud PPTX path therefore still requires usable local Chromium. Cloud PNG skips this local post-conversion inspection.
 </Warning>
 
-`auto` mode selects cloud only when credentials are already configured; otherwise it selects local mode.
+## Make mode selection predictable
+
+`--mode auto` selects cloud when an API key or browser-login token is already configured; otherwise it selects local mode. For production and data-sensitive workflows, pass `--mode cloud` or `--mode local` explicitly so a credential change cannot move processing across the data boundary.
