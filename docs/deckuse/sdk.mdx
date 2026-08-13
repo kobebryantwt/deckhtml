@@ -6,12 +6,12 @@ description: "Execute DeckUse's versioned workspace command protocol from Node.j
 
 The `@deckflow/deckuse` package exports two high-level entry points:
 
-- `createDefaultExecutor()` creates an executor with the PPTX adapter and reserved adapters registered.
+- `createDefaultExecutor()` creates an executor ready to operate on PPTX workspaces.
 - `runCommand(input)` creates an executor and executes one complete command.
 
-<Warning>
-  The source API is implemented and tested, but the current `@deckflow/deckuse@1.0.0` registry package cannot resolve four private placeholder adapters in its dependency list. Develop against the cloned workspace until the published dependency set is corrected.
-</Warning>
+```bash
+npm install @deckflow/deckuse
+```
 
 ## Result contract
 
@@ -23,7 +23,7 @@ type Result<T> =
   | { ok: false; error: DeckuseError; diagnostics: Diagnostic[] };
 ```
 
-Stable error codes include `INVALID_COMMAND`, `WORKSPACE_NOT_FOUND`, `ELEMENT_NOT_FOUND`, `FORMAT_NOT_IMPLEMENTED`, `VALIDATION_FAILED`, `TRANSACTION_CONFLICT`, and `IO_ERROR`.
+Stable error codes include `INVALID_COMMAND`, `WORKSPACE_NOT_FOUND`, `ELEMENT_NOT_FOUND`, `FORMAT_NOT_SUPPORTED`, `VALIDATION_FAILED`, `TRANSACTION_CONFLICT`, and `IO_ERROR`.
 
 ## Initialize and inspect
 
@@ -99,6 +99,6 @@ if (!committed.ok) throw new Error(committed.error.message);
 
 ## Lower-level packages
 
-The source workspace also exposes `@deckflow/deckuse-core`, `@deckflow/deckuse-opc`, and `@deckflow/deckuse-pptx`. They provide the command schema, `Executor`, adapter registry, OPC archive primitives, PPTX capabilities, index builder, and format adapter. Prefer the aggregate API unless you are implementing an adapter or integrating the protocol at a lower level.
+The published `@deckflow/deckuse-core`, `@deckflow/deckuse-opc`, and `@deckflow/deckuse-pptx` packages provide the command schema, `Executor`, adapter registry, OPC archive primitives, PPTX capabilities, index builder, and format adapter. Prefer the aggregate API unless you are implementing an adapter or integrating the protocol at a lower level.
 
 Use [Command Reference](/deckuse/commands) for every command shape and [Selectors](/deckuse/selectors) for query behavior.

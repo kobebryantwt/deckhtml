@@ -42,7 +42,7 @@ Use the English or Simplified Chinese section that matches the developer's langu
 ## DeckUse
 
 - [DeckUse Overview](https://docs.deckflow.com/deckuse/overview.md): Inspect and modify an existing PPTX locally through a versioned command workspace.
-- [DeckUse Quickstart](https://docs.deckflow.com/deckuse/quick-start.md): Install from source, query and replace known text, validate, commit, and verify an updated PPTX.
+- [DeckUse Quickstart](https://docs.deckflow.com/deckuse/quick-start.md): Install the CLI, query and replace known text, validate, commit, and verify an updated PPTX.
 - [CLI](https://docs.deckflow.com/deckuse/cli.md): Use init, inspect, query, apply, validate, and commit safely.
 - [JSON Commands](https://docs.deckflow.com/deckuse/commands.md): Build commands for text, properties, geometry, slides, elements, pictures, charts, and batches.
 - [Selectors](https://docs.deckflow.com/deckuse/selectors.md): Query the index and reuse revision-aware element references.

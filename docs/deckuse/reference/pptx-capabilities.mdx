@@ -4,7 +4,7 @@ sidebarTitle: PPTX Capabilities
 description: "Check exactly which PPTX structures DeckUse indexes, modifies, preserves, and validates."
 ---
 
-PPTX is DeckUse's only implemented editing adapter. This page separates indexed content from writable content so an integration does not assume that every object returned by `inspect` supports every mutation.
+This page separates indexed PPTX content from writable content so an integration does not assume that every object returned by `inspect` supports every mutation.
 
 ## Indexed structures
 
@@ -52,5 +52,4 @@ DeckUse is not a renderer or visual QA engine. Package validation checks unresol
 
 Chart commands update the OOXML chart cache. When an embedded workbook exists, DeckUse returns `EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED` because the workbook is not rewritten.
 
-DOCX, XLSX, Keynote, and Numbers adapters currently return `FORMAT_NOT_IMPLEMENTED`. Use [DeckRender](/deckrender/overview) for visual output and [DeckOps](/deckops/overview) for parsing or conversion.
-
+Use [DeckRender](/deckrender/overview) for visual output and [DeckOps](/deckops/overview) for parsing or conversion.

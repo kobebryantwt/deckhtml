@@ -9,28 +9,21 @@ description: "使用 DeckUse 查询已知 PPTX，执行确认后的文本替换�
 ## 前置条件
 
 - Node.js 18 或更高版本
-- 当前源码安装需要 pnpm 10 和 Git
 - 不需要 DeckFlow 账号或 API Key
-
-<Note>
-  DeckUse 包含 CLI，标准安装命令应为 `npm install -g @deckflow/deckuse`。但是当前 1.0.0 软件包无法解析依赖列表中的私有占位适配器；软件包元数据修正前，下面的步骤会从源码构建并链接同一个 CLI。
-</Note>
 
 ## 运行示例
 
 <Steps>
   <Step title="安装 CLI">
     ```bash
-    git clone https://github.com/deckflow/deckuse.git
-    cd deckuse
-    pnpm install
-    pnpm install:global
+    npm install -g @deckflow/deckuse
+    deckuse --version
     deckuse --help
     ```
   </Step>
   <Step title="下载已知演示文稿">
     ```bash
-    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
       -o input.pptx
     ```
 

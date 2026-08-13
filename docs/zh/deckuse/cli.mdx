@@ -10,7 +10,13 @@ CLI 提供六个工作流命令。`replaceText`、`setProperties`、`add`、`rem
 deckuse <command> [arguments] [options]
 ```
 
-当前可验证的源码安装方式请查看[快速开始](/zh/deckuse/quick-start)。
+安装 CLI 并验证可执行程序：
+
+```bash
+npm install -g @deckflow/deckuse
+deckuse --version
+deckuse --help
+```
 
 ## 命令
 
@@ -31,17 +37,13 @@ deckuse query --help
 deckuse help apply
 ```
 
-<Note>
-  当前 `deckuse --version` 输出的是 CLI 内部的 `0.0.0` 占位值，而不是软件包版本。该值接入软件包元数据前，不要用它判断最低版本。
-</Note>
-
 ## `init`
 
 ```bash
 deckuse init input.pptx ./workspace --json
 ```
 
-两个位置参数分别是源文件和目标工作区。命令解析器可以识别 `.pptx`、`.docx`、`.xlsx`、`.key` 和 `.numbers`，但目前只有 PPTX 实现了适配器；其他格式返回 `FORMAT_NOT_IMPLEMENTED`。
+两个位置参数分别是源 PPTX 和目标工作区。DeckUse 会先验证文件包，再创建工作区。
 
 ## `inspect`
 

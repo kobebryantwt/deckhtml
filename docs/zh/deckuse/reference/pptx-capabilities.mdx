@@ -4,7 +4,7 @@ sidebarTitle: PPTX 能力
 description: "准确了解 DeckUse 可以索引、修改、保留和校验哪些 PPTX 结构。"
 ---
 
-PPTX 是 DeckUse 当前唯一实现的编辑适配器。本页把“可以索引的内容”和“可以写入的内容”分开说明，避免接入方误以为 `inspect` 返回的每种对象都支持所有修改操作。
+本页把“可以索引的 PPTX 内容”和“可以写入的内容”分开说明，避免接入方误以为 `inspect` 返回的每种对象都支持所有修改操作。
 
 ## 可索引结构
 
@@ -52,5 +52,4 @@ DeckUse 不是渲染或视觉质检引擎。文件包校验会检查无法解析
 
 图表命令修改 OOXML 图表缓存。存在内嵌工作簿时，DeckUse 返回 `EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED`，因为工作簿本身不会被重写。
 
-DOCX、XLSX、Keynote 和 Numbers 适配器当前返回 `FORMAT_NOT_IMPLEMENTED`。需要视觉产物时使用 [DeckRender](/zh/deckrender/overview)，需要解析或转换时使用 [DeckOps](/zh/deckops/overview)。
-
+需要视觉产物时使用 [DeckRender](/zh/deckrender/overview)，需要解析或转换时使用 [DeckOps](/zh/deckops/overview)。

@@ -114,17 +114,10 @@ Continue with the [DeckOps Quickstart](/deckops/quick-start) for progress handli
 
 <span className="product-kicker">Local · existing PPTX · editable output</span>
 
-<Warning>
-  DeckUse provides a `deckuse` CLI and its intended install command is `npm install -g @deckflow/deckuse`. The current 1.0.0 Registry metadata references four private placeholder adapters, however, so that install cannot resolve all dependencies. The commands below build and link the same CLI from source until the published dependency list is corrected.
-</Warning>
-
 ```bash
-git clone https://github.com/deckflow/deckuse.git
-cd deckuse
-pnpm install
-pnpm install:global
-deckuse --help
-curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o input.pptx
+npm install -g @deckflow/deckuse
+deckuse --version
+curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx -o input.pptx
 deckuse init input.pptx ./workspace --json
 printf '%s\n' '{"type":"replaceText","find":"2025","replace":"2026"}' \
   | deckuse apply ./workspace --json
@@ -132,7 +125,7 @@ deckuse validate ./workspace --json
 deckuse commit ./workspace -o updated.pptx --json
 ```
 
-DeckUse works locally through a versioned workspace. Its CLI can inspect and query PPTX structure, update text, properties and geometry, add/duplicate/remove supported slides and elements, work with pictures, tables and chart caches, then export another PPTX. Other document adapters remain unimplemented. Follow the [DeckUse Quickstart](/deckuse/quick-start) for prerequisites, expected query output, and final verification.
+DeckUse works locally through a versioned workspace. Its CLI can inspect and query PPTX structure, update text, properties and geometry, add/duplicate/remove supported slides and elements, work with pictures, tables and chart caches, then export another PPTX. Follow the [DeckUse Quickstart](/deckuse/quick-start) for prerequisites, expected query output, and final verification.
 
 ## DeckHTML: generate a PPTX locally
 

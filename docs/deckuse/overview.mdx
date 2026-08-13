@@ -12,7 +12,7 @@ DeckUse is a local, schema-driven document operation engine for coding agents. I
 | Output | A versioned local workspace and an updated `.pptx` |
 | Execution | Local Node.js process; documents are not uploaded |
 | Interfaces | `deckuse` CLI and Node.js `runCommand()` API |
-| Runtime | Node.js 18 or later; source development uses pnpm 10 |
+| Runtime | Node.js 18 or later |
 | Authentication | None |
 
 ```text
@@ -33,23 +33,15 @@ existing.pptx → init workspace → inspect / query → apply JSON commands
   DeckUse is structural, not visual. It does not render slides, detect overlap, judge layout quality, or decide which edits are appropriate. Render or open the exported PPTX before delivery.
 </Note>
 
-## Current format boundary
-
-PPTX is the only implemented editing adapter. DOCX, XLSX, Keynote, and Numbers names are reserved in the command layer, but initialization returns `FORMAT_NOT_IMPLEMENTED`; they are not supported editing targets.
+## PPTX preservation boundary
 
 DeckUse preserves unknown package parts and untouched XML where possible. ZIP entries are recompressed, so an unchanged entry is compared by its uncompressed content rather than byte-for-byte ZIP identity. Text replacement can collapse multiple text runs into one run while retaining the first run's style.
-
-## Package availability
-
-<Warning>
-  The repository provides both the `deckuse` CLI and Node.js API. However, the current `@deckflow/deckuse@1.0.0` registry package declares four private placeholder adapters as dependencies, so `npm install -g @deckflow/deckuse` currently fails while resolving them. Use the same CLI through the source installation in the Quickstart until the published dependency list is corrected.
-</Warning>
 
 ## Continue
 
 <CardGroup cols={2}>
   <Card title="Quickstart" href="/deckuse/quick-start">
-    Install from source, update a known PPTX, validate it, and export a new file.
+    Install the CLI, update a known PPTX, validate it, and export a new file.
   </Card>
   <Card title="Workspace workflow" href="/deckuse/workspace">
     Understand revisions, operation logs, validation, dry runs, and commits.

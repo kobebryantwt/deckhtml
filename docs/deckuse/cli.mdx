@@ -10,7 +10,13 @@ The CLI exposes six workflow commands. Mutations such as `replaceText`, `setProp
 deckuse <command> [arguments] [options]
 ```
 
-Follow the [Quickstart](/deckuse/quick-start) for the currently verified source installation.
+Install the CLI and verify the executable:
+
+```bash
+npm install -g @deckflow/deckuse
+deckuse --version
+deckuse --help
+```
 
 ## Commands
 
@@ -31,17 +37,13 @@ deckuse query --help
 deckuse help apply
 ```
 
-<Note>
-  `deckuse --version` currently prints the CLI's `0.0.0` placeholder rather than the package release. Do not use it to enforce a minimum version until that value is wired to package metadata.
-</Note>
-
 ## `init`
 
 ```bash
 deckuse init input.pptx ./workspace --json
 ```
 
-The positional arguments are the source file and destination workspace. The command parser recognizes `.pptx`, `.docx`, `.xlsx`, `.key`, and `.numbers`, but only PPTX has an implemented adapter; the other formats return `FORMAT_NOT_IMPLEMENTED`.
+The positional arguments are the source PPTX and destination workspace. DeckUse verifies the package before creating the workspace.
 
 ## `inspect`
 

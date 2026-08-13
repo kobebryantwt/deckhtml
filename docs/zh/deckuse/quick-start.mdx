@@ -1,37 +1,25 @@
 ---
 title: DeckUse 快速开始
 sidebarTitle: 快速开始
-description: "从源码安装 DeckUse，检查并替换已知 PPTX 中的文本，校验工作区并导出结果。"
+description: "安装 DeckUse，检查并替换已知 PPTX 中的文本，校验工作区并导出结果。"
 ---
 
-本流程全部在本机执行，不需要 DeckFlow 账号或 API Key。当前公开包的依赖尚未完整发布，因此这里使用源码安装。
+本流程全部在本机执行，不需要 DeckFlow 账号或 API Key。
 
 <Steps>
-  <Step title="检查运行环境">
-    请安装 Node.js 18 或更高版本、pnpm 10 和 Git。
+  <Step title="安装 CLI">
+    请先安装 Node.js 18 或更高版本，再从 npm 安装 DeckUse：
 
     ```bash
     node --version
-    pnpm --version
-    git --version
-    ```
-  </Step>
-  <Step title="构建并链接 CLI">
-    DeckUse 确实提供 CLI。标准安装方式应为 `npm install -g @deckflow/deckuse`，但当前 1.0.0 软件包无法解析其中的私有占位适配器。在依赖列表修正前，请从源码构建并全局链接同一个 CLI：
-
-    ```bash
-    git clone https://github.com/deckflow/deckuse.git
-    cd deckuse
-    pnpm install
-    pnpm install:global
+    npm install -g @deckflow/deckuse
+    deckuse --version
     deckuse --help
     ```
-
-    `pnpm install:global` 会构建全部工作区软件包、部署自包含的生产依赖树，并链接 `deckuse` 可执行程序。当前 `--version` 输出仍是内部占位值，请使用 `deckuse --help` 验证安装，不要根据显示的版本号判断依赖版本。
   </Step>
   <Step title="下载已知 PPTX">
     ```bash
-    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
       -o input.pptx
     ```
 

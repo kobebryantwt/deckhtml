@@ -9,28 +9,21 @@ This example changes `Revenue 2025` to `Revenue 2026` in a known presentation. T
 ## Prerequisites
 
 - Node.js 18 or later
-- pnpm 10 and Git for the current source installation
 - No DeckFlow account or API key
-
-<Note>
-  DeckUse includes a CLI. Its intended install command is `npm install -g @deckflow/deckuse`, but the current 1.0.0 package cannot resolve private placeholder adapters in its dependency list. The following step builds and links the same CLI from source until that package metadata is corrected.
-</Note>
 
 ## Run the example
 
 <Steps>
   <Step title="Install the CLI">
     ```bash
-    git clone https://github.com/deckflow/deckuse.git
-    cd deckuse
-    pnpm install
-    pnpm install:global
+    npm install -g @deckflow/deckuse
+    deckuse --version
     deckuse --help
     ```
   </Step>
   <Step title="Download the known presentation">
     ```bash
-    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
       -o input.pptx
     ```
 
@@ -100,4 +93,3 @@ This example changes `Revenue 2025` to `Revenue 2026` in a known presentation. T
     Map result envelopes, diagnostics, conflicts, and exit status into application logic.
   </Card>
 </CardGroup>
-

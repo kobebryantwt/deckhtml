@@ -1,37 +1,25 @@
 ---
 title: DeckUse Quickstart
 sidebarTitle: Quickstart
-description: "Install DeckUse from source, inspect and replace text in a known PPTX, validate the workspace, and export the result."
+description: "Install DeckUse, inspect and replace text in a known PPTX, validate the workspace, and export the result."
 ---
 
-This path runs entirely on your machine and requires no DeckFlow account or API key. It uses the source installation because the current public package has an incomplete published dependency set.
+This path runs entirely on your machine and requires no DeckFlow account or API key.
 
 <Steps>
-  <Step title="Check the runtime">
-    Install Node.js 18 or later, pnpm 10, and Git.
+  <Step title="Install the CLI">
+    Install Node.js 18 or later, then install DeckUse from npm:
 
     ```bash
     node --version
-    pnpm --version
-    git --version
-    ```
-  </Step>
-  <Step title="Build and link the CLI">
-    DeckUse does provide a CLI. The intended installation is `npm install -g @deckflow/deckuse`, but the current 1.0.0 package cannot resolve its private placeholder adapters. Until that dependency list is corrected, build and globally link the same CLI from source:
-
-    ```bash
-    git clone https://github.com/deckflow/deckuse.git
-    cd deckuse
-    pnpm install
-    pnpm install:global
+    npm install -g @deckflow/deckuse
+    deckuse --version
     deckuse --help
     ```
-
-    `pnpm install:global` builds every workspace package, deploys a self-contained production tree, and links the `deckuse` executable. The current `--version` output is an internal placeholder, so verify this build with `deckuse --help` rather than using the displayed version for dependency checks.
   </Step>
   <Step title="Download a known PPTX">
     ```bash
-    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
       -o input.pptx
     ```
 

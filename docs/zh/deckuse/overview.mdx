@@ -12,7 +12,7 @@ DeckUse 是面向 Coding Agent 的本地、Schema 驱动文档操作引擎。它
 | 输出 | 带版本的本地工作区，以及修改后的 `.pptx` |
 | 执行位置 | 本地 Node.js 进程；不会上传文档 |
 | 接入方式 | `deckuse` CLI 和 Node.js `runCommand()` API |
-| 运行环境 | Node.js 18 或更高版本；源码开发使用 pnpm 10 |
+| 运行环境 | Node.js 18 或更高版本 |
 | 认证 | 不需要 |
 
 ```text
@@ -33,23 +33,15 @@ existing.pptx → 初始化工作区 → 检查 / 查询 → 执行 JSON 命令
   DeckUse 处理结构，不处理视觉判断。它不会渲染幻灯片、检测元素重叠、评价版式，也不会替 Agent 决定该修改什么。交付前仍需打开或渲染导出的 PPTX。
 </Note>
 
-## 当前格式边界
-
-目前只实现了 PPTX 编辑适配器。命令层预留了 DOCX、XLSX、Keynote 和 Numbers 名称，但初始化会返回 `FORMAT_NOT_IMPLEMENTED`；它们还不是可编辑目标。
+## PPTX 保留边界
 
 DeckUse 会尽量保留未知的文件包 Part 和未修改的 XML。ZIP 条目会被重新压缩，因此未修改内容按解压后的数据保持一致，不保证 ZIP 字节完全相同。文本替换可能把多个文本 Run 合并成一个 Run，并保留第一个 Run 的样式。
-
-## 软件包可用状态
-
-<Warning>
-  仓库同时提供 `deckuse` CLI 和 Node.js API。但是当前 Registry 中的 `@deckflow/deckuse@1.0.0` 把四个私有占位适配器声明为依赖，导致 `npm install -g @deckflow/deckuse` 在解析依赖时失败。公开依赖列表修正前，请按照快速开始从源码安装同一个 CLI。
-</Warning>
 
 ## 继续接入
 
 <CardGroup cols={2}>
   <Card title="快速开始" href="/zh/deckuse/quick-start">
-    从源码安装、修改已知 PPTX、校验工作区并导出新文件。
+    安装 CLI、修改已知 PPTX、校验工作区并导出新文件。
   </Card>
   <Card title="工作区流程" href="/zh/deckuse/workspace">
     了解版本、操作日志、校验、试运行和提交。

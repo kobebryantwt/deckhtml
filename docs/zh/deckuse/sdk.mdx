@@ -6,12 +6,12 @@ description: "在 Node.js 18 或更高版本中执行 DeckUse 的带版本工作
 
 `@deckflow/deckuse` 软件包提供两个高层入口：
 
-- `createDefaultExecutor()` 创建注册了 PPTX 适配器和预留适配器的执行器。
+- `createDefaultExecutor()` 创建可以操作 PPTX 工作区的执行器。
 - `runCommand(input)` 创建执行器并执行一条完整命令。
 
-<Warning>
-  源码 API 已实现并通过测试，但当前 Registry 中的 `@deckflow/deckuse@1.0.0` 无法解析依赖列表中的四个私有占位适配器。公开依赖修正前，请在克隆的源码工作区中开发和验证。
-</Warning>
+```bash
+npm install @deckflow/deckuse
+```
 
 ## 结果契约
 
@@ -23,7 +23,7 @@ type Result<T> =
   | { ok: false; error: DeckuseError; diagnostics: Diagnostic[] };
 ```
 
-稳定错误码包括 `INVALID_COMMAND`、`WORKSPACE_NOT_FOUND`、`ELEMENT_NOT_FOUND`、`FORMAT_NOT_IMPLEMENTED`、`VALIDATION_FAILED`、`TRANSACTION_CONFLICT` 和 `IO_ERROR`。
+稳定错误码包括 `INVALID_COMMAND`、`WORKSPACE_NOT_FOUND`、`ELEMENT_NOT_FOUND`、`FORMAT_NOT_SUPPORTED`、`VALIDATION_FAILED`、`TRANSACTION_CONFLICT` 和 `IO_ERROR`。
 
 ## 初始化并检查
 
@@ -99,6 +99,6 @@ if (!committed.ok) throw new Error(committed.error.message);
 
 ## 底层软件包
 
-源码工作区还提供 `@deckflow/deckuse-core`、`@deckflow/deckuse-opc` 和 `@deckflow/deckuse-pptx`，其中包含命令 Schema、`Executor`、适配器注册表、OPC 文件包原语、PPTX 能力、索引构建器和格式适配器。除非要实现适配器或在更底层接入协议，否则优先使用聚合 API。
+已发布的 `@deckflow/deckuse-core`、`@deckflow/deckuse-opc` 和 `@deckflow/deckuse-pptx` 软件包包含命令 Schema、`Executor`、适配器注册表、OPC 文件包原语、PPTX 能力、索引构建器和格式适配器。除非要实现适配器或在更底层接入协议，否则优先使用聚合 API。
 
 全部命令结构请查看[命令参考](/zh/deckuse/commands)，查询行为请查看[选择器](/zh/deckuse/selectors)。
