@@ -26,6 +26,17 @@ deckhtml auth status
 
 ## API Key
 
+配置开发机器或 CI 环境前，先获取 API Key：
+
+<Steps>
+  <Step title="打开 DeckFlow 设置">
+    登录 DeckFlow，然后访问 [API Key 设置页面](https://app.deckflow.com/start#settings)。
+  </Step>
+  <Step title="创建并保存 API Key">
+    在设置页面中配置 API Key，复制后保存到开发或生产环境使用的安全凭证存储中。
+  </Step>
+</Steps>
+
 CI 中优先使用环境密钥：
 
 ```bash
@@ -40,7 +51,7 @@ deckhtml config set api-key "your-api-key"
 deckhtml auth status
 ```
 
-环境变量的优先级高于已保存的 API Key。不要提交凭证文件，也不要把 API Key 放入浏览器代码。
+环境变量的优先级高于已保存的 API Key。不要提交凭证文件、把 API Key 放入浏览器代码或输出到日志。
 
 ## 游客模式
 

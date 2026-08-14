@@ -17,6 +17,19 @@ Login opens the DeckFlow authorization page and stores the returned token in `~/
 
 ## API key
 
+Get an API key before configuring the CLI:
+
+<Steps>
+  <Step title="Open DeckFlow Settings">
+    Sign in to DeckFlow and open [API Key Settings](https://app.deckflow.com/start#settings).
+  </Step>
+  <Step title="Create and store the key">
+    Configure an API key in Settings, copy it once, and save it in the secret store used by your development or production environment.
+  </Step>
+</Steps>
+
+Configure the key on a developer workstation:
+
 ```bash
 deckrender config set api-key YOUR_API_KEY
 deckrender auth status
@@ -30,6 +43,10 @@ deckrender hello.html -o hello.png --json --quiet
 ```
 
 `DECKRENDER_API_KEY` has higher priority than `DECKFLOW_API_KEY`; `DECKHTML_API_KEY` is also recognized for compatibility.
+
+<Warning>
+  Treat the API key as a server-side secret. Do not place it in browser code, commit it to a repository, or print it in logs.
+</Warning>
 
 ## Credential resolution
 

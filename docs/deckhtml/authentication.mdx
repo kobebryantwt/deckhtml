@@ -26,6 +26,17 @@ Browser login is how the CLI obtains and stores a user session token; it is not 
 
 ## API key
 
+Get an API key before configuring a workstation or CI environment:
+
+<Steps>
+  <Step title="Open DeckFlow Settings">
+    Sign in to DeckFlow and open [API Key Settings](https://app.deckflow.com/start#settings).
+  </Step>
+  <Step title="Create and store the key">
+    Configure an API key in Settings, copy it once, and save it in the secret store used by your development or production environment.
+  </Step>
+</Steps>
+
 Prefer an environment secret in CI:
 
 ```bash
@@ -40,7 +51,7 @@ deckhtml config set api-key "your-api-key"
 deckhtml auth status
 ```
 
-The environment variable takes precedence over the persisted API key. Do not commit the credentials file or place an API key in browser code.
+The environment variable takes precedence over the persisted API key. Do not commit the credentials file, place an API key in browser code, or expose it in logs.
 
 ## Guest mode
 
