@@ -1,148 +1,75 @@
 ---
-title: 常见工作流
-sidebarTitle: 常见工作流
-description: "把真实应用工作流对应到 DeckProbe、DeckRender、DeckOps、DeckUse 和 DeckHTML。"
+title: 常见 Agent 工作流
+sidebarTitle: Agent 工作流
+description: "根据 Agent 需要完成的文档任务，选择对应的 DeckFlow 产品。"
 ---
 
-确定应用需要的结果后，再使用本页选择实际工作流。每条路径都会说明起始输入、产品顺序、最终契约，以及文档字节在何处离开本机。
+先确定 Agent 要执行的动作，以及应用最终需要的结果。每个 DeckFlow 产品都有独立契约：一个任务只需要一种结果时调用一个产品，确实需要多种结果时再组合调用。
 
-| 应用目标 | 推荐路径 | 最终结果 |
+## 五类常见 Agent 场景
+
+<CardGroup cols={2}>
+  <Card title="检查收到的附件" icon="shield-halved" iconType="solid" href="/zh/deckprobe/overview" cta="使用 DeckProbe" arrow>
+    文件接收 Agent 在接收或路由前，验证真实格式、数量、加密状态、结构和内嵌资源。文档不需要上传，Agent 可以直接使用本地返回的结构化事实。
+  </Card>
+  <Card title="让 Agent 看见文档" icon="eye" iconType="solid" href="/zh/deckrender/guides/render-images" cta="使用 DeckRender" arrow>
+    多模态或评审 Agent 把支持的文档生成页面图片、缩略图、PDF 或视频，获得写出的视觉产物及其结构化结果。
+  </Card>
+  <Card title="为检索和推理准备文档内容" icon="file-lines" iconType="solid" href="/zh/deckops/parse" cta="使用 DeckOps" arrow>
+    知识处理 Agent 把支持的文档解析成 Markdown 或格式专属结构化内容，用于索引、检索、摘要和后续推理。
+  </Card>
+  <Card title="维护现有演示文稿" icon="pen-to-square" iconType="solid" href="/zh/deckuse/quick-start" cta="使用 DeckUse" arrow>
+    演示文稿维护 Agent 定位指定幻灯片或元素，在本地执行已经确定的内容和属性修改，校验后导出另一份可编辑 PPTX。
+  </Card>
+  <Card title="从应用数据生成演示文稿" icon="code" iconType="solid" href="/zh/deckhtml/quick-start" cta="使用 DeckHTML" arrow>
+    演示文稿生成 Agent 把模板、应用数据或生成式 HTML/SVG 转成可编辑 PPTX 或页面 PNG，并获得可编辑性和视觉降级诊断。
+  </Card>
+</CardGroup>
+
+## Agent 会得到什么
+
+| Agent 任务 | 产品 | 主要结果 | 执行边界 |
+| --- | --- | --- | --- |
+| 判断文件是否继续处理以及进入哪条路径 | DeckProbe | Schema v2 文档事实与证据 | 本地 |
+| 查看或交付文档的视觉内容 | DeckRender | 图片、PDF、视频和 `RenderResult` | 多数使用云端，部分路径本地执行 |
+| 读取、索引、提取或转换文档内容 | DeckOps | Markdown、格式专属 JSON 或转换文件 | 云端 |
+| 对现有 PPTX 执行明确修改 | DeckUse | 修改后仍可编辑的 PPTX 与操作结果 | 本地 |
+| 从 HTML 或 SVG 创建新 Deck | DeckHTML | 可编辑 PPTX 或页面 PNG，以及转换诊断 | 本地或云端 |
+
+## 常见组合方式
+
+各产品不会自动调用其他产品。应用或 Agent 应根据每一步所需结果决定是否组合：
+
+| 工作流 | 调用顺序 | 组合原因 |
 | --- | --- | --- |
-| 在云端处理前控制上传入口 | DeckProbe → 应用策略 | 接收、拒绝或路由 |
-| 构建搜索、RAG 或文档理解 | DeckOps Parse | Markdown 或结构化内容 |
-| 为评审界面加入预览 | DeckRender | 图片、PDF 或受支持的视频 |
-| 个性化修改现有演示文稿 | DeckUse | 修改后仍可编辑的 PPTX |
-| 从应用数据生成演示文稿 | DeckHTML | 带映射诊断的 PPTX，或 PNG 图片 |
-| 校验、解析并预览同一上传文件 | DeckProbe → DeckOps → DeckRender | 策略、内容和视觉产物 |
+| 安全的多模态附件评审 | DeckProbe → 应用策略 → DeckRender | 先在本地验证附件，再把通过检查的文件渲染成视觉内容供模型或评审界面使用。 |
+| 受控的文档入库 | DeckProbe → 应用策略 → DeckOps | 上传前先检查文件身份和安全事实，再解析或转换通过检查的文件。 |
+| 修改并检查演示文稿 | DeckUse → DeckRender | 在本地修改可编辑 PPTX，再渲染导出文件进行视觉检查。 |
+| 根据源材料生成新演示文稿 | DeckOps → 应用逻辑 → DeckHTML | 解析源内容，由应用整理为数据或 HTML，再生成新的 Deck。 |
 
-## 常见 Agent 场景
+<Note>
+  请独立保存每个产品的结果。探测报告、解析结果、渲染产物、PPTX 修改结果和 HTML 转换报告具有不同的重试、缓存和校验规则。
+</Note>
 
-面向 Agent 工作流的三个运行时问题，当前分别映射到 DeckProbe、DeckRender 和 DeckOps：先判断文件是什么以及如何路由，再按需生成视觉视图，或在云端解析和处理文档内容。
-
-### DeckProbe：上传前完成判断
-
-<CardGroup cols={2}>
-  <Card title="附件预检与任务路由" icon="route" iconType="solid" href="/zh/deckprobe/overview">
-    在本地验证真实格式、加密、宏、结构、数量和资源事实，再由 Agent 选择下一项工具。
-  </Card>
-  <Card title="批量盘点与策略检查" icon="boxes-stacked" iconType="solid" href="/zh/deckprobe/cli/automation-and-output">
-    使用 JSONL、资源预算、稳定报告和退出状态批量处理文件，接入上传网关或文档资产盘点。
-  </Card>
-</CardGroup>
-
-### DeckRender：生成视觉视图
-
-<CardGroup cols={2}>
-  <Card title="多模态文档查看" icon="eye" iconType="solid" href="/zh/deckrender/overview">
-    生成页面或幻灯片图片，供应用用作模型输入、评审界面、缩略图或人工检查。
-  </Card>
-  <Card title="预览与交付产物" icon="images" iconType="solid" href="/zh/deckrender/formats">
-    选择当前已实现的图片、PDF 或视频路线，并确认格式对应的保真限制与执行边界。
-  </Card>
-</CardGroup>
-
-### DeckOps：在云端解析和处理文档
-
-<CardGroup cols={2}>
-  <Card title="搜索、RAG 与内容理解" icon="file-lines" iconType="solid" href="/zh/deckops/parse">
-    把受支持的文档解析为 Markdown 或格式专属结构化结果，用于索引、检索和 Agent 输入。
-  </Card>
-  <Card title="格式转换与云端文档任务" icon="gears" iconType="solid" href="/zh/deckops/operations">
-    根据工作流选择提取、转换、OCR、演示文稿、图片、文件或生成任务。
-  </Card>
-</CardGroup>
-
-DeckProbe、DeckRender 和 DeckOps 分别提供独立调用与结果契约。应用只需组合实际需要的产品，不应假设一个产品会自动调用其他产品。
-
-## 在云端处理前校验文档上传
-
-<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">应用接收到的不可信 PDF、Office 或现代 iWork 文件。</span></div>
+## 开始构建工作流
 
 <Steps>
-  <Step title="本地检查">运行 DeckProbe，获取身份、加密、宏、结构、数量或资源 Target。</Step>
-  <Step title="执行策略">根据 Schema v2 证据应用接收和路由规则。</Step>
-  <Step title="明确进入下一步">只有需要云端处理时，才把通过校验的文件交给 DeckOps 或 DeckRender。</Step>
+  <Step title="确定 Agent 的最终结果">
+    在文档事实、视觉产物、结构化内容、修改后的 PPTX 和新生成的 Deck 中选择。
+  </Step>
+  <Step title="确认数据边界">
+    DeckProbe 与 DeckUse 在本地执行，DeckOps 在云端执行；DeckRender 与 DeckHTML 取决于选择的路径或模式。
+  </Step>
+  <Step title="先跑通一个产品">
+    确认它的输入、结果、错误和认证方式，再向工作流中增加其他产品。
+  </Step>
+  <Step title="只组合实际需要的结果">
+    只有 Agent 还需要第二种独立产物或判断时，才增加另一个产品。
+  </Step>
 </Steps>
 
-<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">基于证据的接收、拒绝或路由判断。DeckProbe 阶段字节留在本地，只有应用把文件交给云端产品时才会离开本机。</span></div>
-
-<Card title="从 DeckProbe 开始" href="/zh/deckprobe/quick-start">
-  安装原生 CLI，检查一个已知 PDF，并验证策略输入契约。
-</Card>
-
-## 构建搜索、RAG 或文档理解
-
-<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">受支持的 PDF、PPTX、DOCX、Keynote 文件或 HTML URL。</span></div>
-
-应用需要 Markdown 或源格式结构而不是像素时，使用 DeckOps Parse。把 Task ID 与派生结果一起保存，让失败、重试和格式专属 Schema 保持可观测。
-
-<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">用于索引和模型输入的 Markdown，或在已实现范围内包含布局、备注、元素和语义角色的格式专属结构化响应。</span></div>
-
-<Warning>
-  Parse Facade 和类型化 Parse 任务已存在于 DeckOps 仓库源码，但当前 `@deckops/sdk@0.7.3` npm 产物没有包含。实现前请先查看[解析文档](/zh/deckops/parse)及其可用性说明。
-</Warning>
-
-## 为评审和审批界面增加预览
-
-<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">受支持的文档、URL 或 stdin 流。</span></div>
-
-应用需要页面图片、缩略图、PDF 或受支持的视频，又不想管理底层 DeckOps 路由和下载时，使用 DeckRender。多数路径会把源文件上传到 DeckFlow 云端；本地 PDF 透传和 Pages/Numbers 预览提取是明确例外。
-
-<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">写入的产物，以及包含路由、页数、输出文件、字节数、耗时和保真限制的 <code>RenderResult</code>。</span></div>
-
-<Card title="从 DeckRender 开始" href="/zh/deckrender/quick-start">
-  创建已知 HTML 输入，渲染一张 PNG，并验证文件和 JSON 结果。
-</Card>
-
-## 个性化现有演示文稿
-
-<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">必须继续作为事实源的可编辑 <code>.pptx</code>。</span></div>
-
-使用 DeckUse 为现有 PPTX 建立索引、检查查询结果，并通过明确命令修改文本、属性、几何信息、幻灯片、图片、表格或图表缓存。每个输出版本使用独立的带版本工作区，完成校验后再目视检查导出的演示文稿。
-
-<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">在本地生成的另一个可编辑 PPTX，以及可复现的命令和操作记录。</span></div>
-
-<Card title="从 DeckUse 开始" href="/zh/deckuse/quick-start">
-  安装 CLI，通过 JSON 修改已知 PPTX，校验工作区并验证导出文件。
-</Card>
-
-## 从应用数据生成 Deck
-
-<div className="workflow-meta"><span className="workflow-meta-label">起始输入</span><span className="workflow-meta-value">根据模板、应用数据或生成内容编写的 HTML 或 SVG。</span></div>
-
-使用 DeckHTML 把浏览器布局尽可能映射为可编辑 PPTX 元素，并在必要时回退为栅格图像。源文件可以是一份多页 HTML，也可以是多个有序 HTML/SVG 文件。输入必须留在本机时使用本地模式；需要字体嵌入等云端专属能力时选择云端模式。
-
-<div className="workflow-meta"><span className="workflow-meta-label">最终结果</span><span className="workflow-meta-value">带有原生、矢量、栅格、忽略和不支持映射诊断的 PPTX，或按页排序的渲染 PNG 图片。</span></div>
-
-<Card title="从 DeckHTML 开始" href="/zh/deckhtml/quick-start">
-  准备 Chromium、创建一页幻灯片、生成 PPTX，并检查转换决策。
-</Card>
-
-<Card title="生成多页演示文稿" href="/zh/deckhtml/guides/multi-page-and-batch">
-  在重复幻灯片容器、有序源文件和多个自包含 HTML URL 之间选择。
-</Card>
-
-## 组合校验、内容和预览
-
-上传工作流同时需要三类结果时，让各阶段保持独立：
-
-```mermaid
-flowchart LR
-  I["上传文档"] --> P["DeckProbe 本地校验"]
-  P -->|"接收"| O["DeckOps 云端内容任务"]
-  P -->|"接收"| R["DeckRender 视觉产物"]
-  P -->|"拒绝"| X["应用拒绝"]
-  O --> A["搜索 / AI / 结构化数据"]
-  R --> U["预览 / 评审界面"]
-```
-
-DeckProbe 证据、DeckOps 结构化结果和 DeckRender 产物是三个独立契约。请分别保存和重试，不要假设一个产品会自动调用另一个产品。
-
-<CardGroup cols={2}>
-  <Card title="选择产品" href="/zh/product-guide">只需要一种结果时比较产品边界。</Card>
-  <Card title="运行最小示例" href="/zh/getting-started">查看五个产品的安装、调用和预期结果。</Card>
+<CardGroup cols={3}>
+  <Card title="选择产品" href="/zh/product-guide">比较产品目标和能力边界。</Card>
+  <Card title="运行最小示例" href="/zh/getting-started">查看每个产品的一条完整路径。</Card>
+  <Card title="复制任务示例" href="/zh/examples/overview">从已知输入和预期结果开始。</Card>
 </CardGroup>
-
-<Card title="希望直接复制运行？" icon="flask" iconType="solid" href="/zh/examples/overview" cta="浏览示例" arrow>
-  示例从一份已知文件或源代码开始，并提供命令、预期输出和验证步骤。
-</Card>

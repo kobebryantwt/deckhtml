@@ -7,7 +7,7 @@ description: "将支持的文档格式解析为结构化结果或归一化 Markd
 DeckOps 提供两个层级的解析接口：
 
 <Warning>
-  本页描述当前仓库源码实现。已发布的 `@deckops/sdk@0.7.3` 产物不包含下文的 Parse Facade、类型化 Parse 方法或 Parse 任务类型。软件包修正前，只能在经过验证的源码构建中使用这些接口。
+  不同 SDK 构建提供的 Parse 接口可能不同。使用下面的示例前，请先确认 `typeof deck.parse === 'function'`。如果不可用，请按[快速开始](/zh/deckops/quick-start)使用底层任务流程，并从[操作能力](/zh/deckops/operations)中选择已安装软件包提供的方法。
 </Warning>
 
 | 接口 | 返回结果 | 适用场景 |
@@ -52,5 +52,5 @@ const result = await deck.tasks.down<'pptx.parse'>(done.id);
 这里拿到的是 PPTX 对象模型，而不是 Markdown 投影。不同格式的契约和保真边界请参考[结构化解析结果](/zh/deckops/structured-results)。
 
 <Warning>
-  当前公开实现没有提供跨格式共享的一套 Document IR Schema。不要假设 PDF 结果中的字段也存在于 PPTX、DOCX 或 Keynote 结果中。
+  DeckOps 没有提供跨格式共享的一套 Document IR Schema。不要假设 PDF 结果中的字段也存在于 PPTX、DOCX 或 Keynote 结果中。
 </Warning>

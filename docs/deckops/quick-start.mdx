@@ -4,7 +4,7 @@ sidebarTitle: Quickstart
 description: "Install the published TypeScript SDK and complete a guest cloud task."
 ---
 
-This path creates a known HTML input, uploads it to DeckFlow cloud, explicitly starts a guest task, and verifies the returned PNG metadata. It works with the currently published `@deckops/sdk@0.7.3` and requires Node.js 18 or later.
+This path creates a known HTML input, uploads it to DeckFlow cloud, explicitly starts a guest task, and verifies the returned PNG metadata. It requires Node.js 18 or later.
 
 <Steps>
   <Step title="Prepare the project">
@@ -67,9 +67,9 @@ This path creates a known HTML input, uploads it to DeckFlow cloud, explicitly s
 
 Guest execution is rate-limited. Configure an API key or user token for production; authenticated tasks start automatically. See [Authentication](/deckops/authentication).
 
-<Warning>
-  The repository contains a newer Parse facade and typed Parse tasks, but the currently published `@deckops/sdk@0.7.3` artifact does not expose them. The Parse pages describe the source implementation and must not be treated as an installable npm contract until a corrected package is published.
-</Warning>
+<Note>
+  This quickstart uses a low-level task helper so the complete guest lifecycle is visible. Before choosing a higher-level Parse interface, check its availability in [Parse Documents](/deckops/parse).
+</Note>
 
 <CardGroup cols={2}>
   <Card title="Task model" href="/deckops/task-model">Add progress, timeout, failure, and download handling.</Card>

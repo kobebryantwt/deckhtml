@@ -15,9 +15,11 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
   </div>
 </div>
 
-<Card title="Try Deck Playground — no setup required" icon="flask" iconType="solid" href="https://deckflow.github.io/playground/" cta="Open Playground ↗" arrow>
-  Choose a supported document in the browser to review DeckProbe facts, DeckRender previews, and DeckOps parse results before installing a CLI or SDK.
-</Card>
+<div className="playground-cta">
+  <Card title="Try Deck Playground — no setup required" icon="flask" iconType="solid" href="https://deckflow.github.io/playground/" cta="Open Playground ↗" arrow>
+    Choose a supported document in the browser to review DeckProbe facts, DeckRender previews, and DeckOps parse results before installing a CLI or SDK.
+  </Card>
+</div>
 
 ## Start with the outcome
 
@@ -32,7 +34,7 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
     <strong>DeckOps</strong> provides cloud parsing, extraction, conversion, generation, and asynchronous task execution.
   </Card>
   <Card title="Update an existing PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/deckuse/overview" cta="Explore DeckUse" arrow>
-    <strong>DeckUse</strong> lets agents inspect a versioned PPTX workspace and apply explicit commands for text, properties, geometry, slides, pictures, tables, and charts.
+    <strong>DeckUse</strong> lets agents update text, pictures, slides, and element properties locally without launching PowerPoint, then export another editable PPTX.
   </Card>
   <Card title="Author a deck in HTML" icon="code" iconType="solid" color="#ec4899" href="/deckhtml/overview" cta="Explore DeckHTML" arrow>
     <strong>DeckHTML</strong> turns one multi-page HTML document or ordered HTML/SVG files into PPTX or PNG, and reports which PPTX elements stay editable or fall back to pixels.
@@ -101,7 +103,7 @@ DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and D
 | Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI and Node.js SDK | Not required locally; guest or authenticated cloud mode |
 
 <Note>
-  Supported formats and operations differ by product. A file being recognized by one product does not mean every other product can process it. Use each product's supported-format or command reference as the version-specific contract.
+  Supported formats and operations differ by product. A file being recognized by one product does not mean every other product can process it. Check the relevant supported-format or command reference before choosing a path.
 </Note>
 
 ## Start building

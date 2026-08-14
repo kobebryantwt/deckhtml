@@ -4,10 +4,10 @@ sidebarTitle: 结构化结果
 description: "比较 DeckOps 不同 Parse 任务返回的格式专属结果契约。"
 ---
 
-每个 Parser 会保留当前能够从对应源格式中获得的结构。这些结果用途相近，但并不共享同一套节点 Schema。
+每个 Parser 会保留对应源格式可提供的结构。这些结果用途相近，但并不共享同一套节点 Schema。
 
 <Warning>
-  类型化 Parse API 已存在于仓库源码，但当前 `@deckops/sdk@0.7.3` npm 产物没有包含。本页 Schema 描述源码实现，暂时不是可安装的 npm 契约。
+  依赖下列 Schema 前，请先确认已安装 SDK 提供对应的 Parse 方法。如果类型化方法不可用，请选择软件包已提供的底层任务方法，并检查下载结果。
 </Warning>
 
 ## PDF

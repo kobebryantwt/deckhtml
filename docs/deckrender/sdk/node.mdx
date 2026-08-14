@@ -73,7 +73,7 @@ Use `createRenderer()` to reuse credentials, warning handling, or a custom execu
 | `timeout` | `number` | Cloud task wait timeout in seconds |
 | `onProgress` | `(event) => void` | Resolve, plan, upload, task, wait, download, and write events |
 
-Image options are route-specific. In version 0.1.0, `quality` affects PowerPoint and PDF-based image routes; use `width` or `scale` for HTML and Markdown. See [Supported Formats](/deckrender/formats) before exposing these options directly to users.
+Image options are route-specific. `quality` applies to PowerPoint and PDF-based image routes; use `width` or `scale` for HTML and Markdown. See [Supported Formats](/deckrender/formats) before exposing these options directly to users.
 
 The SDK does not apply CLI profiles or the CLI render-default config automatically. Pass render options explicitly; the exported `PROFILES` and `layerOptions` helpers are available if an application wants the same behavior.
 

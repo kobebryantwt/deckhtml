@@ -18,9 +18,9 @@ DeckProbe 根据逻辑文件名选择 Driver，再验证容器和必需的内部
 | 旧版 Office | `.doc`、`.dot`、`.xls`、`.xlt`、`.ppt`、`.pps`、`.pot` | 已验证的 CFB Stream、SummaryInformation、宏、嵌入对象信号和核心统计 |
 | 现代 iWork | `.key`、`.numbers`、`.pages` | IWA 身份与完整性，以及文件中存在的结构、数量、几何、公式、表格、备注、Build 或 Transition |
 
-## 查询当前安装版本的契约
+## 查询已安装软件包的能力
 
-不同格式暴露的事实并不相同，请通过 CLI 的发现命令查看当前版本：
+不同格式暴露的事实并不相同，请通过 CLI 的发现命令查询：
 
 ```bash
 deckprobe formats --pretty
@@ -49,7 +49,7 @@ Target 是有明确名称的文档事实，并不是关于文档内容的自然�
 - `@security`、`@structure`、`@assets` 和 `@quality` 分别选择对应主题的事实。
 - `@format` 选择当前 Level 可用的格式专属 Target；`@all` 选择全部可用 Target。
 
-运行 `deckprobe targets <format> --pretty`，可查看当前安装版本中每个 Selector 的准确展开结果。
+运行 `deckprobe targets <format> --pretty`，可查看已安装软件包中每个 Selector 的准确展开结果。
 
 ## Probe Level 如何影响请求
 

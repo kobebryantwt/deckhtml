@@ -15,9 +15,11 @@ description: "使用 DeckFlow 为 Agent 构建文档探测、渲染、解析、�
   </div>
 </div>
 
-<Card title="无需安装，直接体验 Deck Playground" icon="flask" iconType="solid" href="https://deckflow.github.io/playground/" cta="打开 Playground ↗" arrow>
-  在浏览器中选择受支持的文档，即可查看 DeckProbe 文档事实、DeckRender 预览和 DeckOps 解析结果，无需先安装 CLI 或 SDK。
-</Card>
+<div className="playground-cta">
+  <Card title="无需安装，直接体验 Deck Playground" icon="flask" iconType="solid" href="https://deckflow.github.io/playground/" cta="打开 Playground ↗" arrow>
+    在浏览器中选择受支持的文档，即可查看 DeckProbe 文档事实、DeckRender 预览和 DeckOps 解析结果，无需先安装 CLI 或 SDK。
+  </Card>
+</div>
 
 ## 从最终结果开始
 
@@ -32,7 +34,7 @@ description: "使用 DeckFlow 为 Agent 构建文档探测、渲染、解析、�
     <strong>DeckOps</strong> 提供云端解析、提取、转换、生成和异步任务执行能力。
   </Card>
   <Card title="修改现有 PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/zh/deckuse/overview" cta="了解 DeckUse" arrow>
-    <strong>DeckUse</strong> 让 Agent 检查带版本的 PPTX 工作区，并通过明确命令修改文本、属性、几何信息、幻灯片、图片、表格和图表。
+    <strong>DeckUse</strong> 让 Agent 无需启动 PowerPoint，即可在本地修改文本、图片、幻灯片和元素属性，并导出另一份可编辑 PPTX。
   </Card>
   <Card title="使用 HTML 创作 Deck" icon="code" iconType="solid" color="#ec4899" href="/zh/deckhtml/overview" cta="了解 DeckHTML" arrow>
     <strong>DeckHTML</strong> 将一份多页 HTML 或多个有序 HTML/SVG 文件转换为 PPTX 或 PNG，并报告 PPTX 中哪些元素保持可编辑、哪些会降级为图片。
@@ -101,7 +103,7 @@ DeckProbe 与 DeckUse 在本地执行。DeckRender 根据路径采用本地、�
 | 从 HTML 或 SVG 生成 PPTX 或 PNG | [DeckHTML](/zh/deckhtml/overview) | CLI 和 Node.js SDK | 本地不需要；云端支持游客或认证 |
 
 <Note>
-  每个产品支持的格式和操作范围不同。某个产品能识别文件，不代表其他产品也能处理。请以各产品的支持格式或命令参考页作为当前版本契约。
+  每个产品支持的格式和操作范围不同。某个产品能识别文件，不代表其他产品也能处理。选择路径前，请查看对应产品的支持格式或命令参考页。
 </Note>
 
 ## 开始接入

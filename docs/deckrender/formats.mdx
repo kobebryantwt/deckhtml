@@ -19,8 +19,8 @@ DeckRender routes one source format to one output family. Recognizing an input d
 | Pages `.pages` | Embedded JPEG preview | One-page PDF wrapper | — |
 | Numbers `.numbers` | Embedded JPEG preview | One-page PDF wrapper | — |
 
-- **Yes** means the route is implemented in the current release.
-- **—** means the current release does not provide that source/output combination.
+- **Yes** means the installed package provides the route.
+- **—** means that source/output combination is unavailable.
 
 Query the installed version instead of hard-coding this table:
 
@@ -48,7 +48,7 @@ Image controls belong to the task that creates the image, so they differ by rout
 On cloud routes, an explicit incompatible option normally fails with `unsupported_option`. A value inherited from a profile or saved config is normally dropped with a warning so a general default does not break an otherwise valid route.
 
 <Warning>
-  The current HTML and Markdown routes do not map `--quality` to a backend parameter; use `--width` or `--scale` instead. Pages and Numbers always write the embedded JPEG bytes and do not transcode `--image-format`. Use a `.jpg` output name for image output. These cases are implementation limits of version 0.1.0.
+  HTML and Markdown do not apply `--quality`; use `--width` or `--scale` instead. Pages and Numbers write the embedded JPEG without transcoding `--image-format`, so use a `.jpg` output name.
 </Warning>
 
 <Tip>
@@ -62,7 +62,7 @@ On cloud routes, an explicit incompatible option normally fails with `unsupporte
     DeckRender first converts HTML to PPTX, then exports that PPTX. PDF follows slide layout rather than native browser print layout; video is a slideshow of the reconstructed deck, not a recording of a live page. The result includes a `caveat`.
   </Accordion>
   <Accordion title="Word to image">
-    Word is converted to PDF, then the PDF is rendered into page images. The result `route` contains both tasks. Intermediate output is downloaded and uploaded again because the current backend cannot chain tasks by an upstream task ID.
+    Word is converted to PDF, then the PDF is rendered into page images. The result `route` contains both tasks, including the intermediate file transfer between them.
   </Accordion>
   <Accordion title="Pages and Numbers">
     These local routes extract `preview.jpg` (or a fallback preview) from the iWork package. Only the first page and its stored resolution are available. Image output should use a `.jpg` destination because no local transcoder runs. PDF output wraps the same JPEG in a single-page PDF; it is not a full Pages or Numbers render.

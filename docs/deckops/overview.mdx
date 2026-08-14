@@ -12,7 +12,7 @@ DeckOps provides cloud document capabilities for applications that need searchab
 | Inputs | PDF, PPTX, DOCX, Keynote, supported conversion inputs, or an HTML URL |
 | Results | Markdown, format-specific JSON, or files such as PDF, images, video, HTML, and PPTX |
 | Runs | DeckFlow cloud |
-| Interfaces | Published TypeScript task SDK and CLIs; Python and Go implementations currently require source checkout |
+| Interfaces | TypeScript SDK and CLI |
 | Authentication | API key or user token; limited guest execution is available for low-level tasks |
 
 ## When to use DeckOps
@@ -22,7 +22,7 @@ DeckOps provides cloud document capabilities for applications that need searchab
 - Convert supported documents into visual or editable artifacts.
 - Run OCR, presentation inspection, compression, splitting, joining, font, image, or content tasks in the cloud.
 
-DeckOps does not currently expose one cross-format public Document IR. The high-level `parse()` facade normalizes supported parse results to Markdown; low-level parse tasks preserve a different structured contract for each format. Read [Structured results](/deckops/structured-results) before storing or transforming those responses.
+DeckOps does not expose one cross-format public Document IR. The high-level `parse()` facade normalizes supported parse results to Markdown; low-level parse tasks preserve a different structured contract for each format. Read [Structured results](/deckops/structured-results) before storing or transforming those responses.
 
 ## How a cloud operation runs
 
@@ -52,22 +52,22 @@ console.log(result);
 
 This published-package path uploads the file, explicitly starts a guest task, waits for completion, and downloads the result. Follow the [Quickstart](/deckops/quick-start) for a complete runnable example.
 
-<Warning>
-  The repository source implements `parse()`, `parseDetailed()`, and typed Parse tasks, but the current `@deckops/sdk@0.7.3` npm artifact does not expose them. Parse documentation is source-contract documentation until a corrected artifact is published. Python is not currently published to PyPI, and the Go module is not fetchable from its repository URL.
-</Warning>
+<Note>
+  SDK interfaces differ. The low-level task flow above is the most direct installable path; verify higher-level Parse helpers on [Parse Documents](/deckops/parse) before using them.
+</Note>
 
 ## Execution and data boundary
 
 Files processed by DeckOps are uploaded to DeckFlow cloud. Authenticated tasks start automatically. A guest-created low-level task must be started explicitly before waiting; the high-level parse facade does not perform that guest start for you.
 
 <Warning>
-  Use an API key or user token with `parse()` and `parseDetailed()`. If you need guest mode, use the low-level task API and call `tasks.start(task.id)` after creation. The Python SDK does not currently expose this guest-start method.
+  Use an API key or user token with `parse()` and `parseDetailed()`. If you need guest mode, use the low-level task API and call `tasks.start(task.id)` after creation. The Python SDK does not expose this guest-start method.
 </Warning>
 
 ## Continue
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" href="/deckops/quick-start">Run and verify an authenticated PDF parse.</Card>
+  <Card title="Quickstart" href="/deckops/quick-start">Run and verify a complete guest cloud task.</Card>
   <Card title="Authentication" href="/deckops/authentication">Choose guest, API-key, or user-token execution.</Card>
   <Card title="Task model" href="/deckops/task-model">Handle task creation, progress, retries, and downloads.</Card>
   <Card title="Capabilities" href="/deckops/operations">Find the task family that matches your workflow.</Card>

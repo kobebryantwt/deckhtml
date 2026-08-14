@@ -4,7 +4,7 @@ sidebarTitle: 快速开始
 description: "安装已发布的 TypeScript SDK，并完成一个游客云端任务。"
 ---
 
-这条路径会创建一个已知 HTML 输入，上传到 DeckFlow 云端，显式启动游客任务，并验证返回的 PNG 元数据。它适用于当前已发布的 `@deckops/sdk@0.7.3`，需要 Node.js 18 或更高版本。
+这条路径会创建一个已知 HTML 输入，上传到 DeckFlow 云端，显式启动游客任务，并验证返回的 PNG 元数据。需要 Node.js 18 或更高版本。
 
 <Steps>
   <Step title="准备项目">
@@ -67,9 +67,9 @@ description: "安装已发布的 TypeScript SDK，并完成一个游客云端任
 
 游客执行存在限频。生产环境请配置 API Key 或用户 Token；已认证任务会自动启动。详见[认证](/zh/deckops/authentication)。
 
-<Warning>
-  仓库源码包含更新的 Parse Facade 和类型化 Parse 任务，但当前已发布的 `@deckops/sdk@0.7.3` 产物没有暴露这些接口。在修正后的软件包发布前，Parse 页面描述的是源码实现，不能视为可安装的 npm 契约。
-</Warning>
+<Note>
+  本示例使用底层任务方法，以便完整展示游客任务生命周期。选择更高层的 Parse 接口前，请先在[解析文档](/zh/deckops/parse)中确认可用性。
+</Note>
 
 <CardGroup cols={2}>
   <Card title="任务模型" href="/zh/deckops/task-model">增加进度、超时、失败和下载处理。</Card>

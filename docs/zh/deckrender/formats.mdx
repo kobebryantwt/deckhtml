@@ -19,8 +19,8 @@ DeckRender 将一种源格式路由到一种输出类型。能够识别输入，
 | Pages `.pages` | 内嵌 JPEG 预览 | 单页 PDF 封装 | — |
 | Numbers `.numbers` | 内嵌 JPEG 预览 | 单页 PDF 封装 | — |
 
-- **支持**表示当前版本已经实现该路线。
-- **—**表示当前版本不提供该输入与输出组合。
+- **支持**表示安装的软件包提供该路线。
+- **—**表示该输入与输出组合不可用。
 
 不要在程序中硬编码这张表，应查询当前安装版本：
 
@@ -48,7 +48,7 @@ JSON 结果会为各输入和输出组合返回路线可用性、路线 `kind`�
 在云端路线中，显式传入不兼容参数通常会返回 `unsupported_option`。如果参数来自 Profile 或保存的配置，DeckRender 通常会发出警告并忽略它，避免通用默认值阻断本可执行的路线。
 
 <Warning>
-  当前 HTML 和 Markdown 路线不会把 `--quality` 映射到后端参数，请改用 `--width` 或 `--scale`。Pages 和 Numbers 始终写出内嵌 JPEG 字节，不会根据 `--image-format` 转码；图片输出应使用 `.jpg` 文件名。这些是 0.1.0 版本的实现限制。
+  HTML 和 Markdown 不应用 `--quality`，请改用 `--width` 或 `--scale`。Pages 和 Numbers 会直接写出内嵌 JPEG，不会根据 `--image-format` 转码，因此图片输出应使用 `.jpg` 文件名。
 </Warning>
 
 <Tip>
@@ -62,7 +62,7 @@ JSON 结果会为各输入和输出组合返回路线可用性、路线 `kind`�
     DeckRender 会先把 HTML 转为 PPTX，再导出 PPTX。PDF 遵循幻灯片布局，而不是浏览器原生打印布局；视频是重建后演示文稿的播放结果，不是实时网页录屏。结果中会包含 `caveat`。
   </Accordion>
   <Accordion title="Word 转图片">
-    Word 会先转为 PDF，再把 PDF 渲染成页面图片。结果的 `route` 会包含两个任务。当前后端不能通过上游任务 ID 直接串联任务，因此中间产物会经历一次下载和重新上传。
+    Word 会先转为 PDF，再把 PDF 渲染成页面图片。结果的 `route` 会包含两个任务，以及两者之间的中间文件传输。
   </Accordion>
   <Accordion title="Pages 和 Numbers">
     这些本地路线从 iWork 包中提取 `preview.jpg` 或备用预览。只能得到第一页和文件中保存的原始分辨率。由于本地不会执行转码，图片输出应使用 `.jpg` 目标文件。PDF 输出只是把同一张 JPEG 封装为单页 PDF，并不是完整渲染 Pages 或 Numbers。

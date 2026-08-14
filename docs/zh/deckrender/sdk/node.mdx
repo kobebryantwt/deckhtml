@@ -73,7 +73,7 @@ const result = await renderer.render({
 | `timeout` | `number` | 云端任务等待超时秒数 |
 | `onProgress` | `(event) => void` | 读取、规划、上传、任务、等待、下载和写出事件 |
 
-图片参数的支持范围取决于路线。在 0.1.0 中，`quality` 只会影响 PowerPoint 和基于 PDF 的图片路线；HTML 与 Markdown 应使用 `width` 或 `scale`。将这些参数直接提供给最终用户前，请先查看[支持格式](/zh/deckrender/formats)。
+图片参数的支持范围取决于路线。`quality` 用于 PowerPoint 和基于 PDF 的图片路线；HTML 与 Markdown 应使用 `width` 或 `scale`。将这些参数直接提供给最终用户前，请先查看[支持格式](/zh/deckrender/formats)。
 
 SDK 不会自动应用 CLI profile 或 CLI 的渲染默认配置。请显式传入选项；应用需要复用相同行为时，也可以使用包导出的 `PROFILES` 和 `layerOptions`。
 

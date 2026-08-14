@@ -4,10 +4,10 @@ sidebarTitle: Structured Results
 description: "Compare the format-specific result contracts returned by DeckOps parse tasks."
 ---
 
-Each parser preserves the structures that its source format can currently expose. The contracts are related by purpose, not by one common node schema.
+Each parser preserves the structures available from its source format. The contracts are related by purpose, not by one common node schema.
 
 <Warning>
-  Typed Parse APIs are present in the repository source but absent from the current `@deckops/sdk@0.7.3` npm artifact. The schemas below describe the source implementation, not an installable npm contract yet.
+  Verify that the selected Parse helper exists in the installed SDK before depending on one of these schemas. If a typed helper is unavailable, use an installed low-level task helper and inspect its downloaded result.
 </Warning>
 
 ## PDF
