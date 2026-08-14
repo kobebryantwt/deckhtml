@@ -1,12 +1,12 @@
 ---
 title: DeckOps
 sidebarTitle: Overview
-description: "Run cloud parsing, extraction, conversion, and document operations through asynchronous tasks."
+description: "Parse and transform documents in the cloud, returning Markdown, structured content, or converted files."
 ---
 
-DeckOps is DeckFlow's cloud document-processing runtime. Upload a supported file or provide a URL, create an asynchronous task, then receive Markdown, a format-specific structured result, or a converted artifact.
+DeckOps provides cloud document capabilities for applications that need searchable text, format-specific structure, or a new file artifact. Send a supported file or URL to parse content, preserve useful document structure, convert formats, or run a broader document operation.
 
-| | DeckOps |
+| | At a glance |
 | --- | --- |
 | Best for | Server-side parsing, extraction, conversion, and document workflows |
 | Inputs | PDF, PPTX, DOCX, Keynote, supported conversion inputs, or an HTML URL |
@@ -14,15 +14,6 @@ DeckOps is DeckFlow's cloud document-processing runtime. Upload a supported file
 | Runs | DeckFlow cloud |
 | Interfaces | Published TypeScript task SDK and CLIs; Python and Go implementations currently require source checkout |
 | Authentication | API key or user token; limited guest execution is available for low-level tasks |
-
-```mermaid
-flowchart LR
-  I["File or URL"] --> U["Upload or materialize input"]
-  U --> C["Create task"]
-  C --> S["Start guest task when required"]
-  S --> W["Wait by SSE or polling"]
-  W --> R["Download result"]
-```
 
 ## When to use DeckOps
 
@@ -32,6 +23,17 @@ flowchart LR
 - Run OCR, presentation inspection, compression, splitting, joining, font, image, or content tasks in the cloud.
 
 DeckOps does not currently expose one cross-format public Document IR. The high-level `parse()` facade normalizes supported parse results to Markdown; low-level parse tasks preserve a different structured contract for each format. Read [Structured results](/deckops/structured-results) before storing or transforming those responses.
+
+## How a cloud operation runs
+
+```mermaid
+flowchart LR
+  I["File or URL"] --> U["Upload or materialize input"]
+  U --> C["Create task"]
+  C --> S["Start guest task when required"]
+  S --> W["Wait by SSE or polling"]
+  W --> R["Download result"]
+```
 
 ## A first cloud task
 

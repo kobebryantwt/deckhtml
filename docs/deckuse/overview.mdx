@@ -1,26 +1,28 @@
 ---
 title: DeckUse
 sidebarTitle: Overview
-description: "Inspect and modify an existing PPTX locally through versioned workspaces, structured selectors, and JSON commands."
+description: "Modify text, pictures, slides, and element properties in an existing PPTX, then export another editable presentation."
 ---
 
-DeckUse is a local, schema-driven document operation engine for coding agents. It opens an existing presentation into a versioned workspace, indexes its structure, applies explicit JSON commands, validates the package, and exports another editable PPTX.
+DeckUse lets applications, scripts, and coding agents make precise changes to an existing PPTX. Find the slides or elements you want to update, change content and properties, add or remove supported objects, then export another PPTX that remains editable. All processing runs locally without uploading the presentation.
 
-| Item | Current contract |
+| Item | At a glance |
 | --- | --- |
 | Input | An existing `.pptx` file |
-| Output | A versioned local workspace and an updated `.pptx` |
+| Result | An updated, editable `.pptx` file |
 | Execution | Local Node.js process; documents are not uploaded |
 | Interfaces | `deckuse` CLI and Node.js `runCommand()` API |
-| Runtime | Node.js 18 or later |
 | Authentication | None |
 
-```text
-existing.pptx → init workspace → inspect / query → apply JSON commands
-              → validate → commit → updated.pptx
-```
+## Use DeckUse for
 
-## What you can do
+- Applying the same approved content or property change across many presentations.
+- Producing customer, region, language, or campaign variants from an existing PPTX.
+- Letting an agent locate and update specific slides or elements through stable references.
+- Integrating PPTX changes, validation, and export into a local application or automation pipeline.
+- Keeping the source and generated presentations on the current machine.
+
+## What you can change
 
 - Inspect slides, text boxes, shapes, groups, pictures, tables, charts, notes, layouts, masters, and themes that are present in the PPTX index.
 - Query elements by kind, name, text, regular expression, slide ID, element ID, or text presence.
@@ -32,6 +34,15 @@ existing.pptx → init workspace → inspect / query → apply JSON commands
 <Note>
   DeckUse is structural, not visual. It does not render slides, detect overlap, judge layout quality, or decide which edits are appropriate. Render or open the exported PPTX before delivery.
 </Note>
+
+## How changes are applied
+
+```text
+existing.pptx → create workspace → inspect / query → apply changes
+              → validate → export → updated.pptx
+```
+
+The workspace keeps the indexed document state, current revision, operation log, and package files needed for validation and export. CLI commands and the Node.js API use the same versioned command protocol, so a workflow can review targets before applying a change and detect conflicting revisions.
 
 ## PPTX preservation boundary
 

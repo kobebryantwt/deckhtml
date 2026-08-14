@@ -1,12 +1,12 @@
 ---
 title: DeckProbe
 sidebarTitle: Overview
-description: "Inspect document identity, metadata, structure, security, and asset facts locally without rendering or opening Office applications."
+description: "Verify document format, counts, security signals, metadata, and assets locally before the file enters a workflow."
 ---
 
-DeckProbe inspects predefined facts about a document without opening or rendering it, running macros, or launching Microsoft Office, Apple iWork, or another desktop suite. It returns named, verifiable properties such as format, page or slide count, encryption status, and asset inventory. It does not answer questions about document meaning or build a page-and-element content model.
+DeckProbe gives applications and agents a structured way to verify a document before accepting, routing, or processing it. It returns named, verifiable facts such as the actual format, page or slide count, encryption status, metadata, and asset inventory. Inspection runs locally and produces JSON that can be used directly in application logic.
 
-| Item | Current contract |
+| Item | At a glance |
 | --- | --- |
 | Inputs | PDF; modern and legacy Word, Excel, and PowerPoint; modern Keynote, Numbers, and Pages |
 | Result | Schema v2 JSON with target values, evidence, confidence, diagnostics, and measured I/O cost |
@@ -16,11 +16,13 @@ DeckProbe inspects predefined facts about a document without opening or renderin
 
 ## Use DeckProbe for
 
-- Verifying a claimed file type before accepting an upload.
-- Reading counts, metadata, structural facts, security signals, or asset inventory.
-- Routing a document to DeckOps or DeckRender based on evidence instead of extension alone.
-- Applying bounded read, decompression, and archive-entry limits plus a cooperative time budget.
-- Producing stable JSON for policy engines, batch inventory, or agent tools.
+- Preflight checks before an application accepts or stores an uploaded file.
+- Batch inventory of document formats, counts, metadata, security signals, and embedded assets.
+- Routing files to parsing or rendering workflows using verified facts instead of the extension alone.
+- Policy checks that need stable JSON, evidence, confidence, and diagnostics.
+- Local browser, server, CI, or agent workflows where document bytes must not be uploaded.
+
+## How inspection works
 
 ```mermaid
 flowchart LR
@@ -29,6 +31,8 @@ flowchart LR
   T --> P["Run only required probe paths"]
   P --> J["Schema v2 facts and evidence"]
 ```
+
+DeckProbe selects the driver, validates the container, and runs only the probe paths required by the requested Targets. Callers can bound file reads, decompression, archive entries, and cooperative execution time.
 
 ## Choose an interface
 

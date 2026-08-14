@@ -1,10 +1,10 @@
 ---
 title: DeckHTML
 sidebarTitle: Overview
-description: "Turn browser-rendered HTML or SVG into PPTX or PNG, with explicit editability and fallback diagnostics."
+description: "Generate editable PPTX presentations or page PNGs from HTML and SVG for template-driven and automated deck production."
 ---
 
-DeckHTML loads HTML or SVG in Chromium, measures the rendered layout, and produces PPTX or PNG. For PPTX, it rebuilds supported text, images, tables, shapes, SVG geometry, and equations as editable or vector objects. When no reliable PowerPoint mapping exists, it can preserve appearance with a raster fallback and record that decision in the conversion report.
+DeckHTML turns HTML templates, application data, or generated HTML into presentation files. Use it to create an editable PPTX for continued work in PowerPoint, or generate page PNGs for previews and downstream visual workflows. One source can contain several slides, and several ordered sources can be combined into one deck.
 
 | | DeckHTML |
 | --- | --- |
@@ -15,6 +15,16 @@ DeckHTML loads HTML or SVG in Chromium, measures the rendered layout, and produc
 | Interfaces | CLI and local Node.js API |
 | Authentication | None for local mode; guest, login, or API key for cloud mode |
 
+## When to use DeckHTML
+
+- Generate presentations from templates, application data, or AI-authored HTML.
+- Keep supported text, shapes, tables, images, SVG geometry, and equations editable in PowerPoint.
+- Convert one multi-slide document or merge several ordered HTML/SVG files into one deck.
+- Produce PNG previews from the same source.
+- Consume per-element conversion diagnostics in your own automated checks.
+
+## How conversion works
+
 ```mermaid
 flowchart LR
   H["HTML / SVG"] --> B["Render and measure in Chromium"]
@@ -24,13 +34,7 @@ flowchart LR
   M --> R["Per-element report and diagnostics"]
 ```
 
-## When to use DeckHTML
-
-- Generate presentations from templates, application data, or AI-authored HTML.
-- Keep supported text, shapes, tables, images, SVG geometry, and equations editable in PowerPoint.
-- Convert one multi-slide document or merge several ordered HTML/SVG files into one deck.
-- Produce PNG previews from the same source.
-- Consume per-element conversion diagnostics in your own automated checks.
+DeckHTML measures the rendered browser layout before rebuilding supported text, images, tables, shapes, SVG geometry, and equations as editable or vector PowerPoint objects. When no reliable PowerPoint mapping exists, it can preserve appearance with a raster fallback and record the decision in the conversion report.
 
 <Note>
   HTML/CSS and PowerPoint use different layout and rendering models. Canvas, complex SVG, filters, layered effects, iframes, and unsupported CSS may be rasterized, omitted, or reported as unsupported. Use the report when editability is part of the delivery contract.

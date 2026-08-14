@@ -1,10 +1,10 @@
 ---
 title: DeckHTML
 sidebarTitle: 概览
-description: "把浏览器渲染后的 HTML 或 SVG 转为 PPTX 或 PNG，并明确记录可编辑映射与降级结果。"
+description: "从 HTML 或 SVG 生成可编辑 PPTX 或页面 PNG，用于模板化和自动化演示文稿生产。"
 ---
 
-DeckHTML 会在 Chromium 中加载 HTML 或 SVG、测量实际渲染布局，再生成 PPTX 或 PNG。生成 PPTX 时，它会把支持的文字、图片、表格、形状、SVG 几何和公式重建为可编辑或矢量对象；没有可靠 PowerPoint 映射时，则用栅格图保留外观，并在转换报告中记录这一决定。
+DeckHTML 把 HTML 模板、应用数据或生成式 HTML 转成演示文稿文件。可以生成一份仍能在 PowerPoint 中继续处理的可编辑 PPTX，也可以生成用于预览和后续视觉流程的页面 PNG。一份源文件可以包含多张幻灯片，多份有序源文件也可以合并成一个 Deck。
 
 | | DeckHTML |
 | --- | --- |
@@ -15,6 +15,16 @@ DeckHTML 会在 Chromium 中加载 HTML 或 SVG、测量实际渲染布局，再
 | 接入方式 | CLI 和本地 Node.js API |
 | 认证 | 本地模式不需要；云端支持游客、登录或 API Key |
 
+## 适合使用 DeckHTML 的场景
+
+- 从模板、应用数据或 AI 生成的 HTML 创建演示文稿。
+- 在 PowerPoint 中保留受支持文字、形状、表格、图片、SVG 几何和公式的可编辑性。
+- 把一份多页文档或多个有序 HTML/SVG 文件合并为一份演示文稿。
+- 从同一份输入生成 PNG 预览。
+- 在自己的自动化检查中使用逐元素转换诊断。
+
+## 转换过程
+
 ```mermaid
 flowchart LR
   H["HTML / SVG"] --> B["在 Chromium 中渲染并测量"]
@@ -24,13 +34,7 @@ flowchart LR
   M --> R["逐元素报告与诊断"]
 ```
 
-## 适合使用 DeckHTML 的场景
-
-- 从模板、应用数据或 AI 生成的 HTML 创建演示文稿。
-- 在 PowerPoint 中保留受支持文字、形状、表格、图片、SVG 几何和公式的可编辑性。
-- 把一份多页文档或多个有序 HTML/SVG 文件合并为一份演示文稿。
-- 从同一份输入生成 PNG 预览。
-- 在自己的自动化检查中使用逐元素转换诊断。
+DeckHTML 会先测量浏览器实际渲染后的布局，再把支持的文字、图片、表格、形状、SVG 几何和公式重建为可编辑或矢量的 PowerPoint 对象。没有可靠映射时，可以使用栅格图保留外观，并在转换报告中记录这一决定。
 
 <Note>
   HTML/CSS 与 PowerPoint 使用不同的布局和渲染模型。Canvas、复杂 SVG、滤镜、分层效果、iframe 和不支持的 CSS 可能被栅格化、省略，或报告为不支持。如果交付要求包含可编辑性，请务必检查转换报告。

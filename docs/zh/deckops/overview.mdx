@@ -1,12 +1,12 @@
 ---
 title: DeckOps
 sidebarTitle: 概览
-description: "通过异步任务运行云端解析、提取、转换和文档操作。"
+description: "在云端解析和转换文档，获得 Markdown、结构化内容或新的文件产物。"
 ---
 
-DeckOps 是 DeckFlow 的云端文档处理运行时。上传支持的文件或提供 URL，创建异步任务，然后得到 Markdown、与格式对应的结构化结果或转换后的文件。
+DeckOps 为需要可检索文本、格式专属结构或新文件产物的应用提供云端文档能力。发送支持的文件或 URL，即可解析内容、保留有用的文档结构、转换格式，或执行更广泛的文档操作。
 
-| | DeckOps |
+| | 快速了解 |
 | --- | --- |
 | 适用场景 | 服务端解析、提取、转换和文档工作流 |
 | 输入 | PDF、PPTX、DOCX、Keynote、受支持的转换输入，或 HTML URL |
@@ -14,15 +14,6 @@ DeckOps 是 DeckFlow 的云端文档处理运行时。上传支持的文件或�
 | 执行位置 | DeckFlow 云端 |
 | 接入方式 | 已发布的 TypeScript 任务 SDK 和 CLI；Python、Go 实现当前需要检出源码 |
 | 认证 | API Key 或用户 Token；底层任务支持受限的游客模式 |
-
-```mermaid
-flowchart LR
-  I["文件或 URL"] --> U["上传或准备输入"]
-  U --> C["创建任务"]
-  C --> S["按需启动游客任务"]
-  S --> W["通过 SSE 或轮询等待"]
-  W --> R["下载结果"]
-```
 
 ## 适合使用 DeckOps 的场景
 
@@ -32,6 +23,17 @@ flowchart LR
 - 在云端执行 OCR、演示文稿检查、压缩、拆分、合并、字体、图片或内容任务。
 
 DeckOps 当前没有对外提供一个跨格式统一的 Document IR。高层 `parse()` 接口把支持的解析结果统一为 Markdown；底层解析任务则为每种格式保留不同的结构化契约。持久化或转换这些响应前，请先阅读[结构化解析结果](/zh/deckops/structured-results)。
+
+## 云端操作如何执行
+
+```mermaid
+flowchart LR
+  I["文件或 URL"] --> U["上传或准备输入"]
+  U --> C["创建任务"]
+  C --> S["按需启动游客任务"]
+  S --> W["通过 SSE 或轮询等待"]
+  W --> R["下载结果"]
+```
 
 ## 第一个云端任务
 
