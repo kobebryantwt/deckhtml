@@ -1,0 +1,204 @@
+---
+title: Apply Changes and Export
+sidebarTitle: Apply and Export
+description: "Pass JSON mutations to DeckUse, preview and persist changes, validate the workspace, and export a new PPTX."
+---
+
+`deckuse apply` reads mutation commands from a file or standard input. The CLI adds the protocol version, workspace ID, and current transaction revision to each top-level command, so command files can focus on the intended change.
+
+## Choose an input form
+
+<Tabs>
+  <Tab title="One command">
+    Save one JSON object as `replace.json`:
+
+    ```json
+    {
+      "type": "replaceText",
+      "find": "FY2025",
+      "replace": "FY2026",
+      "selector": "kind=textbox"
+    }
+    ```
+
+    ```bash
+    deckuse apply ./workspace --input replace.json --json
+    ```
+  </Tab>
+  <Tab title="JSON array">
+    A JSON array runs each top-level command in order. The CLI reloads the latest revision before every item.
+
+    ```json
+    [
+      { "type": "replaceText", "find": "FY2025", "replace": "FY2026" },
+      { "type": "replaceText", "find": "Old Product", "replace": "New Product" }
+    ]
+    ```
+
+    ```bash
+    deckuse apply ./workspace --input changes.json --json
+    ```
+  </Tab>
+  <Tab title="JSON Lines">
+    JSON Lines is useful when another program generates commands incrementally. Put one complete JSON object on each non-empty line:
+
+    ```jsonl
+    {"type":"replaceText","find":"FY2025","replace":"FY2026"}
+    {"type":"replaceText","find":"Old Product","replace":"New Product"}
+    ```
+
+    ```bash
+    deckuse apply ./workspace --input changes.jsonl --json
+    ```
+  </Tab>
+  <Tab title="Standard input">
+    `--input -` is the default:
+
+    ```bash
+    printf '%s\n' '{"type":"replaceText","find":"2025","replace":"2026"}' \
+      | deckuse apply ./workspace --json
+    ```
+  </Tab>
+</Tabs>
+
+The CLI stops at the first failed top-level command. A JSON array or JSONL stream is sequential, not atomic: earlier successful commands remain persisted if a later command fails. Use a `batch` command when all related mutations must succeed or fail together.
+
+## Read the mutation result
+
+A persisted replacement returns the number of changed indexed nodes and the new workspace revision:
+
+```json
+{
+  "ok": true,
+  "value": {
+    "changed": true,
+    "matched": 1,
+    "refs": [
+      {
+        "documentId": "/absolute/path/workspace",
+        "elementId": "256:5",
+        "path": "/ppt/slides/slide1.xml#256:5",
+        "revision": "mssob1ss-2943b374"
+      }
+    ],
+    "diagnostics": [],
+    "revision": "mssobe6c-bdeb914a"
+  },
+  "diagnostics": []
+}
+```
+
+The returned refs describe the elements selected before the mutation. Query again to receive references bound to the new revision.
+
+## Preview a change
+
+Add `dryRun: true` to a mutation or batch to evaluate it without changing the package, index, revision, or operation log:
+
+```json
+{
+  "type": "replaceText",
+  "find": "FY2025",
+  "replace": "FY2026",
+  "selector": "kind=textbox",
+  "dryRun": true
+}
+```
+
+The result includes `dryRun: true`; its revision remains unchanged. A dry run checks the structural operation, not the visual appearance of the eventual slide.
+
+## Change one exact element
+
+First query and review the target:
+
+```bash
+deckuse query ./workspace 'slide=256 text=Revenue' --limit 10 --json
+```
+
+Copy the returned `ref` into a command file:
+
+```json
+{
+  "type": "setText",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:5",
+    "revision": "mssob1ss-2943b374"
+  },
+  "text": "Enterprise Revenue"
+}
+```
+
+```bash
+deckuse apply ./workspace --input set-title.json --json
+```
+
+Never copy example IDs into a different presentation. If another command has already changed the workspace, query again rather than deleting the revision from an unreviewed stale reference.
+
+## Common mutation families
+
+| Goal | Command type | Important inputs |
+| --- | --- | --- |
+| Replace approved text across candidates | `replaceText` | `find`, `replace`, optional `regex`, `selector`, and `limit` |
+| Replace all text in one indexed node | `setText` | A current `ref` and `text` |
+| Change fill, stroke, font, name, visibility, or chart cache | `setProperties` | A current `ref` and `properties` |
+| Change explicit position, size, or rotation | `setTransform` | A current `ref` and EMU geometry |
+| Add a supported slide or element | `add` | A parent slide reference and element definition |
+| Duplicate or remove an existing object | `duplicate` or `remove` | A current slide or element reference |
+| Replace embedded picture bytes in place | `replacePicture` | A picture reference plus `path` or `base64` |
+| Apply related changes as one transaction | `batch` | Complete nested mutation envelopes and `atomic` behavior |
+
+The [JSON Command Reference](/deckuse/commands) provides runnable payload shapes for each family. The [PPTX Capabilities](/deckuse/reference/pptx-capabilities) page separates indexed objects from writable objects.
+
+## Validate and commit
+
+Run structural validation before export:
+
+```bash
+deckuse validate ./workspace --level full --json
+```
+
+The following shortened response shows the fields normally used to gate export:
+
+```json
+{
+  "ok": true,
+  "value": {
+    "valid": true,
+    "revision": "mssobe6c-bdeb914a",
+    "capabilities": { "slides": { "add": true, "duplicate": true, "remove": true } }
+  },
+  "diagnostics": []
+}
+```
+
+`--level` accepts `fast` or `full` and defaults to `full`. The current PPTX validator checks internal relationship targets; it does not render slides or validate every OOXML rule.
+
+Export a new PPTX:
+
+```bash
+deckuse commit ./workspace -o updated.pptx --json
+```
+
+```json
+{
+  "ok": true,
+  "value": {
+    "destination": "/absolute/path/updated.pptx",
+    "revision": "mssobe6c-bdeb914a"
+  },
+  "diagnostics": []
+}
+```
+
+Without `-o`, DeckUse writes `<source-name>.deckuse.pptx` beside the original source. It refuses to overwrite an existing destination; add `--force` only when replacement is intentional.
+
+## Verify the result
+
+Reopen the exported file in a separate workspace and query for the expected change:
+
+```bash
+deckuse init updated.pptx ./verification --json
+deckuse query ./verification 'text=FY2026' --limit 100 --json
+```
+
+Package validation is not visual QA. Render or open the exported PPTX before delivery.

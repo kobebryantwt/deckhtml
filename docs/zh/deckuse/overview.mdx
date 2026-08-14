@@ -46,7 +46,7 @@ existing.pptx → 创建工作区 → 检查 / 查询 → 执行修改
 
 ## PPTX 保留边界
 
-DeckUse 会尽量保留未知的文件包 Part 和未修改的 XML。ZIP 条目会被重新压缩，因此未修改内容按解压后的数据保持一致，不保证 ZIP 字节完全相同。文本替换可能把多个文本 Run 合并成一个 Run，并保留第一个 Run 的样式。
+DeckUse 会尽量保留未知的文件包部件和未修改的 XML。ZIP 条目会被重新压缩，因此未修改内容按解压后的数据保持一致，不保证 ZIP 字节完全相同。文本替换可能把多个文字片段合并成一个，并保留第一个片段的样式。
 
 ## 继续接入
 
@@ -57,8 +57,8 @@ DeckUse 会尽量保留未知的文件包 Part 和未修改的 XML。ZIP 条目�
   <Card title="工作区流程" href="/zh/deckuse/workspace">
     了解版本、操作日志、校验、试运行和提交。
   </Card>
-  <Card title="CLI" href="/zh/deckuse/cli">
-    使用六个 CLI 子命令，并把修改命令交给 `apply`。
+  <Card title="CLI" href="/zh/deckuse/cli/overview">
+    在本地完成 PPTX 检查、查询、修改、校验、导出和自动化接入。
   </Card>
   <Card title="命令参考" href="/zh/deckuse/commands">
     构造文本、属性、几何、幻灯片、元素、图片和批处理 JSON 命令。
@@ -80,3 +80,7 @@ DeckUse 会尽量保留未知的文件包 Part 和未修改的 XML。ZIP 条目�
 - 需要图片、PDF 或视频时，使用 [DeckRender](/zh/deckrender/overview)。
 - 需要解析、提取、转换或其他云端任务时，使用 [DeckOps](/zh/deckops/overview)。
 - HTML 或 SVG 是新 Deck 的创作源时，使用 [DeckHTML](/zh/deckhtml/overview)。
+
+## 源码与支持
+
+DeckUse 完全开源。可以前往 [DeckUse 开源项目](https://github.com/deckflow/deckuse)查看实现与版本发布，或提交 Issue。

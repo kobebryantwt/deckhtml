@@ -44,6 +44,7 @@ The shape of `value` depends on the command. Mutations that persist changes retu
 | `VALIDATION_FAILED` | Package validation or an atomic operation failed; inspect diagnostics |
 | `TRANSACTION_CONFLICT` | The workspace or reference revision is stale; reload and retry deliberately |
 | `IO_ERROR` | Reading, writing, packaging, or destination handling failed |
+| `INTERNAL_ERROR` | An unexpected adapter failure occurred; retain the command and diagnostics when reporting the issue |
 
 ## Diagnostics
 

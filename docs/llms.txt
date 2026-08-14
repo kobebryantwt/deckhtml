@@ -43,7 +43,10 @@ Use the English or Simplified Chinese section that matches the developer's langu
 
 - [DeckUse Overview](https://docs.deckflow.com/deckuse/overview.md): Inspect and modify an existing PPTX locally through a versioned command workspace.
 - [DeckUse Quickstart](https://docs.deckflow.com/deckuse/quick-start.md): Install the CLI, query and replace known text, validate, commit, and verify an updated PPTX.
-- [CLI](https://docs.deckflow.com/deckuse/cli.md): Use init, inspect, query, apply, validate, and commit safely.
+- [CLI Overview](https://docs.deckflow.com/deckuse/cli/overview.md): Install the CLI and choose the right path for inspection, mutation, export, or automation.
+- [Inspect and Query](https://docs.deckflow.com/deckuse/cli/inspect-and-query.md): Read the PPTX index, filter candidates, and retain revision-aware references.
+- [Apply and Export](https://docs.deckflow.com/deckuse/cli/apply-and-export.md): Run JSON mutations, preview changes, validate, and export a new PPTX.
+- [CLI Automation and Output](https://docs.deckflow.com/deckuse/cli/automation-and-output.md): Handle JSON Lines, streams, exit status, diagnostics, and revision conflicts.
 - [JSON Commands](https://docs.deckflow.com/deckuse/commands.md): Build commands for text, properties, geometry, slides, elements, pictures, charts, and batches.
 - [Selectors](https://docs.deckflow.com/deckuse/selectors.md): Query the index and reuse revision-aware element references.
 - [Workspace Workflow](https://docs.deckflow.com/deckuse/workspace.md): Manage revisions, dry runs, operation logs, validation, and commits.
@@ -79,6 +82,10 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [DeckRender](https://docs.deckflow.com/zh/deckrender/overview.md): 将支持的输入渲染为视觉产物。
 - [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 执行云端文档任务。
 - [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 通过带版本命令工作区在本地检查并修改现有 PPTX。
+- [DeckUse CLI 概览](https://docs.deckflow.com/zh/deckuse/cli/overview.md): 安装 CLI，并选择检查、修改、导出或自动化所需的命令路径。
+- [DeckUse 检查与查询](https://docs.deckflow.com/zh/deckuse/cli/inspect-and-query.md): 读取 PPTX 索引、筛选候选元素并保留带版本引用。
+- [DeckUse 修改与导出](https://docs.deckflow.com/zh/deckuse/cli/apply-and-export.md): 执行 JSON 修改、预演、校验并导出新的 PPTX。
+- [DeckUse CLI 自动化](https://docs.deckflow.com/zh/deckuse/cli/automation-and-output.md): 处理 JSON Lines、输出流、退出状态、诊断和版本冲突。
 - [DeckUse JSON 命令](https://docs.deckflow.com/zh/deckuse/commands.md): 构造文本、属性、几何、幻灯片、元素、图片、图表和批处理命令。
 - [DeckUse PPTX 能力](https://docs.deckflow.com/zh/deckuse/reference/pptx-capabilities.md): 查看可索引对象、可写操作、保留行为和当前边界。
 - [DeckUse 结果与错误](https://docs.deckflow.com/zh/deckuse/reference/results-and-errors.md): 处理结果封装、诊断、冲突和 CLI 退出状态。

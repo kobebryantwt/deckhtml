@@ -245,7 +245,15 @@
             "groups": [
               { "group": "Get Started", "pages": ["deckuse/overview", "deckuse/quick-start"] },
               { "group": "Guides", "pages": ["deckuse/workspace", "deckuse/selectors"] },
-              { "group": "CLI", "pages": ["deckuse/cli"] },
+              {
+                "group": "CLI",
+                "pages": [
+                  "deckuse/cli/overview",
+                  "deckuse/cli/inspect-and-query",
+                  "deckuse/cli/apply-and-export",
+                  "deckuse/cli/automation-and-output"
+                ]
+              },
               { "group": "SDK", "pages": ["deckuse/sdk"] },
               { "group": "Reference", "pages": ["deckuse/commands", "deckuse/reference/pptx-capabilities", "deckuse/reference/results-and-errors"] }
             ]
@@ -470,7 +478,15 @@
             "groups": [
               { "group": "开始使用", "pages": ["zh/deckuse/overview", "zh/deckuse/quick-start"] },
               { "group": "使用指南", "pages": ["zh/deckuse/workspace", "zh/deckuse/selectors"] },
-              { "group": "CLI", "pages": ["zh/deckuse/cli"] },
+              {
+                "group": "CLI",
+                "pages": [
+                  "zh/deckuse/cli/overview",
+                  "zh/deckuse/cli/inspect-and-query",
+                  "zh/deckuse/cli/apply-and-export",
+                  "zh/deckuse/cli/automation-and-output"
+                ]
+              },
               { "group": "SDK", "pages": ["zh/deckuse/sdk"] },
               { "group": "参考", "pages": ["zh/deckuse/commands", "zh/deckuse/reference/pptx-capabilities", "zh/deckuse/reference/results-and-errors"] }
             ]

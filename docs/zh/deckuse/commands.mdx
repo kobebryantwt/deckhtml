@@ -13,7 +13,7 @@ DeckUse 当前使用 `1.0` 协议。CLI 为 `init`、`inspect`、`query`、`vali
 | `init` | 根据源文档创建工作区 |
 | `inspect` | 返回能力与元素索引，或检查一个引用 |
 | `query` | 使用字符串或结构化选择器筛选索引元素 |
-| `getText` | 通过 API 读取一个引用的文本、几何信息和 Payload |
+| `getText` | 通过 API 读取一个引用的文本、几何信息和附加数据 |
 | `setText` | 替换一个引用节点中的全部文本 |
 | `replaceText` | 在匹配的索引元素中执行字面量或正则替换 |
 | `setProperties` | 修改支持的形状、文字或图表属性 |
@@ -26,7 +26,36 @@ DeckUse 当前使用 `1.0` 协议。CLI 为 `init`、`inspect`、`query`、`vali
 | `validate` | 检查当前工作区文件包 |
 | `commit` | 把当前文件包导出到目标 PPTX |
 
-## CLI 修改 Envelope
+## 字段参考
+
+每条命令都包含 `version: "1.0"` 和 `type`。Node.js API 还要求提供 `workspaceId`；持久化修改和 `commit` 需要当前 `transactionId`。通过 `apply` 发送顶层对象时，CLI 会自动补充这些字段。
+
+| 命令 | 必填的命令字段 | 可选字段 |
+| --- | --- | --- |
+| `init` | `workspaceId`、`format`、`source` | — |
+| `inspect` | `workspaceId` | `ref`，以及 `0` 到 `100` 的 `depth` |
+| `query` | `workspaceId`、`selector` | `1` 到 `10000` 的 `limit` |
+| `getText` | `workspaceId`、`ref` | — |
+| `validate` | `workspaceId` | `level`：`fast` 或 `full` |
+| `commit` | `workspaceId`、`transactionId` | `destination`、`overwrite` |
+
+修改命令都包含 `workspaceId` 和 `transactionId`，并可选择使用 `dryRun`：
+
+| 命令 | 必填的命令字段 | 可选字段 |
+| --- | --- | --- |
+| `setText` | `ref`、`text` | `dryRun` |
+| `replaceText` | `find`、`replace` | `regex`、`selector`、`limit`、`dryRun` |
+| `setProperties` | `ref`、`properties` | `dryRun` |
+| `setTransform` | `ref`、`transform` | `dryRun`；`transform` 中的各字段可以省略 |
+| `add` | `parent`、`element` | `dryRun` |
+| `remove` | `ref` | `dryRun` |
+| `replacePicture` | `ref`，以及 `path` 或 `base64` | `dryRun` |
+| `duplicate` | `ref` | `dryRun` |
+| `batch` | `commands` | `atomic`、`dryRun` |
+
+元素引用需要 `documentId`，以及 `elementId` 或 `path` 两者之一；`revision` 可选，但建议用于定向修改。PPTX 当前实现的 `setTransform.transform` 字段包括 `x`、`y`、`width`、`height` 和 `rotation`。
+
+## CLI 修改封装
 
 把单条顶层命令传给 `deckuse apply` 时，可以省略 `version`、`workspaceId` 和 `transactionId`；CLI 会根据工作区补充：
 
@@ -40,7 +69,7 @@ DeckUse 当前使用 `1.0` 协议。CLI 为 `init`、`inspect`、`query`、`vali
 }
 ```
 
-Node.js API 需要完整 Envelope：
+Node.js API 需要完整命令封装：
 
 ```json
 {
@@ -71,7 +100,7 @@ Node.js API 需要完整 Envelope：
 }
 ```
 
-`setText` 与 `replaceText` 会重写目标文本节点，并可能把多个文本 Run 合并为一个，同时保留第一个 Run 的样式。需要明确控制文字样式时，请在文本修改后使用 `setProperties`。
+`setText` 与 `replaceText` 会重写目标文本节点，并可能把多个文字片段合并为一个，同时保留第一个片段的样式。需要明确控制文字样式时，请在文本修改后使用 `setProperties`。
 
 ## 属性与几何信息
 
@@ -170,13 +199,13 @@ Node.js API 需要完整 Envelope：
 }
 ```
 
-为 `replacePicture` 提供 `path` 或 `base64`；同时存在时优先读取文件路径。删除图片和幻灯片时，只清理由其他关系不再引用的媒体。复制幻灯片时会克隆可变的备注和图表 Part，版式和媒体可能继续共享。
+为 `replacePicture` 提供 `path` 或 `base64`；同时存在时优先读取文件路径。删除图片和幻灯片时，只清理由其他关系不再引用的媒体。复制幻灯片时会克隆可变的备注和图表部件，版式和媒体可能继续共享。
 
 ## 表格、备注与图表
 
 - 查询 `kind=table` 会返回表格及带有行、列位置的 `tableCell` 子元素。
-- 演讲者备注的类型为 `notes`；`getText` 可以读取，`setText` 可以替换备注 Part 中的文本。
-- 图表查询结果包含标题、缓存的系列名称和值、Chart Part，以及是否存在内嵌工作簿。
+- 演讲者备注的类型为 `notes`；`getText` 可以读取，`setText` 可以替换备注部件中的文本。
+- 图表查询结果包含标题、缓存的系列名称和值、图表部件，以及是否存在内嵌工作簿。
 
 使用 `setProperties` 修改图表：
 
@@ -195,7 +224,7 @@ DeckUse 修改的是 OOXML 图表缓存，不会更新内嵌 Excel 工作簿。�
 
 ## 批处理与试运行
 
-当前 Schema 要求每条嵌套批处理命令都包含完整协议与修改 Envelope，即使外层批处理通过 CLI 执行也一样：
+当前 JSON Schema 要求每条嵌套批处理命令都包含完整协议与修改封装，即使外层批处理通过 CLI 执行也一样：
 
 ```json
 {
@@ -229,4 +258,4 @@ CLI 会自动补充外层命令的工作区和事务字段。`atomic` 默认为 
 
 ## 协议 Schema
 
-已发布的 Core 软件包通过 `@deckflow/deckuse-core/schema/command.json` 导出 Draft 2020-12 命令 Schema。可以用它校验生成的工具调用，但执行后仍需检查运行时的 `ok` 字段和诊断信息。
+已发布的核心软件包通过 `@deckflow/deckuse-core/schema/command.json` 导出 Draft 2020-12 命令 Schema。可以用它校验生成的工具调用，但执行后仍需检查运行时的 `ok` 字段和诊断信息。

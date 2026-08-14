@@ -1,0 +1,135 @@
+---
+title: CLI Automation and Output
+sidebarTitle: Automation and Output
+description: "Consume DeckUse CLI JSON, diagnostics, streams, exit status, and revision conflicts reliably in scripts and CI."
+---
+
+DeckUse writes command result envelopes to standard output and CLI usage or JSON parsing errors to standard error. Automation should evaluate both the process exit status and the JSON `ok` field.
+
+## Compact and indented JSON
+
+Without `--json`, one result envelope is printed as indented JSON for reading. With `--json`, the same fields are printed on one line for scripts and JSON Lines consumers:
+
+```bash
+deckuse query ./workspace 'text=Revenue' --json
+```
+
+`--json` changes formatting only; it does not select different result fields.
+
+## One output envelope per input command
+
+`apply` accepts one object, a JSON array, or JSON Lines. Each top-level input command produces one result envelope. With `--json`, two JSONL commands produce two output lines:
+
+```jsonl
+{"ok":true,"value":{"changed":true,"diagnostics":[],"revision":"mssoc3fw-8898b2b3"},"diagnostics":[]}
+{"ok":true,"value":{"changed":true,"diagnostics":[],"revision":"mssoc3s5-2e4d8839"},"diagnostics":[]}
+```
+
+The CLI stops after the first `ok: false` result. Process output collected before that failure still belongs to commands that were already persisted.
+
+## Exit status
+
+| Status | Meaning | Output location |
+| ---: | --- | --- |
+| `0` | Every executed command returned `ok: true` | Result JSON on stdout |
+| `1` | A valid DeckUse command returned `ok: false` | Failure envelope on stdout |
+| `2` | CLI arguments, file reading, or JSON parsing failed before execution | Human-readable message on stderr |
+
+An existing destination without `--force` is an executed command failure:
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "IO_ERROR",
+    "message": "Destination exists: /absolute/path/updated.pptx"
+  },
+  "diagnostics": []
+}
+```
+
+Malformed input does not produce a result envelope:
+
+```text
+deckuse: Expected property name or '}' in JSON at position 1
+```
+
+## Check results in a shell
+
+The following Bash and Zsh examples use `jq` to evaluate the JSON result. Install `jq` first or perform the same checks with your application's JSON parser.
+
+Require exactly one query match:
+
+```bash
+deckuse query ./workspace 'slide=256 text=Revenue' --limit 2 --json \
+  | jq -e '.ok and (.value | length == 1)' > /dev/null
+```
+
+Require a persisted change:
+
+```bash
+deckuse apply ./workspace --input change.json --json \
+  | jq -e '.ok and .value.changed and (.value.revision | length > 0)' > /dev/null
+```
+
+When reading JSONL results, evaluate every line rather than only the last one:
+
+```bash
+set -o pipefail
+deckuse apply ./workspace --input changes.jsonl --json \
+  | jq -s -e 'all(.ok == true)' > /dev/null
+```
+
+`jq -s` collects all result lines and checks each envelope; `pipefail` also preserves a nonzero DeckUse process status.
+
+## Check results in PowerShell
+
+```powershell
+$result = deckuse validate .\workspace --json | ConvertFrom-Json
+if ($LASTEXITCODE -ne 0 -or -not $result.ok -or -not $result.value.valid) {
+  exit 1
+}
+```
+
+For `apply` with multiple top-level commands, parse each output line separately:
+
+```powershell
+$results = deckuse apply .\workspace --input changes.jsonl --json |
+  ForEach-Object { $_ | ConvertFrom-Json }
+
+if ($LASTEXITCODE -ne 0 -or @($results | Where-Object { -not $_.ok }).Count -gt 0) {
+  exit 1
+}
+```
+
+## Handle revisions deliberately
+
+Every persisted mutation creates a new revision. The CLI reloads the latest transaction revision before each top-level `apply` item, but a targeted `ref` can still carry an older revision.
+
+A stale reference returns:
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "TRANSACTION_CONFLICT",
+    "message": "Expected revision mssob1ss-2943b374, current mssoc3s5-2e4d8839"
+  },
+  "diagnostics": []
+}
+```
+
+On a conflict:
+
+1. Run `inspect` or `query` again.
+2. Confirm the candidate is still the intended object.
+3. Rebuild the command with the new reference.
+4. Retry the reviewed operation.
+
+Do not automatically strip the reference revision or retry an old mutation against a changed workspace.
+
+## Diagnostics are part of success handling
+
+An `ok: true` result can still contain warnings. For example, changing a chart cache whose chart has an embedded workbook returns `EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED`. Treat diagnostics as structured output and decide which codes block delivery in your workflow.
+
+See [Results, Diagnostics, and Errors](/deckuse/reference/results-and-errors) for the complete result envelope and caller actions.

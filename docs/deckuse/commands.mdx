@@ -26,6 +26,35 @@ DeckUse uses protocol version `1.0`. The CLI has convenience subcommands for `in
 | `validate` | Check the current workspace package |
 | `commit` | Export the current package to a destination PPTX |
 
+## Field reference
+
+Every command includes `version: "1.0"` and `type`. The Node.js API also requires `workspaceId`; persisted mutations and `commit` require the current `transactionId`. The CLI supplies these fields for each top-level object passed through `apply`.
+
+| Command | Required command-specific fields | Optional fields |
+| --- | --- | --- |
+| `init` | `workspaceId`, `format`, `source` | — |
+| `inspect` | `workspaceId` | `ref`, `depth` from `0` to `100` |
+| `query` | `workspaceId`, `selector` | `limit` from `1` to `10000` |
+| `getText` | `workspaceId`, `ref` | — |
+| `validate` | `workspaceId` | `level`: `fast` or `full` |
+| `commit` | `workspaceId`, `transactionId` | `destination`, `overwrite` |
+
+Mutation commands share `workspaceId` and `transactionId`, and optionally accept `dryRun`:
+
+| Command | Required command-specific fields | Optional fields |
+| --- | --- | --- |
+| `setText` | `ref`, `text` | `dryRun` |
+| `replaceText` | `find`, `replace` | `regex`, `selector`, `limit`, `dryRun` |
+| `setProperties` | `ref`, `properties` | `dryRun` |
+| `setTransform` | `ref`, `transform` | `dryRun`; individual transform fields may be omitted |
+| `add` | `parent`, `element` | `dryRun` |
+| `remove` | `ref` | `dryRun` |
+| `replacePicture` | `ref` and either `path` or `base64` | `dryRun` |
+| `duplicate` | `ref` | `dryRun` |
+| `batch` | `commands` | `atomic`, `dryRun` |
+
+An element reference requires `documentId` plus either `elementId` or `path`; `revision` is optional but recommended for targeted changes. `setTransform.transform` accepts implemented PPTX fields `x`, `y`, `width`, `height`, and `rotation`.
+
 ## CLI mutation envelope
 
 For one top-level command passed to `deckuse apply`, omit `version`, `workspaceId`, and `transactionId`; the CLI fills them from the workspace:

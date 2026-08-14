@@ -1,0 +1,75 @@
+---
+title: DeckUse CLI
+sidebarTitle: Overview
+description: "Install the DeckUse CLI and choose the right command path for inspecting, modifying, validating, and exporting a PPTX."
+---
+
+The DeckUse CLI maintains an existing PPTX through a local workspace. Six shell commands cover the document lifecycle; all content mutations are expressed as JSON and passed to `apply`.
+
+```text
+input.pptx → init → inspect / query → apply → validate → commit → updated.pptx
+```
+
+## Install and verify
+
+Install Node.js 18 or later, then install the CLI from npm:
+
+```bash
+node --version
+npm install -g @deckflow/deckuse
+deckuse --version
+deckuse --help
+```
+
+DeckUse runs locally and does not require a DeckFlow account or API key.
+
+## Command map
+
+| Command | What it does | Continue with |
+| --- | --- | --- |
+| `init <input> <workspace>` | Import one PPTX into a persistent workspace | [Inspect and query](/deckuse/cli/inspect-and-query) |
+| `inspect <workspace>` | Return capabilities and the complete indexed structure | [Inspect and query](/deckuse/cli/inspect-and-query#inspect-the-document) |
+| `query <workspace> [selector]` | Find indexed elements that match a selector | [Inspect and query](/deckuse/cli/inspect-and-query#query-for-candidates) |
+| `apply <workspace>` | Execute JSON mutation commands from a file or stdin | [Apply and export](/deckuse/cli/apply-and-export) |
+| `validate <workspace>` | Check internal PPTX relationships before export | [Validate and commit](/deckuse/cli/apply-and-export#validate-and-commit) |
+| `commit <workspace>` | Export the workspace as another PPTX | [Validate and commit](/deckuse/cli/apply-and-export#validate-and-commit) |
+
+Mutations such as `replaceText`, `setProperties`, `setTransform`, `add`, `remove`, `duplicate`, and `replacePicture` are JSON command types, not separate shell subcommands. See the [JSON Command Reference](/deckuse/commands) for their payloads.
+
+## A minimal CLI path
+
+```bash
+deckuse init input.pptx ./workspace --json
+deckuse query ./workspace 'text=2025' --limit 100 --json
+printf '%s\n' '{"type":"replaceText","find":"2025","replace":"2026"}' \
+  | deckuse apply ./workspace --json
+deckuse validate ./workspace --json
+deckuse commit ./workspace -o updated.pptx --json
+```
+
+Do not skip the query merely because `replaceText` accepts a global search. Review the candidates before a bulk mutation, and use a returned element reference when one exact object must change.
+
+## Choose the next page
+
+<CardGroup cols={2}>
+  <Card title="Inspect and query" href="/deckuse/cli/inspect-and-query">
+    Understand the index, selectors, query results, element references, and revisions.
+  </Card>
+  <Card title="Apply and export" href="/deckuse/cli/apply-and-export">
+    Supply JSON commands, preview or persist changes, validate, and write a new PPTX.
+  </Card>
+  <Card title="Automation and output" href="/deckuse/cli/automation-and-output">
+    Consume JSON Lines, exit status, stdout, stderr, diagnostics, and retryable conflicts.
+  </Card>
+  <Card title="Quickstart" href="/deckuse/quick-start">
+    Download a known PPTX and complete one verified text replacement end to end.
+  </Card>
+</CardGroup>
+
+Command-specific help is available locally:
+
+```bash
+deckuse query --help
+deckuse help apply
+deckuse commit --help
+```

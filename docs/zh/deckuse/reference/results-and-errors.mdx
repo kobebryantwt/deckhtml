@@ -37,13 +37,14 @@ description: "处理 DeckUse 结果封装、诊断信息、错误码、工作区
 
 | 错误码 | 含义与处理方式 |
 | --- | --- |
-| `INVALID_COMMAND` | 命令未通过 Schema 或操作校验；修正请求内容 |
+| `INVALID_COMMAND` | 命令未通过 JSON Schema 或操作校验；修正请求内容 |
 | `WORKSPACE_NOT_FOUND` | 无法解析工作区；先初始化或修正路径 |
 | `ELEMENT_NOT_FOUND` | 引用已经无法解析；重新查询当前索引 |
 | `FORMAT_NOT_SUPPORTED` | 没有为该格式注册适配器 |
 | `VALIDATION_FAILED` | 文件包校验或原子操作失败；检查诊断信息 |
 | `TRANSACTION_CONFLICT` | 工作区或引用版本已经过期；重新读取后再决定是否重试 |
 | `IO_ERROR` | 读取、写入、打包或目标文件处理失败 |
+| `INTERNAL_ERROR` | 适配器发生预期外错误；报告问题时保留命令与诊断信息 |
 
 ## 诊断信息
 
@@ -71,7 +72,7 @@ description: "处理 DeckUse 结果封装、诊断信息、错误码、工作区
 
 - 持久化修改会生成新版本。
 - 修改命令必须使用当前 `transactionId`，或使用字面值 `latest`。
-- 引用携带旧 `revision` 时，即使 Element ID 仍存在，也可能触发 `TRANSACTION_CONFLICT`。
+- 引用携带旧 `revision` 时，即使元素 ID 仍存在，也可能触发 `TRANSACTION_CONFLICT`。
 - 发生冲突后，请重新检查或查询，再重新构造目标命令；不要直接替换未复核旧命令中的事务版本。
 - `dryRun: true` 返回预期结果，但不会修改版本。
 

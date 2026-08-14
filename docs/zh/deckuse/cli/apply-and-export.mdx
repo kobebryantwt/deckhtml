@@ -1,0 +1,204 @@
+---
+title: 执行修改并导出
+sidebarTitle: 修改与导出
+description: "向 DeckUse 提交 JSON 修改命令，预演或保存修改，校验工作区并导出新的 PPTX。"
+---
+
+`deckuse apply` 从文件或标准输入读取修改命令。CLI 会为每条顶层命令补充协议版本、工作区 ID 和当前事务版本，因此命令文件只需描述要执行的修改。
+
+## 选择输入形式
+
+<Tabs>
+  <Tab title="单条命令">
+    把一个 JSON 对象保存为 `replace.json`：
+
+    ```json
+    {
+      "type": "replaceText",
+      "find": "FY2025",
+      "replace": "FY2026",
+      "selector": "kind=textbox"
+    }
+    ```
+
+    ```bash
+    deckuse apply ./workspace --input replace.json --json
+    ```
+  </Tab>
+  <Tab title="JSON 数组">
+    JSON 数组中的顶层命令会依次执行。每执行一项前，CLI 都会重新读取最新版本。
+
+    ```json
+    [
+      { "type": "replaceText", "find": "FY2025", "replace": "FY2026" },
+      { "type": "replaceText", "find": "Old Product", "replace": "New Product" }
+    ]
+    ```
+
+    ```bash
+    deckuse apply ./workspace --input changes.json --json
+    ```
+  </Tab>
+  <Tab title="JSON Lines">
+    当其他程序逐条生成命令时，可以使用 JSON Lines。每个非空行放一个完整 JSON 对象：
+
+    ```jsonl
+    {"type":"replaceText","find":"FY2025","replace":"FY2026"}
+    {"type":"replaceText","find":"Old Product","replace":"New Product"}
+    ```
+
+    ```bash
+    deckuse apply ./workspace --input changes.jsonl --json
+    ```
+  </Tab>
+  <Tab title="标准输入">
+    `--input -` 是默认行为：
+
+    ```bash
+    printf '%s\n' '{"type":"replaceText","find":"2025","replace":"2026"}' \
+      | deckuse apply ./workspace --json
+    ```
+  </Tab>
+</Tabs>
+
+遇到第一条失败的顶层命令后，CLI 会停止执行。JSON 数组和 JSONL 都是顺序执行，不具备原子性：后续命令失败时，之前成功的命令已经保存。需要全部成功或全部失败时，应使用 `batch` 命令。
+
+## 读取修改结果
+
+持久化文字替换会返回修改的索引节点数量和新的工作区版本：
+
+```json
+{
+  "ok": true,
+  "value": {
+    "changed": true,
+    "matched": 1,
+    "refs": [
+      {
+        "documentId": "/absolute/path/workspace",
+        "elementId": "256:5",
+        "path": "/ppt/slides/slide1.xml#256:5",
+        "revision": "mssob1ss-2943b374"
+      }
+    ],
+    "diagnostics": [],
+    "revision": "mssobe6c-bdeb914a"
+  },
+  "diagnostics": []
+}
+```
+
+返回的 refs 描述修改前选中的元素。需要继续定向修改时，应重新查询并获取绑定到新版本的引用。
+
+## 预演修改
+
+在修改或批处理中增加 `dryRun: true`，可以在不改变文件包、索引、版本和操作日志的情况下检查操作：
+
+```json
+{
+  "type": "replaceText",
+  "find": "FY2025",
+  "replace": "FY2026",
+  "selector": "kind=textbox",
+  "dryRun": true
+}
+```
+
+结果中会包含 `dryRun: true`，工作区版本保持不变。预演只能检查结构化操作，不能判断修改后的视觉效果。
+
+## 修改一个确定元素
+
+先查询并检查目标：
+
+```bash
+deckuse query ./workspace 'slide=256 text=Revenue' --limit 10 --json
+```
+
+把返回的 `ref` 放入命令文件：
+
+```json
+{
+  "type": "setText",
+  "ref": {
+    "documentId": "/absolute/path/workspace",
+    "elementId": "256:5",
+    "revision": "mssob1ss-2943b374"
+  },
+  "text": "Enterprise Revenue"
+}
+```
+
+```bash
+deckuse apply ./workspace --input set-title.json --json
+```
+
+不要把示例 ID 复制到其他演示文稿。如果工作区已经被另一条命令修改，应重新查询目标，而不是直接删除未经复核的旧引用中的版本字段。
+
+## 常用修改类型
+
+| 目标 | 命令类型 | 关键输入 |
+| --- | --- | --- |
+| 在已确认的候选元素中替换文字 | `replaceText` | `find`、`replace`，以及可选的 `regex`、`selector` 和 `limit` |
+| 替换一个索引节点中的全部文字 | `setText` | 当前 `ref` 和 `text` |
+| 修改填充、描边、字体、名称、隐藏状态或图表缓存 | `setProperties` | 当前 `ref` 和 `properties` |
+| 修改明确的位置、尺寸或旋转信息 | `setTransform` | 当前 `ref` 和 EMU 几何值 |
+| 添加支持的幻灯片或元素 | `add` | 父级幻灯片引用和元素定义 |
+| 复制或删除现有对象 | `duplicate` 或 `remove` | 当前幻灯片或元素引用 |
+| 原位替换内嵌图片内容 | `replacePicture` | 图片引用，以及 `path` 或 `base64` |
+| 把相关修改作为一个事务执行 | `batch` | 完整的嵌套修改命令，以及 `atomic` 行为 |
+
+[JSON 命令参考](/zh/deckuse/commands)提供了各类操作可执行的请求结构。[PPTX 能力](/zh/deckuse/reference/pptx-capabilities)则区分了可以索引的对象和可以修改的对象。
+
+## 校验并提交
+
+导出前执行结构校验：
+
+```bash
+deckuse validate ./workspace --level full --json
+```
+
+下面的缩略结果展示了决定是否导出时通常使用的字段：
+
+```json
+{
+  "ok": true,
+  "value": {
+    "valid": true,
+    "revision": "mssobe6c-bdeb914a",
+    "capabilities": { "slides": { "add": true, "duplicate": true, "remove": true } }
+  },
+  "diagnostics": []
+}
+```
+
+`--level` 接受 `fast` 或 `full`，默认为 `full`。当前 PPTX 校验器检查内部关系指向的目标是否存在，不会渲染幻灯片，也不会验证全部 OOXML 规则。
+
+导出新的 PPTX：
+
+```bash
+deckuse commit ./workspace -o updated.pptx --json
+```
+
+```json
+{
+  "ok": true,
+  "value": {
+    "destination": "/absolute/path/updated.pptx",
+    "revision": "mssobe6c-bdeb914a"
+  },
+  "diagnostics": []
+}
+```
+
+不指定 `-o` 时，DeckUse 会在源文件旁写入 `<source-name>.deckuse.pptx`。目标文件已经存在时会拒绝覆盖；只有明确需要替换时才添加 `--force`。
+
+## 验证结果
+
+在单独的工作区重新打开导出文件，并查询预期修改：
+
+```bash
+deckuse init updated.pptx ./verification --json
+deckuse query ./verification 'text=FY2026' --limit 100 --json
+```
+
+文件包校验不能代替视觉检查。交付前仍需打开或渲染导出的 PPTX。

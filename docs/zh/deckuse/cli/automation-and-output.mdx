@@ -1,0 +1,135 @@
+---
+title: CLI 自动化与输出
+sidebarTitle: 自动化与输出
+description: "在脚本和 CI 中可靠处理 DeckUse CLI 的 JSON、诊断信息、输出流、退出状态和版本冲突。"
+---
+
+DeckUse 把命令结果封装写入标准输出，把命令用法错误或 JSON 解析错误写入标准错误。自动化程序应同时判断进程退出状态和 JSON 中的 `ok` 字段。
+
+## 单行与缩进 JSON
+
+不使用 `--json` 时，一条结果会以带缩进的 JSON 输出，方便人工阅读。使用 `--json` 后，同样的字段会压缩到一行，方便脚本和 JSON Lines 消费者处理：
+
+```bash
+deckuse query ./workspace 'text=Revenue' --json
+```
+
+`--json` 只改变输出排版，不会切换结果字段。
+
+## 每条输入对应一条结果
+
+`apply` 可以接收一个对象、JSON 数组或 JSON Lines。每条顶层输入命令都会产生一条结果。使用 `--json` 时，两条 JSONL 命令会产生两行输出：
+
+```jsonl
+{"ok":true,"value":{"changed":true,"diagnostics":[],"revision":"mssoc3fw-8898b2b3"},"diagnostics":[]}
+{"ok":true,"value":{"changed":true,"diagnostics":[],"revision":"mssoc3s5-2e4d8839"},"diagnostics":[]}
+```
+
+遇到第一条 `ok: false` 结果后，CLI 会停止。失败前已经产生的结果，对应之前已经持久化的命令。
+
+## 退出状态
+
+| 状态码 | 含义 | 输出位置 |
+| ---: | --- | --- |
+| `0` | 所有已执行命令都返回 `ok: true` | 结果 JSON 写入标准输出 |
+| `1` | 有效的 DeckUse 命令返回 `ok: false` | 失败结果写入标准输出 |
+| `2` | 参数、文件读取或 JSON 解析在执行前失败 | 可读错误信息写入标准错误 |
+
+未使用 `--force` 覆盖现有目标文件，属于命令执行失败：
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "IO_ERROR",
+    "message": "Destination exists: /absolute/path/updated.pptx"
+  },
+  "diagnostics": []
+}
+```
+
+JSON 语法错误不会产生结果封装：
+
+```text
+deckuse: Expected property name or '}' in JSON at position 1
+```
+
+## 在 Shell 中检查结果
+
+下面的 Bash 和 Zsh 示例使用 `jq` 判断 JSON 结果。请先安装 `jq`，或使用应用自身的 JSON 解析器完成相同检查。
+
+要求查询结果只包含一个元素：
+
+```bash
+deckuse query ./workspace 'slide=256 text=Revenue' --limit 2 --json \
+  | jq -e '.ok and (.value | length == 1)' > /dev/null
+```
+
+要求操作产生了持久化修改：
+
+```bash
+deckuse apply ./workspace --input change.json --json \
+  | jq -e '.ok and .value.changed and (.value.revision | length > 0)' > /dev/null
+```
+
+处理 JSONL 结果时，应检查每一行，而不是只读取最后一条：
+
+```bash
+set -o pipefail
+deckuse apply ./workspace --input changes.jsonl --json \
+  | jq -s -e 'all(.ok == true)' > /dev/null
+```
+
+`jq -s` 会把所有结果读入数组并逐项判断；`pipefail` 还可以保留 DeckUse 自身的非零退出状态。
+
+## 在 PowerShell 中检查结果
+
+```powershell
+$result = deckuse validate .\workspace --json | ConvertFrom-Json
+if ($LASTEXITCODE -ne 0 -or -not $result.ok -or -not $result.value.valid) {
+  exit 1
+}
+```
+
+当 `apply` 包含多条顶层命令时，应逐行解析输出：
+
+```powershell
+$results = deckuse apply .\workspace --input changes.jsonl --json |
+  ForEach-Object { $_ | ConvertFrom-Json }
+
+if ($LASTEXITCODE -ne 0 -or @($results | Where-Object { -not $_.ok }).Count -gt 0) {
+  exit 1
+}
+```
+
+## 明确处理工作区版本
+
+每次持久化修改都会生成新的版本。执行每条顶层 `apply` 命令前，CLI 会重新读取当前事务版本，但定向修改使用的 `ref` 仍可能包含旧版本。
+
+过期引用会返回：
+
+```json
+{
+  "ok": false,
+  "error": {
+    "code": "TRANSACTION_CONFLICT",
+    "message": "Expected revision mssob1ss-2943b374, current mssoc3s5-2e4d8839"
+  },
+  "diagnostics": []
+}
+```
+
+发生冲突后：
+
+1. 重新执行 `inspect` 或 `query`。
+2. 确认候选元素仍然是预期对象。
+3. 使用新引用重新构造命令。
+4. 重试已经复核的操作。
+
+不要自动删除引用中的版本，也不要把旧修改直接重试到已经变化的工作区。
+
+## 成功时也要处理诊断信息
+
+`ok: true` 结果中仍可能包含警告。例如，修改带有内嵌工作簿的图表缓存时会返回 `EMBEDDED_WORKBOOK_NOT_SYNCHRONIZED`。应把诊断信息作为结构化结果处理，并在自己的工作流中决定哪些诊断会阻止交付。
+
+完整结果结构和处理建议请查看[结果、诊断与错误](/zh/deckuse/reference/results-and-errors)。
