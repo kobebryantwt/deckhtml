@@ -17,13 +17,13 @@ description: "安装 DeckUse，检查并替换已知 PPTX 中的文本，校验�
     deckuse --help
     ```
   </Step>
-  <Step title="下载已知 PPTX">
+  <Step title="下载公开测试 PPTX">
     ```bash
-    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx \
       -o input.pptx
     ```
 
-    示例中包含 `Revenue 2025`，所以下面的查询和替换都有已知匹配。首次跑通后，可以换成自己的 PPTX。
+    这份固定版本的测试文件来自公开的 [python-pptx 测试套件](https://github.com/scanny/python-pptx/blob/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx)，其中有且只有一个可编辑文本框包含 `Presentation Title Text`，所以下面的查询和替换都有确定结果。首次跑通后，可以换成自己的 PPTX。
   </Step>
   <Step title="创建工作区">
     ```bash
@@ -34,10 +34,10 @@ description: "安装 DeckUse，检查并替换已知 PPTX 中的文本，校验�
   </Step>
   <Step title="检查匹配元素">
     ```bash
-    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    deckuse query ./workspace 'text=Presentation Title' --limit 10 --json
     ```
 
-    确认结果中有一个 `text` 为 `Revenue 2025` 的文本框。后续命令需要精确修改单个对象时，请保留查询返回的 `ref`。
+    确认结果中只有一个文本框，并且 `text` 为 `Presentation Title Text`。后续命令需要精确修改单个对象时，请保留查询返回的 `ref`。
   </Step>
   <Step title="执行确认后的替换">
     把下面的命令保存为 `replace.json`：
@@ -45,9 +45,10 @@ description: "安装 DeckUse，检查并替换已知 PPTX 中的文本，校验�
     ```json
     {
       "type": "replaceText",
-      "find": "2025",
-      "replace": "2026",
-      "selector": "kind=textbox"
+      "find": "Presentation Title Text",
+      "replace": "DeckUse Updated Title",
+      "selector": "kind=textbox",
+      "limit": 1
     }
     ```
 
@@ -70,7 +71,7 @@ description: "安装 DeckUse，检查并替换已知 PPTX 中的文本，校验�
   <Step title="验证导出文件">
     ```bash
     deckuse init updated.pptx ./verification --json
-    deckuse query ./verification 'text=2026' --limit 10 --json
+    deckuse query ./verification 'text=DeckUse Updated Title' --limit 10 --json
     test -s updated.pptx
     ```
 

@@ -17,13 +17,13 @@ This path runs entirely on your machine and requires no DeckFlow account or API 
     deckuse --help
     ```
   </Step>
-  <Step title="Download a known PPTX">
+  <Step title="Download a public test PPTX">
     ```bash
-    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx \
       -o input.pptx
     ```
 
-    The sample contains the text `Revenue 2025`, so the following query and replacement have a known match. You can substitute your own PPTX after completing this path once.
+    This immutable fixture comes from the public [python-pptx test suite](https://github.com/scanny/python-pptx/blob/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx). It contains one editable text box with `Presentation Title Text`, so the following query and replacement have a known match. You can substitute your own PPTX after completing this path once.
   </Step>
   <Step title="Create a workspace">
     ```bash
@@ -34,10 +34,10 @@ This path runs entirely on your machine and requires no DeckFlow account or API 
   </Step>
   <Step title="Inspect the matching element">
     ```bash
-    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    deckuse query ./workspace 'text=Presentation Title' --limit 10 --json
     ```
 
-    Confirm that the result contains a text box whose `text` is `Revenue 2025`. Keep the returned `ref` when a later command must change one exact object.
+    Confirm that the result contains exactly one text box whose `text` is `Presentation Title Text`. Keep the returned `ref` when a later command must change one exact object.
   </Step>
   <Step title="Apply a reviewed replacement">
     Save this command as `replace.json`:
@@ -45,9 +45,10 @@ This path runs entirely on your machine and requires no DeckFlow account or API 
     ```json
     {
       "type": "replaceText",
-      "find": "2025",
-      "replace": "2026",
-      "selector": "kind=textbox"
+      "find": "Presentation Title Text",
+      "replace": "DeckUse Updated Title",
+      "selector": "kind=textbox",
+      "limit": 1
     }
     ```
 
@@ -70,7 +71,7 @@ This path runs entirely on your machine and requires no DeckFlow account or API 
   <Step title="Verify the exported file">
     ```bash
     deckuse init updated.pptx ./verification --json
-    deckuse query ./verification 'text=2026' --limit 10 --json
+    deckuse query ./verification 'text=DeckUse Updated Title' --limit 10 --json
     test -s updated.pptx
     ```
 

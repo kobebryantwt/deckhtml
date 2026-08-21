@@ -4,7 +4,7 @@ sidebarTitle: 修改 PPTX 内容
 description: "使用 DeckUse 查询已知 PPTX，执行确认后的文本替换，校验工作区并验证导出的演示文稿。"
 ---
 
-本示例把一份已知演示文稿中的 `Revenue 2025` 修改为 `Revenue 2026`。源文件与输出文件都留在本地，并且不会覆盖原始 PPTX。
+本示例把一份已知演示文稿中的 `Presentation Title Text` 修改为 `DeckUse Updated Title`。源文件与输出文件都留在本地，并且不会覆盖原始 PPTX。
 
 ## 前置条件
 
@@ -21,18 +21,18 @@ description: "使用 DeckUse 查询已知 PPTX，执行确认后的文本替换�
     deckuse --help
     ```
   </Step>
-  <Step title="下载已知演示文稿">
+  <Step title="下载公开测试演示文稿">
     ```bash
-    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx \
       -o input.pptx
     ```
 
-    文件包含两个可编辑文本框，其中一个文本为 `Revenue 2025`。
+    这份固定版本的测试文件来自公开的 [python-pptx 测试套件](https://github.com/scanny/python-pptx/blob/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx)，其中有一个可编辑文本框的内容为 `Presentation Title Text`。
   </Step>
   <Step title="初始化并检查匹配结果">
     ```bash
     deckuse init input.pptx ./workspace --json
-    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    deckuse query ./workspace 'text=Presentation Title' --limit 10 --json
     ```
 
     只有查询返回预期文本框时才继续。先检查再修改，可以避免对未知文件执行意外的全局替换。
@@ -43,8 +43,8 @@ description: "使用 DeckUse 查询已知 PPTX，执行确认后的文本替换�
     ```json
     {
       "type": "replaceText",
-      "find": "Revenue 2025",
-      "replace": "Revenue 2026",
+      "find": "Presentation Title Text",
+      "replace": "DeckUse Updated Title",
       "selector": "kind=textbox",
       "limit": 1
     }
@@ -62,11 +62,11 @@ description: "使用 DeckUse 查询已知 PPTX，执行确认后的文本替换�
   <Step title="把输出作为新输入验证">
     ```bash
     deckuse init updated.pptx ./verification --json
-    deckuse query ./verification 'text=Revenue' --limit 10 --json
+    deckuse query ./verification 'text=DeckUse Updated Title' --limit 10 --json
     test -s updated.pptx
     ```
 
-    验证查询应返回 `Revenue 2026`，并且不再包含 `Revenue 2025`。PowerShell 中使用以下命令检查文件：
+    验证查询应返回 `DeckUse Updated Title`，并且不再包含 `Presentation Title Text`。PowerShell 中使用以下命令检查文件：
 
     ```powershell
     if (!(Test-Path updated.pptx) -or (Get-Item updated.pptx).Length -eq 0) { exit 1 }

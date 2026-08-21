@@ -117,9 +117,9 @@ HTML 会上传到 DeckFlow 云端。成功结果会标识任务，并返回 PNG 
 ```bash
 npm install -g @deckflow/deckuse
 deckuse --version
-curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx -o input.pptx
+curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx -o input.pptx
 deckuse init input.pptx ./workspace --json
-printf '%s\n' '{"type":"replaceText","find":"2025","replace":"2026"}' \
+printf '%s\n' '{"type":"replaceText","find":"Presentation Title Text","replace":"DeckUse Updated Title","selector":"kind=textbox","limit":1}' \
   | deckuse apply ./workspace --json
 deckuse validate ./workspace --json
 deckuse commit ./workspace -o updated.pptx --json

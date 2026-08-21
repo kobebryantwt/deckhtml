@@ -4,7 +4,7 @@ sidebarTitle: Update PPTX Content
 description: "Use DeckUse to query a known PPTX, apply a reviewed text replacement, validate the workspace, and verify the exported presentation."
 ---
 
-This example changes `Revenue 2025` to `Revenue 2026` in a known presentation. The source and output remain local, and the original PPTX is never overwritten.
+This example changes `Presentation Title Text` to `DeckUse Updated Title` in a known presentation. The source and output remain local, and the original PPTX is never overwritten.
 
 ## Prerequisites
 
@@ -21,18 +21,18 @@ This example changes `Revenue 2025` to `Revenue 2026` in a known presentation. T
     deckuse --help
     ```
   </Step>
-  <Step title="Download the known presentation">
+  <Step title="Download the public test presentation">
     ```bash
-    curl -fL https://raw.githubusercontent.com/kobebryantwt/deckhtml/codex/docs-product-architecture/docs/images/deckuse-sample.pptx \
+    curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx \
       -o input.pptx
     ```
 
-    The file contains two editable text boxes, including `Revenue 2025`.
+    This immutable fixture comes from the public [python-pptx test suite](https://github.com/scanny/python-pptx/blob/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx). It contains one editable text box with `Presentation Title Text`.
   </Step>
   <Step title="Initialize and review the match">
     ```bash
     deckuse init input.pptx ./workspace --json
-    deckuse query ./workspace 'text=Revenue' --limit 10 --json
+    deckuse query ./workspace 'text=Presentation Title' --limit 10 --json
     ```
 
     Continue only when the query returns the expected text box. A reviewed query prevents an accidental global change against an unknown file.
@@ -43,8 +43,8 @@ This example changes `Revenue 2025` to `Revenue 2026` in a known presentation. T
     ```json
     {
       "type": "replaceText",
-      "find": "Revenue 2025",
-      "replace": "Revenue 2026",
+      "find": "Presentation Title Text",
+      "replace": "DeckUse Updated Title",
       "selector": "kind=textbox",
       "limit": 1
     }
@@ -62,11 +62,11 @@ This example changes `Revenue 2025` to `Revenue 2026` in a known presentation. T
   <Step title="Verify the output as a new input">
     ```bash
     deckuse init updated.pptx ./verification --json
-    deckuse query ./verification 'text=Revenue' --limit 10 --json
+    deckuse query ./verification 'text=DeckUse Updated Title' --limit 10 --json
     test -s updated.pptx
     ```
 
-    The verification query should return `Revenue 2026` and no `Revenue 2025`. In PowerShell, verify the file with:
+    The verification query should return `DeckUse Updated Title` and no `Presentation Title Text`. In PowerShell, verify the file with:
 
     ```powershell
     if (!(Test-Path updated.pptx) -or (Get-Item updated.pptx).Length -eq 0) { exit 1 }
