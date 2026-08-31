@@ -11,7 +11,7 @@ DeckProbe 帮助应用和 Agent 在接收、路由或处理文档前，先完成
 | 输入 | PDF；现代与旧版 Word、Excel、PowerPoint；现代 Keynote、Numbers、Pages |
 | 结果 | Schema v2 JSON，包含 Target 值、证据、置信度、诊断和实际 I/O 成本 |
 | 执行位置 | 本地原生进程或本地 WebAssembly；文档字节不会发送给 DeckFlow |
-| 接入方式 | 原生 CLI、npm CLI、Browser SDK、Web Worker SDK 和 Node.js API |
+| 接入方式 | 原生与 npm CLI、Browser 与 Worker SDK、Node.js API、Agent Skill 和本地 MCP Server |
 | 认证 | 不需要 |
 
 ## DeckProbe 适合什么
@@ -46,8 +46,8 @@ DeckProbe 会选择对应 Driver、验证文件容器，并只执行请求的 Ta
   <Card title="Node.js API" href="/zh/deckprobe/node-sdk">
     在 Node.js 20+ 应用中探测文件路径或字节数组。
   </Card>
-  <Card title="格式与 Target" href="/zh/deckprobe/formats-and-targets">
-    查看支持的文档类型、Target 发现和 Probe Level。
+  <Card title="Agent 集成" href="/zh/deckprobe/agent-integrations/overview">
+    通过 Agent Skill 使用 CLI，或通过本地 MCP Server 暴露有类型约束的工具。
   </Card>
 </CardGroup>
 

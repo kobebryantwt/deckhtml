@@ -1,0 +1,85 @@
+---
+title: DeckProbe Agent Skill
+sidebarTitle: Agent Skill
+description: "Install and verify the DeckProbe Skill for shell-capable coding agents."
+---
+
+The DeckProbe Agent Skill teaches an agent how to choose Targets, set Probe Levels, read Schema v2 reports, and handle exit statuses. The Skill is a set of instructions and references; DeckProbe CLI remains the executable that inspects the document.
+
+## Before you install
+
+Verify that the CLI is available:
+
+```bash
+deckprobe --version
+```
+
+If it is not installed, follow the [DeckProbe Quickstart](/deckprobe/quick-start). A Skill installed through `npx skills add` contains instructions only; it does not install the DeckProbe binary. When Node.js is available, the Skill can fall back to `npx -y @deckflow/deckprobe`, which downloads the CLI package on first use.
+
+## Install for detected agents
+
+Run the command from the project in which the agent should use DeckProbe:
+
+```bash
+# Preview destinations and files without writing them
+deckprobe install --skills --dry-run --pretty
+
+# Install for agent directories already present in this project
+deckprobe install --skills
+```
+
+With no `--agent`, DeckProbe detects known agent directories in the current project. If none exists, it uses the vendor-neutral `.agents/skills` location. Repeating the command is safe: matching files are reported as `unchanged` rather than rewritten.
+
+## Choose an agent or destination
+
+Install the Skill for one agent at user scope:
+
+```bash
+deckprobe install --skills --agent codex --global
+deckprobe install --skills --agent claude --global
+deckprobe install --skills --agent cursor --global
+```
+
+Supported agent values include `claude`, `codex`, `cursor`, `opencode`, `gemini`, `copilot`, `windsurf`, `cline`, `zed`, and the vendor-neutral `agents`. Use `--agent all` to select all known destinations, or provide an explicit skills container:
+
+```bash
+deckprobe install --skills --dir ./.custom-agent/skills
+```
+
+The explicit directory receives a `deckprobe/` child containing `SKILL.md` and its references.
+
+## Read the installation receipt
+
+Every installation writes a JSON receipt to standard output. Check these fields in automation:
+
+- `install.scope`: `project`, `global`, or `explicit`.
+- `install.targets[].directory`: the resolved Skill directory.
+- `install.targets[].files[].action`: `created`, `updated`, or `unchanged`.
+- `install.targets[].orphaned`: files no longer shipped by the current version; DeckProbe reports but does not delete them.
+
+DeckProbe updates a Skill directory that it recognizes as its own. If a destination already contains an unrelated `SKILL.md`, installation stops without partially writing other destinations. Use `--force` only after verifying that replacing that directory is intentional.
+
+## Install without the DeckProbe CLI
+
+The cross-agent Skills installer can install the same instructions directly from the open-source repository:
+
+```bash
+npx skills add deckflow/deckprobe
+```
+
+Claude Code also supports the repository as a plugin marketplace:
+
+```text
+/plugin marketplace add deckflow/deckprobe
+/plugin install deckprobe@deckflow
+```
+
+These paths install the Skill instructions, not a standalone DeckProbe binary.
+
+## Verify the integration
+
+After installation, ask the agent to inspect a known local document for a specific fact, such as its verified format and page or slide count. The agent should use `deckprobe`, check the process exit status, and return fields from the JSON report rather than unzip the document or infer the answer from its extension.
+
+For the complete installation flags, Man Pages, and Shell Completion options, see the [CLI Command Reference](/deckprobe/cli/command-reference#install-support-files).
+
+The Skill is maintained with DeckProbe in the [open-source repository](https://github.com/deckflow/deckprobe/tree/main/skills/deckprobe).

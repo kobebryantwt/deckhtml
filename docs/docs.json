@@ -184,6 +184,14 @@
                 ]
               },
               {
+                "group": "Agent Integrations",
+                "pages": [
+                  "deckprobe/agent-integrations/overview",
+                  "deckprobe/agent-integrations/agent-skill",
+                  "deckprobe/agent-integrations/mcp-server"
+                ]
+              },
+              {
                 "group": "Reference",
                 "pages": [
                   "deckprobe/output-model"
@@ -414,6 +422,14 @@
                 "pages": [
                   "zh/deckprobe/browser-sdk",
                   "zh/deckprobe/node-sdk"
+                ]
+              },
+              {
+                "group": "Agent 集成",
+                "pages": [
+                  "zh/deckprobe/agent-integrations/overview",
+                  "zh/deckprobe/agent-integrations/agent-skill",
+                  "zh/deckprobe/agent-integrations/mcp-server"
                 ]
               },
               {

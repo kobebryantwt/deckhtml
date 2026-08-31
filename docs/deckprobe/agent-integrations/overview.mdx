@@ -1,0 +1,33 @@
+---
+title: Agent Integrations
+sidebarTitle: Overview
+description: "Choose the DeckProbe Agent Skill or local MCP server for document inspection workflows driven by an AI agent."
+---
+
+DeckProbe offers two local integrations for agents. Both use the same target vocabulary and return the same Schema v2 facts; the difference is how the agent reaches the engine.
+
+| Integration | Use it when | How the agent calls DeckProbe |
+| --- | --- | --- |
+| Agent Skill | The agent can run shell commands and read local files | The Skill teaches the agent to invoke the full DeckProbe CLI correctly |
+| MCP Server | The client supports MCP and you want typed tools instead of shell commands | A local stdio server exposes `probe`, `probe_batch`, `list_formats`, and `list_targets` |
+
+Both integrations run on the machine that starts DeckProbe. They require no DeckFlow account or API key, and document bytes are not sent to DeckFlow.
+
+<CardGroup cols={2}>
+  <Card title="Agent Skill" href="/deckprobe/agent-integrations/agent-skill" icon="wand-magic-sparkles">
+    Install DeckProbe instructions for Codex, Claude Code, Cursor, Gemini, and other shell-capable agents.
+  </Card>
+  <Card title="MCP Server" href="/deckprobe/agent-integrations/mcp-server" icon="plug">
+    Register a local MCP server, verify its tools, and restrict which directories it may read.
+  </Card>
+</CardGroup>
+
+<Tip>
+  Use the Skill when the agent already has a shell and you want the complete CLI surface. Use MCP when the client works through typed tools or does not expose a shell to the agent.
+</Tip>
+
+## What these integrations return
+
+The Skill and MCP server do not add a second report format. A single probe still returns the [DeckProbe Schema v2 output](/deckprobe/output-model), including canonical Target keys, evidence, confidence, diagnostics, and measured cost. Batch MCP calls wrap one report per requested path while preserving input order.
+
+Continue to [Formats and Targets](/deckprobe/formats-and-targets) before depending on a format-specific Target in an automated agent workflow.

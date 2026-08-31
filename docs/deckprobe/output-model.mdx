@@ -32,7 +32,7 @@ The following example uses illustrative values and costs; its field names and st
 ```json
 {
   "schema_version": 2,
-  "tool_version": "2.3.1",
+  "tool_version": "2.4.0",
   "status": "ok",
   "input": {
     "display_name": "deck.pptx",
@@ -76,15 +76,33 @@ Every requested target has an explicit status:
 | Status | Meaning |
 | --- | --- |
 | `resolved` | A value satisfies the requested confidence |
-| `estimated` | A value exists but has lower confidence |
+| `estimated` | A value was obtained from approximate or indirect evidence |
 | `planned` | Plan-only mode selected a path without executing it |
-| `unknown` | The format is supported but the value could not be determined |
-| `unsupported` | The target is not supported for the detected format or level |
-| `invalid` | The target request is invalid |
+| `unknown` | The path ran, but the document does not record this fact; this is a normal answer |
+| `unsupported` | No eligible path can satisfy the Target for the detected format and active request |
+| `invalid` | The document records a value that fails validation |
 | `budget_exceeded` | Resolving the target exceeded an active budget |
 | `failed` | The selected parser path failed |
 
 Resolved evidence includes the target-defined `value`, categorical and numeric confidence, executed path, and evidence source.
+
+### Confidence is evidence strength
+
+`confidence` describes how strongly the selected path supports a value. `confidence_score` is a fixed numeric form of the label, not a measured probability or accuracy rate:
+
+| Label | Score | Typical evidence |
+| --- | ---: | --- |
+| `exact` | `1.0` | Read directly from the authoritative structure |
+| `high` | `0.95` | Read from an application-saved statistic that may become stale |
+| `medium` | `0.7` | Inferred from a structural proxy |
+| `low` | `0.4` | Weak or indirect evidence |
+| `none` | `0.0` | The result carries no value |
+
+Use these values to order or filter evidence. Do not interpret `0.95` as a 95% real-world accuracy claim.
+
+<Tip>
+  A report-level `partial` status means at least one requested Target was not resolved at the required confidence. It does not mean the document is damaged or unsafe, and other resolved results remain usable. Check `execution.unresolved_targets` to identify the affected Targets.
+</Tip>
 
 ## Deterministic execution cost
 
@@ -107,7 +125,7 @@ Syntax and runtime failures use the same machine-readable error shape:
 ```json
 {
   "schema_version": 2,
-  "tool_version": "2.3.1",
+  "tool_version": "2.4.0",
   "status": "error",
   "error": {
     "code": "MALFORMED_INPUT",

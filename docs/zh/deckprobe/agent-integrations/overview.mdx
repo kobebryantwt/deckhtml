@@ -1,0 +1,33 @@
+---
+title: Agent 集成
+sidebarTitle: 概览
+description: "根据 Agent 是否能够使用 Shell，在 DeckProbe Agent Skill 与本地 MCP Server 之间选择。"
+---
+
+DeckProbe 为 Agent 提供两种本地接入方式。它们使用相同的 Target 词汇并返回相同的 Schema v2 文档事实，区别在于 Agent 如何调用引擎。
+
+| 接入方式 | 适用情况 | Agent 如何调用 DeckProbe |
+| --- | --- | --- |
+| Agent Skill | Agent 可以运行 Shell 命令并读取本地文件 | Skill 指导 Agent 正确使用完整的 DeckProbe CLI |
+| MCP Server | 客户端支持 MCP，希望通过有类型约束的工具调用 | 本地 stdio Server 提供 `probe`、`probe_batch`、`list_formats` 和 `list_targets` |
+
+两种接入都在启动 DeckProbe 的计算机上运行，不需要 DeckFlow 账号或 API Key，也不会把文档字节发送给 DeckFlow。
+
+<CardGroup cols={2}>
+  <Card title="Agent Skill" href="/zh/deckprobe/agent-integrations/agent-skill" icon="wand-magic-sparkles">
+    为 Codex、Claude Code、Cursor、Gemini 等可以使用 Shell 的 Agent 安装 DeckProbe 使用说明。
+  </Card>
+  <Card title="MCP Server" href="/zh/deckprobe/agent-integrations/mcp-server" icon="plug">
+    注册本地 MCP Server、验证工具，并限制 Server 可以读取的目录。
+  </Card>
+</CardGroup>
+
+<Tip>
+  Agent 已经可以使用 Shell，并且需要完整 CLI 能力时选择 Skill；客户端主要通过有类型约束的工具工作，或者不向 Agent 暴露 Shell 时选择 MCP。
+</Tip>
+
+## 两种接入返回什么
+
+Skill 和 MCP Server 不会引入另一套报告格式。单文件探测仍返回 [DeckProbe Schema v2 输出](/zh/deckprobe/output-model)，包括完整 Target Key、证据、置信度、诊断和实际成本。MCP 批量调用会按输入顺序包装每个文件的独立报告。
+
+在 Agent 自动化流程中依赖格式专属 Target 前，请继续查看[支持格式与 Target](/zh/deckprobe/formats-and-targets)。

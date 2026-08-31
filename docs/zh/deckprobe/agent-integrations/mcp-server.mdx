@@ -1,0 +1,115 @@
+---
+title: DeckProbe MCP Server
+sidebarTitle: MCP Server
+description: "通过有类型约束的 MCP 工具，在兼容的 Agent 客户端中调用本地 DeckProbe。"
+---
+
+DeckProbe MCP Server 通过本地 stdio 运行，把 DeckProbe 暴露为有类型约束的只读工具。适合让 MCP 客户端检查本地文档，而无需 Agent 自己拼接 Shell 命令。
+
+<Note>
+  这是 DeckProbe 的本地接入方式，与 DeckFlow 托管的 MCP 服务不同。它不需要 DeckFlow 账号或 API Key，也不会把文档字节上传到 DeckFlow。
+</Note>
+
+## 环境要求
+
+- Node.js 20 或更高版本。
+- MCP 客户端可以启动本地 stdio 命令。
+- 启动 MCP Server 的进程能够读取目标本地文件。
+
+## 添加 Server
+
+Claude Code 可以直接通过命令添加：
+
+```bash
+claude mcp add deckprobe -- npx -y @deckflow/deckprobe-mcp
+```
+
+对于读取 `mcpServers` 配置的客户端，可以添加：
+
+```json
+{
+  "mcpServers": {
+    "deckprobe": {
+      "command": "npx",
+      "args": ["-y", "@deckflow/deckprobe-mcp"]
+    }
+  }
+}
+```
+
+首次启动可能需要下载 npm 包。如果希望固定并单独维护命令，可以全局安装 `@deckflow/deckprobe-mcp`，再把配置中的命令改为 `deckprobe-mcp`。
+
+## 验证工具
+
+重启或刷新 MCP 客户端，确认可以看到以下工具：
+
+| 工具 | 用途 |
+| --- | --- |
+| `probe` | 检查一个本地文档，返回完整报告或紧凑 Values |
+| `probe_batch` | 在一次调用中检查多个明确的本地路径，并保持输入顺序 |
+| `list_formats` | 查询支持的 Driver、Profile 和实现边界 |
+| `list_targets` | 查询某种格式有效的 Target 名称、别名、Level、成本和 Selector |
+
+Server 还会提供 `deckprobe://schema` Resource，其中是当前 DeckProbe 引擎内置的 JSON Schema。
+
+可以先尝试：
+
+```json
+{
+  "path": "/absolute/path/to/deck.pptx",
+  "targets": ["document.format", "powerpoint.slide_count"],
+  "view": "values"
+}
+```
+
+`path` 必须是本地 MCP Server 进程可以读取的普通文件。这里不接受 HTTP URL、目录、Glob 或已上传文件 ID。需要批量处理时，由调用流程先得到明确文件列表，再把多个路径传给 `probe_batch`。
+
+## 工具参数
+
+`probe` 支持：
+
+- `targets`：短别名、完整 Target 名称或 Selector 预设。
+- `level`：`header`、`metadata` 或 `deep`。
+- `min_confidence`：`low`、`medium`、`high` 或 `exact`。
+- `target_confidence`：按 Target 设置最低置信度。
+- `view`：`report` 返回完整证据，`values` 返回紧凑映射。
+- `budget`：覆盖物理读取量、解压量、归档条目数和超时预算。
+
+`probe_batch` 会把相同的 Target、Level、最低置信度、View 和预算应用到每个路径，默认使用紧凑的 `values` 结果。某个文件失败时，错误只出现在对应条目中，不会丢弃其他文件的报告。
+
+调用 `list_targets` 时，`detail: "compact"` 适合常规发现；需要 Target 的 JSON Schema、支持的 Level 和完整 Selector 展开时使用 `detail: "full"`。
+
+## 限制可读取目录
+
+默认情况下，MCP 进程可以读取其操作系统用户有权限访问的全部文件。共享或自动化环境应配置允许目录：
+
+```json
+{
+  "mcpServers": {
+    "deckprobe": {
+      "command": "npx",
+      "args": ["-y", "@deckflow/deckprobe-mcp"],
+      "env": {
+        "DECKPROBE_MCP_ROOTS": "/Users/me/Documents:/Users/me/Downloads"
+      }
+    }
+  }
+}
+```
+
+多个路径使用当前系统的 Path 分隔符：macOS 和 Linux 使用 `:`，Windows 使用 `;`。Server 会在允许目录检查前解析真实路径和符号链接。
+
+其他可选设置：
+
+| 环境变量 | 默认值 | 用途 |
+| --- | ---: | --- |
+| `DECKPROBE_MCP_BIN` | 内置引擎 | 指定 DeckProbe 可执行文件 |
+| `DECKPROBE_MCP_TIMEOUT_MS` | `30000` | 单个引擎进程的硬超时 |
+| `DECKPROBE_MCP_MAX_CONCURRENCY` | `4` | 引擎进程最大并发数 |
+| `DECKPROBE_MCP_MAX_BATCH` | `64` | 单次批量调用允许的最大路径数 |
+
+Server 会优先使用原生 DeckProbe 可执行文件；没有兼容的二进制文件时，退回使用内置 WebAssembly 引擎。原生执行可以保留惰性文件读取和进程隔离，WebAssembly 退回路径会把完整文件读入内存。
+
+报告契约请查看[输出模型](/zh/deckprobe/output-model)，可请求的事实请查看[支持格式与 Target](/zh/deckprobe/formats-and-targets)。
+
+MCP Server 完全开源。可以前往 [deckprobe-mcp-server 开源项目](https://github.com/deckflow/deckprobe-mcp-server)查看实现与版本发布，或提交 Issue。

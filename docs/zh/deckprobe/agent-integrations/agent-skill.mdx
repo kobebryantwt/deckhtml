@@ -1,0 +1,85 @@
+---
+title: DeckProbe Agent Skill
+sidebarTitle: Agent Skill
+description: "为可以使用 Shell 的 Coding Agent 安装并验证 DeckProbe Skill。"
+---
+
+DeckProbe Agent Skill 会指导 Agent 选择 Target、设置探测层级、读取 Schema v2 报告并处理退出码。Skill 是一组操作说明和参考资料；真正检查文档的仍是 DeckProbe CLI。
+
+## 安装前检查
+
+先确认 CLI 可以运行：
+
+```bash
+deckprobe --version
+```
+
+如果尚未安装，请先完成 [DeckProbe 快速开始](/zh/deckprobe/quick-start)。通过 `npx skills add` 安装的 Skill 只包含操作说明，不会安装 DeckProbe 可执行文件。当环境中存在 Node.js 时，Skill 可以退回使用 `npx -y @deckflow/deckprobe`，首次调用会下载 CLI 包。
+
+## 为已识别的 Agent 安装
+
+在希望 Agent 使用 DeckProbe 的项目目录中运行：
+
+```bash
+# 只预览目标目录和文件，不执行写入
+deckprobe install --skills --dry-run --pretty
+
+# 为当前项目中已存在的 Agent 目录安装
+deckprobe install --skills
+```
+
+没有指定 `--agent` 时，DeckProbe 会识别当前项目中的已知 Agent 目录；如果没有识别到，则使用通用的 `.agents/skills` 目录。重复执行是安全的，内容未变化的文件会报告为 `unchanged`，不会重复改写。
+
+## 指定 Agent 或目录
+
+为某个 Agent 安装到用户级目录：
+
+```bash
+deckprobe install --skills --agent codex --global
+deckprobe install --skills --agent claude --global
+deckprobe install --skills --agent cursor --global
+```
+
+支持的 Agent 值包括 `claude`、`codex`、`cursor`、`opencode`、`gemini`、`copilot`、`windsurf`、`cline`、`zed` 和通用的 `agents`。使用 `--agent all` 可以选择所有已知目录，也可以直接指定 Skill 容器目录：
+
+```bash
+deckprobe install --skills --dir ./.custom-agent/skills
+```
+
+指定目录下会生成 `deckprobe/` 子目录，其中包含 `SKILL.md` 和参考资料。
+
+## 读取安装回执
+
+每次安装都会向标准输出写入 JSON 回执。自动化流程可以检查：
+
+- `install.scope`：`project`、`global` 或 `explicit`。
+- `install.targets[].directory`：解析后的 Skill 目录。
+- `install.targets[].files[].action`：`created`、`updated` 或 `unchanged`。
+- `install.targets[].orphaned`：当前版本不再提供的文件；DeckProbe 只报告，不会删除。
+
+DeckProbe 可以直接更新由自己创建的 Skill 目录。如果目标中已经存在无法识别的 `SKILL.md`，安装会停止，也不会给其他目标留下只写了一半的内容。只有确认需要替换该目录时才使用 `--force`。
+
+## 不通过 DeckProbe CLI 安装
+
+通用 Skills 安装器可以直接从开源项目安装相同的说明：
+
+```bash
+npx skills add deckflow/deckprobe
+```
+
+Claude Code 也可以把该仓库作为 Plugin Marketplace：
+
+```text
+/plugin marketplace add deckflow/deckprobe
+/plugin install deckprobe@deckflow
+```
+
+这两种方式安装的是 Skill 说明，不是独立的 DeckProbe 可执行文件。
+
+## 验证接入
+
+安装后，让 Agent 对一份已知的本地文档检查明确事实，例如验证格式以及页数或幻灯片数量。Agent 应该调用 `deckprobe`、检查进程退出码并读取 JSON 字段，而不是自行解压文档或根据扩展名推测结果。
+
+完整安装参数、Man Page 和 Shell Completion 选项请查看 [CLI 命令参考](/zh/deckprobe/cli/command-reference#install-support-files)。
+
+Skill 与 DeckProbe 一起维护，可以在[开源项目](https://github.com/deckflow/deckprobe/tree/main/skills/deckprobe)中查看实现与更新。

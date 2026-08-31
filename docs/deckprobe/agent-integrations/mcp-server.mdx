@@ -1,0 +1,115 @@
+---
+title: DeckProbe MCP Server
+sidebarTitle: MCP Server
+description: "Expose local DeckProbe inspection through typed MCP tools for compatible agent clients."
+---
+
+The DeckProbe MCP Server runs locally over stdio and exposes DeckProbe as typed, read-only tools. It is useful when an MCP client should inspect local documents without asking the agent to construct shell commands.
+
+<Note>
+  This is a local DeckProbe integration, separate from DeckFlow's hosted MCP services. It requires no DeckFlow account or API key and does not upload document bytes to DeckFlow.
+</Note>
+
+## Requirements
+
+- Node.js 20 or later.
+- An MCP client that can start a local stdio command.
+- Local file access from the process that starts the MCP server.
+
+## Add the server
+
+Claude Code can register it from the command line:
+
+```bash
+claude mcp add deckprobe -- npx -y @deckflow/deckprobe-mcp
+```
+
+For clients that read an `mcpServers` configuration, add:
+
+```json
+{
+  "mcpServers": {
+    "deckprobe": {
+      "command": "npx",
+      "args": ["-y", "@deckflow/deckprobe-mcp"]
+    }
+  }
+}
+```
+
+The first start may download the npm package. To pin and manage the command separately, install `@deckflow/deckprobe-mcp` globally and use `deckprobe-mcp` as the configured command.
+
+## Verify the tools
+
+Restart or refresh the MCP client, then confirm that it exposes these tools:
+
+| Tool | Purpose |
+| --- | --- |
+| `probe` | Inspect one local document and return a full report or compact values |
+| `probe_batch` | Inspect several literal local paths in one call and preserve input order |
+| `list_formats` | List supported drivers, profiles, and implementation boundaries |
+| `list_targets` | List valid Target names, aliases, levels, costs, and selectors for one format |
+
+The server also exposes `deckprobe://schema`, the JSON Schema bundled with the active DeckProbe engine.
+
+Try a request such as:
+
+```json
+{
+  "path": "/absolute/path/to/deck.pptx",
+  "targets": ["document.format", "powerpoint.slide_count"],
+  "view": "values"
+}
+```
+
+`path` must name a regular file visible to the local MCP server process. The server does not accept an HTTP URL, directory, glob, or uploaded file ID. Expand a set of files in the calling workflow and pass literal paths to `probe_batch`.
+
+## Tool options
+
+`probe` accepts:
+
+- `targets`: short aliases, canonical Target names, or Selector presets.
+- `level`: `header`, `metadata`, or `deep`.
+- `min_confidence`: `low`, `medium`, `high`, or `exact`.
+- `target_confidence`: a per-Target confidence map.
+- `view`: `report` for full evidence or `values` for a compact map.
+- `budget`: physical-read, expanded-byte, archive-entry, and timeout overrides.
+
+`probe_batch` accepts the same common selection, level, confidence, view, and budget settings for every path. It defaults to the compact `values` view. A failure for one path is returned in that path's entry and does not discard the other reports.
+
+Call `list_targets` with `detail: "compact"` for the normal discovery result or `detail: "full"` when you also need JSON Schema fragments, supported levels, and expanded Selector members.
+
+## Restrict file access
+
+By default, the MCP process can read any file that its operating-system user can read. Set an allow-list for shared or automated environments:
+
+```json
+{
+  "mcpServers": {
+    "deckprobe": {
+      "command": "npx",
+      "args": ["-y", "@deckflow/deckprobe-mcp"],
+      "env": {
+        "DECKPROBE_MCP_ROOTS": "/Users/me/Documents:/Users/me/Downloads"
+      }
+    }
+  }
+}
+```
+
+Use the platform path-list separator (`:` on macOS and Linux, `;` on Windows). Paths and symbolic links are resolved before the allow-list check.
+
+Other optional settings are:
+
+| Variable | Default | Purpose |
+| --- | ---: | --- |
+| `DECKPROBE_MCP_BIN` | Bundled engine | Use a specific DeckProbe executable |
+| `DECKPROBE_MCP_TIMEOUT_MS` | `30000` | Hard deadline for one engine process |
+| `DECKPROBE_MCP_MAX_CONCURRENCY` | `4` | Maximum concurrent engine processes |
+| `DECKPROBE_MCP_MAX_BATCH` | `64` | Maximum paths accepted by one batch call |
+
+The server prefers a native DeckProbe executable and falls back to the bundled WebAssembly engine when no compatible binary is available. Native execution preserves lazy file reads and process isolation; the WebAssembly fallback reads the full file into memory.
+
+See the [Output Model](/deckprobe/output-model) for the report contract and [Formats and Targets](/deckprobe/formats-and-targets) for the facts that can be requested.
+
+The MCP Server is open source. Visit the [deckprobe-mcp-server repository](https://github.com/deckflow/deckprobe-mcp-server) to inspect its implementation, follow releases, or report an issue.

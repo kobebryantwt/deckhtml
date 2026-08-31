@@ -25,6 +25,7 @@ deckprobe <COMMAND> [OPTIONS]
 | `deckprobe schema` | Print the Schema v2 JSON Schema bundled with the binary |
 | `deckprobe completion <SHELL>` | Generate Shell Completion from the live command model |
 | `deckprobe generate man` | Generate the main Roff Man Page, or a complete Man Page directory |
+| `deckprobe install` | Install the Agent Skill, Man Pages, or Shell Completion files |
 | `deckprobe help [COMMAND]` | Print the main help or the help for one subcommand |
 | `deckprobe --help` | Print complete human-readable help |
 | `deckprobe --version` | Print the installed DeckProbe version |
@@ -37,6 +38,7 @@ deckprobe targets --help
 deckprobe schema --help
 deckprobe completion --help
 deckprobe generate --help
+deckprobe install --help
 ```
 
 ## Input interpretation options
@@ -239,7 +241,45 @@ deckprobe-targets.1
 deckprobe-generate.1
 deckprobe-schema.1
 deckprobe-completion.1
+deckprobe-install.1
 ```
+
+<a id="install-support-files"></a>
+
+## `install` support files
+
+`deckprobe install` writes Agent Skill instructions, generated Man Pages, or Shell Completion files to their resolved destination. With no artifact selector, it installs the Agent Skill.
+
+```bash
+# Preview the default Agent Skill installation without writing files
+deckprobe install --dry-run --pretty
+
+# Install for known Agent directories in the current project
+deckprobe install --skills
+
+# Install for one Agent at user scope
+deckprobe install --skills --agent codex --global
+
+# Install into an explicit skills container
+deckprobe install --skills --dir ./.custom-agent/skills
+
+# Install generated documentation or Completion source
+deckprobe install --man --global
+deckprobe install --completions zsh --dir ~/.zfunc
+```
+
+| Option | Purpose |
+| --- | --- |
+| `--skills` | Install the DeckProbe Agent Skill; selected by default |
+| `--man` | Install the generated Man Page set |
+| `--completions SHELL` | Install Completion source for `bash`, `elvish`, `fish`, `powershell`, or `zsh`; requires `--dir` |
+| `-a`, `--agent AGENT` | Select one or more known Agent destinations; repeatable and comma-separated |
+| `-g`, `--global` | Use the current user's Agent or documentation directory instead of the current project |
+| `-d`, `--dir DIRECTORY` | Write to an explicit destination; conflicts with `--agent` and `--global` |
+| `--dry-run` | Validate destinations and return the JSON receipt without writing files |
+| `--force` | Replace a Skill directory that DeckProbe does not recognize as its own |
+
+Every run emits one JSON receipt with resolved destinations and `created`, `updated`, or `unchanged` actions. A rejected multi-destination run writes nothing, and files reported under `orphaned` are not deleted. See [DeckProbe Agent Skill](/deckprobe/agent-integrations/agent-skill) for the complete setup workflow and supported Agent values.
 
 ## Exit status
 

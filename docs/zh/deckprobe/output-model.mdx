@@ -32,7 +32,7 @@ Schema v2 定义了三种报告形态：
 ```json
 {
   "schema_version": 2,
-  "tool_version": "2.3.1",
+  "tool_version": "2.4.0",
   "status": "ok",
   "input": {
     "display_name": "deck.pptx",
@@ -76,15 +76,33 @@ Schema v2 定义了三种报告形态：
 | 状态 | 含义 |
 | --- | --- |
 | `resolved` | Value 满足请求的置信度 |
-| `estimated` | 存在 Value，但置信度较低 |
+| `estimated` | 通过近似或间接证据得到 Value |
 | `planned` | Plan-only 模式选择了路径，但没有执行 |
-| `unknown` | 格式受支持，但无法确定该值 |
-| `unsupported` | 检测到的格式或当前 Level 不支持该 Target |
-| `invalid` | Target 请求无效 |
+| `unknown` | 对应 Path 已执行，但文档没有记录这项事实；这是正常结果 |
+| `unsupported` | 检测到的格式和当前请求下，没有可满足该 Target 的 Path |
+| `invalid` | 文档记录了值，但该值没有通过验证 |
 | `budget_exceeded` | 解析 Target 超出当前预算 |
 | `failed` | 所选 Parser Path 执行失败 |
 
 已解析证据包含 Target 定义的 `value`、分类与数值置信度、执行路径和证据来源。
+
+### 置信度表示证据强度
+
+`confidence` 表示所选 Path 对当前 Value 的证据强度。`confidence_score` 是每个等级对应的固定数值，并不是经过统计校准的正确概率或准确率：
+
+| 等级 | 分数 | 典型证据 |
+| --- | ---: | --- |
+| `exact` | `1.0` | 直接从权威结构读取 |
+| `high` | `0.95` | 从应用保存的统计信息读取，但该统计可能过期 |
+| `medium` | `0.7` | 通过结构代理信息推断 |
+| `low` | `0.4` | 较弱或间接的证据 |
+| `none` | `0.0` | 当前结果不携带 Value |
+
+这些数值适合排序或过滤证据，不能把 `0.95` 解读成真实准确率为 95%。
+
+<Tip>
+  报告级 `partial` 表示至少一个请求的 Target 没有达到要求的置信度，并不表示文档已经损坏或不安全，其他已解析结果仍然可以使用。通过 `execution.unresolved_targets` 确认受影响的 Target。
+</Tip>
 
 ## 确定性执行成本
 
@@ -107,7 +125,7 @@ deckprobe -t @summary --view values report.pdf
 ```json
 {
   "schema_version": 2,
-  "tool_version": "2.3.1",
+  "tool_version": "2.4.0",
   "status": "error",
   "error": {
     "code": "MALFORMED_INPUT",

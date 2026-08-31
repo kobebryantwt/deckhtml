@@ -11,7 +11,7 @@ DeckProbe gives applications and agents a structured way to verify a document be
 | Inputs | PDF; modern and legacy Word, Excel, and PowerPoint; modern Keynote, Numbers, and Pages |
 | Result | Schema v2 JSON with target values, evidence, confidence, diagnostics, and measured I/O cost |
 | Execution | Local native process or local WebAssembly; document bytes are not sent to DeckFlow |
-| Interfaces | Native CLI, npm CLI, Browser SDK, Web Worker SDK, and Node.js API |
+| Interfaces | Native and npm CLI, Browser and Worker SDK, Node.js API, Agent Skill, and local MCP Server |
 | Authentication | None |
 
 ## Use DeckProbe for
@@ -46,8 +46,8 @@ DeckProbe selects the driver, validates the container, and runs only the probe p
   <Card title="Node.js API" href="/deckprobe/node-sdk">
     Probe file paths or byte arrays from a Node.js 20+ application.
   </Card>
-  <Card title="Formats and targets" href="/deckprobe/formats-and-targets">
-    Review supported document families, target discovery, and probe levels.
+  <Card title="Agent integrations" href="/deckprobe/agent-integrations/overview">
+    Use the CLI through an Agent Skill or expose typed tools through a local MCP server.
   </Card>
 </CardGroup>
 

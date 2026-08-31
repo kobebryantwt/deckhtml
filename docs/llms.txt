@@ -19,6 +19,9 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [DeckProbe Quickstart](https://docs.deckflow.com/deckprobe/quick-start.md): Install the native CLI and verify a first Schema v2 result.
 - [Formats and Targets](https://docs.deckflow.com/deckprobe/formats-and-targets.md): Check supported format families and target names.
 - [CLI](https://docs.deckflow.com/deckprobe/cli.md): Integrate the native command-line interface.
+- [Agent Integrations](https://docs.deckflow.com/deckprobe/agent-integrations/overview.md): Choose between the DeckProbe Agent Skill and local MCP server.
+- [Agent Skill](https://docs.deckflow.com/deckprobe/agent-integrations/agent-skill.md): Install DeckProbe instructions for shell-capable coding agents.
+- [Local MCP Server](https://docs.deckflow.com/deckprobe/agent-integrations/mcp-server.md): Expose local document inspection through typed MCP tools.
 - [Output Model](https://docs.deckflow.com/deckprobe/output-model.md): Read full, values, and error report contracts.
 
 ## DeckRender
@@ -79,6 +82,9 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [常见工作流](https://docs.deckflow.com/zh/common-workflows.md): 将应用目标对应到一个或多个 DeckFlow 产品。
 - [示例](https://docs.deckflow.com/zh/examples/overview.md): 查看带有已知输入和预期结果的完整配方。
 - [DeckProbe](https://docs.deckflow.com/zh/deckprobe/overview.md): 在本地嗅探文档事实。
+- [DeckProbe Agent 集成](https://docs.deckflow.com/zh/deckprobe/agent-integrations/overview.md): 在 Agent Skill 与本地 MCP Server 之间选择。
+- [DeckProbe Agent Skill](https://docs.deckflow.com/zh/deckprobe/agent-integrations/agent-skill.md): 为可以使用 Shell 的 Coding Agent 安装 DeckProbe 说明。
+- [DeckProbe MCP Server](https://docs.deckflow.com/zh/deckprobe/agent-integrations/mcp-server.md): 通过有类型约束的 MCP 工具检查本地文档。
 - [DeckRender](https://docs.deckflow.com/zh/deckrender/overview.md): 将支持的输入渲染为视觉产物。
 - [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 执行云端文档任务。
 - [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 通过带版本命令工作区在本地检查并修改现有 PPTX。
