@@ -1,0 +1,98 @@
+---
+title: Browser SDK
+sidebarTitle: Browser SDK
+description: "Upload a browser-selected document to DeckFlow cloud rendering and display the returned artifacts without Node.js polyfills."
+---
+
+Use `@deckflow/deckrender/browser` in browser applications. The API runs in the browser, while document conversion runs in the DeckFlow cloud. It does not contain the Node.js local engine.
+
+```bash
+npm install --omit=optional @deckflow/deckrender
+```
+
+The browser entry requires a modern secure context: HTTPS or localhost. Importing it during server-side rendering is safe, but call `render()` only on the client.
+
+## Render a selected file
+
+```ts
+import { createRenderer } from '@deckflow/deckrender/browser';
+
+const renderer = createRenderer({
+  guest: true,
+  onWarning: (message) => console.warn(message),
+});
+
+const result = await renderer.render({
+  input: fileInput.files![0]!,
+  format: 'image',
+  imageFormat: 'png',
+  pages: '1-3',
+  width: 1920,
+  onProgress: (event) => console.log(event.phase, event.message),
+});
+
+const first = result.outputs[0];
+if (first) {
+  previewImage.src = first.url;
+  const blob = await first.blob();
+  console.log(first.page, blob.size);
+}
+
+// Revoke SDK-owned object URLs after removing previews.
+result.dispose();
+```
+
+`fileInput` and `previewImage` belong to the application. The SDK does not provide a file picker, UI, or login flow.
+
+## Inputs
+
+```ts
+await renderer.render({ input: file });
+await renderer.render({ input: { data: blob, name: 'deck.pptx' } });
+await renderer.render({ input: { data: bytes, name: 'report.pdf' } });
+await renderer.render({ input: { html: '<h1>Hello</h1>', baseUrl: 'https://example.com/deck/' } });
+await renderer.render({ input: { markdown: '# Hello' } });
+```
+
+Supported binary values are `Blob`, `Uint8Array`, and `ArrayBuffer`; each non-`File` binary needs a filename. Use `from` when the name does not identify the source format.
+
+The Browser SDK does not accept local paths or implicitly fetch URL strings. To render a hosted document, fetch it with the application's own CORS and authentication policy, then pass the returned bytes with a filename. Inline HTML may use `baseUrl` for relative resources, but this does not reproduce an authenticated browser session.
+
+## Authentication
+
+Choose exactly one authentication form:
+
+```ts
+const guestRenderer = createRenderer({ guest: true });
+const tokenRenderer = createRenderer({ token: userToken });
+const refreshingRenderer = createRenderer({
+  getToken: () => auth.getDeckFlowToken(),
+});
+```
+
+- Guest upload must be explicitly enabled with `guest: true`.
+- `token` must be a DeckFlow user session token.
+- `getToken` runs before each render so the application can refresh the token.
+- Do not embed a long-lived API key in frontend code. Keep API-key integrations on a server.
+- Browser authentication failures do not silently retry as a guest. Obtain a valid token or explicitly start a new guest render.
+
+`apiBase` may point to an absolute HTTP(S), DeckOps-compatible API root without a query or fragment. For a same-origin proxy, enforce user, workspace, and task ownership on the server; do not expose a privileged generic forwarding endpoint.
+
+## Results and cleanup
+
+`BrowserRenderResult.outputs` contains remote artifact URLs rather than Node.js output paths. `output.blob()` downloads one artifact only. Remote URLs may expire and require suitable storage CORS settings.
+
+PDF→PDF is an unchanged-document passthrough: the SDK creates a local object URL without resolving credentials or uploading the PDF. Call `dispose()` to revoke SDK-owned object URLs. It is safe to call repeatedly, but it does not cancel cloud tasks or delete remote files.
+
+<Warning>
+  Closing the page does not guarantee cancellation of an already-created cloud task. Derived routes may also download and re-upload intermediate artifacts in the browser, so use Node.js or server orchestration for large documents.
+</Warning>
+
+## Production browser checklist
+
+- Allow the frontend origin and actual DeckFlow request headers in API preflights.
+- Allow signed upload methods and expose multipart `ETag` headers to JavaScript.
+- Allow the frontend to fetch intermediate and final artifact URLs; an image displaying in `<img>` does not prove `blob()` or canvas access will work.
+- Permit API and storage hosts in CSP `connect-src`, and preview hosts plus `blob:` in the relevant media directives.
+
+The Browser SDK follows the [cloud format matrix](/deckrender/formats). It does not support `local`, `auto`, output paths, native executable paths, CLI profiles, or API-key discovery from local configuration.

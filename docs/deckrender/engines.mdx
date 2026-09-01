@@ -1,0 +1,97 @@
+---
+title: Local and Cloud Engines
+sidebarTitle: Local and Cloud Engines
+description: "Choose DeckRender local, cloud, or automatic execution and understand each mode's dependencies and data boundary."
+---
+
+DeckRender exposes one CLI and Node.js API over two independent render engines. Choose the engine per workload instead of treating execution location as an implementation detail.
+
+| Engine | Best for | Implemented routes |
+| --- | --- | --- |
+| `local` | Private, offline, and development workflows | PPTX→image/PDF, PDF→image/PDF, HTML or URL→image |
+| `cloud` | Broader format coverage and managed production execution | See [Supported Formats](/deckrender/formats) |
+| `auto` | Local-first convenience | Uses local for an implemented route; otherwise warns before using cloud |
+
+<Warning>
+  `local` is a strict data boundary. An unsupported route or missing dependency fails locally and never triggers a cloud retry. Only `auto` may select the cloud.
+</Warning>
+
+## Select an engine
+
+The default remains `cloud`. Choose an engine for one command:
+
+```bash
+deckrender deck.pptx --engine local -o frames/
+deckrender deck.pptx --engine cloud -o frames/
+deckrender deck.pptx --engine auto -o frames/
+```
+
+Or save a default:
+
+```bash
+deckrender config set engine local
+deckrender config list
+```
+
+Selection precedence is:
+
+```text
+--engine > DECKRENDER_ENGINE > ~/.deckrender/config.json > cloud
+```
+
+Inspect the matrix for one engine before building a workflow:
+
+```bash
+deckrender formats --engine local
+deckrender formats --engine cloud
+deckrender formats --engine auto --json
+```
+
+## Local prerequisites
+
+A default npm installation includes the JavaScript libraries and the matching `office2html` platform package as optional dependencies:
+
+```bash
+npm install -g @deckflow/deckrender
+```
+
+The machine must also have Chrome, Chromium, or Edge. `playwright-core` controls an existing browser; it does not download one.
+
+| Local task | Browser | Additional dependency |
+| --- | --- | --- |
+| PPTX→image | Chrome/Chromium/Edge | `playwright-core`, matching `office2html` package |
+| PPTX→PDF | Chrome/Chromium/Edge | `playwright-core`, matching `office2html` package, `pdf-lib` |
+| PDF→image | Chrome/Chromium/Edge | `playwright-core`, `pdfjs-dist` |
+| PDF→PDF | None | None; the file is passed through unchanged |
+| HTML/URL→image | Chrome/Chromium/Edge | `playwright-core` |
+
+Chrome resolution order is an explicit `--executable-path`, `DECKRENDER_CHROMIUM_EXECUTABLE_PATH`, an existing Playwright browser cache, standard browser installation paths, then `PATH`.
+
+The matching `office2html` package is available for macOS arm64/x64, Linux x64, and Windows x64. DeckRender also accepts an explicit binary:
+
+```bash
+deckrender config set office2html-path /opt/deckflow/office2html
+```
+
+If optional dependencies were omitted during installation, enable them before using local routes:
+
+```bash
+npm install -g --include=optional @deckflow/deckrender
+```
+
+For a cloud-only CLI installation or a frontend project that only uses the Browser SDK:
+
+```bash
+npm install -g --omit=optional @deckflow/deckrender
+```
+
+## Data and fidelity boundaries
+
+- Local PPTX and PDF routes do not resolve cloud credentials, contact DeckFlow, or upload document bytes.
+- Local HTML does not contact the DeckFlow API, but the page may intentionally load remote assets.
+- Local PPTX rendering blocks CDN references emitted by `office2html` and uses installed system fonts. Missing fonts, icons, and complex Office effects can differ from cloud output.
+- Cloud routes upload the source and any intermediate artifacts. For example, DOCX→image downloads the intermediate PDF and uploads it to the next task.
+- PDF→PDF is a passthrough, not a render.
+
+The returned `engine` and `route` fields make the chosen execution path observable. See the [Result Contract](/deckrender/reference/result-contract).
+

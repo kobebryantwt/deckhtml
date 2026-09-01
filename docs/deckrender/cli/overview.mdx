@@ -1,7 +1,7 @@
 ---
 title: CLI
 sidebarTitle: Overview
-description: "Use DeckRender with files, URLs, stdin, page ranges, output paths, and render presets."
+description: "Choose a local or cloud engine and render files, URLs, or stdin with page, sizing, and output controls."
 ---
 
 ```bash
@@ -43,6 +43,7 @@ URL requests do not inherit browser cookies, custom request headers, or a logged
 | Option | Purpose |
 | --- | --- |
 | `-o, --output <path>` | File, directory, `.zip`, or `-` for raw stdout bytes |
+| `--engine <engine>` | `local`, `cloud`, or local-first `auto` |
 | `--format <format>` | `image`, `pdf`, or `video`; otherwise inferred from `-o` or defaults to image |
 | `--image-format <format>` | `png`, `jpg`, or `webp` |
 | `--from <format>` | Override the source format; required for stdin |
@@ -84,7 +85,7 @@ If `--format` conflicts with the `-o` extension, `--format` wins and DeckRender 
 
 Multiple artifacts cannot be streamed directly to stdout. Use a directory, a ZIP file, or narrow the result with `--pages`. Raw stdout and `--json` cannot be combined.
 
-Page ranges are 1-based and inclusive. They filter the artifacts after the source has been rendered, so they reduce downloaded and written files but do not reduce the cloud render's page count or compute. For WebP output, filtering happens before the per-frame WebP conversion.
+Page ranges are 1-based and inclusive. Local PPTX/PDF routes capture or rasterize only selected pages. Cloud routes render the complete source first, so selection reduces downloads and written files rather than base cloud compute. For WebP output, filtering happens before the per-frame conversion.
 
 ## Profiles
 
@@ -106,7 +107,7 @@ deckrender report.pdf --profile thumbnail -o cover.jpg
 
 | Command | Purpose |
 | --- | --- |
-| `deckrender formats [--json]` | Show the installed input/output route matrix |
+| `deckrender formats [--engine local\|cloud\|auto] [--json]` | Show the route matrix for one engine selection |
 | `deckrender auth login [--port N]` | Open browser login and store the returned session token |
 | `deckrender auth status` | Validate effective credentials and display their source |
 | `deckrender auth logout` | Remove credentials from the shared DeckFlow file |
@@ -118,14 +119,16 @@ deckrender report.pdf --profile thumbnail -o cover.jpg
 
 ```bash
 deckrender formats
+deckrender formats --engine local
 deckrender auth login
 deckrender auth status
 deckrender auth logout
 deckrender auth path
 deckrender config list
 deckrender config set profile web
+deckrender config set engine local
 deckrender config unset profile
 deckrender config path
 ```
 
-Continue with [automation and errors](/deckrender/cli/automation) for stable stdout/stderr behavior, JSON failures, and exit codes.
+An explicit local engine never uploads or falls back to cloud. See [Local and Cloud Engines](/deckrender/engines) for installation and data boundaries, then continue with [automation and errors](/deckrender/cli/automation) for stable stdout/stderr behavior, JSON failures, and exit codes.

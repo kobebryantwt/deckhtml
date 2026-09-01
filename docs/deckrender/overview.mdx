@@ -1,18 +1,18 @@
 ---
 title: DeckRender
 sidebarTitle: Overview
-description: "Generate page images, PDFs, or videos from supported documents for previews, delivery, and visual processing."
+description: "Render supported documents into page images, PDFs, or videos locally or through DeckFlow cloud."
 ---
 
-DeckRender turns supported documents into visual artifacts that applications can preview, deliver, index, or pass to multimodal workflows. It can produce a single PDF or video, numbered page images, or a ZIP archive from a local file, HTTP(S) URL, or standard input.
+DeckRender turns supported documents into visual artifacts for previews, delivery, visual review, and multimodal workflows. The CLI and Node.js SDK can use a private local engine or DeckFlow cloud; the Browser SDK provides cloud rendering directly from a web application.
 
 | Item | At a glance |
 | --- | --- |
-| Inputs | `.pptx`, `.pdf`, `.key`, `.docx`, HTML, Markdown, `.pages`, and `.numbers` on supported routes |
+| Inputs | `.pptx`, `.pdf`, HTML, URL, and additional cloud-supported formats |
 | Outputs | PNG, JPEG, or WebP images; PDF; MP4 video |
-| Interfaces | `deckrender` CLI and `@deckflow/deckrender` Node.js API |
-| Execution | Mostly DeckFlow cloud tasks, plus local PDF passthrough and iWork preview extraction |
-| Authentication | Guest mode without credentials; authenticated execution with an API key or a session token obtained through browser login |
+| Interfaces | `deckrender` CLI, Node.js SDK, and cloud-only Browser SDK |
+| Execution | Local for implemented PPTX/PDF/HTML routes, or DeckFlow cloud for broader coverage |
+| Authentication | None for local routes; guest mode, API key, or session token for cloud routes |
 
 ## Use DeckRender for
 
@@ -21,6 +21,7 @@ DeckRender turns supported documents into visual artifacts that applications can
 - PDF delivery from supported presentation, document, or HTML inputs.
 - MP4 slideshow output from PowerPoint, or from HTML through a PPTX route.
 - A stable artifact and result contract without managing DeckOps task chains directly.
+- Private local rendering for supported PPTX, PDF, and HTML routes without uploading document bytes to DeckFlow.
 
 ## How one render runs
 
@@ -28,11 +29,11 @@ DeckRender turns supported documents into visual artifacts that applications can
   <Step title="Resolve the input">
     Read one file or stdin stream, or fetch one URL in the local Node.js process.
   </Step>
-  <Step title="Choose a supported route">
-    Match the source, requested output family, and compatible image options against the installed route table.
+  <Step title="Choose an engine and route">
+    Use `local`, `cloud`, or local-first `auto`, then match the source, output family, and compatible options against that engine's route table.
   </Step>
   <Step title="Execute locally or in the cloud">
-    Use local passthrough or preview extraction where implemented; otherwise upload the source and run DeckFlow cloud tasks.
+    Local routes keep supported document processing on the machine. Cloud routes upload the source and execute managed conversion tasks.
   </Step>
   <Step title="Write and report the result">
     Download and write the requested artifact layout, then return a `RenderResult` describing the route and written files.
@@ -45,9 +46,11 @@ DeckRender turns supported documents into visual artifacts that applications can
 
 ## Data and execution boundary
 
-Most formats are uploaded to DeckFlow cloud tasks. A local PDF-to-PDF request is passed through without upload. Pages and Numbers are handled locally by extracting the embedded first-page JPEG preview; this is not a full iWork render.
+An explicit `local` selection never uploads the document or falls back to cloud. It currently covers PPTX→image/PDF, PDF→image/PDF, and HTML or URL→image. Local PPTX and PDF routes do not resolve cloud credentials or contact DeckFlow. HTML pages may still fetch resources referenced by the page.
 
-An HTTP(S) URL is fetched by the local Node.js process. HTML receives a base URL for relative assets and is then uploaded as source content. DeckRender does not capture the current state, cookies, or authenticated session of the user's browser.
+Cloud routes upload the source and any intermediate artifacts. Guest mode is available for evaluation; authenticated execution provides production quotas and workspace access. The default engine remains `cloud`, while `auto` chooses local when the exact route exists and warns before choosing cloud.
+
+An HTTP(S) URL is fetched by the local Node.js process. DeckRender does not capture the current state, cookies, or authenticated session of the user's browser. In local mode the page is captured on the machine; in cloud mode the fetched source is uploaded.
 
 <Warning>
   HTML-to-PDF and HTML-to-video first rebuild HTML as PPTX. The result follows a slide model rather than native print layout or a recording of a live page.
@@ -60,7 +63,10 @@ An HTTP(S) URL is fetched by the local Node.js process. HTML receives a base URL
     Create a minimal HTML input, render one PNG, and verify the result.
   </Card>
   <Card title="Supported formats" href="/deckrender/formats">
-    Check implemented routes, output encodings, and fidelity caveats.
+    Compare local and cloud routes, output encodings, and fidelity caveats.
+  </Card>
+  <Card title="Local and cloud engines" href="/deckrender/engines">
+    Choose execution mode, install local dependencies, and understand upload boundaries.
   </Card>
   <Card title="Render page images" href="/deckrender/guides/render-images">
     Select pages, control long-edge size and encoding, and write a directory or ZIP.
@@ -77,6 +83,9 @@ An HTTP(S) URL is fetched by the local Node.js process. HTML receives a base URL
   <Card title="Node.js SDK" href="/deckrender/sdk/node">
     Render programmatically and receive progress, warnings, and `RenderResult`.
   </Card>
+  <Card title="Browser SDK" href="/deckrender/sdk/browser">
+    Upload browser-selected files to cloud rendering and display returned artifacts.
+  </Card>
   <Card title="Result contract" href="/deckrender/reference/result-contract">
     Consume routes, page counts, written artifacts, caveats, and typed errors.
   </Card>
@@ -88,5 +97,5 @@ An HTTP(S) URL is fetched by the local Node.js process. HTML receives a base URL
 
 ## Source and cloud access
 
-- The [DeckRender repository](https://github.com/deckflow/deckrender) contains the CLI, Node.js SDK, and render-routing implementation. Use it to inspect client behavior, follow releases, or report an issue.
-- Most render routes run as DeckFlow cloud tasks. See [Authentication](/deckrender/authentication) to try guest mode or configure authenticated cloud access.
+- The [DeckRender repository](https://github.com/deckflow/deckrender) contains the CLI, Node.js and Browser SDKs, and render engines. Use it to inspect client behavior, follow releases, or report an issue.
+- See [Local and Cloud Engines](/deckrender/engines) for local prerequisites and execution boundaries. See [Authentication](/deckrender/authentication) for guest or authenticated cloud access.

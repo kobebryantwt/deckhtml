@@ -31,7 +31,7 @@ description: "根据 Agent 需要完成的文档任务，选择对应的 DeckFlo
 | Agent 任务 | 产品 | 主要结果 | 执行边界 |
 | --- | --- | --- | --- |
 | 判断文件是否继续处理以及进入哪条路径 | DeckProbe | Schema v2 文档事实与证据 | 本地 |
-| 查看或交付文档的视觉内容 | DeckRender | 图片、PDF、视频和 `RenderResult` | 多数使用云端，部分路径本地执行 |
+| 查看或交付文档的视觉内容 | DeckRender | 图片、PDF、视频和 `RenderResult` | 显式选择本地或云端引擎 |
 | 读取、索引、提取或转换文档内容 | DeckOps | Markdown、格式专属 JSON 或转换文件 | 云端 |
 | 对现有 PPTX 执行明确修改 | DeckUse | 修改后仍可编辑的 PPTX 与操作结果 | 本地 |
 | 从 HTML 或 SVG 创建新 Deck | DeckHTML | 可编辑 PPTX 或页面 PNG，以及转换诊断 | 本地或云端 |
@@ -58,7 +58,7 @@ description: "根据 Agent 需要完成的文档任务，选择对应的 DeckFlo
     在文档事实、视觉产物、结构化内容、修改后的 PPTX 和新生成的 Deck 中选择。
   </Step>
   <Step title="确认数据边界">
-    DeckProbe 与 DeckUse 在本地执行，DeckOps 在云端执行；DeckRender 与 DeckHTML 取决于选择的路径或模式。
+    DeckProbe 与 DeckUse 在本地执行，DeckOps 在云端执行；DeckRender 显式选择 `local`、`cloud` 或本地优先的 `auto`，DeckHTML 取决于所选模式。
   </Step>
   <Step title="先跑通一个产品">
     确认它的输入、结果、错误和认证方式，再向工作流中增加其他产品。

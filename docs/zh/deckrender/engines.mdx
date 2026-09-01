@@ -1,0 +1,97 @@
+---
+title: 本地与云端引擎
+sidebarTitle: 本地与云端引擎
+description: "选择 DeckRender 本地、云端或自动执行，并了解不同模式的依赖与数据边界。"
+---
+
+DeckRender 通过同一套 CLI 和 Node.js API 提供两套独立的渲染引擎。执行位置会影响格式范围、运行依赖和数据边界，应根据工作负载明确选择。
+
+| 引擎 | 适用场景 | 已实现路线 |
+| --- | --- | --- |
+| `local` | 隐私、离线和开发环境中的文档渲染 | PPTX→图片/PDF、PDF→图片/PDF、HTML 或 URL→图片 |
+| `cloud` | 更完整的格式范围和托管式生产执行 | 参见[支持的格式](/zh/deckrender/formats) |
+| `auto` | 本地优先的便捷选择 | 当前路线支持本地时使用本地，否则警告后使用云端 |
+
+<Warning>
+  `local` 是严格的数据边界。本地不支持路线或缺少依赖时会直接失败，不会转为云端执行。只有 `auto` 可能选择云端。
+</Warning>
+
+## 选择引擎
+
+默认引擎仍是 `cloud`。可以只为当前命令指定：
+
+```bash
+deckrender deck.pptx --engine local -o frames/
+deckrender deck.pptx --engine cloud -o frames/
+deckrender deck.pptx --engine auto -o frames/
+```
+
+也可以保存为默认配置：
+
+```bash
+deckrender config set engine local
+deckrender config list
+```
+
+配置优先级为：
+
+```text
+--engine > DECKRENDER_ENGINE > ~/.deckrender/config.json > cloud
+```
+
+建立工作流前，可以单独检查某个引擎的能力矩阵：
+
+```bash
+deckrender formats --engine local
+deckrender formats --engine cloud
+deckrender formats --engine auto --json
+```
+
+## 本地运行依赖
+
+默认 npm 安装会把 JavaScript 库和当前平台对应的 `office2html` 包作为可选依赖一并安装：
+
+```bash
+npm install -g @deckflow/deckrender
+```
+
+执行机器还需要安装 Chrome、Chromium 或 Edge。`playwright-core` 负责控制已有浏览器，不会自动下载浏览器本体。
+
+| 本地任务 | 浏览器 | 其他依赖 |
+| --- | --- | --- |
+| PPTX→图片 | Chrome/Chromium/Edge | `playwright-core`、当前平台的 `office2html` 包 |
+| PPTX→PDF | Chrome/Chromium/Edge | `playwright-core`、当前平台的 `office2html` 包、`pdf-lib` |
+| PDF→图片 | Chrome/Chromium/Edge | `playwright-core`、`pdfjs-dist` |
+| PDF→PDF | 不需要 | 不需要；原文件直接透传 |
+| HTML/URL→图片 | Chrome/Chromium/Edge | `playwright-core` |
+
+DeckRender 会依次查找 `--executable-path`、`DECKRENDER_CHROMIUM_EXECUTABLE_PATH`、已有 Playwright 浏览器缓存、系统常见浏览器安装位置和 `PATH`。
+
+`office2html` 平台包覆盖 macOS arm64/x64、Linux x64 和 Windows x64，也可以显式指定可执行文件：
+
+```bash
+deckrender config set office2html-path /opt/deckflow/office2html
+```
+
+如果安装时省略了可选依赖，在使用本地路线前重新启用：
+
+```bash
+npm install -g --include=optional @deckflow/deckrender
+```
+
+如果只使用云端 CLI 或前端 Browser SDK，可以选择轻量安装：
+
+```bash
+npm install -g --omit=optional @deckflow/deckrender
+```
+
+## 数据与保真边界
+
+- 本地 PPTX 和 PDF 路线不会读取云端凭证、访问 DeckFlow 或上传文档字节。
+- 本地 HTML 不访问 DeckFlow API，但页面可能按自身定义加载远程资源。
+- 本地 PPTX 渲染会阻止 `office2html` 产生的 CDN 请求，并使用系统已安装字体；缺失字体、图标和复杂 Office 效果可能与云端结果不同。
+- 云端路线会上传源文件和中间产物。例如 DOCX→图片会下载中间 PDF，再上传给下一项任务。
+- PDF→PDF 是文件透传，不是重新渲染。
+
+返回结果中的 `engine` 和 `route` 可以用于确认实际执行路径，详见[结果契约](/zh/deckrender/reference/result-contract)。
+

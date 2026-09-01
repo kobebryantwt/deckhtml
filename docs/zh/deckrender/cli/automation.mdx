@@ -73,7 +73,7 @@ first_file=$(printf '%s' "$result" | jq -r '.outputs[0].file')
 | `2` | 调用、格式组合或选项无法执行 | `usage_error`、`unsupported_format`、`unsupported_option`、`not_implemented` |
 | `3` | 需要凭证或凭证被拒绝 | `auth_error` |
 
-在 CI 或 JSON 模式下，收到 `401` 后不会打开交互式登录窗口，请在运行前配置 API Key 或 Token。
+已配置凭证被拒绝时，DeckRender 会警告并以游客模式重试一次。如果游客请求也被拒绝，CI 和 JSON 模式会返回 `auth_error`，不会打开交互式登录窗口。`402 Payment Required` 不会以游客模式重试。
 
 ```bash
 export DECKFLOW_API_KEY='...'

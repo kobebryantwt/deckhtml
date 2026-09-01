@@ -4,7 +4,11 @@ sidebarTitle: Authentication
 description: "Try DeckRender cloud routes as a guest, or authenticate for production quotas and workspace access."
 ---
 
-You can try DeckRender cloud routes without configuring credentials. Guest mode is rate-limited and is suitable for evaluation. For sustained workloads, CI, production quotas, or a private workspace, use an API key or sign in through the browser. Browser login stores a session token for interactive development; API keys are better suited to unattended services.
+Local routes require no DeckFlow credentials. Cloud routes can run in rate-limited guest mode for evaluation. For sustained workloads, CI, production quotas, or a private workspace, use an API key or sign in through the CLI browser flow. That login stores a session token; API keys are better suited to unattended services.
+
+<Note>
+  The frontend Browser SDK has a separate contract: configure a user token or explicitly set `guest: true`. It does not read local credential files, run a login UI, or accept a long-lived API key in browser code.
+</Note>
 
 ## Browser login
 
@@ -69,8 +73,6 @@ deckrender config list
 
 Logout removes credentials stored in the shared DeckFlow file. An environment variable or token in the DeckOps config can still authenticate subsequent calls; confirm the effective source with `config list`.
 
-<Warning>
-  JSON, CI, and other non-interactive calls do not open a browser after `401`. Configure an API key or token before starting the job.
-</Warning>
+If a configured CLI or Node.js credential is rejected, DeckRender drops that credential and its associated `spaceId`, warns, and retries once as a guest. A `402 Payment Required` is not retried. If the guest request is also rejected, interactive terminals may offer browser login; JSON and CI calls return `auth_error` instead of opening a browser.
 
 Render defaults such as format, profile, width, and timeout are covered separately in [Configuration](/deckrender/configuration).

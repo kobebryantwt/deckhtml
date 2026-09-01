@@ -8,6 +8,8 @@ DeckRender 把渲染偏好保存在 `~/.deckrender/config.json`，与 DeckFlow �
 
 ```bash
 deckrender config set profile web
+deckrender config set engine local
+deckrender config set office2html-path /opt/deckflow/office2html
 deckrender config set image-format webp
 deckrender config set width 2560
 deckrender config unset width
@@ -19,6 +21,8 @@ deckrender config path
 
 | 键 | 取值 |
 | --- | --- |
+| `engine` | `local`、`cloud`、`auto` |
+| `office2html-path` | 本地 `office2html` 可执行文件绝对路径 |
 | `profile` | `web`、`presentation`、`print`、`thumbnail` |
 | `format` | `image`、`pdf`、`video` |
 | `image-format` | `png`、`jpg`、`webp` |
@@ -27,7 +31,13 @@ deckrender config path
 | `scale` | 正数缩放倍数 |
 | `timeout` | 正数任务等待秒数 |
 
-优先级为：
+引擎选择优先级为：
+
+```text
+--engine > DECKRENDER_ENGINE > ~/.deckrender/config.json > cloud
+```
+
+其他渲染默认值使用：
 
 ```text
 profile 默认值 < ~/.deckrender/config.json < 显式 CLI 参数

@@ -9,25 +9,23 @@ PDF and video routes produce one file rather than a numbered image sequence. The
 ## Render a presentation to PDF
 
 ```bash
-deckrender presentation.pptx -o presentation.pdf
+deckrender presentation.pptx --engine local -o presentation.pdf
 ```
 
-PowerPoint, Keynote, Word, and HTML have implemented PDF routes. A local PDF-to-PDF request is a local passthrough: DeckRender copies the input without uploading or re-rendering it.
+Local mode supports PPTX→PDF. Cloud mode provides the Keynote, Word, and HTML routes. PDF→PDF is always a passthrough: DeckRender copies the input without uploading or re-rendering it.
 
 ```bash
-deckrender report.docx -o report.pdf
-deckrender keynote.key -o keynote.pdf
+deckrender report.docx --engine cloud -o report.pdf
+deckrender keynote.key --engine cloud -o keynote.pdf
 deckrender existing.pdf -o copy.pdf
 ```
-
-Pages and Numbers PDF output wraps their embedded first-page JPEG preview in a one-page PDF. It is not a full render of the document.
 
 ## Render a presentation to MP4
 
 PowerPoint can be rendered to one MP4 file:
 
 ```bash
-deckrender presentation.pptx -o presentation.mp4
+deckrender presentation.pptx --engine cloud -o presentation.mp4
 ```
 
 The equivalent explicit form is:
@@ -41,8 +39,8 @@ DeckRender uploads the presentation and runs the implemented cloud video route. 
 ## Render HTML to PDF or video
 
 ```bash
-deckrender page.html -o page.pdf
-deckrender page.html -o page.mp4
+deckrender page.html --engine cloud -o page.pdf
+deckrender page.html --engine cloud -o page.mp4
 ```
 
 For both targets, DeckRender first rebuilds the HTML as PPTX and then exports that presentation. PDF follows a slide canvas rather than browser print pagination. Video is based on the reconstructed deck rather than a recording of a live browser page. The `RenderResult` includes a `caveat` for these routes.

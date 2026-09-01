@@ -31,7 +31,7 @@ Start with the action the agent must perform and the result the application expe
 | Agent task | Product | Primary result | Execution boundary |
 | --- | --- | --- | --- |
 | Decide whether and where a file should continue | DeckProbe | Schema v2 document facts and evidence | Local |
-| See or deliver the visual document | DeckRender | Images, PDF, video, and `RenderResult` | Mostly cloud, with explicit local routes |
+| See or deliver the visual document | DeckRender | Images, PDF, video, and `RenderResult` | Explicit local or cloud engine |
 | Read, index, extract, or transform content | DeckOps | Markdown, format-specific JSON, or converted files | Cloud |
 | Apply known changes to an existing PPTX | DeckUse | Updated editable PPTX and operation results | Local |
 | Build a new deck from HTML or SVG | DeckHTML | Editable PPTX or page PNGs with conversion diagnostics | Local or cloud |
@@ -58,7 +58,7 @@ The products do not invoke one another automatically. The application or agent d
     Choose facts, visual artifacts, structured content, an updated PPTX, or a newly generated deck.
   </Step>
   <Step title="Confirm the data boundary">
-    DeckProbe and DeckUse run locally. DeckOps runs in the cloud. DeckRender and DeckHTML depend on the selected route or mode.
+    DeckProbe and DeckUse run locally. DeckOps runs in the cloud. DeckRender explicitly selects `local`, `cloud`, or local-first `auto`; DeckHTML depends on its selected mode.
   </Step>
   <Step title="Run one product end to end">
     Verify its input, result, errors, and authentication before adding another product to the workflow.

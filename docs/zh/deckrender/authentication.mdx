@@ -4,7 +4,11 @@ sidebarTitle: 认证
 description: "无需凭证即可试用 DeckRender 云端能力，也可以通过认证获得生产额度和工作空间访问。"
 ---
 
-无需配置凭证即可试用 DeckRender 的云端渲染能力。访客模式存在限频，适合体验和验证。持续调用、CI、生产额度或私有工作空间应使用 API Key，或通过浏览器登录完成认证。浏览器登录会保存 Session Token，适合交互式开发；API Key 更适合无人值守服务。
+本地路线不需要 DeckFlow 凭证。云端路线可以通过限频的游客模式进行体验；持续调用、CI、生产额度或私有 Workspace 应使用 API Key，或者通过 CLI 的浏览器流程完成登录。登录后保存 Session Token，适合交互式开发；API Key 更适合无人值守服务。
+
+<Note>
+  前端 Browser SDK 使用独立契约：配置用户 Token，或显式设置 `guest: true`。它不会读取本地凭证文件、提供登录界面，也不应在浏览器代码中使用长期 API Key。
+</Note>
 
 ## 浏览器登录
 
@@ -69,8 +73,6 @@ deckrender config list
 
 退出登录只会删除 DeckFlow 共享文件中的凭证。环境变量或 DeckOps 配置中的 Token 仍然可能让后续调用处于认证状态，请通过 `config list` 确认最终来源。
 
-<Warning>
-  JSON、CI 和其他非交互式调用收到 `401` 后不会打开浏览器。请在任务开始前配置 API Key 或 Token。
-</Warning>
+CLI 或 Node.js 中已配置的凭证被拒绝时，DeckRender 会丢弃该凭证及关联的 `spaceId`，给出警告并以游客模式重试一次。`402 Payment Required` 不会重试。如果游客请求也被拒绝，交互式终端可以继续浏览器登录；JSON 和 CI 调用不会打开浏览器，而是返回 `auth_error`。
 
 格式、Profile、宽度和超时等渲染默认值请查看[配置](/zh/deckrender/configuration)。

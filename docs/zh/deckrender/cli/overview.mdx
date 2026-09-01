@@ -1,7 +1,7 @@
 ---
 title: CLI
 sidebarTitle: 概览
-description: "通过文件、URL 或标准输入调用 DeckRender，并配置页面范围、输出路径和渲染预设。"
+description: "选择本地或云端引擎，并使用页面、尺寸和输出参数渲染文件、URL 或标准输入。"
 ---
 
 ```bash
@@ -43,6 +43,7 @@ URL 请求不会继承浏览器 Cookie、自定义请求 Header 或已经登录�
 | 选项 | 用途 |
 | --- | --- |
 | `-o, --output <path>` | 文件、目录、`.zip`，或使用 `-` 把原始字节写入 stdout |
+| `--engine <engine>` | `local`、`cloud` 或本地优先的 `auto` |
 | `--format <format>` | `image`、`pdf` 或 `video`；否则从 `-o` 推断，默认图片 |
 | `--image-format <format>` | `png`、`jpg` 或 `webp` |
 | `--from <format>` | 覆盖源格式；标准输入必须指定 |
@@ -84,7 +85,7 @@ deckrender deck.pptx --format video -o deck.mp4
 
 多个产物不能直接写入 stdout，请改用目录、ZIP，或通过 `--pages` 缩小结果。原始 stdout 与 `--json` 也不能组合使用。
 
-页面范围从 1 开始并包含首尾页面。筛选发生在源文档完成渲染之后，因此能减少下载和写出的文件，但不会减少云端渲染的页数或计算量。输出 WebP 时，会先筛选页面，再执行逐帧 WebP 转换。
+页面范围从 1 开始并包含首尾页面。本地 PPTX/PDF 路线只会捕获或栅格化选中的页面；云端路线先渲染完整源文件，因此筛选减少的是下载和写出，而不是基础云端计算。输出 WebP 时，会先筛选页面，再执行逐帧转换。
 
 ## Profiles
 
@@ -106,7 +107,7 @@ deckrender report.pdf --profile thumbnail -o cover.jpg
 
 | 命令 | 作用 |
 | --- | --- |
-| `deckrender formats [--json]` | 查看当前安装版本的输入输出路线矩阵 |
+| `deckrender formats [--engine local\|cloud\|auto] [--json]` | 查看指定引擎选择下的路线矩阵 |
 | `deckrender auth login [--port N]` | 打开浏览器登录并保存返回的 Session Token |
 | `deckrender auth status` | 验证当前凭证并显示来源 |
 | `deckrender auth logout` | 删除 DeckFlow 共享文件中的凭证 |
@@ -118,14 +119,16 @@ deckrender report.pdf --profile thumbnail -o cover.jpg
 
 ```bash
 deckrender formats
+deckrender formats --engine local
 deckrender auth login
 deckrender auth status
 deckrender auth logout
 deckrender auth path
 deckrender config list
 deckrender config set profile web
+deckrender config set engine local
 deckrender config unset profile
 deckrender config path
 ```
 
-继续阅读[自动化与错误处理](/zh/deckrender/cli/automation)，了解稳定的 stdout/stderr 行为、JSON 错误和退出码。
+显式选择本地引擎后不会上传，也不会在失败时转为云端。安装与数据边界参见[本地与云端引擎](/zh/deckrender/engines)；稳定的 stdout/stderr、JSON 错误和退出码参见[自动化与错误处理](/zh/deckrender/cli/automation)。

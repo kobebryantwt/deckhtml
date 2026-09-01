@@ -9,7 +9,7 @@ Choose the first result your application needs. Each section provides installati
 | Product | First result | Runs | Credentials |
 | --- | --- | --- | --- |
 | DeckProbe | Schema v2 facts about a document | Local | None |
-| DeckRender | PNG, PDF, or supported video render | Mostly cloud | Guest or authenticated |
+| DeckRender | PNG, PDF, or supported video render | Local or cloud | None locally; guest or authenticated cloud |
 | DeckOps | Markdown, structured parse data, or converted artifact | Cloud | API key/token recommended |
 | DeckUse | Updated PPTX | Local | None |
 | DeckHTML | PPTX or PNG from HTML | Local or cloud | None locally |
@@ -44,15 +44,15 @@ See the [DeckProbe Quickstart](/deckprobe/quick-start) for platform installers a
 
 ## DeckRender: create a PNG
 
-<span className="product-kicker">Cloud route · guest available · visual artifact</span>
+<span className="product-kicker">Local or cloud · visual artifact · structured result</span>
 
 ```bash
 npm install -g @deckflow/deckrender
-deckrender hello.html -o hello.png --json
+deckrender hello.html --engine local -o hello.png --json --quiet
 test -s hello.png
 ```
 
-The command uploads the HTML to DeckFlow cloud, writes `hello.png`, and returns a `RenderResult` containing `ok`, route, page count, output path, bytes, and duration. Create the HTML input and review guest limits in the [DeckRender Quickstart](/deckrender/quick-start).
+The command uses an installed Chrome/Chromium/Edge browser, keeps the HTML on the machine, writes `hello.png`, and returns a `RenderResult` containing `engine`, route, page count, output path, bytes, and duration. Create the input, check local prerequisites, and try the guest cloud path in the [DeckRender Quickstart](/deckrender/quick-start).
 
 ## DeckOps: run a cloud task
 

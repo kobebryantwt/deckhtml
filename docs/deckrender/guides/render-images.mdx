@@ -7,7 +7,7 @@ description: "Render all or selected document pages to PNG, JPEG, or WebP files,
 Use image output for page previews, thumbnails, review interfaces, and multimodal model input. The available encodings and sizing controls depend on the source format, so confirm the route in [Supported Formats](/deckrender/formats) before exposing these options to application users.
 
 <Note>
-  Most image routes upload the source to DeckFlow cloud. Pages and Numbers use a local embedded preview instead of a full cloud render.
+  Add `--engine local` to keep supported PPTX, PDF, or HTML rendering on the machine. Cloud remains the default and provides broader format coverage.
 </Note>
 
 ## Render every page
@@ -15,7 +15,7 @@ Use image output for page previews, thumbnails, review interfaces, and multimoda
 Pass a multi-page document and an output directory:
 
 ```bash
-deckrender presentation.pptx -o frames/
+deckrender presentation.pptx --engine local -o frames/
 ```
 
 The directory contains numbered files in page order:
@@ -45,7 +45,7 @@ Use `--page` when only one page is needed:
 deckrender report.pdf --page 1 -o cover.png
 ```
 
-The selection controls which images are downloaded and written. The base cloud task still renders the complete source, so page selection reduces transferred and stored artifacts rather than the base render work. A page beyond the document's range returns an error.
+On local PPTX and PDF routes, only selected pages are captured or rasterized, so selection also saves local work. On cloud routes, the base task still renders the complete source; selection reduces downloaded and written artifacts instead. A page beyond the document's range returns an error.
 
 ## Set image size
 
@@ -66,10 +66,10 @@ deckrender report.pdf --pages 1-3 --scale 1.5 -o large-pages/
 
 Sizing behavior differs by route:
 
-- PowerPoint snaps the requested long edge to `1080`, `1920`, or `2560` pixels.
+- Cloud PowerPoint snaps the requested long edge to `1080`, `1920`, or `2560` pixels; local PPTX accepts continuous sizing.
 - PDF and the PDF-to-image step used by Word accept a positive long-edge value.
 - HTML and Markdown accept width or scale and produce one image.
-- Keynote and local Pages/Numbers previews do not provide resolution control.
+- Cloud Keynote does not provide resolution control.
 
 DeckRender reports an adjustment when a PowerPoint width is snapped to a supported tier.
 
@@ -92,7 +92,7 @@ deckrender presentation.pptx \
   -o web-frames/
 ```
 
-WebP is produced by an additional per-image cloud conversion step. When pages are selected, only the retained frames enter that WebP step. JPEG is not available on every source route; check the format matrix before choosing it.
+WebP is produced by an additional per-image cloud conversion step and is not available in the local engine. When pages are selected, only retained cloud frames enter that WebP step. JPEG is not available on every source route; check the format matrix before choosing it.
 
 ## Package selected pages as ZIP
 

@@ -11,7 +11,7 @@ description: "按照输入、操作、执行位置和最终产物比较 DeckFlow
 | 产品 | 输入 | 产物 | 执行位置 | 不替代什么 |
 | --- | --- | --- | --- | --- |
 | DeckProbe | 已有 PDF、Office 或现代 iWork 文档 | Schema v2 Target 证据和实际探测成本 | 原生 Rust CLI 或本地 WebAssembly | 完整内容解析、渲染或编辑 |
-| DeckRender | 支持的文档、URL 或标准输入 | 图片、PDF 或视频 | 本地、透传或云端路径 | 结构化内容提取或源文件编辑 |
+| DeckRender | 支持的文档、URL、标准输入或浏览器选择的文件 | 图片、PDF 或视频 | 显式本地或云端引擎；Browser SDK 仅云端 | 结构化内容提取或源文件编辑 |
 | DeckOps | 文件、URL 或已上传的 File ID | 格式专属解析结果、Markdown 或生成文件 | DeckFlow 云端任务 | 纯本地检查或可编辑源文件修改 |
 | DeckUse | 现有 PPTX | 带版本工作区和修改后的 PPTX | 本地 Node.js 命令工作流 | DOCX/XLSX/Keynote 编辑、渲染或视觉检查 |
 | DeckHTML | 本地 HTML/SVG、有序文件、标准输入或 HTML URL | PPTX 或 PNG；PPTX 映射诊断 | CLI 使用本地浏览器或云端任务；Node.js API 仅本地 | 对现有 Office 文件的通用转换 |
@@ -23,7 +23,7 @@ description: "按照输入、操作、执行位置和最终产物比较 DeckFlow
     最终只需要经过验证的文档级事实，或需要在接收、路由文件前判断风险时，使用 <strong>DeckProbe</strong>。需要页面和元素内容、Markdown、语义提取或生成文件时，使用 <strong>DeckOps</strong>。提高 DeckProbe 的探测级别仍然只会得到 Target 证据，不会变成 DeckOps 的解析结果。
   </Accordion>
   <Accordion title="DeckRender 还是 DeckOps？">
-    应用需要图片、PDF 或视频，并且不希望管理底层任务名、多步路径、页面命名和下载时，使用 <strong>DeckRender</strong>。渲染属于更大的解析、提取、转换或生成流程时，直接使用 <strong>DeckOps</strong>。
+    应用需要图片、PDF 或视频，并希望通过稳定的本地/云端产物契约避免管理转换步骤、页面命名和下载时，使用 <strong>DeckRender</strong>。渲染属于更大的解析、提取、转换或生成流程时，直接使用 <strong>DeckOps</strong>。
   </Accordion>
   <Accordion title="DeckUse 还是 DeckHTML？">
     现有 PPTX 是事实源，并需要修改其中已有内容时，使用 <strong>DeckUse</strong>。HTML 或 SVG 是创作源，并要生成新的 PPTX 或 PNG 时，使用 <strong>DeckHTML</strong>。

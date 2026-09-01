@@ -9,7 +9,7 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
   <h2 className="deckflow-hero-title">Give agents a reliable way to work with documents</h2>
   <p className="deckflow-hero-copy">Inspect a file locally before upload, produce visual artifacts, parse or transform content in the cloud, update an existing PPTX, or generate a new deck from HTML.</p>
   <div className="deckflow-pills">
-    <span className="deckflow-pill">Local-first inspection</span>
+    <span className="deckflow-pill">Local inspection and rendering</span>
     <span className="deckflow-pill">Cloud document tasks</span>
     <span className="deckflow-pill">Editable PPTX workflows</span>
   </div>
@@ -28,7 +28,7 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
     <strong>DeckProbe</strong> reads document identity, metadata, structure, security signals, and asset facts locally without launching Office or iWork.
   </Card>
   <Card title="Render a document" icon="images" iconType="solid" color="#3b82f6" href="/deckrender/overview" cta="Explore DeckRender" arrow>
-    <strong>DeckRender</strong> routes supported files to images, PDF, or video and returns a structured result for the written artifacts.
+    <strong>DeckRender</strong> produces images, PDF, or video through a private local engine or DeckFlow cloud, with Node.js and Browser SDK access.
   </Card>
   <Card title="Run document operations" icon="cube" iconType="solid" color="#8b5cf6" href="/deckops/overview" cta="Explore DeckOps" arrow>
     <strong>DeckOps</strong> provides cloud parsing, extraction, conversion, generation, and asynchronous task execution.
@@ -90,14 +90,14 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
   </section>
 </div>
 
-DeckProbe and DeckUse execute locally. DeckRender uses local, passthrough, and DeckFlow cloud routes. DeckOps executes document tasks in the cloud. DeckHTML supports local browser-based conversion and a cloud mode.
+DeckProbe and DeckUse execute locally. DeckRender provides explicit local, cloud, and local-first automatic engine selection; its Browser SDK is cloud-only. DeckOps executes document tasks in the cloud. DeckHTML supports local browser-based conversion and a cloud mode.
 
 ## Compare the execution boundary
 
 | Goal | Product | Primary interface | Authentication |
 | --- | --- | --- | --- |
 | Verify format, counts, metadata, structure, or risk signals | [DeckProbe](/deckprobe/overview) | CLI and JavaScript SDK | Not required; processing stays local |
-| Produce page images, PDF, thumbnails, or video | [DeckRender](/deckrender/overview) | CLI and Node.js SDK | Optional for cloud routes; guest mode is available |
+| Produce page images, PDF, thumbnails, or video | [DeckRender](/deckrender/overview) | CLI, Node.js SDK, and Browser SDK | None locally; guest or authenticated cloud access |
 | Parse, extract, convert, generate, or orchestrate cloud tasks | [DeckOps](/deckops/overview) | CLI and SDK | Credentials for high-level Parse; limited guest low-level tasks |
 | Inspect and apply structured changes to an existing PPTX | [DeckUse](/deckuse/overview) | CLI and Node.js SDK | Not required; processing stays local |
 | Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI and Node.js SDK | Not required locally; guest or authenticated cloud mode |

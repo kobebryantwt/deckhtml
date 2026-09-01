@@ -1,18 +1,18 @@
 ---
 title: DeckRender
 sidebarTitle: 概览
-description: "把支持的文档生成页面图片、PDF 或视频，用于预览、交付和视觉处理。"
+description: "通过本地引擎或 DeckFlow 云端，把支持的文档渲染为页面图片、PDF 或视频。"
 ---
 
-DeckRender 把支持的文档转成可供应用预览、交付、索引或传入多模态流程的视觉产物。输入本地文件、HTTP(S) URL 或标准输入后，可以得到单个 PDF 或视频、连续编号的页面图片，或者 ZIP 压缩包。
+DeckRender 把支持的文档转为预览、交付、视觉审阅和多模态流程需要的视觉产物。CLI 与 Node.js SDK 可以选择私有本地引擎或 DeckFlow 云端；Browser SDK 则让前端应用直接接入云端渲染。
 
 | 项目 | 快速了解 |
 | --- | --- |
-| 输入 | `.pptx`、`.pdf`、`.key`、`.docx`、HTML、Markdown、`.pages`、`.numbers` 的已支持路径 |
+| 输入 | `.pptx`、`.pdf`、HTML、URL，以及云端支持的其他格式 |
 | 输出 | PNG、JPEG、WebP 图片；PDF；MP4 视频 |
-| 接入方式 | `deckrender` CLI 和 `@deckflow/deckrender` Node.js API |
-| 执行位置 | 多数使用 DeckFlow 云端任务，另有本地 PDF 透传和 iWork 预览提取 |
-| 认证 | 无凭证时使用访客模式；认证调用使用 API Key，或使用浏览器登录获得的 Session Token |
+| 接入方式 | `deckrender` CLI、Node.js SDK 和纯云端 Browser SDK |
+| 执行位置 | 已实现的 PPTX/PDF/HTML 路线可在本地执行，更多格式通过 DeckFlow 云端完成 |
+| 认证 | 本地路线无需认证；云端支持游客模式、API Key 或 Session Token |
 
 ## DeckRender 适合什么
 
@@ -21,6 +21,7 @@ DeckRender 把支持的文档转成可供应用预览、交付、索引或传入
 - 从支持的演示文稿、文档或 HTML 生成 PDF。
 - 从 PowerPoint 生成 MP4，或通过 PPTX 路径从 HTML 生成 MP4。
 - 不直接管理 DeckOps 任务链，也能得到稳定的产物与结果契约。
+- 对支持的 PPTX、PDF 和 HTML 路线进行私有本地渲染，不向 DeckFlow 上传文档字节。
 
 ## 一次渲染如何执行
 
@@ -28,11 +29,11 @@ DeckRender 把支持的文档转成可供应用预览、交付、索引或传入
   <Step title="解析输入">
     读取一个文件或标准输入流，或者在本地 Node.js 进程中抓取一个 URL。
   </Step>
-  <Step title="选择受支持的路线">
-    根据源格式、目标输出类型和图片参数，在当前安装版本的路由表中选择可执行路线。
+  <Step title="选择引擎与路线">
+    使用 `local`、`cloud` 或本地优先的 `auto`，再根据源格式、目标产物和兼容参数匹配对应引擎的路线表。
   </Step>
   <Step title="在本地或云端执行">
-    已实现本地透传或预览提取时在本机完成；其他路线会上传源文件并执行 DeckFlow 云端任务。
+    本地路线在当前机器完成支持的文档处理；云端路线会上传源文件并执行托管转换任务。
   </Step>
   <Step title="写出并返回结果">
     下载并按指定布局写出产物，然后返回描述执行路线和文件位置的 `RenderResult`。
@@ -45,9 +46,11 @@ DeckRender 把支持的文档转成可供应用预览、交付、索引或传入
 
 ## 数据与执行边界
 
-多数格式会上传到 DeckFlow 云端任务。本地 PDF 转 PDF 会直接透传，不上传文件。Pages 与 Numbers 在本地提取内嵌的第一页 JPEG 预览，并不是完整的 iWork 渲染。
+显式选择 `local` 后，文档不会上传，也不会在失败时转为云端。当前本地支持 PPTX→图片/PDF、PDF→图片/PDF，以及 HTML 或 URL→图片。本地 PPTX 和 PDF 路线不会读取云端凭证或访问 DeckFlow；HTML 页面仍可能加载自身引用的远程资源。
 
-HTTP(S) URL 由本地 Node.js 进程获取。HTML 会补充用于解析相对资源的 Base URL，再作为源内容上传。DeckRender 不会捕获用户浏览器当前的状态、Cookie 或认证会话。
+云端路线会上传源文件和中间产物。游客模式适合体验，认证模式提供生产额度和 Workspace 访问。默认引擎仍为 `cloud`；`auto` 会优先使用当前路线对应的本地能力，只有本地不支持时才警告并选择云端。
+
+HTTP(S) URL 由本地 Node.js 进程获取。DeckRender 不会捕获用户浏览器当前的状态、Cookie 或认证会话。本地模式在当前机器捕获页面；云端模式则上传获取到的源内容。
 
 <Warning>
   HTML 转 PDF 和 HTML 转视频会先把 HTML 重建为 PPTX。结果遵循幻灯片模型，并不是原生打印布局或在线页面录制。
@@ -60,7 +63,10 @@ HTTP(S) URL 由本地 Node.js 进程获取。HTML 会补充用于解析相对资
     创建最小 HTML 输入、渲染一张 PNG，并验证结果。
   </Card>
   <Card title="支持的格式" href="/zh/deckrender/formats">
-    检查已实现路径、输出编码和保真限制。
+    比较本地与云端路线、输出编码和保真边界。
+  </Card>
+  <Card title="本地与云端引擎" href="/zh/deckrender/engines">
+    选择执行模式、安装本地依赖并了解文件上传边界。
   </Card>
   <Card title="渲染页面图片" href="/zh/deckrender/guides/render-images">
     选择页面、控制长边尺寸和编码，并写入目录或 ZIP。
@@ -77,6 +83,9 @@ HTTP(S) URL 由本地 Node.js 进程获取。HTML 会补充用于解析相对资
   <Card title="Node.js SDK" href="/zh/deckrender/sdk/node">
     在代码中渲染，并接收进度、警告和 `RenderResult`。
   </Card>
+  <Card title="Browser SDK" href="/zh/deckrender/sdk/browser">
+    在前端上传用户选择的文件并展示云端渲染产物。
+  </Card>
   <Card title="结果契约" href="/zh/deckrender/reference/result-contract">
     消费路径、页数、写出产物、限制和类型化错误。
   </Card>
@@ -88,5 +97,5 @@ HTTP(S) URL 由本地 Node.js 进程获取。HTML 会补充用于解析相对资
 
 ## 源码与云端访问
 
-- [DeckRender 项目仓库](https://github.com/deckflow/deckrender)包含 CLI、Node.js SDK 和渲染路由实现，可用于查看客户端行为、跟踪版本发布或提交 Issue。
-- 多数渲染路径通过 DeckFlow 云端任务执行。请阅读[认证](/zh/deckrender/authentication)，了解游客试用和认证后的云端访问方式。
+- [DeckRender 项目仓库](https://github.com/deckflow/deckrender)包含 CLI、Node.js 与 Browser SDK，以及渲染引擎实现，可用于查看客户端行为、跟踪版本发布或提交 Issue。
+- 通过[本地与云端引擎](/zh/deckrender/engines)了解本地依赖和执行边界；通过[认证](/zh/deckrender/authentication)了解游客模式和认证云端访问。

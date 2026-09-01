@@ -1,28 +1,27 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: "Install DeckRender, create an HTML input, render a PNG in guest mode, and verify the artifact and JSON result."
+description: "Install DeckRender, run a local HTML render, verify the artifact, and choose when to use cloud execution."
 ---
 
-This example creates its own input and runs through a DeckFlow cloud render in guest mode. The HTML source is uploaded for processing; no account is required for the first request.
+This walkthrough renders a self-contained HTML file locally. It does not require an account or upload the source to DeckFlow.
 
 <Steps>
-  <Step title="Check Node.js">
-    DeckRender requires Node.js 18 or later.
+  <Step title="Check prerequisites">
+    DeckRender requires Node.js 18 or later. Local rendering also needs Chrome, Chromium, or Edge installed on the execution machine.
 
     ```bash
     node --version
     ```
   </Step>
   <Step title="Install and verify the CLI">
+    A normal installation includes the optional JavaScript dependencies and the matching `office2html` platform package.
+
     ```bash
     npm install -g @deckflow/deckrender
     deckrender --version
-    deckrender formats
-    deckrender config list
+    deckrender formats --engine local
     ```
-
-    Check the credential source shown by `config list`. DeckRender can inherit a token from DeckOps; an expired fallback token will cause `auth_error` instead of guest execution.
   </Step>
   <Step title="Create a known input">
     Save this as `hello.html`:
@@ -41,12 +40,12 @@ This example creates its own input and runs through a DeckFlow cloud render in g
     </html>
     ```
   </Step>
-  <Step title="Render one PNG">
+  <Step title="Render one PNG locally">
     ```bash
-    deckrender hello.html -o hello.png --json --quiet
+    deckrender hello.html --engine local -o hello.png --json --quiet
     ```
   </Step>
-  <Step title="Verify the artifact and result">
+  <Step title="Verify the artifact and route">
     A successful command exits `0`, writes `hello.png`, and prints a result shaped like:
 
     ```json
@@ -54,27 +53,19 @@ This example creates its own input and runs through a DeckFlow cloud render in g
       "ok": true,
       "input": "hello.html",
       "format": "image",
-      "engine": "cloud",
-      "route": ["convertor.html2png"],
+      "engine": "local",
+      "route": ["local.capture"],
       "pages": 1,
-      "outputs": [
-        {
-          "page": 1,
-          "file": "hello.png",
-          "bytes": 18432
-        }
-      ],
-      "durationMs": 3200
+      "outputs": [{ "page": 1, "file": "hello.png", "width": 1280, "height": 720, "bytes": 18432 }],
+      "durationMs": 1200
     }
     ```
 
-    `--quiet` keeps stderr empty unless the command fails. Byte count and duration vary. Verify the file separately in automation:
+    Dimensions, byte count, and duration depend on the page and browser. Verify the file separately in automation:
 
     ```bash
     test -s hello.png
     ```
-
-    In PowerShell, use:
 
     ```powershell
     if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }
@@ -82,19 +73,21 @@ This example creates its own input and runs through a DeckFlow cloud render in g
   </Step>
 </Steps>
 
-Guest rendering is quota-limited. If the command returns `auth_error`, run `deckrender auth status` to inspect the selected credential. Sign in or configure an API key and retry; an expired environment variable or DeckOps fallback credential can override guest mode. See [Authentication](/deckrender/authentication).
+If DeckRender cannot find a browser, install Chrome/Chromium/Edge or set `DECKRENDER_CHROMIUM_EXECUTABLE_PATH`. See [Local and Cloud Engines](/deckrender/engines) for dependency lookup and PPTX/PDF local routes.
+
+## Try a cloud route
+
+Cloud is still the default engine and provides broader format coverage. This command uploads `hello.html` and runs without credentials in rate-limited guest mode:
+
+```bash
+deckrender hello.html --engine cloud -o hello-cloud.png --json --quiet
+```
+
+Use `--engine auto` for local-first selection. It warns before choosing cloud, so an upload is never silent. For sustained workloads or private workspaces, configure [Authentication](/deckrender/authentication).
 
 <CardGroup cols={2}>
-  <Card title="Render page images" href="/deckrender/guides/render-images">
-    Select pages, control image size and encoding, or write a ZIP.
-  </Card>
-  <Card title="Render PDF or video" href="/deckrender/guides/render-pdf-and-video">
-    Produce and verify a single PDF or MP4 artifact.
-  </Card>
-  <Card title="Automate safely" href="/deckrender/cli/automation">
-    Separate stdout from diagnostics and branch on stable error codes.
-  </Card>
-  <Card title="Use Node.js" href="/deckrender/sdk/node">
-    Reuse a renderer, listen for progress, or inject a custom engine.
-  </Card>
+  <Card title="Compare engines" href="/deckrender/engines">Check local dependencies, supported routes, data boundaries, and `auto` behavior.</Card>
+  <Card title="Render page images" href="/deckrender/guides/render-images">Select pages, control image size and encoding, or write a ZIP.</Card>
+  <Card title="Use Node.js" href="/deckrender/sdk/node">Select an engine in code and receive progress, warnings, and typed results.</Card>
+  <Card title="Use the Browser SDK" href="/deckrender/sdk/browser">Upload browser-selected files to DeckFlow cloud and display returned artifacts.</Card>
 </CardGroup>

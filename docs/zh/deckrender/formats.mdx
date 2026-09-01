@@ -1,91 +1,73 @@
 ---
-title: 支持格式
-sidebarTitle: 支持格式
-description: "选择已实现的 DeckRender 路线，并确认它支持哪些图片、尺寸和页面参数。"
+title: 支持的格式
+sidebarTitle: 支持的格式
+description: "比较本地与云端已实现的路线，以及每条路线支持的图片参数。"
 ---
 
-DeckRender 将一种源格式路由到一种输出类型。能够识别输入，并不代表它支持所有输出或参数。
+格式范围取决于选择的引擎。云端支持某种格式，不代表它也能在本地执行，应以当前安装版本返回的矩阵为准。
 
-## 输入与输出矩阵
+```bash
+deckrender formats --engine local
+deckrender formats --engine cloud
+deckrender formats --engine auto --json
+```
+
+## 本地引擎
+
+| 输入 | 图片 | PDF | 视频 |
+| --- | --- | --- | --- |
+| PowerPoint `.pptx` | PNG、JPEG | 支持 | — |
+| PDF `.pdf` | PNG、JPEG | 原文件透传 | — |
+| HTML `.html`、`.htm`、URL | PNG、JPEG | — | — |
+
+本地 PPTX 和 PDF 路线会把文档字节保留在当前机器。HTML 本地渲染不访问 DeckFlow，但页面仍可能加载自身引用的远程资源。依赖与保真边界参见[本地与云端引擎](/zh/deckrender/engines)。
+
+## 云端引擎
 
 | 输入 | 图片 | PDF | 视频 |
 | --- | --- | --- | --- |
 | PowerPoint `.pptx` | PNG、JPEG、WebP | 支持 | MP4 |
-| PDF `.pdf` | PNG、JPEG、WebP | 本地透传 | — |
+| PDF `.pdf` | PNG、JPEG、WebP | 原文件透传 | — |
 | Keynote `.key` | PNG、WebP | 支持 | — |
 | Word `.docx` | PNG、JPEG、WebP | 支持 | — |
 | HTML `.html`、`.htm`、URL | PNG、WebP | 支持 | MP4 |
 | Markdown `.md`、`.markdown` | PNG、WebP | — | — |
-| Pages `.pages` | 内嵌 JPEG 预览 | 单页 PDF 封装 | — |
-| Numbers `.numbers` | 内嵌 JPEG 预览 | 单页 PDF 封装 | — |
 
-- **支持**表示安装的软件包提供该路线。
-- **—**表示该输入与输出组合不可用。
+所有云端转换都会上传源文件。派生路线还会传输中间产物，例如 Word→图片会先执行 DOCX→PDF，再执行 PDF→图片。PDF→PDF 不需要转换，仍在本地直接透传。
 
-不要在程序中硬编码这张表，应查询当前安装版本：
+## 图片参数
 
-```bash
-deckrender formats
-deckrender formats --json
-```
-
-JSON 结果会为各输入和输出组合返回路线可用性、路线 `kind`、任务链和保真限制。
-
-## 不同来源支持的图片参数
-
-图片参数由实际生成图片的任务决定，因此不同路线的支持范围并不相同。
-
-| 图片来源 | `--width` / `--scale` | `--image-format` | `--pages` |
+| 引擎与输入 | `--width` / `--scale` | `--image-format` | `--pages` |
 | --- | --- | --- | --- |
-| PowerPoint `.pptx` | 吸附到 1080、1920 或 2560 px | `png`、`jpg`、`webp` | 支持 |
-| PDF | 任意正数长边尺寸 | `png`、`jpg`、`webp` | 支持 |
-| Word `.docx` | 在 PDF 转图片步骤接受任意正数 | `png`、`jpg`、`webp` | 支持 |
-| Keynote | 不支持 | `png`、`webp` | 支持 |
-| HTML 或按 HTML 处理的 URL | 支持宽度和缩放 | `png`、`webp` | 不支持；只生成一张长图 |
-| Markdown | 支持页面宽度和缩放 | `png`、`webp` | 不支持；只生成一张图片 |
-| Pages 或 Numbers | 不支持 | 仅内嵌 JPEG | 不支持；仅第一页 |
+| 本地 PPTX | 连续尺寸 | `png`、`jpg` | 支持；只捕获选中幻灯片 |
+| 本地 PDF | 连续尺寸 | `png`、`jpg` | 支持；只栅格化选中页面 |
+| 本地 HTML/URL | 宽度和缩放 | `png`、`jpg` | 不支持；生成一次通用页面捕获 |
+| 云端 PPTX | 吸附到 1080、1920 或 2560 px | `png`、`jpg`、`webp` | 支持 |
+| 云端 PDF 或 DOCX 派生图片 | 任意正数长边 | `png`、`jpg`、`webp` | 支持 |
+| 云端 Keynote | 不支持调整 | `png`、`webp` | 支持 |
+| 云端 HTML/URL | 宽度和缩放 | `png`、`webp` | 不支持；生成一张图片 |
+| 云端 Markdown | 页面宽度和缩放 | `png`、`webp` | 不支持；生成一张图片 |
 
-在云端路线中，显式传入不兼容参数通常会返回 `unsupported_option`。如果参数来自 Profile 或保存的配置，DeckRender 通常会发出警告并忽略它，避免通用默认值阻断本可执行的路线。
+显式传入不兼容参数时会返回 `unsupported_option`，不会静默忽略，也不会切换到其他引擎。WebP 通过额外的逐图云端任务生成；页面筛选会在这个步骤之前完成。
 
-<Warning>
-  HTML 和 Markdown 不应用 `--quality`，请改用 `--width` 或 `--scale`。Pages 和 Numbers 会直接写出内嵌 JPEG，不会根据 `--image-format` 转码，因此图片输出应使用 `.jpg` 文件名。
-</Warning>
-
-<Tip>
-  WebP 通过额外的逐图云端转换步骤生成。使用 `--pages` 时，DeckRender 会先筛选页面，再执行 WebP 转换，因此只有选中页面会进入该步骤。
-</Tip>
-
-## 路线的特殊行为
+## 路线行为
 
 <AccordionGroup>
-  <Accordion title="HTML 转 PDF 或视频">
-    DeckRender 会先把 HTML 转为 PPTX，再导出 PPTX。PDF 遵循幻灯片布局，而不是浏览器原生打印布局；视频是重建后演示文稿的播放结果，不是实时网页录屏。结果中会包含 `caveat`。
+  <Accordion title="本地 PPTX 渲染">
+    DeckRender 使用 `office2html` 把 PPTX 转为 HTML，再由 Chromium 捕获幻灯片；请求 PDF 时会逐页打印并合并。转换器产生的外部 CDN 请求会被阻止，系统字体、图标和复杂 Office 效果可能与托管云端结果不同。
   </Accordion>
-  <Accordion title="Word 转图片">
-    Word 会先转为 PDF，再把 PDF 渲染成页面图片。结果的 `route` 会包含两个任务，以及两者之间的中间文件传输。
+  <Accordion title="本地 PDF 渲染">
+    PDF 图片通过 Chromium 中的 PDF.js 栅格化。PDF→PDF 直接复制原文件，不重新渲染，也不上传。
   </Accordion>
-  <Accordion title="Pages 和 Numbers">
-    这些本地路线从 iWork 包中提取 `preview.jpg` 或备用预览。只能得到第一页和文件中保存的原始分辨率。由于本地不会执行转码，图片输出应使用 `.jpg` 目标文件。PDF 输出只是把同一张 JPEG 封装为单页 PDF，并不是完整渲染 Pages 或 Numbers。
+  <Accordion title="HTML 转云端 PDF 或视频">
+    云端会先把 HTML 重建为 PPTX。PDF 遵循幻灯片布局，而不是浏览器打印布局；视频是重建后 Deck 的幻灯片视频，不是在线页面录制。返回结果会包含 `caveat`。
   </Accordion>
-  <Accordion title="PDF 转 PDF">
-    本地 PDF 文件会直接复制，不上传也不重新渲染。URL 与 stdin 输入没有本地路径，因此不能使用该透传路线。
+  <Accordion title="Word 转云端图片">
+    Word 先转换为 PDF，再把 PDF 渲染为页面图片；返回的 `route` 会包含两项云端任务。
   </Accordion>
   <Accordion title="URL 输入">
-    未提供 `--from` 时，URL 会按 HTML 处理。DeckRender 在本地 Node.js 进程中抓取页面，为相对资源插入 Base URL，然后上传得到的源内容。它不会获得用户浏览器当前的 Cookie、登录状态或运行时 DOM。URL 指向其他受支持文件时，需要使用 `--from` 指定格式。
+    Node.js CLI 和 SDK 会先在本机获取 URL。本地模式直接捕获获取到的 HTML；云端模式会补充相对资源所需的 Base URL 后上传。两种模式都不会继承用户浏览器的 Cookie 或当前 DOM。
   </Accordion>
 </AccordionGroup>
 
-## 页面选择与单文件输出
-
-`--pages` 和 `--page` 只适用于多图片路线。筛选发生在基础云端渲染完成之后，因此可以减少下载和写入的文件，但不会减少基础任务渲染的页数或计算成本。
-
-PDF 和视频都是单文件输出。尺寸、图片编码、质量和页面选择属于图片路线参数，因此不适用于这两类输出。
-
-<CardGroup cols={2}>
-  <Card title="渲染页面图片" href="/zh/deckrender/guides/render-images">
-    应用页面范围、图片尺寸、编码、Profile、目录输出和 ZIP 打包。
-  </Card>
-  <Card title="渲染 PDF 和视频" href="/zh/deckrender/guides/render-pdf-and-video">
-    查看当前 PDF 和 MP4 路线的完整命令。
-  </Card>
-</CardGroup>
+PDF 和视频属于单文件输出，不接受图片尺寸、编码、质量或页面筛选参数。可执行示例参见[渲染 PDF 和视频](/zh/deckrender/guides/render-pdf-and-video)。

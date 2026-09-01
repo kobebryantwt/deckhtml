@@ -73,7 +73,7 @@ For the simplest error parser, use `--json --quiet`. If warnings are needed, rea
 | `2` | The invocation, format pair, or option cannot run | `usage_error`, `unsupported_format`, `unsupported_option`, `not_implemented` |
 | `3` | Credentials were required or rejected | `auth_error` |
 
-In CI or JSON mode DeckRender does not open an interactive login window after a `401`. Configure an API key or token before running the command.
+When a configured credential is rejected, DeckRender warns and retries once as a guest. If the guest request is also rejected, CI and JSON mode return `auth_error` without opening an interactive login window. A `402 Payment Required` is never retried as guest.
 
 ```bash
 export DECKFLOW_API_KEY='...'

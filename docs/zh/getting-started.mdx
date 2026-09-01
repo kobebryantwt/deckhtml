@@ -9,7 +9,7 @@ description: "对比每个 DeckFlow 产品的最小输入、命令和可验证�
 | 产品 | 第一个结果 | 执行位置 | 凭证 |
 | --- | --- | --- | --- |
 | DeckProbe | 文档事实的 Schema v2 报告 | 本地 | 无 |
-| DeckRender | PNG、PDF 或支持的视频渲染 | 主要在云端 | 游客或认证 |
+| DeckRender | PNG、PDF 或支持的视频渲染 | 本地或云端 | 本地无需凭证；云端游客或认证 |
 | DeckOps | Markdown、结构化解析数据或转换产物 | 云端 | 推荐 API Key/Token |
 | DeckUse | 更新后的 PPTX | 本地 | 无 |
 | DeckHTML | 从 HTML 生成 PPTX 或 PNG | 本地或云端 | 本地无需凭证 |
@@ -44,15 +44,15 @@ npm 软件包中的 CLI 会调用对应平台的原生二进制。成功时退�
 
 ## DeckRender：生成 PNG
 
-<span className="product-kicker">云端路径 · 支持访客 · 视觉产物</span>
+<span className="product-kicker">本地或云端 · 视觉产物 · 结构化结果</span>
 
 ```bash
 npm install -g @deckflow/deckrender
-deckrender hello.html -o hello.png --json
+deckrender hello.html --engine local -o hello.png --json --quiet
 test -s hello.png
 ```
 
-命令会把 HTML 上传到 DeckFlow 云端，写入 `hello.png`，并返回包含 `ok`、路由、页数、输出路径、字节数和耗时的 `RenderResult`。创建输入并了解游客限额见 [DeckRender 快速开始](/zh/deckrender/quick-start)。
+命令调用已安装的 Chrome/Chromium/Edge，把 HTML 保留在当前机器，写入 `hello.png`，并返回包含 `engine`、路线、页数、输出路径、字节数和耗时的 `RenderResult`。创建输入、检查本地依赖并体验游客云端路线，请查看 [DeckRender 快速开始](/zh/deckrender/quick-start)。
 
 ## DeckOps：运行一个云端任务
 

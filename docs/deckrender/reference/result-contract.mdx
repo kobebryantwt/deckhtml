@@ -32,14 +32,25 @@ interface RenderOutputEntry {
 | --- | --- |
 | `input` | Original display path, URL, or `-` |
 | `format` | Requested output family |
-| `engine` | Executor used, such as `cloud`, `local`, or `passthrough` |
-| `route` | Ordered execution steps, including `local:iwork-preview` or `passthrough` for those routes |
+| `engine` | Built-in executor selected: `cloud`, `local`, or `passthrough` |
+| `route` | Ordered steps such as `local.office2html`, `local.capture`, cloud task names, or `passthrough` |
 | `pages` | Total pages produced before page filtering |
 | `outputs` | Files or stream entries actually written after filtering |
 | `durationMs` | End-to-end time including input resolution and artifact writing |
 | `caveat` | Known fidelity limitation for the chosen route, when applicable |
 
 The render plan and `route` are execution metadata. They do not contain parsed pages, elements, text, or Document IR.
+
+Local PPTX image output, for example, reports:
+
+```json
+{
+  "engine": "local",
+  "route": ["local.office2html", "local.capture"]
+}
+```
+
+The Browser SDK returns a related `BrowserRenderResult`. Its outputs contain temporary remote or Object URLs with a `blob()` method instead of Node.js `file` paths, and the result provides `dispose()` for SDK-owned Object URLs. See [Browser SDK](/deckrender/sdk/browser).
 
 Output entry paths depend on the destination:
 

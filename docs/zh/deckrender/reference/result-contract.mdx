@@ -32,14 +32,25 @@ interface RenderOutputEntry {
 | --- | --- |
 | `input` | 原始展示路径、URL 或 `-` |
 | `format` | 请求的输出类型 |
-| `engine` | 实际执行器，如 `cloud`、`local` 或 `passthrough` |
-| `route` | 按顺序执行的步骤；本地或透传路径分别包含 `local:iwork-preview` 或 `passthrough` |
+| `engine` | 选中的内置执行器：`cloud`、`local` 或 `passthrough` |
+| `route` | 顺序执行的步骤，如 `local.office2html`、`local.capture`、云端任务名称或 `passthrough` |
 | `pages` | 页面筛选前生成的总页数 |
 | `outputs` | 页面筛选后实际写出的文件或流条目 |
 | `durationMs` | 包含输入读取和产物写出的端到端耗时 |
 | `caveat` | 所选路径存在的已知保真限制，如适用 |
 
 Render Plan 和 `route` 都属于执行元数据，不包含解析后的页面、元素、文本或 Document IR。
+
+例如，本地 PPTX 图片输出会返回：
+
+```json
+{
+  "engine": "local",
+  "route": ["local.office2html", "local.capture"]
+}
+```
+
+Browser SDK 返回结构相近的 `BrowserRenderResult`。其中 `outputs` 是带 `blob()` 方法的临时远程 URL 或 Object URL，而不是 Node.js `file` 路径；结果还提供 `dispose()` 释放 SDK 创建的 Object URL。详见 [Browser SDK](/zh/deckrender/sdk/browser)。
 
 输出条目的路径取决于写出方式：
 

@@ -1,39 +1,55 @@
 ---
 title: Node.js SDK
 sidebarTitle: Node.js SDK
-description: "Render documents from Node.js with the @deckflow/deckrender package."
+description: "Render documents from Node.js with an explicit local, cloud, or automatic engine selection."
 ---
 
-The CLI and programmatic API are distributed in the same package and require Node.js 18 or later.
+The package root provides the Node.js API and requires Node.js 18 or later. A normal installation includes optional local-rendering dependencies; use `--omit=optional` for a cloud-only service.
 
 ```bash
 npm install @deckflow/deckrender
 ```
 
-## One-shot render
+## Render locally
 
 ```ts
 import { render } from '@deckflow/deckrender';
 
 const result = await render({
   input: './deck.pptx',
+  engine: 'local',
   format: 'image',
-  imageFormat: 'webp',
+  imageFormat: 'png',
   pages: '1-5',
   width: 1920,
   out: './frames/',
-  apiKey: process.env.DECKFLOW_API_KEY,
 });
 
-console.log(result.route);
-console.log(result.outputs);
+console.log(result.engine); // local
+console.log(result.route);  // local.office2html, local.capture
 ```
 
-`render()` resolves the input, builds and executes a route, writes the artifacts, and returns a `RenderResult`. Omit credentials to use guest mode.
+Local PPTX and PDF routes do not resolve credentials, contact DeckFlow, or upload document bytes. The execution machine needs the dependencies described in [Local and Cloud Engines](/deckrender/engines). Explicit `local` execution never falls back to cloud.
 
-Most routes upload the source to DeckFlow cloud. A URL is fetched by the local Node.js process first; relative HTML assets receive a base URL, then the resulting source is uploaded. This is not a capture of the user's browser session, cookies, or current runtime DOM. Local PDF passthrough and Pages/Numbers preview extraction do not upload the input.
+## Render through DeckFlow cloud
 
-## Reusable renderer
+```ts
+import { render } from '@deckflow/deckrender';
+
+const result = await render({
+  input: './deck.pptx',
+  engine: 'cloud',
+  format: 'video',
+  out: './deck.mp4',
+  apiKey: process.env.DECKFLOW_API_KEY,
+});
+```
+
+Omit credentials for rate-limited guest mode. Cloud routes upload the source and any intermediate artifacts. A URL is fetched by the local Node.js process first; DeckRender does not inherit the user's browser cookies or current DOM.
+
+Use `engine: 'auto'` for local-first selection. If the exact local route is unavailable, DeckRender calls `onWarning` before choosing cloud.
+
+## Reuse a renderer
 
 ```ts
 import { createRenderer } from '@deckflow/deckrender';
@@ -45,64 +61,58 @@ const renderer = createRenderer({
 
 const result = await renderer.render({
   input: './report.pdf',
+  engine: 'auto',
   format: 'image',
   pages: '1,3,5-7',
   out: './report-pages/',
-  onProgress: ({ phase, message, ratio }) => {
-    console.log({ phase, message, ratio });
-  },
+  onProgress: ({ phase, message, ratio }) => console.log({ phase, message, ratio }),
 });
 ```
-
-Use `createRenderer()` to reuse credentials, warning handling, or a custom execution backend across calls.
 
 ## Render options
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `input` | `string` | File path, HTTP(S) URL, or `-` for stdin |
+| `engine` | `'local' \| 'cloud' \| 'auto'` | Explicit value, then `DECKRENDER_ENGINE`, then `cloud`; SDK calls do not read CLI render-default files |
 | `from` | `SourceFormat` | Explicit input type; required for stdin |
 | `format` | `'image' \| 'pdf' \| 'video'` | Defaults to `image` |
-| `imageFormat` | `'png' \| 'jpg' \| 'webp'` | Image encoding |
+| `imageFormat` | `'png' \| 'jpg' \| 'webp'` | Depends on the selected engine and route |
 | `out` | `string` | File, directory, ZIP, or `-` |
 | `pages` | `string` | 1-based selection such as `1-5` or `1,3,7-9` |
-| `width` | `number` | Target long edge for compatible routes |
-| `scale` | `number` | Route-relative scale |
+| `width` / `scale` | `number` | Image sizing for compatible routes |
 | `quality` | `'low' \| 'medium' \| 'high'` | Image preset |
-| `embedFonts` | `boolean` | Applies to HTML routes passing through PPTX |
+| `embedFonts` | `boolean` | Cloud HTML routes passing through PPTX |
 | `timeout` | `number` | Cloud task wait timeout in seconds |
-| `onProgress` | `(event) => void` | Resolve, plan, upload, task, wait, download, and write events |
+| `onProgress` | `(event) => void` | Resolve, plan, upload, task, wait, download, and write phases |
 
-Image options are route-specific. `quality` applies to PowerPoint and PDF-based image routes; use `width` or `scale` for HTML and Markdown. See [Supported Formats](/deckrender/formats) before exposing these options directly to users.
+The SDK does not apply CLI profiles or saved CLI render defaults automatically. Pass options explicitly, or use the exported `PROFILES` and `layerOptions` helpers.
 
-The SDK does not apply CLI profiles or the CLI render-default config automatically. Pass render options explicitly; the exported `PROFILES` and `layerOptions` helpers are available if an application wants the same behavior.
-
-Use `supportedTargets()` or `findRoute()` when an application needs to check a combination before rendering:
+Use the engine-specific helpers before presenting a route in an application:
 
 ```ts
-import { findRoute, supportedTargets } from '@deckflow/deckrender';
+import { findLocalRoute, findRoute, localSupportedTargets, supportedTargets } from '@deckflow/deckrender';
 
-console.log(supportedTargets('docx')); // ['image', 'pdf']
-console.log(findRoute('docx', 'image')?.kind); // 'derived'
+console.log(localSupportedTargets('pptx')); // ['image', 'pdf']
+console.log(supportedTargets('docx'));      // cloud: ['image', 'pdf']
+console.log(findLocalRoute('pptx', 'image')?.tasks);
+console.log(findRoute('docx', 'image')?.tasks);
 ```
 
-These functions describe the route table bundled with the installed package. They do not contact the cloud service.
+These helpers inspect the installed route tables and do not contact DeckFlow.
 
-## Renderer configuration
+## Custom engines and clients
 
-`createRenderer()` accepts `apiKey`, `token`, `spaceId`, and `apiBase`, plus:
+`createRenderer()` also accepts:
 
-- `client`: an existing `@deckops/sdk` client.
-- `engine`: a custom implementation of the exported `RenderEngine` interface.
-- `onWarning`: route caveats and non-fatal option adjustments.
-- `onUnauthorized`: a caller-provided reauthentication hook after `401`.
-- `onPaymentRequired`: a caller-provided hook after `402`.
+- `client`: an existing `@deckops/sdk` cloud client.
+- `engine`: a custom `RenderEngine` implementation for backward compatibility.
+- `customEngine`: the unambiguous spelling for a custom engine.
+- `onUnauthorized` and `onPaymentRequired`: hooks for the built-in cloud client path.
 
-Local and passthrough routes continue to run locally even when a custom cloud client is supplied.
+A custom engine and a built-in engine name cannot control the same renderer invocation. An injected client is treated as already configured and must own its authentication hooks.
 
-<Warning>
-  An injected `client` is treated as already authenticated. If the application needs DeckRender's built-in guest task startup, omit `client` and let DeckRender create it. `onUnauthorized` and `onPaymentRequired` also apply only to the built-in client path; an injected client must configure its own hooks.
-</Warning>
+For frontend applications, use the separate [Browser SDK](/deckrender/sdk/browser); do not bundle the Node.js package root into the browser.
 
 ## Handle typed errors
 
@@ -110,7 +120,7 @@ Local and passthrough routes continue to run locally even when a custom cloud cl
 import { DeckRenderError, render } from '@deckflow/deckrender';
 
 try {
-  await render({ input: './deck.key', format: 'image', width: 1920 });
+  await render({ input: './deck.pptx', engine: 'local', format: 'image' });
 } catch (error) {
   if (error instanceof DeckRenderError) {
     console.error(error.code, error.message, error.hint);
@@ -118,4 +128,4 @@ try {
 }
 ```
 
-See the [result contract](/deckrender/reference/result-contract) for every returned field.
+See the [Result Contract](/deckrender/reference/result-contract) for returned fields and error codes.

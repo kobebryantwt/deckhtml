@@ -1,0 +1,98 @@
+---
+title: Browser SDK
+sidebarTitle: Browser SDK
+description: "在浏览器中上传用户选择的文档，通过 DeckFlow 云端渲染并展示返回产物。"
+---
+
+前端应用通过 `@deckflow/deckrender/browser` 接入。API 代码运行在浏览器中，文档转换运行在 DeckFlow 云端；它不包含 Node.js 本地引擎。
+
+```bash
+npm install --omit=optional @deckflow/deckrender
+```
+
+Browser SDK 需要现代浏览器的安全上下文，即 HTTPS 或 localhost。服务端渲染阶段可以安全导入，但只能在客户端调用 `render()`。
+
+## 渲染用户选择的文件
+
+```ts
+import { createRenderer } from '@deckflow/deckrender/browser';
+
+const renderer = createRenderer({
+  guest: true,
+  onWarning: (message) => console.warn(message),
+});
+
+const result = await renderer.render({
+  input: fileInput.files![0]!,
+  format: 'image',
+  imageFormat: 'png',
+  pages: '1-3',
+  width: 1920,
+  onProgress: (event) => console.log(event.phase, event.message),
+});
+
+const first = result.outputs[0];
+if (first) {
+  previewImage.src = first.url;
+  const blob = await first.blob();
+  console.log(first.page, blob.size);
+}
+
+// 移除预览后，释放 SDK 创建的 Object URL。
+result.dispose();
+```
+
+`fileInput` 和 `previewImage` 由应用提供。SDK 不包含文件选择界面、预览组件或登录页面。
+
+## 输入形式
+
+```ts
+await renderer.render({ input: file });
+await renderer.render({ input: { data: blob, name: 'deck.pptx' } });
+await renderer.render({ input: { data: bytes, name: 'report.pdf' } });
+await renderer.render({ input: { html: '<h1>Hello</h1>', baseUrl: 'https://example.com/deck/' } });
+await renderer.render({ input: { markdown: '# Hello' } });
+```
+
+二进制值支持 `Blob`、`Uint8Array` 和 `ArrayBuffer`；除 `File` 外都必须同时提供文件名。文件名不能识别格式时，再使用 `from` 明确指定。
+
+Browser SDK 不接受本地路径，也不会隐式抓取 URL 字符串。渲染在线文件时，由应用按自己的 CORS 和认证策略下载，再把文件字节和名称交给 SDK。内联 HTML 可以用 `baseUrl` 解析相对资源，但不会复现用户当前浏览器的登录会话。
+
+## 认证
+
+以下认证方式只能选择一种：
+
+```ts
+const guestRenderer = createRenderer({ guest: true });
+const tokenRenderer = createRenderer({ token: userToken });
+const refreshingRenderer = createRenderer({
+  getToken: () => auth.getDeckFlowToken(),
+});
+```
+
+- 游客上传必须显式设置 `guest: true`。
+- `token` 必须是 DeckFlow 用户会话 Token。
+- `getToken` 会在每次渲染前执行，Token 刷新由应用负责。
+- 不要把长期 API Key 放进前端代码；API Key 集成应保留在服务端。
+- 浏览器认证失败后不会静默降级为游客模式，需要取得有效 Token 或显式重新发起游客渲染。
+
+`apiBase` 可以指向不包含 Query 或 Fragment 的绝对 HTTP(S)、DeckOps 兼容 API 根地址。使用同源代理时，服务端必须校验用户、Workspace 和任务归属，不要暴露带高权限的通用转发接口。
+
+## 返回结果与资源释放
+
+`BrowserRenderResult.outputs` 返回远程产物 URL，而不是 Node.js 文件路径。调用 `output.blob()` 才会下载对应的一项产物。远程 URL 可能过期，也需要对象存储允许前端来源跨域访问。
+
+PDF→PDF 是原文件透传：SDK 在本地创建 Object URL，不读取凭证，也不上传 PDF。`dispose()` 用于释放 SDK 创建的 Object URL，可以重复调用，但不会取消云端任务或删除远程文件。
+
+<Warning>
+  关闭页面不能保证取消已经创建的云端任务。派生路线还可能在浏览器中下载并重新上传中间产物；大文件更适合使用 Node.js 或服务端编排。
+</Warning>
+
+## 浏览器生产环境检查
+
+- API 预检请求应允许前端来源和 DeckFlow 实际使用的请求 Header。
+- 签名上传存储应允许所需方法，并向 JavaScript 暴露分片上传的 `ETag`。
+- 中间产物和最终产物地址应允许前端 Fetch；图片能在 `<img>` 显示，不代表 `blob()` 或 Canvas 一定可以读取。
+- CSP 的 `connect-src` 应允许 API 和存储域名，图片或媒体规则还需要允许预览域名与 `blob:`。
+
+Browser SDK 使用[云端格式矩阵](/zh/deckrender/formats)，不支持 `local`、`auto`、输出路径、本地可执行文件路径、CLI Profile，也不会从本地配置中查找 API Key。

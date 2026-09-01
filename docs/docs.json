@@ -202,10 +202,10 @@
           {
             "tab": "DeckRender",
             "groups": [
-              { "group": "Get Started", "pages": ["deckrender/overview", "deckrender/quick-start", "deckrender/formats"] },
+              { "group": "Get Started", "pages": ["deckrender/overview", "deckrender/quick-start", "deckrender/engines", "deckrender/formats"] },
               { "group": "Guides", "pages": ["deckrender/guides/render-images", "deckrender/guides/render-pdf-and-video"] },
               { "group": "CLI", "pages": ["deckrender/cli/overview", "deckrender/cli/automation"] },
-              { "group": "SDK", "pages": ["deckrender/sdk/node"] },
+              { "group": "SDK", "pages": ["deckrender/sdk/node", "deckrender/sdk/browser"] },
               { "group": "Configuration", "pages": ["deckrender/authentication", "deckrender/configuration"] },
               { "group": "Reference", "pages": ["deckrender/reference/result-contract"] }
             ]
@@ -443,10 +443,10 @@
           {
             "tab": "DeckRender",
             "groups": [
-              { "group": "开始使用", "pages": ["zh/deckrender/overview", "zh/deckrender/quick-start", "zh/deckrender/formats"] },
+              { "group": "开始使用", "pages": ["zh/deckrender/overview", "zh/deckrender/quick-start", "zh/deckrender/engines", "zh/deckrender/formats"] },
               { "group": "操作指南", "pages": ["zh/deckrender/guides/render-images", "zh/deckrender/guides/render-pdf-and-video"] },
               { "group": "CLI", "pages": ["zh/deckrender/cli/overview", "zh/deckrender/cli/automation"] },
-              { "group": "SDK", "pages": ["zh/deckrender/sdk/node"] },
+              { "group": "SDK", "pages": ["zh/deckrender/sdk/node", "zh/deckrender/sdk/browser"] },
               { "group": "配置", "pages": ["zh/deckrender/authentication", "zh/deckrender/configuration"] },
               { "group": "参考", "pages": ["zh/deckrender/reference/result-contract"] }
             ]

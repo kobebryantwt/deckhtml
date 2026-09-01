@@ -8,6 +8,8 @@ DeckRender keeps render preferences in `~/.deckrender/config.json`, separate fro
 
 ```bash
 deckrender config set profile web
+deckrender config set engine local
+deckrender config set office2html-path /opt/deckflow/office2html
 deckrender config set image-format webp
 deckrender config set width 2560
 deckrender config unset width
@@ -19,6 +21,8 @@ deckrender config path
 
 | Key | Values |
 | --- | --- |
+| `engine` | `local`, `cloud`, `auto` |
+| `office2html-path` | Absolute path to a local `office2html` executable |
 | `profile` | `web`, `presentation`, `print`, `thumbnail` |
 | `format` | `image`, `pdf`, `video` |
 | `image-format` | `png`, `jpg`, `webp` |
@@ -27,7 +31,13 @@ deckrender config path
 | `scale` | Positive multiplier |
 | `timeout` | Positive task wait time in seconds |
 
-Precedence is:
+Engine selection precedence is:
+
+```text
+--engine > DECKRENDER_ENGINE > ~/.deckrender/config.json > cloud
+```
+
+Other render defaults use:
 
 ```text
 profile defaults < ~/.deckrender/config.json < explicit CLI options

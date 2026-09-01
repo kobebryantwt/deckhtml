@@ -9,25 +9,23 @@ PDF 和视频路线会生成一个文件，而不是连续编号的图片。输�
 ## 把演示文稿渲染为 PDF
 
 ```bash
-deckrender presentation.pptx -o presentation.pdf
+deckrender presentation.pptx --engine local -o presentation.pdf
 ```
 
-PowerPoint、Keynote、Word 和 HTML 已实现 PDF 路线。本地 PDF 转 PDF 使用本地透传：DeckRender 直接复制输入，不上传也不重新渲染。
+本地模式支持 PPTX→PDF；Keynote、Word 和 HTML 路线需要使用云端。PDF→PDF 始终直接透传：DeckRender 复制输入，不上传也不重新渲染。
 
 ```bash
-deckrender report.docx -o report.pdf
-deckrender keynote.key -o keynote.pdf
+deckrender report.docx --engine cloud -o report.pdf
+deckrender keynote.key --engine cloud -o keynote.pdf
 deckrender existing.pdf -o copy.pdf
 ```
-
-Pages 和 Numbers 的 PDF 输出会把内嵌的第一页 JPEG 预览封装为单页 PDF，并不是完整文档渲染。
 
 ## 把演示文稿渲染为 MP4
 
 PowerPoint 可以渲染为一个 MP4 文件：
 
 ```bash
-deckrender presentation.pptx -o presentation.mp4
+deckrender presentation.pptx --engine cloud -o presentation.mp4
 ```
 
 对应的显式写法是：
@@ -41,8 +39,8 @@ DeckRender 会上传演示文稿并执行已实现的云端视频路线，最终
 ## 把 HTML 渲染为 PDF 或视频
 
 ```bash
-deckrender page.html -o page.pdf
-deckrender page.html -o page.mp4
+deckrender page.html --engine cloud -o page.pdf
+deckrender page.html --engine cloud -o page.mp4
 ```
 
 这两个目标都会先把 HTML 重建为 PPTX，再导出演示文稿。PDF 遵循幻灯片画布，而不是浏览器打印分页；视频基于重建后的 Deck，并不是实时浏览器页面录屏。对应 `RenderResult` 会包含 `caveat`。

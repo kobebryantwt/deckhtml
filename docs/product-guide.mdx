@@ -11,7 +11,7 @@ Start with the artifact your application must receive—facts, pixels, structure
 | Product | Start with | Produces | Runs | Does not replace |
 | --- | --- | --- | --- | --- |
 | DeckProbe | Existing PDF, Office, or modern iWork document | Schema v2 target evidence and measured probe cost | Native Rust CLI or local WebAssembly | Full content parsing, rendering, or editing |
-| DeckRender | Supported document, URL, or stdin | Images, PDF, or video | Local, passthrough, or cloud route | Structured content extraction or source editing |
+| DeckRender | Supported document, URL, stdin, or browser-selected file | Images, PDF, or video | Explicit local or cloud engine; Browser SDK is cloud-only | Structured content extraction or source editing |
 | DeckOps | File, URL, or uploaded file ID | Format-specific parse results, Markdown, or generated files | DeckFlow cloud tasks | Local-only inspection or editable source mutation |
 | DeckUse | Existing PPTX | Versioned workspace and updated PPTX | Local Node.js command workflow | DOCX/XLSX/Keynote editing, rendering, or visual review |
 | DeckHTML | Local HTML/SVG, ordered files, stdin, or HTML URL | PPTX or PNG; PPTX mapping diagnostics | Local browser or cloud task through the CLI; local Node.js API | General-purpose conversion of existing Office files |
@@ -23,7 +23,7 @@ Start with the artifact your application must receive—facts, pixels, structure
     Use <strong>DeckProbe</strong> when verified document-level facts are the final result or are needed before accepting and routing a file. Use <strong>DeckOps</strong> when you need page and element content, Markdown, semantic extraction, or a generated file. A deeper DeckProbe level still returns target evidence, not a DeckOps parse result.
   </Accordion>
   <Accordion title="DeckRender or DeckOps?">
-    Use <strong>DeckRender</strong> when your application needs images, PDF, or video and does not want to manage underlying cloud task names, multi-step routes, page naming, or downloads. Use <strong>DeckOps</strong> when the task itself is part of a broader parse, extract, convert, or generation workflow.
+    Use <strong>DeckRender</strong> when your application needs images, PDF, or video through a stable local/cloud artifact contract without managing conversion steps, page naming, or downloads. Use <strong>DeckOps</strong> when the task itself is part of a broader parse, extract, convert, or generation workflow.
   </Accordion>
   <Accordion title="DeckUse or DeckHTML?">
     Use <strong>DeckUse</strong> when an existing PPTX is the source of truth and you need to change its current content. Use <strong>DeckHTML</strong> when HTML or SVG is the authoring source and a new PPTX or PNG is the result.

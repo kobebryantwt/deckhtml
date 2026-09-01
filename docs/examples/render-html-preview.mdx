@@ -4,19 +4,18 @@ sidebarTitle: HTML to PNG Preview
 description: "Create a known HTML page, render it to PNG with DeckRender, and verify both the visual artifact and JSON result."
 ---
 
-This example creates a presentation-sized HTML page, sends it through a DeckFlow cloud render, and verifies the resulting PNG and `RenderResult` without adding another npm dependency.
+This example creates a presentation-sized HTML page, renders it on the local machine, and verifies the resulting PNG and `RenderResult`.
 
 <div className="workflow-meta"><span className="workflow-meta-label">Produces</span><span className="workflow-meta-value"><code>preview.png</code> plus <code>render-result.json</code> containing the route, page count, output metadata, and duration.</span></div>
 
 ## Requirements
 
 - Node.js 18 or later
-- Network access to DeckFlow cloud
-- Guest quota or authenticated access with an API key or a browser-obtained session token
+- Chrome, Chromium, or Edge on the execution machine
 
-<Warning>
-  This DeckRender route uploads the HTML source to DeckFlow cloud. DeckRender does not provide a local HTML render route. If the source must stay on the machine, switch to the separate [DeckHTML product](/deckhtml/overview), which supports local HTML-to-PNG conversion.
-</Warning>
+<Note>
+  This example explicitly selects `local`, so it does not upload the HTML to DeckFlow. A page can still load remote resources referenced by its own HTML.
+</Note>
 
 ## Run the example
 
@@ -26,11 +25,10 @@ This example creates a presentation-sized HTML page, sends it through a DeckFlow
 ```bash
 npm install -g @deckflow/deckrender
 deckrender --version
-deckrender formats
-deckrender config list
+deckrender formats --engine local
 ```
 
-Check the credential source reported by `config list`. An expired environment variable or inherited DeckOps token can override guest mode and return `auth_error`.
+The local matrix should show HTML→image. If the command cannot find a browser, follow [Local and Cloud Engines](/deckrender/engines).
 
   </Step>
   <Step title="Create a known HTML input">
@@ -64,7 +62,7 @@ Save as `preview.html`:
   <body>
     <main>
       <h1>DeckRender preview</h1>
-      <p>A known HTML input rendered through DeckFlow cloud.</p>
+      <p>A known HTML input rendered on this machine.</p>
     </main>
   </body>
 </html>
@@ -74,7 +72,7 @@ Save as `preview.html`:
   <Step title="Render the PNG and capture JSON">
 
 ```bash
-deckrender preview.html -o preview.png --json --quiet > render-result.json
+deckrender preview.html --engine local -o preview.png --json --quiet > render-result.json
 ```
 
 `--quiet` prevents human-readable progress logs from mixing with JSON on stdout. The command writes the image separately to `preview.png`.
@@ -127,7 +125,7 @@ Route: convertor.html2png
   <Card title="Render another format" icon="images" iconType="solid" href="/deckrender/formats">
     Check the current input/output matrix and format-specific limitations.
   </Card>
-  <Card title="Configure authentication" icon="key" iconType="solid" href="/deckrender/authentication">
-    Move from guest quota to an API key or a session token obtained through browser login.
+  <Card title="Compare engines" icon="server" iconType="solid" href="/deckrender/engines">
+    Compare local prerequisites, cloud coverage, and data boundaries.
   </Card>
 </CardGroup>

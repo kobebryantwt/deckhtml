@@ -4,19 +4,18 @@ sidebarTitle: HTML 转 PNG 预览
 description: "创建一份已知 HTML，使用 DeckRender 渲染为 PNG，并验证视觉产物和 JSON 结果。"
 ---
 
-本示例会创建一张演示文稿尺寸的 HTML 页面，通过 DeckFlow 云端完成渲染，并在不增加其他 npm 依赖的情况下验证 PNG 和 `RenderResult`。
+本示例会创建一张演示文稿尺寸的 HTML 页面，在当前机器完成渲染，并验证 PNG 和 `RenderResult`。
 
 <div className="workflow-meta"><span className="workflow-meta-label">生成结果</span><span className="workflow-meta-value"><code>preview.png</code>，以及包含路线、页数、输出元数据和耗时的 <code>render-result.json</code>。</span></div>
 
 ## 环境要求
 
 - Node.js 18 或更高版本
-- 可以访问 DeckFlow 云端
-- 可用的游客额度，或使用 API Key、浏览器登录获得的 Session Token 进行认证
+- 执行机器已安装 Chrome、Chromium 或 Edge
 
-<Warning>
-  这条 DeckRender 路线会把 HTML 源文件上传到 DeckFlow 云端，DeckRender 不提供本地 HTML 渲染路线。源文件必须留在本机时，需要切换到独立的 [DeckHTML 产品](/zh/deckhtml/overview)，由它在本地完成 HTML 转 PNG。
-</Warning>
+<Note>
+  本示例显式选择 `local`，不会把 HTML 上传到 DeckFlow。页面仍可能加载 HTML 自身引用的远程资源。
+</Note>
 
 ## 运行示例
 
@@ -26,11 +25,10 @@ description: "创建一份已知 HTML，使用 DeckRender 渲染为 PNG，并验
 ```bash
 npm install -g @deckflow/deckrender
 deckrender --version
-deckrender formats
-deckrender config list
+deckrender formats --engine local
 ```
 
-检查 `config list` 返回的凭证来源。过期的环境变量或继承自 DeckOps 的 Token 可能覆盖游客模式并返回 `auth_error`。
+本地矩阵中应显示 HTML→图片。如果命令找不到浏览器，请查看[本地与云端引擎](/zh/deckrender/engines)。
 
   </Step>
   <Step title="创建已知 HTML 输入">
@@ -64,7 +62,7 @@ deckrender config list
   <body>
     <main>
       <h1>DeckRender preview</h1>
-      <p>A known HTML input rendered through DeckFlow cloud.</p>
+      <p>A known HTML input rendered on this machine.</p>
     </main>
   </body>
 </html>
@@ -74,7 +72,7 @@ deckrender config list
   <Step title="渲染 PNG 并保存 JSON">
 
 ```bash
-deckrender preview.html -o preview.png --json --quiet > render-result.json
+deckrender preview.html --engine local -o preview.png --json --quiet > render-result.json
 ```
 
 `--quiet` 可以避免面向用户的进度日志混入 stdout 中的 JSON。图片会单独写入 `preview.png`。
@@ -127,7 +125,7 @@ Route: convertor.html2png
   <Card title="渲染其他格式" icon="images" iconType="solid" href="/zh/deckrender/formats">
     查看当前输入输出矩阵和各格式的限制。
   </Card>
-  <Card title="配置认证" icon="key" iconType="solid" href="/zh/deckrender/authentication">
-    从游客额度切换到 API Key，或通过浏览器登录获得的 Session Token。
+  <Card title="比较引擎" icon="server" iconType="solid" href="/zh/deckrender/engines">
+    比较本地依赖、云端格式范围和数据边界。
   </Card>
 </CardGroup>

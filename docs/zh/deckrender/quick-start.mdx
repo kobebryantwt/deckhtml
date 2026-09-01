@@ -1,31 +1,30 @@
 ---
 title: 快速开始
 sidebarTitle: 快速开始
-description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 PNG，并验证产物和 JSON 结果。"
+description: "安装 DeckRender，在本地渲染 HTML，验证产物，并了解何时使用云端执行。"
 ---
 
-本示例会创建自己的输入，并通过 DeckFlow 云端访客模式完成渲染。HTML 源文件会被上传处理；首次请求不需要账号。
+下面会在本地渲染一个自行创建的 HTML 文件，无需账号，也不会向 DeckFlow 上传源文件。
 
 <Steps>
-  <Step title="检查 Node.js">
-    DeckRender 需要 Node.js 18 或更高版本。
+  <Step title="检查运行条件">
+    DeckRender 需要 Node.js 18 或更高版本。本地渲染还要求执行机器已安装 Chrome、Chromium 或 Edge。
 
     ```bash
     node --version
     ```
   </Step>
   <Step title="安装并验证 CLI">
+    正常安装会包含可选 JavaScript 依赖，以及当前平台对应的 `office2html` 包。
+
     ```bash
     npm install -g @deckflow/deckrender
     deckrender --version
-    deckrender formats
-    deckrender config list
+    deckrender formats --engine local
     ```
-
-    检查 `config list` 显示的凭证来源。DeckRender 可能继承 DeckOps Token；已过期的回退 Token 会返回 `auth_error`，而不是进入游客模式。
   </Step>
   <Step title="创建已知输入">
-    保存为 `hello.html`：
+    将以下内容保存为 `hello.html`：
 
     ```html
     <!doctype html>
@@ -41,40 +40,32 @@ description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 
     </html>
     ```
   </Step>
-  <Step title="渲染一张 PNG">
+  <Step title="在本地渲染一张 PNG">
     ```bash
-    deckrender hello.html -o hello.png --json --quiet
+    deckrender hello.html --engine local -o hello.png --json --quiet
     ```
   </Step>
-  <Step title="验证产物和结果">
-    成功命令的退出码为 `0`，会写入 `hello.png`，并输出类似以下结构的结果：
+  <Step title="验证产物与路线">
+    命令成功时退出码为 `0`，写出 `hello.png`，并返回类似结果：
 
     ```json
     {
       "ok": true,
       "input": "hello.html",
       "format": "image",
-      "engine": "cloud",
-      "route": ["convertor.html2png"],
+      "engine": "local",
+      "route": ["local.capture"],
       "pages": 1,
-      "outputs": [
-        {
-          "page": 1,
-          "file": "hello.png",
-          "bytes": 18432
-        }
-      ],
-      "durationMs": 3200
+      "outputs": [{ "page": 1, "file": "hello.png", "width": 1280, "height": 720, "bytes": 18432 }],
+      "durationMs": 1200
     }
     ```
 
-    `--quiet` 会在命令失败前保持 stderr 为空。字节数和耗时会变化，自动化流程还应单独检查文件：
+    尺寸、字节数和耗时会随页面和浏览器变化。自动化流程应单独检查文件：
 
     ```bash
     test -s hello.png
     ```
-
-    PowerShell 中使用：
 
     ```powershell
     if (!(Test-Path hello.png) -or (Get-Item hello.png).Length -eq 0) { exit 1 }
@@ -82,19 +73,21 @@ description: "安装 DeckRender、创建 HTML 输入、使用访客模式渲染 
   </Step>
 </Steps>
 
-访客渲染存在额度限制。如果命令返回 `auth_error`，先运行 `deckrender auth status` 检查实际选中的凭证，再登录或配置 API Key 后重试。已过期的环境变量或 DeckOps 回退凭证可能会覆盖游客模式。详见[认证](/zh/deckrender/authentication)。
+如果 DeckRender 找不到浏览器，请安装 Chrome/Chromium/Edge，或设置 `DECKRENDER_CHROMIUM_EXECUTABLE_PATH`。PPTX/PDF 本地路线和依赖查找方式参见[本地与云端引擎](/zh/deckrender/engines)。
+
+## 体验云端路线
+
+云端仍是默认引擎，并提供更完整的格式范围。以下命令会上传 `hello.html`，无需凭证即可使用限频的游客模式执行：
+
+```bash
+deckrender hello.html --engine cloud -o hello-cloud.png --json --quiet
+```
+
+使用 `--engine auto` 可以本地优先选择；如果需要转到云端，它会提前给出警告，不会静默上传。持续工作负载或私有 Workspace 应配置[认证](/zh/deckrender/authentication)。
 
 <CardGroup cols={2}>
-  <Card title="渲染页面图片" href="/zh/deckrender/guides/render-images">
-    选择页面、控制图片尺寸和编码，或写出 ZIP。
-  </Card>
-  <Card title="渲染 PDF 或视频" href="/zh/deckrender/guides/render-pdf-and-video">
-    生成并验证单个 PDF 或 MP4 产物。
-  </Card>
-  <Card title="稳定自动化" href="/zh/deckrender/cli/automation">
-    分离 stdout 与诊断，并根据稳定错误码处理失败。
-  </Card>
-  <Card title="使用 Node.js" href="/zh/deckrender/sdk/node">
-    复用 Renderer、监听进度或注入自定义 Engine。
-  </Card>
+  <Card title="比较引擎" href="/zh/deckrender/engines">查看本地依赖、支持路线、数据边界和 `auto` 行为。</Card>
+  <Card title="渲染页面图片" href="/zh/deckrender/guides/render-images">选择页面、控制图片尺寸和编码，或写出 ZIP。</Card>
+  <Card title="使用 Node.js" href="/zh/deckrender/sdk/node">在代码中选择引擎，并接收进度、警告和类型化结果。</Card>
+  <Card title="使用 Browser SDK" href="/zh/deckrender/sdk/browser">在前端上传用户选择的文件，并展示 DeckFlow 云端返回的产物。</Card>
 </CardGroup>
