@@ -49,6 +49,10 @@
     { "source": "/deckprobe/interfaces", "destination": "/deckprobe/cli", "permanent": true },
     { "source": "/products/deckops/document-information", "destination": "/deckops/structured-results", "permanent": true },
     { "source": "/deckops/document-ir", "destination": "/deckops/structured-results", "permanent": true },
+    { "source": "/deckops/task-model", "destination": "/deckops/artifacts", "permanent": true },
+    { "source": "/deckops/reference/task-types", "destination": "/deckops/reference/results-and-errors", "permanent": true },
+    { "source": "/deckops/sdk/python", "destination": "/deckops/sdk/typescript", "permanent": true },
+    { "source": "/deckops/sdk/go", "destination": "/deckops/sdk/typescript", "permanent": true },
     { "source": "/products/deckhtml/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
     { "source": "/products/:path*", "destination": "/:path*", "permanent": true },
     { "source": "/docs/quick-start", "destination": "/deckhtml/quick-start", "permanent": true },
@@ -91,6 +95,10 @@
     { "source": "/zh/deckprobe/interfaces", "destination": "/zh/deckprobe/cli", "permanent": true },
     { "source": "/zh/products/deckops/document-information", "destination": "/zh/deckops/structured-results", "permanent": true },
     { "source": "/zh/deckops/document-ir", "destination": "/zh/deckops/structured-results", "permanent": true },
+    { "source": "/zh/deckops/task-model", "destination": "/zh/deckops/artifacts", "permanent": true },
+    { "source": "/zh/deckops/reference/task-types", "destination": "/zh/deckops/reference/results-and-errors", "permanent": true },
+    { "source": "/zh/deckops/sdk/python", "destination": "/zh/deckops/sdk/typescript", "permanent": true },
+    { "source": "/zh/deckops/sdk/go", "destination": "/zh/deckops/sdk/typescript", "permanent": true },
     { "source": "/zh/products/deckhtml/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
     { "source": "/zh/products/:path*", "destination": "/zh/:path*", "permanent": true },
     { "source": "/zh/docs/quick-start", "destination": "/zh/deckhtml/quick-start", "permanent": true },
@@ -217,17 +225,16 @@
                 "group": "Get Started",
                 "pages": [
                   "deckops/overview",
-                  "deckops/quick-start",
-                  "deckops/authentication",
-                  "deckops/task-model"
+                  "deckops/quick-start"
                 ]
               },
               {
-                "group": "Capabilities",
+                "group": "Guides",
                 "pages": [
                   "deckops/parse",
-                  "deckops/structured-results",
-                  "deckops/operations"
+                  "deckops/operations",
+                  "deckops/artifacts",
+                  "deckops/structured-results"
                 ]
               },
               {
@@ -238,13 +245,16 @@
                 "group": "SDK",
                 "pages": [
                   "deckops/sdk/typescript",
-                  "deckops/sdk/python",
-                  "deckops/sdk/go"
+                  "deckops/sdk/browser"
                 ]
               },
               {
+                "group": "Cloud",
+                "pages": ["deckops/authentication"]
+              },
+              {
                 "group": "Reference",
-                "pages": ["deckops/reference/task-types"]
+                "pages": ["deckops/reference/results-and-errors"]
               }
             ]
           },
@@ -458,17 +468,16 @@
                 "group": "开始使用",
                 "pages": [
                   "zh/deckops/overview",
-                  "zh/deckops/quick-start",
-                  "zh/deckops/authentication",
-                  "zh/deckops/task-model"
+                  "zh/deckops/quick-start"
                 ]
               },
               {
-                "group": "核心能力",
+                "group": "使用指南",
                 "pages": [
                   "zh/deckops/parse",
-                  "zh/deckops/structured-results",
-                  "zh/deckops/operations"
+                  "zh/deckops/operations",
+                  "zh/deckops/artifacts",
+                  "zh/deckops/structured-results"
                 ]
               },
               {
@@ -479,13 +488,16 @@
                 "group": "SDK",
                 "pages": [
                   "zh/deckops/sdk/typescript",
-                  "zh/deckops/sdk/python",
-                  "zh/deckops/sdk/go"
+                  "zh/deckops/sdk/browser"
                 ]
               },
               {
+                "group": "云端能力",
+                "pages": ["zh/deckops/authentication"]
+              },
+              {
                 "group": "参考",
-                "pages": ["zh/deckops/reference/task-types"]
+                "pages": ["zh/deckops/reference/results-and-errors"]
               }
             ]
           },

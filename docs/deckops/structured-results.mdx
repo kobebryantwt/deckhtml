@@ -1,43 +1,74 @@
 ---
-title: Structured Parse Results
-sidebarTitle: Structured Results
-description: "Compare the format-specific result contracts returned by DeckOps parse tasks."
+title: DeckIR Output Model
+sidebarTitle: DeckIR Output
+description: "Read the public deckir.v1 document, node, asset, provenance, and quality fields produced by DeckOps."
 ---
 
-Each parser preserves the structures available from its source format. The contracts are related by purpose, not by one common node schema.
+`ir.json` is a cross-format `deckir.v1` document. It gives applications one stable envelope while allowing source-specific detail through node types, styles, source references, and extensions.
 
-<Warning>
-  Verify that the selected Parse helper exists in the installed SDK before depending on one of these schemas. If a typed helper is unavailable, use an installed low-level task helper and inspect its downloaded result.
-</Warning>
+## Top-level shape
 
-## PDF
+```json
+{
+  "schemaVersion": "deckir.v1",
+  "format": "pptx",
+  "source": {
+    "sha256": "<source-sha256>",
+    "name": "slides.pptx",
+    "bytes": 45210
+  },
+  "producer": {
+    "engine": "local",
+    "name": "deckparse-pptx",
+    "version": "1"
+  },
+  "document": {
+    "metadata": {},
+    "pages": [],
+    "nodes": [],
+    "assets": []
+  },
+  "quality": {
+    "status": "pass",
+    "checks": [],
+    "coverage": {}
+  }
+}
+```
 
-`pdf.parse` returns `textBlocks` and optional `images`. Text blocks include text, a zero-based page locator, optional bold or italic style, and an optional semantic role such as `heading`, `list-item`, or `caption`.
+## Pages and nodes
 
-## PPTX
+Each page has a stable ID, zero-based index, optional dimensions, ordered node IDs, and a source reference. Nodes form a tree through `parentId` and `children` and can include:
 
-`pptx.parse` returns a presentation object model. It can retain slides, shapes, transforms, text bodies, tables, images, groups, layout and master relationships, and other PPTX-specific data. The Markdown converter uses geometry and shape relationships to reconstruct reading order.
+- `type`, `order`, text, rich-text runs, style, and links
+- page, bounding box, and z-index when the source exposes layout
+- confidence and issue codes
+- an `opaque` record when DeckOps can retain an object but cannot fully interpret it
+- `extensions` for format-specific information that does not belong in the common fields
 
-## DOCX
+`sourceRef` records where a page or node came from, such as a page index, part name, XML path, object ID, byte range, or character span. Use these references for traceability instead of inferring source locations from Markdown order.
 
-`docx.parseTextAndImage` returns ordered document elements, including text, images, tables, charts, diagrams, groups, and structured document tags. Heading output depends on paragraph style information when the upstream parser provides it.
+## Assets
 
-## Keynote
+Asset records contain a stable ID, artifact-relative path, hash, byte size, optional media type, and optional source reference. Nodes refer to these persistent identities; applications should resolve paths relative to the artifact directory.
 
-`keynote.parseTextAndImage` returns document dimensions and slides containing text, tables, and chart labels, plus images associated with page indexes. Images without a valid page index are retained in a fallback section by the Markdown converter.
+## Quality report
 
-## Web pages
+The quality report separates a successful parse from its fidelity:
 
-`html.getByURL` can fetch source HTML or runtime HTML. The Markdown facade applies article extraction, converts the selected content to GitHub-flavored Markdown, resolves relative image URLs, and drops scripts, styles, and iframes.
+- `status` is `pass`, `degraded`, or `unsupported`.
+- `checks` contain a stable code, severity, message, and optional page/node detail.
+- `coverage` can report parsed pages, parsed versus opaque objects, and text-character counts.
+- `recommendation: "cloud"` indicates that cloud parsing may improve a local result; it does not trigger an upload.
 
-## Markdown is a projection
+Use `--fail-on-degraded` when degraded output should fail a CLI job. Otherwise, consume the IR and surface relevant checks in your own workflow.
 
-Markdown is convenient but intentionally loses some source detail. Use the low-level result when the application needs:
+## Validate the schema
 
-- slide or page geometry
-- shape hierarchy and grouping
-- rich text runs and style metadata
-- tables, charts, images, notes, layouts, or masters
-- a stable task ID for later result inspection
+The published npm package exports the JSON Schema:
 
-Use `parseDetailed()` when you want Markdown now but still need the task ID and selected parser for later access.
+```js
+import schema from '@deckflow/deckops/schemas/deckir.v1.schema' with { type: 'json' };
+```
+
+The Node.js SDK also exports `validateDeckIR()` for runtime validation.

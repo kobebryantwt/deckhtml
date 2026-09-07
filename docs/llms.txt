@@ -4,6 +4,10 @@
 
 Use the English or Simplified Chinese section that matches the developer's language. Start with Overview and Getting Started, use Choose a Product for product boundaries, then follow the selected product's quickstart and reference. Treat availability notices and format matrices as version-specific contracts. For the complete documentation corpus, fetch https://docs.deckflow.com/llms-full.txt.
 
+## Package Installation
+
+Install DeckFlow CLIs and JavaScript SDKs from npm. For example: `npm install -g @deckflow/deckprobe` or `npm install @deckflow/deckops`. In mainland China or another environment where the default npm registry is slow or unreachable, the currently verified npm mirror can be selected per command: `npm install @deckflow/deckops --registry=https://registry.npmmirror.com`. Do not change the developer's global registry automatically. A mirror can lag npm; verify the installed CLI with `--version`, and retry against `https://registry.npmjs.org/` when the required release is missing.
+
 ## Start Here
 
 - [Overview](https://docs.deckflow.com/introduction.md): Understand the five products and their execution boundaries.
@@ -38,11 +42,16 @@ Use the English or Simplified Chinese section that matches the developer's langu
 
 ## DeckOps
 
-- [DeckOps Overview](https://docs.deckflow.com/deckops/overview.md): Understand cloud parsing, conversion, generation, and task execution.
-- [DeckOps Quickstart](https://docs.deckflow.com/deckops/quick-start.md): Submit, start, wait for, and download a task.
-- [Authentication](https://docs.deckflow.com/deckops/authentication.md): Configure guest, token, API key, and space behavior.
-- [Task Model](https://docs.deckflow.com/deckops/task-model.md): Follow asynchronous task states and result downloads.
-- [Parse Documents](https://docs.deckflow.com/deckops/parse.md): Review Parse behavior and current public-package availability.
+- [DeckOps Overview](https://docs.deckflow.com/deckops/overview.md): Understand local-first parsing, durable DeckIR artifacts, Markdown views, and explicit cloud routes.
+- [DeckOps Quickstart](https://docs.deckflow.com/deckops/quick-start.md): Install the npm CLI, parse locally, and verify artifact reuse during Markdown conversion.
+- [Parse Documents](https://docs.deckflow.com/deckops/parse.md): Choose formats, engines, preflight, quality behavior, and parser options.
+- [Convert to Markdown](https://docs.deckflow.com/deckops/operations.md): Derive portable or artifact-managed Markdown without reparsing.
+- [Artifacts and Reuse](https://docs.deckflow.com/deckops/artifacts.md): Persist and reopen DeckIR, understand cache identity, and manage cloud reference lifetime.
+- [DeckIR Output](https://docs.deckflow.com/deckops/structured-results.md): Consume pages, nodes, assets, provenance, and quality fields.
+- [DeckOps CLI](https://docs.deckflow.com/deckops/cli.md): Automate inputs, engine selection, parser flags, JSON output, and resource limits.
+- [DeckOps Node.js SDK](https://docs.deckflow.com/deckops/sdk/typescript.md): Parse and convert locally from Node.js.
+- [DeckOps Browser SDK](https://docs.deckflow.com/deckops/sdk/browser.md): Upload browser values to cloud parsing and reuse remote IR references.
+- [Cloud Authentication](https://docs.deckflow.com/deckops/authentication.md): Authenticate only explicit cloud routes and keep API keys out of browser code.
 
 ## DeckUse
 
@@ -90,7 +99,13 @@ Use the English or Simplified Chinese section that matches the developer's langu
 - [DeckRender](https://docs.deckflow.com/zh/deckrender/overview.md): 将支持的输入渲染为视觉产物。
 - [DeckRender 本地与云端引擎](https://docs.deckflow.com/zh/deckrender/engines.md): 选择严格本地、云端或本地优先自动执行，并准备本地依赖。
 - [DeckRender Browser SDK](https://docs.deckflow.com/zh/deckrender/sdk/browser.md): 在前端上传用户选择的文件并消费云端渲染产物。
-- [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 执行云端文档任务。
+- [DeckOps](https://docs.deckflow.com/zh/deckops/overview.md): 默认在本地把文档解析成可持久保存的 DeckIR，并从 IR 生成 Markdown。
+- [DeckOps 快速开始](https://docs.deckflow.com/zh/deckops/quick-start.md): 安装 npm CLI，完成本地解析并验证 Markdown 复用。
+- [DeckOps 解析文档](https://docs.deckflow.com/zh/deckops/parse.md): 选择格式、引擎、预检、质量行为和解析参数。
+- [DeckOps 产物与复用](https://docs.deckflow.com/zh/deckops/artifacts.md): 保存和重新打开 DeckIR，理解缓存身份与云端引用有效期。
+- [DeckOps DeckIR 输出](https://docs.deckflow.com/zh/deckops/structured-results.md): 处理页面、节点、资源、来源和质量字段。
+- [DeckOps Node.js SDK](https://docs.deckflow.com/zh/deckops/sdk/typescript.md): 在 Node.js 中本地解析和转换文档。
+- [DeckOps Browser SDK](https://docs.deckflow.com/zh/deckops/sdk/browser.md): 在浏览器中接入云端解析并复用远端 IR 引用。
 - [DeckUse](https://docs.deckflow.com/zh/deckuse/overview.md): 通过带版本命令工作区在本地检查并修改现有 PPTX。
 - [DeckUse CLI 概览](https://docs.deckflow.com/zh/deckuse/cli/overview.md): 安装 CLI，并选择检查、修改、导出或自动化所需的命令路径。
 - [DeckUse 检查与查询](https://docs.deckflow.com/zh/deckuse/cli/inspect-and-query.md): 读取 PPTX 索引、筛选候选元素并保留带版本引用。

@@ -1,56 +1,98 @@
 ---
 title: 解析文档
 sidebarTitle: 解析文档
-description: "将支持的文档格式解析为结构化结果或归一化 Markdown。"
+description: "通过明确的格式、质量与预检规则，把受支持的文档解析成 deckir.v1 产物。"
 ---
 
-DeckOps 提供两个层级的解析接口：
+`parse` 读取源文件并创建产物目录，不会生成 Markdown；需要文本视图时，在解析后执行 `convert`。
 
-<Warning>
-  不同 SDK 构建提供的 Parse 接口可能不同。使用下面的示例前，请先确认 `typeof deck.parse === 'function'`。如果不可用，请按[快速开始](/zh/deckops/quick-start)使用底层任务流程，并从[操作能力](/zh/deckops/operations)中选择已安装软件包提供的方法。
-</Warning>
+## 支持的路径
 
-| 接口 | 返回结果 | 适用场景 |
+| 输入 | 默认路径 | 常用参数 |
 | --- | --- | --- |
-| `deck.parse()` | Markdown 字符串 | 搜索、摘要、索引或大模型输入只需要便于消费的文本表示 |
-| 底层 Parse 任务 | 格式专属结构化对象 | 应用需要页面、形状、几何、表格、图片、备注或样式数据 |
+| PDF | 本地 | `--profile`、`--password`、`--no-images`、`--page-furniture`、`--overlaid-text` |
+| PPTX | 本地 | 不能完整解析的复杂图表和 SmartArt 会保留为不透明节点 |
+| DOCX | 本地 | `--tracked-changes final\|original\|all` |
+| Keynote（`.key`） | 云端 | `--stay-image-area-rate` |
+| HTTP(S) URL | 本地源码 | `--mode source` 获取 HTML；`--mode runtime` 选择云端浏览器运行时 |
 
-## 支持的解析路由
+运行 `deckops formats` 可以查看当前已安装 CLI 实际实现的路径。
 
-| 输入 | 任务类型 |
+## 选择引擎
+
+```bash
+# 默认：本地解析，不上传文档
+deckops parse report.pdf
+
+# 明确选择云端解析
+deckops parse report.pdf --engine cloud
+
+# 先本地解析，质量降级时给出云端建议
+deckops parse report.pdf --engine auto
+
+# 允许 auto 在本地质量不足时上传
+deckops parse report.pdf --engine auto --allow-upload
+```
+
+`--engine auto` 本身不代表允许上传。只有同时使用 `--allow-upload`，才明确授权 DeckOps 回退到云端。
+
+## 解析前预检
+
+本地文件和标准输入会先使用 DeckProbe 预检：
+
+| 模式 | 行为 |
 | --- | --- |
-| `.pdf` | `pdf.parse` |
-| `.pptx` | `pptx.parse` |
-| `.docx` | `docx.parseTextAndImage` |
-| `.key` | `keynote.parseTextAndImage` |
-| HTTP 或 HTTPS URL | `html.getByURL` |
+| `validate` | 默认值。拒绝容器不匹配或损坏的文档，以及未提供有效密码的加密文档；探测运行或预算失败会转成警告。 |
+| `strict` | 请求的预检证据不能确定时也会失败。 |
+| `off` | 在启动延迟或浏览器 CSP 更重要的环境中跳过预检。 |
 
-## Markdown 门面
-
-```ts
-const markdown = await deck.parse('./report.pdf');
-
-const detailed = await deck.parseDetailed({
-  file: './slides.pptx',
-  wait: { timeout: 300 },
-});
-
-console.log(detailed.markdown);
-console.log(detailed.taskId, detailed.type);
+```bash
+deckops parse report.pdf --preflight validate
+deckops parse slides.pptx --preflight strict
 ```
 
-对于已经上传的文件，传入 `{ fileId, name }`。二进制或 Blob 输入需要提供 `name`，让 SDK 可以选择 Parser。
+预检成功后，完整报告写入 `probe.json`，摘要写入 manifest 和命令结果的 `inspection`。URL 输入跳过本地预检。
 
-## 结构化结果
+## 格式专属示例
 
-```ts
-const task = await deck.pptxParse({ files: ['./slides.pptx'] });
-const done = await deck.tasks.wait(task.id);
-const result = await deck.tasks.down<'pptx.parse'>(done.id);
+<Tabs>
+  <Tab title="PDF">
+    ```bash
+    deckops parse report.pdf \
+      --profile balanced \
+      --page-furniture drop \
+      --overlaid-text auto \
+      -o report-ir
+    ```
+
+    PDF Profile 包括 `fast`、`balanced` 和 `quality`。DeckOps 不执行 OCR；`--no-images` 会跳过内嵌图片导出。
+  </Tab>
+  <Tab title="DOCX">
+    ```bash
+    deckops parse contract.docx \
+      --tracked-changes final \
+      -o contract-ir
+    ```
+
+    `original` 读取修订前内容，`all` 同时保留修订前后内容。
+  </Tab>
+  <Tab title="URL">
+    ```bash
+    deckops parse https://example.com/article \
+      --mode source \
+      -o article-ir
+    ```
+
+    源码模式只获取指定 URL 和受限次数的重定向；运行时模式使用云端引擎，需要云端访问能力。
+  </Tab>
+</Tabs>
+
+## 质量与降级
+
+每份 `deckir.v1` 都包含 `quality`，其中记录状态、检查项和覆盖率。解析器无法完整理解某个对象时，会把它保留成不透明节点并说明限制。
+
+如果流水线不接受降级结果，可使用：
+
+```bash
+deckops parse slides.pptx --fail-on-degraded --json
 ```
-
-这里拿到的是 PPTX 对象模型，而不是 Markdown 投影。不同格式的契约和保真边界请参考[结构化解析结果](/zh/deckops/structured-results)。
-
-<Warning>
-  DeckOps 没有提供跨格式共享的一套 Document IR Schema。不要假设 PDF 结果中的字段也存在于 PPTX、DOCX 或 Keynote 结果中。
-</Warning>

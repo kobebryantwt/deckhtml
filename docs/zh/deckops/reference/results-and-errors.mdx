@@ -1,0 +1,97 @@
+---
+title: CLI 结果与错误
+sidebarTitle: 结果与错误
+description: "处理 DeckOps 解析与转换结果、错误代码、退出状态和本地资源限制。"
+---
+
+## 解析成功
+
+```json
+{
+  "ok": true,
+  "op": "parse",
+  "input": "slides.pptx",
+  "engine": "local",
+  "type": "pptx.parse",
+  "format": "pptx",
+  "quality": {
+    "status": "pass",
+    "checks": [],
+    "coverage": { "pages": { "parsed": 1, "total": 1 } }
+  },
+  "taskId": null,
+  "reusedParse": false,
+  "irSchemaVersion": "deckir.v1",
+  "artifact": "slides",
+  "outputs": [
+    { "file": "slides/ir.json", "bytes": 3786 }
+  ],
+  "warnings": [],
+  "durationMs": 152
+}
+```
+
+云端结果包含任务 ID，还可能包含 `irKey`。再次执行兼容的解析时，可能返回 `"engine": "artifact-cache"` 和 `"reusedParse": true`。
+
+## 转换成功
+
+```json
+{
+  "ok": true,
+  "op": "convert",
+  "input": "slides/",
+  "to": "markdown",
+  "engine": "local",
+  "format": "pptx",
+  "taskId": null,
+  "reusedParse": true,
+  "outputs": [
+    { "file": "slides/views/markdown/index.md", "bytes": 48213 }
+  ],
+  "warnings": [],
+  "durationMs": 4
+}
+```
+
+应把 `outputs` 作为数组处理，因为 `--split-pages` 可能生成多个 Markdown 文件。
+
+## 错误与退出状态
+
+```json
+{
+  "ok": false,
+  "op": "parse",
+  "error": {
+    "code": "unsupported",
+    "message": "The input format is not supported.",
+    "hint": "Run deckops formats to inspect available routes."
+  }
+}
+```
+
+| 退出状态 | 错误代码 | 调用方处理方式 |
+| --- | --- | --- |
+| `2` | `usage_error` | 修正命令语法或不适用于当前输入的参数 |
+| `3` | `unsupported` | 从 `deckops formats` 中选择可用路径 |
+| `4` | `auth_error` | 刷新或更换云端凭证 |
+| `5` | `input_error`、`ir_not_found`、`ir_expired`、`ir_schema_unsupported`、`ir_invalid`、`asset_error` | 根据返回提示修正源文件或产物 |
+| `6` | `backend_error` | 保存任务 ID，并按应用策略决定是否重试 |
+| `7` | `not_implemented` | 不要调用预留操作 |
+| `8` | `quota_error` | 完成认证或获取足够的云端额度 |
+
+## 本地资源限制
+
+本地解析器会限制源文件大小、ZIP 条目与展开量、单个和全部资源、XML 工作量、URL 响应、执行时间及 Worker 堆内存。CLI 提供以下主要覆盖参数：
+
+```text
+--max-source-bytes
+--max-expanded-bytes
+--max-part-bytes
+--max-asset-bytes
+--max-total-asset-bytes
+--max-zip-entries
+--max-url-bytes
+--worker-heap-mb
+```
+
+覆盖值会参与产物缓存身份计算。只有在应用已经完成输入接受和资源策略判断后才应调高这些限制。

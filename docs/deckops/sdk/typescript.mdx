@@ -1,49 +1,85 @@
 ---
-title: TypeScript SDK
-sidebarTitle: TypeScript
-description: "Use @deckops/sdk from Node.js or a browser application."
+title: Node.js SDK
+sidebarTitle: Node.js
+description: "Use @deckflow/deckops to parse documents locally, inspect DeckIR, reopen artifacts, and generate Markdown."
 ---
 
 ```bash
-npm install @deckops/sdk
+npm install @deckflow/deckops
 ```
 
-## Create a client
+The Node.js entry requires Node.js 22.18 or newer. It is local-first and does not initialize a cloud client unless a cloud route is selected.
+
+## Parse and convert
 
 ```ts
-import { createDeck } from '@deckops/sdk';
+import { parse, type DeckIR } from '@deckflow/deckops';
 
-const deck = createDeck({
+const document = await parse('slides.pptx');
+const ir = await document.ir() as DeckIR;
+const result = await document.convert({ splitPages: true });
+
+console.log(document.dir);
+console.log(ir.schemaVersion);
+console.log(result.outputs);
+```
+
+`parse()` returns a `ParsedDocument`, not Markdown. The handle exposes its artifact directory, manifest, optional cloud `irKey`, preflight summary, full preflight report, IR, and conversion method.
+
+## Reopen without reparsing
+
+```ts
+import { openArtifact } from '@deckflow/deckops';
+
+const document = await openArtifact('slides/');
+await document.convert();
+```
+
+## Use a configured client
+
+```ts
+import { createClient } from '@deckflow/deckops';
+
+const client = createClient({
   apiKey: process.env.DECKOPS_API_KEY,
   spaceId: process.env.DECKOPS_SPACE_ID,
 });
-```
 
-Client options include `root`, `token`, `apiKey`, `spaceId`, an explicit or custom-stored authentication UUID, and callbacks for `401` or `402` recovery.
+const local = await client.parse('report.pdf', {
+  engine: 'local',
+  profile: 'balanced',
+  preflight: 'validate',
+  out: 'artifacts/report',
+});
 
-## Node.js and browser files
-
-Node.js callers can pass file paths. Both Node.js and browsers can pass binary data, and browser applications can pass a selected `File` directly.
-
-```ts
-await deck.imageOcr({
-  files: [{ input: bytes, name: 'scan.png' }],
-  params: { language: 'en' },
+const envelope = await client.convert('artifacts/report', {
+  anchors: true,
+  out: 'output/report.md',
 });
 ```
 
-## Typed and generic APIs
-
-Typed helpers bind a method to one task type and infer its parameters and result. The generic API is useful when task types are selected dynamically.
+Use `parseEnvelope()` when the caller needs the complete machine result without opening a document handle:
 
 ```ts
-const task = await deck.convertPptToPdf({ files: ['./slides.pptx'] });
-const done = await deck.tasks.wait(task.id);
-const result = await deck.tasks.down<'convertor.ppt2pdf'>(done.id);
+const result = await client.parseEnvelope('contract.docx', {
+  trackedChanges: 'final',
+});
+
+console.log(result.artifact, result.quality, result.inspection);
 ```
 
-Use `parse()` for Markdown, `parseDetailed()` for Markdown plus task metadata, or low-level parse helpers for structured results.
+## Handle typed errors
 
-<Warning>
-  Some published `0.7.3` artifacts predate the Parse facade even though the repository package version is unchanged. Check `typeof deck.parseDetailed === 'function'` before using it. If it is absent, use the low-level `pdf.parse`, `pptx.parse`, `docx.parseTextAndImage`, or `keynote.parseTextAndImage` task flow shown in the [Quickstart](/deckops/quick-start), or upgrade after a newer artifact is published.
-</Warning>
+```ts
+import { DeckOpsError, parse } from '@deckflow/deckops';
+
+try {
+  await parse('report.pdf', { failOnDegraded: true });
+} catch (error) {
+  if (error instanceof DeckOpsError) {
+    console.error(error.code, error.message, error.hint, error.taskId);
+  }
+}
+```
+
+Stable error codes distinguish invalid usage, unsupported formats, authentication, caller-fixable IR/input problems, backend failures, unavailable operations, and quota exhaustion.

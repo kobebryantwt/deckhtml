@@ -7,10 +7,10 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
 <div className="deckflow-hero">
   <span className="deckflow-hero-eyebrow">The Document Runtime for Agents</span>
   <h2 className="deckflow-hero-title">Give agents a reliable way to work with documents</h2>
-  <p className="deckflow-hero-copy">Inspect a file locally before upload, produce visual artifacts, parse or transform content in the cloud, update an existing PPTX, or generate a new deck from HTML.</p>
+  <p className="deckflow-hero-copy">Inspect a file locally, produce visual artifacts, parse it into durable document state, update an existing PPTX, or generate a new deck from HTML.</p>
   <div className="deckflow-pills">
     <span className="deckflow-pill">Local inspection and rendering</span>
-    <span className="deckflow-pill">Cloud document tasks</span>
+    <span className="deckflow-pill">Reusable document IR</span>
     <span className="deckflow-pill">Editable PPTX workflows</span>
   </div>
 </div>
@@ -30,8 +30,8 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
   <Card title="Render a document" icon="images" iconType="solid" color="#3b82f6" href="/deckrender/overview" cta="Explore DeckRender" arrow>
     <strong>DeckRender</strong> produces images, PDF, or video through a private local engine or DeckFlow cloud, with Node.js and Browser SDK access.
   </Card>
-  <Card title="Run document operations" icon="cube" iconType="solid" color="#8b5cf6" href="/deckops/overview" cta="Explore DeckOps" arrow>
-    <strong>DeckOps</strong> provides cloud parsing, extraction, conversion, generation, and asynchronous task execution.
+  <Card title="Parse into reusable document state" icon="cube" iconType="solid" color="#8b5cf6" href="/deckops/overview" cta="Explore DeckOps" arrow>
+    <strong>DeckOps</strong> creates durable DeckIR artifacts for search, reasoning, and repeatable Markdown generation, locally by default with explicit cloud routes.
   </Card>
   <Card title="Update an existing PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/deckuse/overview" cta="Explore DeckUse" arrow>
     <strong>DeckUse</strong> lets agents update text, pictures, slides, and element properties locally without launching PowerPoint, then export another editable PPTX.
@@ -62,9 +62,9 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
         <span>Images, PDF, thumbnails, or video</span>
       </a>
       <a className="product-map-card" href="/deckops/overview">
-        <span className="product-map-label">Operate on content</span>
+        <span className="product-map-label">Parse reusable content</span>
         <strong>DeckOps</strong>
-        <span>Parse, extract, convert, and generate</span>
+        <span>DeckIR, assets, quality, and Markdown views</span>
       </a>
       <a className="product-map-card" href="/deckuse/overview">
         <span className="product-map-label">Update an existing PPTX</span>
@@ -90,7 +90,7 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
   </section>
 </div>
 
-DeckProbe and DeckUse execute locally. DeckRender provides explicit local, cloud, and local-first automatic engine selection; its Browser SDK is cloud-only. DeckOps executes document tasks in the cloud. DeckHTML supports local browser-based conversion and a cloud mode.
+DeckProbe and DeckUse execute locally. DeckRender provides explicit local, cloud, and local-first automatic engine selection; its Browser SDK is cloud-only. DeckOps parses PDF, PPTX, DOCX, and static web source locally by default, with explicit cloud routes and a cloud-only Browser SDK. DeckHTML supports local browser-based conversion and a cloud mode.
 
 ## Compare the execution boundary
 
@@ -98,7 +98,7 @@ DeckProbe and DeckUse execute locally. DeckRender provides explicit local, cloud
 | --- | --- | --- | --- |
 | Verify format, counts, metadata, structure, or risk signals | [DeckProbe](/deckprobe/overview) | CLI and JavaScript SDK | Not required; processing stays local |
 | Produce page images, PDF, thumbnails, or video | [DeckRender](/deckrender/overview) | CLI, Node.js SDK, and Browser SDK | None locally; guest or authenticated cloud access |
-| Parse, extract, convert, generate, or orchestrate cloud tasks | [DeckOps](/deckops/overview) | CLI and SDK | Credentials for high-level Parse; limited guest low-level tasks |
+| Parse content into reusable DeckIR and Markdown | [DeckOps](/deckops/overview) | CLI, Node.js SDK, and Browser SDK | Not required locally; cloud access for cloud routes |
 | Inspect and apply structured changes to an existing PPTX | [DeckUse](/deckuse/overview) | CLI and Node.js SDK | Not required; processing stays local |
 | Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI and Node.js SDK | Not required locally; guest or authenticated cloud mode |
 

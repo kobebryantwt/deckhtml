@@ -1,49 +1,85 @@
 ---
-title: TypeScript SDK
-sidebarTitle: TypeScript
-description: "在 Node.js 或浏览器应用中使用 @deckops/sdk。"
+title: Node.js SDK
+sidebarTitle: Node.js
+description: "使用 @deckflow/deckops 在本地解析文档、读取 DeckIR、重新打开产物并生成 Markdown。"
 ---
 
 ```bash
-npm install @deckops/sdk
+npm install @deckflow/deckops
 ```
 
-## 创建客户端
+Node.js 入口需要 Node.js 22.18 或更高版本。它默认本地执行，只有实际选择云端路径时才会初始化云端 Client。
+
+## 解析与转换
 
 ```ts
-import { createDeck } from '@deckops/sdk';
+import { parse, type DeckIR } from '@deckflow/deckops';
 
-const deck = createDeck({
+const document = await parse('slides.pptx');
+const ir = await document.ir() as DeckIR;
+const result = await document.convert({ splitPages: true });
+
+console.log(document.dir);
+console.log(ir.schemaVersion);
+console.log(result.outputs);
+```
+
+`parse()` 返回 `ParsedDocument`，而不是 Markdown 字符串。该对象包含产物目录、manifest、可选云端 `irKey`、预检摘要、完整预检报告、IR 和转换方法。
+
+## 不重新解析，直接打开产物
+
+```ts
+import { openArtifact } from '@deckflow/deckops';
+
+const document = await openArtifact('slides/');
+await document.convert();
+```
+
+## 使用配置后的 Client
+
+```ts
+import { createClient } from '@deckflow/deckops';
+
+const client = createClient({
   apiKey: process.env.DECKOPS_API_KEY,
   spaceId: process.env.DECKOPS_SPACE_ID,
 });
-```
 
-客户端选项包括 `root`、`token`、`apiKey`、`spaceId`、显式或自定义存储的认证 UUID，以及处理 `401` 或 `402` 后恢复请求的回调。
+const local = await client.parse('report.pdf', {
+  engine: 'local',
+  profile: 'balanced',
+  preflight: 'validate',
+  out: 'artifacts/report',
+});
 
-## Node.js 和浏览器文件
-
-Node.js 调用方可以传文件路径。Node.js 和浏览器都可以传二进制数据，浏览器应用还能直接传文件选择器返回的 `File`。
-
-```ts
-await deck.imageOcr({
-  files: [{ input: bytes, name: 'scan.png' }],
-  params: { language: 'en' },
+const envelope = await client.convert('artifacts/report', {
+  anchors: true,
+  out: 'output/report.md',
 });
 ```
 
-## 类型化和通用 API
-
-类型化方法会绑定具体任务类型，并推断其参数和结果；运行时动态选择任务时使用通用 API。
+调用方只需要完整机器结果而不需要文档对象时，使用 `parseEnvelope()`：
 
 ```ts
-const task = await deck.convertPptToPdf({ files: ['./slides.pptx'] });
-const done = await deck.tasks.wait(task.id);
-const result = await deck.tasks.down<'convertor.ppt2pdf'>(done.id);
+const result = await client.parseEnvelope('contract.docx', {
+  trackedChanges: 'final',
+});
+
+console.log(result.artifact, result.quality, result.inspection);
 ```
 
-需要 Markdown 时使用 `parse()`；需要 Markdown 与任务信息时使用 `parseDetailed()`；需要结构化结果时使用底层 Parse 方法。
+## 处理类型化错误
 
-<Warning>
-  部分已发布的 `0.7.3` 产物早于 Parse Facade，但仓库中的软件包版本没有变化。使用前请检查 `typeof deck.parseDetailed === 'function'`。如果不存在，请按[快速开始](/zh/deckops/quick-start)使用底层 `pdf.parse`、`pptx.parse`、`docx.parseTextAndImage` 或 `keynote.parseTextAndImage` 任务流程，或等待更新的软件包产物。
-</Warning>
+```ts
+import { DeckOpsError, parse } from '@deckflow/deckops';
+
+try {
+  await parse('report.pdf', { failOnDegraded: true });
+} catch (error) {
+  if (error instanceof DeckOpsError) {
+    console.error(error.code, error.message, error.hint, error.taskId);
+  }
+}
+```
+
+稳定错误代码可区分参数错误、不支持的格式、认证、调用方可修复的 IR/输入问题、云端失败、尚不可用的操作和额度不足。

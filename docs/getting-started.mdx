@@ -6,11 +6,15 @@ description: "Compare the minimum input, command, and verified result for every 
 
 Choose the first result your application needs. Each section provides installation, a concrete invocation, and the signal that proves the example succeeded.
 
+<Note>
+  All DeckFlow JavaScript packages and CLIs below are installed from npm. If the default registry is unavailable in your region, add `--registry=https://registry.npmmirror.com` to that install command. Keep this override per command so other projects and registries are not changed globally; mirrors can occasionally lag the official npm release.
+</Note>
+
 | Product | First result | Runs | Credentials |
 | --- | --- | --- | --- |
 | DeckProbe | Schema v2 facts about a document | Local | None |
 | DeckRender | PNG, PDF, or supported video render | Local or cloud | None locally; guest or authenticated cloud |
-| DeckOps | Markdown, structured parse data, or converted artifact | Cloud | API key/token recommended |
+| DeckOps | Durable DeckIR artifact and Markdown view | Local by default; cloud when selected | None locally |
 | DeckUse | Updated PPTX | Local | None |
 | DeckHTML | PPTX or PNG from HTML | Local or cloud | None locally |
 
@@ -40,7 +44,7 @@ The npm package's CLI uses the platform-specific native binary. Success means ex
 }
 ```
 
-See the [DeckProbe Quickstart](/deckprobe/quick-start) for platform installers and the complete response.
+See the [DeckProbe Quickstart](/deckprobe/quick-start) for a complete response and additional inputs.
 
 ## DeckRender: create a PNG
 
@@ -54,61 +58,23 @@ test -s hello.png
 
 The command uses an installed Chrome/Chromium/Edge browser, keeps the HTML on the machine, writes `hello.png`, and returns a `RenderResult` containing `engine`, route, page count, output path, bytes, and duration. Create the input, check local prerequisites, and try the guest cloud path in the [DeckRender Quickstart](/deckrender/quick-start).
 
-## DeckOps: run a cloud task
+## DeckOps: parse once, derive Markdown
 
-<span className="product-kicker">Cloud · asynchronous task · downloadable result</span>
-
-Install the published task SDK:
+<span className="product-kicker">Local by default · durable DeckIR · reusable views</span>
 
 ```bash
-npm install @deckops/sdk
+npm install -g @deckflow/deckops
+deckops --version
+
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o sample.pptx
+deckops parse sample.pptx --json
+deckops convert sample/ --json
+test -s sample/views/markdown/index.md
 ```
 
-Save this input as `sample.html`:
+The first command creates `sample/` with `ir.json`, `manifest.json`, an optional `probe.json`, and extracted assets. The second reads that IR rather than parsing the PPTX again; a successful result reports `"reusedParse": true` and writes the Markdown view.
 
-```html
-<!doctype html>
-<html><body><h1>Hello DeckOps</h1></body></html>
-```
-
-Save the following as `run.mjs`. It creates a guest task, starts it explicitly, waits for completion, and downloads its result metadata:
-
-```js
-import { createDeck } from '@deckops/sdk';
-
-const deck = createDeck();
-const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
-
-await deck.tasks.start(task.id);
-const completed = await deck.tasks.wait(task.id, { timeout: 120 });
-const result = await deck.tasks.down(completed.id);
-
-console.log(JSON.stringify({
-  taskId: completed.id,
-  type: completed.type,
-  status: completed.status,
-  result,
-}, null, 2));
-```
-
-Run it:
-
-```bash
-node run.mjs
-```
-
-The HTML is uploaded to DeckFlow cloud. A successful result identifies the task and returns a PNG download URL, byte size, and hash:
-
-```json
-{
-  "taskId": "<task-id>",
-  "type": "convertor.html2png",
-  "status": "completed",
-  "result": ["<download-url>", 8063, "<hash>"]
-}
-```
-
-Continue with the [DeckOps Quickstart](/deckops/quick-start) for progress handling and current package availability notes.
+DeckOps keeps PDF, PPTX, DOCX, and static web source local by default. Continue with the [DeckOps Quickstart](/deckops/quick-start) for a complete verified workflow and explicit cloud-engine selection.
 
 ## DeckUse: update an existing PPTX
 
@@ -117,7 +83,7 @@ Continue with the [DeckOps Quickstart](/deckops/quick-start) for progress handli
 ```bash
 npm install -g @deckflow/deckuse
 deckuse --version
-curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx -o input.pptx
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o input.pptx
 deckuse init input.pptx ./workspace --json
 printf '%s\n' '{"type":"replaceText","find":"Presentation Title Text","replace":"DeckUse Updated Title","selector":"kind=textbox","limit":1}' \
   | deckuse apply ./workspace --json

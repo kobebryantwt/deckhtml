@@ -1,56 +1,98 @@
 ---
 title: Parse Documents
 sidebarTitle: Parse Documents
-description: "Parse supported document formats into structured results or normalized Markdown."
+description: "Parse supported documents into deckir.v1 artifacts with explicit format, quality, and preflight behavior."
 ---
 
-DeckOps offers two parse levels:
+`parse` reads a source document and creates an artifact. It does not produce Markdown; use `convert` after parsing when a text view is needed.
 
-<Warning>
-  Parse interface availability differs by SDK build. Before using the examples below, verify that `typeof deck.parse === 'function'`. If it is unavailable, use the low-level task flow in the [Quickstart](/deckops/quick-start) and choose an installed helper from [Operations](/deckops/operations).
-</Warning>
+## Supported routes
 
-| Interface | Result | Use it when |
+| Input | Default route | Useful options |
 | --- | --- | --- |
-| `deck.parse()` | Markdown string | Search, summarization, indexing, or language-model input needs a convenient text representation |
-| Low-level parse task | Format-specific structured object | Your application needs pages, shapes, geometry, tables, images, notes, or style metadata |
+| PDF | Local | `--profile`, `--password`, `--no-images`, `--page-furniture`, `--overlaid-text` |
+| PPTX | Local | Complex charts and SmartArt remain visible as opaque nodes when they cannot be fully interpreted |
+| DOCX | Local | `--tracked-changes final\|original\|all` |
+| Keynote (`.key`) | Cloud | `--stay-image-area-rate` |
+| HTTP(S) URL | Local source | `--mode source` fetches HTML; `--mode runtime` selects cloud browser execution |
 
-## Supported parse routes
+Run `deckops formats` to inspect the installed CLI's route matrix.
 
-| Input | Task type |
+## Select an engine
+
+```bash
+# Default: local parsing, no document upload
+deckops parse report.pdf
+
+# Explicit cloud parsing
+deckops parse report.pdf --engine cloud
+
+# Try local and report when cloud could improve quality
+deckops parse report.pdf --engine auto
+
+# Permit auto mode to upload only when local quality is insufficient
+deckops parse report.pdf --engine auto --allow-upload
+```
+
+`--engine auto` never uploads on its own. `--allow-upload` is valid only with `auto` and is the explicit authorization to use cloud fallback.
+
+## Validate before parsing
+
+Local files and standard input use DeckProbe preflight before parsing:
+
+| Mode | Behavior |
 | --- | --- |
-| `.pdf` | `pdf.parse` |
-| `.pptx` | `pptx.parse` |
-| `.docx` | `docx.parseTextAndImage` |
-| `.key` | `keynote.parseTextAndImage` |
-| HTTP or HTTPS URL | `html.getByURL` |
+| `validate` | Default. Rejects a mismatched/malformed container and an encrypted input without a usable password; probe runtime or budget failures become warnings. |
+| `strict` | Also fails when the requested preflight evidence cannot be established. |
+| `off` | Skips preflight for environments where startup latency or browser CSP is more important. |
 
-## Markdown facade
-
-```ts
-const markdown = await deck.parse('./report.pdf');
-
-const detailed = await deck.parseDetailed({
-  file: './slides.pptx',
-  wait: { timeout: 300 },
-});
-
-console.log(detailed.markdown);
-console.log(detailed.taskId, detailed.type);
+```bash
+deckops parse report.pdf --preflight validate
+deckops parse slides.pptx --preflight strict
 ```
 
-For an existing upload, pass `{ fileId, name }`. Binary and Blob inputs need a `name` so the SDK can select the parser.
+Successful preflight writes the complete report to `probe.json` and copies a compact `inspection` summary into the manifest and command result. URL inputs skip local preflight.
 
-## Structured result
+## Format-specific examples
 
-```ts
-const task = await deck.pptxParse({ files: ['./slides.pptx'] });
-const done = await deck.tasks.wait(task.id);
-const result = await deck.tasks.down<'pptx.parse'>(done.id);
+<Tabs>
+  <Tab title="PDF">
+    ```bash
+    deckops parse report.pdf \
+      --profile balanced \
+      --page-furniture drop \
+      --overlaid-text auto \
+      -o report-ir
+    ```
+
+    PDF profiles are `fast`, `balanced`, and `quality`. DeckOps does not perform OCR. `--no-images` skips embedded-image export.
+  </Tab>
+  <Tab title="DOCX">
+    ```bash
+    deckops parse contract.docx \
+      --tracked-changes final \
+      -o contract-ir
+    ```
+
+    Use `original` to read pre-change content or `all` to retain both sides of tracked changes.
+  </Tab>
+  <Tab title="URL">
+    ```bash
+    deckops parse https://example.com/article \
+      --mode source \
+      -o article-ir
+    ```
+
+    Source mode fetches the supplied URL and bounded redirects. Runtime mode uses the cloud engine and requires cloud access.
+  </Tab>
+</Tabs>
+
+## Quality and degradation
+
+Every `deckir.v1` artifact includes a `quality` object with `status`, checks, and coverage. When a parser preserves unsupported content as an opaque node, the artifact remains inspectable and explains the limitation.
+
+Use `--fail-on-degraded` in pipelines that should reject a locally produced artifact when its quality status is degraded:
+
+```bash
+deckops parse slides.pptx --fail-on-degraded --json
 ```
-
-The result is the PPTX object model rather than the Markdown projection. See [Structured Results](/deckops/structured-results) for format-specific contracts and fidelity boundaries.
-
-<Warning>
-  DeckOps does not expose one shared Document IR schema across all formats. Do not assume that fields from a PDF result also exist in PPTX, DOCX, or Keynote results.
-</Warning>

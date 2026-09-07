@@ -1,40 +1,20 @@
 ---
 title: DeckProbe Quickstart
 sidebarTitle: Quickstart
-description: "Install DeckProbe, download a sample PDF, request two facts, and verify a Schema v2 result."
+description: "Install DeckProbe from npm, download a sample PDF, request two facts, and verify a Schema v2 result."
 ---
 
 This path uses the native CLI. It runs entirely on your machine and requires no account or API key.
 
 <Steps>
-  <Step title="Install a prebuilt release">
-    <Tabs>
-      <Tab title="macOS and Linux">
-        ```bash
-        curl --proto '=https' --tlsv1.2 -LsSf \
-          https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
-        ```
-      </Tab>
-      <Tab title="Windows PowerShell">
-        ```powershell
-        powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
-        ```
-
-        Restart the shell if the installer changes the user `Path`.
-      </Tab>
-    </Tabs>
-  </Step>
-  <Step title="Verify the executable">
+  <Step title="Install from npm and verify">
     ```bash
+    npm install -g @deckflow/deckprobe
     deckprobe --version
     deckprobe --help
     ```
 
-    Source installation is also available with Rust 1.88 or later:
-
-    ```bash
-    cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
-    ```
+    The npm package selects the native executable for the current operating system and CPU architecture.
   </Step>
   <Step title="Download a multi-page PDF">
     ```bash
@@ -59,7 +39,7 @@ This path uses the native CLI. It runs entirely on your machine and requires no 
     ```json
     {
       "schema_version": 2,
-      "tool_version": "2.4.0",
+      "tool_version": "<installed-version>",
       "status": "ok",
       "view": "values",
       "driver": {

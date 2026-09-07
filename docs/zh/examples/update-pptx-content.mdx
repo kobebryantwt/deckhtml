@@ -21,13 +21,13 @@ description: "使用 DeckUse 查询已知 PPTX，执行确认后的文本替换�
     deckuse --help
     ```
   </Step>
-  <Step title="下载公开测试演示文稿">
+  <Step title="下载文档示例演示文稿">
     ```bash
-    curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx \
+    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx \
       -o input.pptx
     ```
 
-    这份固定版本的测试文件来自公开的 [python-pptx 测试套件](https://github.com/scanny/python-pptx/blob/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx)，其中有一个可编辑文本框的内容为 `Presentation Title Text`。
+    这份文档示例中有一个可编辑文本框的内容为 `Presentation Title Text`。
   </Step>
   <Step title="初始化并检查匹配结果">
     ```bash

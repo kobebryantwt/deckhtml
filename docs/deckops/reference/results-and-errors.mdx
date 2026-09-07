@@ -1,0 +1,97 @@
+---
+title: CLI and Result Reference
+sidebarTitle: Results and Errors
+description: "Consume DeckOps parse and convert envelopes, error codes, exit statuses, and local resource controls."
+---
+
+## Successful parse
+
+```json
+{
+  "ok": true,
+  "op": "parse",
+  "input": "slides.pptx",
+  "engine": "local",
+  "type": "pptx.parse",
+  "format": "pptx",
+  "quality": {
+    "status": "pass",
+    "checks": [],
+    "coverage": { "pages": { "parsed": 1, "total": 1 } }
+  },
+  "taskId": null,
+  "reusedParse": false,
+  "irSchemaVersion": "deckir.v1",
+  "artifact": "slides",
+  "outputs": [
+    { "file": "slides/ir.json", "bytes": 3786 }
+  ],
+  "warnings": [],
+  "durationMs": 152
+}
+```
+
+Cloud results use a task ID and can include `irKey`. A repeated compatible parse may report `"engine": "artifact-cache"` and `"reusedParse": true`.
+
+## Successful conversion
+
+```json
+{
+  "ok": true,
+  "op": "convert",
+  "input": "slides/",
+  "to": "markdown",
+  "engine": "local",
+  "format": "pptx",
+  "taskId": null,
+  "reusedParse": true,
+  "outputs": [
+    { "file": "slides/views/markdown/index.md", "bytes": 48213 }
+  ],
+  "warnings": [],
+  "durationMs": 4
+}
+```
+
+Treat `outputs` as a list: `--split-pages` can produce multiple Markdown files.
+
+## Errors and exit status
+
+```json
+{
+  "ok": false,
+  "op": "parse",
+  "error": {
+    "code": "unsupported",
+    "message": "The input format is not supported.",
+    "hint": "Run deckops formats to inspect available routes."
+  }
+}
+```
+
+| Exit | Error code | Caller action |
+| --- | --- | --- |
+| `2` | `usage_error` | Correct command syntax or an option that does not apply to the input |
+| `3` | `unsupported` | Choose a route listed by `deckops formats` |
+| `4` | `auth_error` | Refresh or replace cloud credentials |
+| `5` | `input_error`, `ir_not_found`, `ir_expired`, `ir_schema_unsupported`, `ir_invalid`, `asset_error` | Correct the source or artifact using the returned hint |
+| `6` | `backend_error` | Record the task ID and retry according to application policy |
+| `7` | `not_implemented` | Do not call a reserved operation |
+| `8` | `quota_error` | Authenticate or obtain sufficient cloud quota |
+
+## Local resource controls
+
+Local parsers bound source size, ZIP entries and expansion, individual and total assets, XML work, URL responses, execution time, and worker heap. CLI overrides include:
+
+```text
+--max-source-bytes
+--max-expanded-bytes
+--max-part-bytes
+--max-asset-bytes
+--max-total-asset-bytes
+--max-zip-entries
+--max-url-bytes
+--worker-heap-mb
+```
+
+Overrides become part of the artifact cache identity. Increase them only after applying your own input acceptance and resource policies.

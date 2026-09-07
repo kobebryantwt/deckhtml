@@ -1,0 +1,58 @@
+---
+title: 产物与复用
+sidebarTitle: 产物与复用
+description: "理解 DeckOps 产物目录、缓存身份、离线复用和云端引用有效期。"
+---
+
+DeckOps 产物是解析与所有下游操作之间可持久保存的交接格式。
+
+```text
+report/
+├── ir.json
+├── manifest.json
+├── probe.json
+├── assets/
+└── views/
+    └── markdown/
+```
+
+| 内容 | 用途 |
+| --- | --- |
+| `ir.json` | 公开的 `deckir.v1` 文档模型 |
+| `manifest.json` | 源文件哈希、解析器身份、参数、质量、资源、视图和可选云端引用 |
+| `probe.json` | 预检成功时保存的完整 DeckProbe 报告 |
+| `assets/` | 以内容身份保存的图片和其他解析资源 |
+| `views/` | 从 IR 派生的输出，当前为 Markdown |
+
+## 复用规则
+
+源文件字节、引擎、兼容的解析器版本和解析参数一致时，DeckOps 会复用已有产物。命中缓存时，机器可读输出会显示 `"engine": "artifact-cache"`。
+
+```bash
+deckops parse report.pdf --json
+deckops parse report.pdf --json
+```
+
+明确需要重新解析时使用：
+
+```bash
+deckops parse report.pdf --force
+```
+
+资源限制覆盖值和格式专属参数也属于缓存身份的一部分，因此不同约束下生成的产物不会被悄悄复用。
+
+## 在 Node.js 中重新打开
+
+```ts
+import { openArtifact } from '@deckflow/deckops';
+
+const document = await openArtifact('report/');
+const ir = await document.ir();
+await document.convert({ anchors: true });
+```
+
+本地 manifest v2 产物包含公开 IR，可以在无凭证、无网络的情况下继续转换。云端产物还可能包含 `irKey`；该远端引用目前会在七天后过期，但本地保存的 IR 不受此有效期影响。
+
+## 移动或归档产物
+
+请完整保留产物目录。资源相对路径、已登记视图和 `probe.json` 都以目录根路径解析。如果另一个服务只需要 Markdown，可用 `deckops convert artifact/ -o output.md` 导出；如果需要结构化内容，应传递完整产物目录。

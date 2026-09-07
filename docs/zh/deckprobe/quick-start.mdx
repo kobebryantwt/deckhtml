@@ -1,40 +1,20 @@
 ---
 title: DeckProbe 快速开始
 sidebarTitle: 快速开始
-description: "安装 DeckProbe、下载示例 PDF、请求两个事实，并验证 Schema v2 结果。"
+description: "通过 npm 安装 DeckProbe、下载示例 PDF、请求两个事实，并验证 Schema v2 结果。"
 ---
 
 本流程使用原生 CLI，全部操作都在本机完成，不需要账号或 API Key。
 
 <Steps>
-  <Step title="安装预编译版本">
-    <Tabs>
-      <Tab title="macOS 与 Linux">
-        ```bash
-        curl --proto '=https' --tlsv1.2 -LsSf \
-          https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
-        ```
-      </Tab>
-      <Tab title="Windows PowerShell">
-        ```powershell
-        powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
-        ```
-
-        安装程序修改用户 `Path` 后，请重启 Shell。
-      </Tab>
-    </Tabs>
-  </Step>
-  <Step title="验证可执行程序">
+  <Step title="通过 npm 安装并验证">
     ```bash
+    npm install -g @deckflow/deckprobe
     deckprobe --version
     deckprobe --help
     ```
 
-    也可以使用 Rust 1.88 或更高版本从源码安装：
-
-    ```bash
-    cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
-    ```
+    npm 包会根据当前操作系统和 CPU 架构选择对应的原生可执行程序。
   </Step>
   <Step title="下载多页 PDF">
     ```bash
@@ -59,7 +39,7 @@ description: "安装 DeckProbe、下载示例 PDF、请求两个事实，并验�
     ```json
     {
       "schema_version": 2,
-      "tool_version": "2.4.0",
+      "tool_version": "<installed-version>",
       "status": "ok",
       "view": "values",
       "driver": {

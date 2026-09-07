@@ -8,28 +8,11 @@ DeckProbe CLI 在本地运行目标驱动的 Rust 引擎，适合 Shell、CI、�
 
 ## 安装
 
-<Tabs>
-  <Tab title="macOS 与 Linux">
-    ```bash
-    curl --proto '=https' --tlsv1.2 -LsSf \
-      https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.sh | sh
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    powershell -ExecutionPolicy ByPass -c "irm https://github.com/deckflow/deckprobe/releases/latest/download/deckprobe-installer.ps1 | iex"
-    ```
+```bash
+npm install -g @deckflow/deckprobe
+```
 
-    如果安装器更新了用户 `Path`，请重启终端。
-  </Tab>
-  <Tab title="从源码安装">
-    需要 Rust 1.88 或更高版本以及 Git。
-
-    ```bash
-    cargo install --git https://github.com/deckflow/deckprobe --locked deckprobe
-    ```
-  </Tab>
-</Tabs>
+npm 包会根据当前操作系统和 CPU 架构选择对应的原生可执行程序。只运行一次时，可以使用 `npx -y @deckflow/deckprobe@latest`。
 
 验证可执行文件并查看内置帮助：
 

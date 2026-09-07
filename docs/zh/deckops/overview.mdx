@@ -1,74 +1,58 @@
 ---
 title: DeckOps
 sidebarTitle: 概览
-description: "在云端解析和转换文档，获得 Markdown、结构化内容或新的文件产物。"
+description: "将 PDF、PPTX、DOCX、Keynote 或网页内容解析成可持久保存的 DeckIR，并在不重复解析源文件的情况下生成 Markdown。"
 ---
 
-DeckOps 为需要可检索文本、格式专属结构或新文件产物的应用提供云端文档能力。发送支持的文件或 URL，即可解析内容、保留有用的文档结构、转换格式，或执行更广泛的文档操作。
+DeckOps 把文档转换成适合 Agent 与应用继续处理的中间表示。先解析一次并得到本地产物目录，之后可以反复读取 IR 或生成 Markdown，无需再次打开和解析源文件。
 
-| | 快速了解 |
+| | 概览 |
 | --- | --- |
-| 适用场景 | 服务端解析、提取、转换和文档工作流 |
-| 输入 | PDF、PPTX、DOCX、Keynote、受支持的转换输入，或 HTML URL |
-| 结果 | Markdown、与格式对应的 JSON，或 PDF、图片、视频、HTML、PPTX 等文件 |
-| 执行位置 | DeckFlow 云端 |
-| 接入方式 | TypeScript SDK 和 CLI |
-| 认证 | API Key 或用户 Token；底层任务支持受限的游客模式 |
+| 适合场景 | 搜索入库、RAG、文档理解和需要重复执行的下游处理 |
+| 本地输入 | PDF、PPTX、DOCX，以及静态网页源码 |
+| 云端输入 | Keynote、需要运行时渲染的网页；也可明确选择把本地格式交给云端 |
+| 主要结果 | 包含 `deckir.v1`、资源、质量信息和可选 DeckProbe 报告的版本化产物目录 |
+| 派生视图 | Markdown，可按页拆分或为 PDF 增加来源锚点 |
+| 接入方式 | CLI、Node.js SDK，以及仅接入云端的 Browser SDK |
 
-## 适合使用 DeckOps 的场景
+## DeckOps 为应用提供什么
 
-- 把 PDF、PPTX、DOCX 或 Keynote 解析成 Markdown，用于检索、审阅或 AI 工作流。
-- 保留幻灯片几何信息、演讲者备注、文档元素或 PDF 语义角色等格式专属结构。
-- 把支持的文档转换成可视化或可编辑产物。
-- 在云端执行 OCR、演示文稿检查、压缩、拆分、合并、字体、图片或内容任务。
+- **统一文档模型：**页面、节点、文本片段、几何信息、来源引用、资源和质量检查都使用公开的 `deckir.v1` Schema。
+- **可复用产物：**源文件哈希、解析器身份、参数、IR、资源和已生成视图保存在一起。
+- **明确的质量边界：**不能完整解析的内容会标记为降级或不透明节点，不会悄悄近似处理。
+- **默认本地执行：**PDF、PPTX、DOCX 和静态 URL 源码默认在本地解析，不需要凭证。
+- **明确选择云端：**Keynote、运行时网页，或应用主动选择云端解析时才进入云端路径。
 
-DeckOps 没有对外提供一个跨格式统一的 Document IR。高层 `parse()` 接口把支持的解析结果统一为 Markdown；底层解析任务则为每种格式保留不同的结构化契约。持久化或转换这些响应前，请先阅读[结构化解析结果](/zh/deckops/structured-results)。
-
-## 云端操作如何执行
-
-```mermaid
-flowchart LR
-  I["文件或 URL"] --> U["上传或准备输入"]
-  U --> C["创建任务"]
-  C --> S["按需启动游客任务"]
-  S --> W["通过 SSE 或轮询等待"]
-  W --> R["下载结果"]
+```text
+文档 ── parse ──> 产物目录/
+                    ├── ir.json
+                    ├── manifest.json
+                    ├── probe.json
+                    ├── assets/
+                    └── views/markdown/
+                             ↑
+                       从 IR 执行 convert
 ```
 
-## 第一个云端任务
+<Tip>
+  `parse` 是唯一会读取并理解源文件的操作。`convert` 消费已有产物；直接把文档传给 `convert` 时，DeckOps 只是用一次性快捷流程完成解析和转换。
+</Tip>
 
-```ts
-import { createDeck } from '@deckops/sdk';
+## 选择执行引擎
 
-const deck = createDeck();
-const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
-await deck.tasks.start(task.id); // 游客任务必须显式启动
-const completed = await deck.tasks.wait(task.id);
-const result = await deck.tasks.down(completed.id);
+- `local` 是默认值。支持的文件留在当前机器，无需 DeckFlow 账号。
+- `cloud` 会明确上传输入，需要可用的游客或认证云端路径。
+- `auto` 仍先在本地执行，只有同时传入 `--allow-upload` 或 `allowUpload: true` 才获得上传许可。
 
-console.log(completed.id, completed.type, completed.status);
-console.log(result);
-```
+Browser SDK 只接入云端。它可以在上传前通过 DeckProbe 检查浏览器中选中的本地文件，但真正的文档解析仍在 DeckFlow 云端执行。
 
-这条已发布软件包路径会上传文件、显式启动游客任务、等待完成并下载结果。完整可运行流程见[快速开始](/zh/deckops/quick-start)。
-
-<Note>
-  不同 SDK 提供的接口有所不同。上面的底层任务流程是最直接的可安装路径；使用更高层 Parse 方法前，请先在[解析文档](/zh/deckops/parse)中确认可用性。
-</Note>
-
-## 执行与数据边界
-
-DeckOps 处理的文件会上传到 DeckFlow 云端。已认证任务会自动启动；游客创建的底层任务必须先显式启动再等待，高层解析接口不会替你启动游客任务。
-
-<Warning>
-  使用 `parse()` 和 `parseDetailed()` 时请配置 API Key 或用户 Token。需要游客模式时，请使用底层任务 API，并在创建后调用 `tasks.start(task.id)`。Python SDK 没有提供这个游客启动方法。
-</Warning>
-
-## 继续阅读
+## 从这里开始
 
 <CardGroup cols={2}>
-  <Card title="快速开始" href="/zh/deckops/quick-start">完成并验证一次完整的游客云端任务。</Card>
-  <Card title="认证" href="/zh/deckops/authentication">选择游客、API Key 或用户 Token。</Card>
-  <Card title="任务模型" href="/zh/deckops/task-model">处理任务创建、进度、重试和下载。</Card>
-  <Card title="能力" href="/zh/deckops/operations">查找与工作流匹配的任务类型。</Card>
+  <Card title="快速开始" href="/zh/deckops/quick-start">通过 npm 安装，并生成第一份本地 IR 产物和 Markdown。</Card>
+  <Card title="解析文档" href="/zh/deckops/parse">选择格式、引擎、预检模式和解析参数。</Card>
+  <Card title="产物与复用" href="/zh/deckops/artifacts">持久保存并重新打开 IR，不重复解析文档。</Card>
+  <Card title="Node.js SDK" href="/zh/deckops/sdk/typescript">在应用中接入本地解析和转换。</Card>
 </CardGroup>
+
+DeckOps 的源码与问题跟踪位于[开源项目仓库](https://github.com/deckflow/deckops)。

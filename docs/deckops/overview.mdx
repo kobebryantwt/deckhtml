@@ -1,74 +1,58 @@
 ---
 title: DeckOps
 sidebarTitle: Overview
-description: "Parse and transform documents in the cloud, returning Markdown, structured content, or converted files."
+description: "Parse PDF, PPTX, DOCX, Keynote, or web content into durable DeckIR artifacts and derive Markdown without reparsing the source."
 ---
 
-DeckOps provides cloud document capabilities for applications that need searchable text, format-specific structure, or a new file artifact. Send a supported file or URL to parse content, preserve useful document structure, convert formats, or run a broader document operation.
+DeckOps turns a document into a durable, agent-operable intermediate representation. Parse once to create a local artifact, then read the IR or generate Markdown repeatedly without reopening the source document.
 
 | | At a glance |
 | --- | --- |
-| Best for | Server-side parsing, extraction, conversion, and document workflows |
-| Inputs | PDF, PPTX, DOCX, Keynote, supported conversion inputs, or an HTML URL |
-| Results | Markdown, format-specific JSON, or files such as PDF, images, video, HTML, and PPTX |
-| Runs | DeckFlow cloud |
-| Interfaces | TypeScript SDK and CLI |
-| Authentication | API key or user token; limited guest execution is available for low-level tasks |
+| Best for | Search ingestion, retrieval pipelines, document understanding, and repeatable downstream processing |
+| Local inputs | PDF, PPTX, DOCX, and static web-page source |
+| Cloud inputs | Keynote and web pages that require runtime rendering; local formats can also be uploaded explicitly |
+| Primary result | A versioned artifact containing `deckir.v1`, assets, quality information, and an optional DeckProbe report |
+| Derived view | Markdown, including optional page splitting or PDF source anchors |
+| Interfaces | CLI, Node.js SDK, and a cloud-only Browser SDK |
 
-## When to use DeckOps
+## What DeckOps gives your application
 
-- Parse PDF, PPTX, DOCX, or Keynote into Markdown for search, review, or AI pipelines.
-- Retain format-specific structure such as slide geometry, notes, document elements, or PDF semantic roles.
-- Convert supported documents into visual or editable artifacts.
-- Run OCR, presentation inspection, compression, splitting, joining, font, image, or content tasks in the cloud.
+- **One document model:** pages, nodes, text runs, geometry, source references, assets, and quality checks use the public `deckir.v1` schema.
+- **A reusable artifact:** the source hash, parser identity, options, IR, assets, and generated views are stored together.
+- **A visible quality boundary:** partial or opaque content is reported rather than silently approximated.
+- **Local-first execution:** PDF, PPTX, DOCX, and static URL source use local parsers by default and do not require credentials.
+- **Explicit cloud execution:** use the cloud engine for Keynote, runtime web pages, or when your application deliberately chooses cloud parsing.
 
-DeckOps does not expose one cross-format public Document IR. The high-level `parse()` facade normalizes supported parse results to Markdown; low-level parse tasks preserve a different structured contract for each format. Read [Structured results](/deckops/structured-results) before storing or transforming those responses.
-
-## How a cloud operation runs
-
-```mermaid
-flowchart LR
-  I["File or URL"] --> U["Upload or materialize input"]
-  U --> C["Create task"]
-  C --> S["Start guest task when required"]
-  S --> W["Wait by SSE or polling"]
-  W --> R["Download result"]
+```text
+document ── parse ──> artifact/
+                       ├── ir.json
+                       ├── manifest.json
+                       ├── probe.json
+                       ├── assets/
+                       └── views/markdown/
+                                ↑
+                         convert from IR
 ```
 
-## A first cloud task
+<Tip>
+  `parse` is the only operation that reads and interprets the source. `convert` consumes an existing artifact; when given a document directly, it performs the parse and conversion as a one-shot convenience.
+</Tip>
 
-```ts
-import { createDeck } from '@deckops/sdk';
+## Choose an execution engine
 
-const deck = createDeck();
-const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
-await deck.tasks.start(task.id); // required for a guest task
-const completed = await deck.tasks.wait(task.id);
-const result = await deck.tasks.down(completed.id);
+- `local` is the default. It keeps supported files on the machine and needs no DeckFlow account.
+- `cloud` explicitly uploads the input and requires an available guest or authenticated cloud path.
+- `auto` still starts locally. It may upload only when `--allow-upload` or `allowUpload: true` explicitly grants permission.
 
-console.log(completed.id, completed.type, completed.status);
-console.log(result);
-```
+The browser entry is cloud-only: it can inspect a selected local file with DeckProbe before upload, but document parsing itself runs in DeckFlow cloud.
 
-This published-package path uploads the file, explicitly starts a guest task, waits for completion, and downloads the result. Follow the [Quickstart](/deckops/quick-start) for a complete runnable example.
-
-<Note>
-  SDK interfaces differ. The low-level task flow above is the most direct installable path; verify higher-level Parse helpers on [Parse Documents](/deckops/parse) before using them.
-</Note>
-
-## Execution and data boundary
-
-Files processed by DeckOps are uploaded to DeckFlow cloud. Authenticated tasks start automatically. A guest-created low-level task must be started explicitly before waiting; the high-level parse facade does not perform that guest start for you.
-
-<Warning>
-  Use an API key or user token with `parse()` and `parseDetailed()`. If you need guest mode, use the low-level task API and call `tasks.start(task.id)` after creation. The Python SDK does not expose this guest-start method.
-</Warning>
-
-## Continue
+## Start here
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" href="/deckops/quick-start">Run and verify a complete guest cloud task.</Card>
-  <Card title="Authentication" href="/deckops/authentication">Choose guest, API-key, or user-token execution.</Card>
-  <Card title="Task model" href="/deckops/task-model">Handle task creation, progress, retries, and downloads.</Card>
-  <Card title="Capabilities" href="/deckops/operations">Find the task family that matches your workflow.</Card>
+  <Card title="Quickstart" href="/deckops/quick-start">Install from npm and create your first local IR artifact and Markdown view.</Card>
+  <Card title="Parse documents" href="/deckops/parse">Choose a format, engine, preflight mode, and parser options.</Card>
+  <Card title="Artifacts and reuse" href="/deckops/artifacts">Persist and reopen IR without reparsing the document.</Card>
+  <Card title="Node.js SDK" href="/deckops/sdk/typescript">Integrate local parsing and conversion in an application.</Card>
 </CardGroup>
+
+The DeckOps source and issue tracker are available in the [open-source repository](https://github.com/deckflow/deckops).

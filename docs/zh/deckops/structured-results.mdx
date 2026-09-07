@@ -1,43 +1,74 @@
 ---
-title: 结构化解析结果
-sidebarTitle: 结构化结果
-description: "比较 DeckOps 不同 Parse 任务返回的格式专属结果契约。"
+title: DeckIR 输出模型
+sidebarTitle: DeckIR 输出
+description: "读取 DeckOps 生成的 deckir.v1 文档、节点、资源、来源和质量字段。"
 ---
 
-每个 Parser 会保留对应源格式可提供的结构。这些结果用途相近，但并不共享同一套节点 Schema。
+`ir.json` 是跨格式的 `deckir.v1` 文档。它为应用提供稳定的外层契约，同时通过节点类型、样式、来源引用和扩展字段保留源格式细节。
 
-<Warning>
-  依赖下列 Schema 前，请先确认已安装 SDK 提供对应的 Parse 方法。如果类型化方法不可用，请选择软件包已提供的底层任务方法，并检查下载结果。
-</Warning>
+## 顶层结构
 
-## PDF
+```json
+{
+  "schemaVersion": "deckir.v1",
+  "format": "pptx",
+  "source": {
+    "sha256": "<source-sha256>",
+    "name": "slides.pptx",
+    "bytes": 45210
+  },
+  "producer": {
+    "engine": "local",
+    "name": "deckparse-pptx",
+    "version": "1"
+  },
+  "document": {
+    "metadata": {},
+    "pages": [],
+    "nodes": [],
+    "assets": []
+  },
+  "quality": {
+    "status": "pass",
+    "checks": [],
+    "coverage": {}
+  }
+}
+```
 
-`pdf.parse` 返回 `textBlocks` 和可选的 `images`。文本块包含文本、从 0 开始的页定位、可选的粗体或斜体样式，以及 `heading`、`list-item`、`caption` 等可选语义角色。
+## 页面与节点
 
-## PPTX
+每个页面包含稳定 ID、从零开始的索引、可选尺寸、有序节点 ID 和来源引用。节点通过 `parentId` 与 `children` 形成树形结构，还可以包含：
 
-`pptx.parse` 返回演示文稿对象模型，可以保留幻灯片、形状、Transform、Text Body、表格、图片、Group、Layout 和 Master 关系等 PPTX 专属数据。Markdown 转换器会利用几何与形状关系重建阅读顺序。
+- `type`、`order`、文本、富文本片段、样式和链接
+- 源格式提供布局时的页面、边界框和层级
+- 置信度和问题代码
+- DeckOps 能保留但不能完整理解对象时的 `opaque` 记录
+- 不适合放入通用字段的格式专属 `extensions`
 
-## DOCX
+`sourceRef` 记录页面或节点在源文件中的位置，例如页码、部件名、XML 路径、对象 ID、字节范围或字符范围。需要追溯来源时应使用这些字段，不要从 Markdown 顺序反推。
 
-`docx.parseTextAndImage` 返回有序文档元素，包括文本、图片、表格、图表、Diagram、Group 和结构化文档标签。只有上游 Parser 提供段落样式时，Markdown 转换才能还原标题层级。
+## 资源
 
-## Keynote
+资源记录包含稳定 ID、相对产物路径、哈希、字节数、可选媒体类型和来源引用。节点使用这些持久身份引用资源；应用应以产物目录为根解析路径。
 
-`keynote.parseTextAndImage` 返回文档尺寸、包含文本、表格和图表标签的 Slide，以及带页索引的图片。Markdown 转换器会把没有有效页索引的图片保留到兜底段落，避免静默丢失。
+## 质量报告
 
-## 网页
+质量报告把“解析完成”和“解析保真度”分开表达：
 
-`html.getByURL` 可以获取源码或运行后的 HTML。Markdown 门面会提取正文、转换为 GitHub-flavored Markdown、补全相对图片地址，并移除脚本、样式和 iframe。
+- `status` 为 `pass`、`degraded` 或 `unsupported`。
+- `checks` 包含稳定代码、严重程度、说明和可选的页面/节点详情。
+- `coverage` 可以记录已解析页面、已解析与不透明对象数量、文本字符数。
+- `recommendation: "cloud"` 表示云端解析可能改善本地结果，但不会自动触发上传。
 
-## Markdown 是结果投影
+如果降级结果应导致 CLI 任务失败，请使用 `--fail-on-degraded`。
 
-Markdown 便于使用，但会主动丢弃部分源格式细节。以下场景应使用底层结构化结果：
+## 校验 Schema
 
-- 需要页面或幻灯片几何
-- 需要形状层级和组合关系
-- 需要 Rich Text Run 与样式
-- 需要表格、图表、图片、备注、Layout 或 Master
-- 需要保留 Task ID 以便后续检查原始结果
+npm 包导出了 JSON Schema：
 
-如果当前需要 Markdown，同时希望保留 Task ID 和实际 Parser，请使用 `parseDetailed()`。
+```js
+import schema from '@deckflow/deckops/schemas/deckir.v1.schema' with { type: 'json' };
+```
+
+Node.js SDK 还导出 `validateDeckIR()` 用于运行时校验。

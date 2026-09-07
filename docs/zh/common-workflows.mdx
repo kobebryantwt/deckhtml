@@ -16,7 +16,7 @@ description: "根据 Agent 需要完成的文档任务，选择对应的 DeckFlo
     多模态或评审 Agent 把支持的文档生成页面图片、缩略图、PDF 或视频，获得写出的视觉产物及其结构化结果。
   </Card>
   <Card title="为检索和推理准备文档内容" icon="file-lines" iconType="solid" href="/zh/deckops/parse" cta="使用 DeckOps" arrow>
-    知识处理 Agent 把支持的文档解析成 Markdown 或格式专属结构化内容，用于索引、检索、摘要和后续推理。
+    知识处理 Agent 把支持的文档解析成可持久保存的 DeckIR，再生成用于索引、检索、摘要和后续推理的 Markdown。
   </Card>
   <Card title="维护现有演示文稿" icon="pen-to-square" iconType="solid" href="/zh/deckuse/quick-start" cta="使用 DeckUse" arrow>
     演示文稿维护 Agent 定位指定幻灯片或元素，在本地执行已经确定的内容和属性修改，校验后导出另一份可编辑 PPTX。
@@ -32,7 +32,7 @@ description: "根据 Agent 需要完成的文档任务，选择对应的 DeckFlo
 | --- | --- | --- | --- |
 | 判断文件是否继续处理以及进入哪条路径 | DeckProbe | Schema v2 文档事实与证据 | 本地 |
 | 查看或交付文档的视觉内容 | DeckRender | 图片、PDF、视频和 `RenderResult` | 显式选择本地或云端引擎 |
-| 读取、索引、提取或转换文档内容 | DeckOps | Markdown、格式专属 JSON 或转换文件 | 云端 |
+| 读取、索引文档内容或据此推理 | DeckOps | 可持久保存的 DeckIR 产物和 Markdown 视图 | 默认本地；明确选择云端路径 |
 | 对现有 PPTX 执行明确修改 | DeckUse | 修改后仍可编辑的 PPTX 与操作结果 | 本地 |
 | 从 HTML 或 SVG 创建新 Deck | DeckHTML | 可编辑 PPTX 或页面 PNG，以及转换诊断 | 本地或云端 |
 
@@ -43,9 +43,9 @@ description: "根据 Agent 需要完成的文档任务，选择对应的 DeckFlo
 | 工作流 | 调用顺序 | 组合原因 |
 | --- | --- | --- |
 | 安全的多模态附件评审 | DeckProbe → 应用策略 → DeckRender | 先在本地验证附件，再把通过检查的文件渲染成视觉内容供模型或评审界面使用。 |
-| 受控的文档入库 | DeckProbe → 应用策略 → DeckOps | 上传前先检查文件身份和安全事实，再解析或转换通过检查的文件。 |
+| 受控的文档入库 | DeckProbe → 应用策略 → DeckOps | 先检查文件身份和安全事实，只为通过策略的文件创建可复用 IR。 |
 | 修改并检查演示文稿 | DeckUse → DeckRender | 在本地修改可编辑 PPTX，再渲染导出文件进行视觉检查。 |
-| 根据源材料生成新演示文稿 | DeckOps → 应用逻辑 → DeckHTML | 解析源内容，由应用整理为数据或 HTML，再生成新的 Deck。 |
+| 根据源材料生成新演示文稿 | DeckOps → 应用逻辑 → DeckHTML | 把源内容解析成 IR 或 Markdown，由应用整理为 HTML，再生成新的 Deck。 |
 
 <Note>
   请独立保存每个产品的结果。探测报告、解析结果、渲染产物、PPTX 修改结果和 HTML 转换报告具有不同的重试、缓存和校验规则。
@@ -58,7 +58,7 @@ description: "根据 Agent 需要完成的文档任务，选择对应的 DeckFlo
     在文档事实、视觉产物、结构化内容、修改后的 PPTX 和新生成的 Deck 中选择。
   </Step>
   <Step title="确认数据边界">
-    DeckProbe 与 DeckUse 在本地执行，DeckOps 在云端执行；DeckRender 显式选择 `local`、`cloud` 或本地优先的 `auto`，DeckHTML 取决于所选模式。
+    DeckProbe 与 DeckUse 在本地执行。DeckOps 的 CLI 和 Node.js SDK 默认本地执行，Browser SDK 使用云端。DeckRender 显式选择 `local`、`cloud` 或本地优先的 `auto`，DeckHTML 取决于所选模式。
   </Step>
   <Step title="先跑通一个产品">
     确认它的输入、结果、错误和认证方式，再向工作流中增加其他产品。

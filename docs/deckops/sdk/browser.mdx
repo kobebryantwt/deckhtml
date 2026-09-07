@@ -1,0 +1,79 @@
+---
+title: Browser SDK
+sidebarTitle: Browser
+description: "Upload browser-selected documents to DeckOps cloud, inspect in-memory IR, and derive Markdown views."
+---
+
+```bash
+npm install @deckflow/deckops
+```
+
+Import the explicit browser entry:
+
+```ts
+import { createClient } from '@deckflow/deckops/browser';
+```
+
+The Browser SDK is cloud-only. Its local DeckProbe preflight can inspect a selected file before upload, but the document parser and Markdown conversion run in DeckFlow cloud.
+
+## Parse a selected file
+
+```ts
+const client = createClient({
+  apiBase: '/api/deckops',
+  token: userAccessToken,
+  onUnauthorized: async () => refreshUserAccessToken(),
+});
+
+const fileInput = document.querySelector<HTMLInputElement>('#document');
+const file = fileInput?.files?.[0];
+if (!file) throw new Error('Choose a document first.');
+
+const controller = new AbortController();
+const parsed = await client.parse(file, {
+  preflight: 'validate',
+  signal: controller.signal,
+  timeout: 300,
+  onProgress(event) {
+    if (event.phase === 'upload') console.log(event.progress);
+    else if (event.phase === 'preflight') console.log(event.phase, event.status);
+    else console.log(event.phase, event.status, event.taskId);
+  },
+});
+
+const ir = await parsed.ir();
+const view = await parsed.convert();
+console.log(ir, view.markdown, view.images);
+```
+
+Accepted inputs are `File`, `{ file: Blob | Uint8Array | ArrayBuffer, name }`, and `{ url }`. Browser code cannot pass a local path, standard input, or an unnamed Blob.
+
+## Result and reuse
+
+`parse()` returns a `BrowserParsedDocument` with `taskId`, task type, `irKey`, schema version, `ir()`, `convert()`, optional preflight information, and warnings. It retains IR in memory; it does not create an artifact directory or automatically download every asset.
+
+Convert an existing cloud reference without uploading the source again:
+
+```ts
+const view = await client.convert(
+  { irKey: savedIrKey },
+  { splitPages: true }
+);
+```
+
+Cloud IR references currently expire after seven days. Signed image URLs are also temporary; persist required content in application-controlled storage.
+
+## Cancellation and recovery
+
+An `AbortSignal` stops local upload/request/waiting work but cannot cancel or refund a cloud task that has already been created. Capture the task ID from `onProgress`, then inspect it after a timeout or disconnect:
+
+```ts
+const task = await client.getTask(savedTaskId);
+if (task.status === 'completed') {
+  const view = await client.convert({ taskId: task.id });
+}
+```
+
+<Warning>
+  Never put a server API key in browser code. Use a user-scoped token or an authenticated backend proxy, and configure CORS for the API, event stream, uploads, downloads, and image assets.
+</Warning>

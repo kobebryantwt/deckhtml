@@ -1,43 +1,69 @@
 ---
-title: Document Operations
-sidebarTitle: Operations
-description: "Choose an implemented DeckOps operation for conversion, extraction, PPTX processing, media, or content workflows."
+title: Convert IR to Markdown
+sidebarTitle: Convert to Markdown
+description: "Generate Markdown views from existing DeckOps artifacts without reparsing the source document."
 ---
 
-DeckOps groups a broad set of cloud document tasks behind the same upload and task lifecycle.
+`convert` derives a view from DeckIR. The current target is Markdown. When the input is an artifact directory, DeckOps reads `ir.json` and never reopens or reparses the original document.
 
-## Conversion
+## Convert an existing artifact
 
-Implemented conversions include:
+```bash
+deckops convert report/
+```
 
-- PPT or PPTX to images, PDF, or video
-- PPT to PPTX
-- DOC or DOCX to PDF
-- PDF to images
-- Keynote to images, HTML, or PDF
-- HTML to PNG or PPTX
-- Markdown to PNG
+The default output is `report/views/markdown/index.md`, and `manifest.json` records the renderer, options, files, and creation time.
 
-The exact source and destination pair selects the backend task type. Use [Task Type Reference](/deckops/reference/task-types) rather than inferring unsupported pairs.
+To write elsewhere:
 
-## PPTX operations and extraction
+```bash
+deckops convert report/ -o output/report.md
+```
 
-- Split a deck into slide files or join PPTX files in input order.
-- Inspect used and embedded fonts.
-- Extract page, shape, text, image, layout, master, and optional speaker-note information.
-- Embed selected fonts into a PPTX.
+Use `-` to write Markdown to standard output:
 
-## OCR, compression, and images
+```bash
+deckops convert report/ -o -
+```
 
-- OCR images with a configured language.
-- Compress document or video files.
-- Convert images to WebP.
-- Resize images by maximum width or height.
+## One-shot conversion
 
-## Content workflows
+You can pass a document instead of an artifact:
 
-The current task catalog also includes document generation, translation, revamp, and HTML player creation. These operations use the same task API but return task-specific results.
+```bash
+deckops convert report.pdf -o report.md
+```
 
-<Note>
-  Some operations read one source file while others use an ordered file list. `pptx.join`, `convertor.html2pptx`, `html.buildPlayer`, and `generation` are notable multi-source workflows.
-</Note>
+This is shorthand for parsing the document and then converting the resulting IR. Use the two-step form when your application will inspect `ir.json`, generate multiple views, or reuse the parse later.
+
+## Preserve source context
+
+For PDF, add per-element provenance comments containing stable node IDs:
+
+```bash
+deckops convert report/ --anchors -o report.md
+```
+
+For PPTX and Keynote, write one Markdown file per page or slide:
+
+```bash
+deckops convert slides/ --split-pages
+```
+
+If cloud conversion returns expiring image links, the default behavior protects portability by rejecting an incomplete localization. `--keep-remote-images` accepts those temporary links explicitly:
+
+```bash
+deckops convert cloud-artifact/ --keep-remote-images
+```
+
+<Warning>
+  Signed cloud image URLs are temporary preview references. Download and store required assets in your own system before their links expire.
+</Warning>
+
+## Verify reuse in automation
+
+```bash
+deckops convert report/ --json
+```
+
+Check that the response has `"ok": true`, `"op": "convert"`, and `"reusedParse": true`. The `outputs` array contains each written file and its byte size.

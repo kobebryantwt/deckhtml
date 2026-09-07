@@ -1,77 +1,72 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: "Install the published TypeScript SDK and complete a guest cloud task."
+description: "Install DeckOps from npm, parse a document locally, and generate Markdown from the resulting artifact."
 ---
 
-This path creates a known HTML input, uploads it to DeckFlow cloud, explicitly starts a guest task, and verifies the returned PNG metadata. It requires Node.js 18 or later.
+This quickstart uses the CLI because it exposes the complete local workflow with no account or API key. DeckOps requires Node.js 22.18 or newer.
 
 <Steps>
-  <Step title="Prepare the project">
+  <Step title="Install and verify the CLI">
     ```bash
-    mkdir deckops-quickstart && cd deckops-quickstart
-    npm init -y
-    npm install @deckops/sdk
+    npm install -g @deckflow/deckops
+    deckops --version
+    deckops --help
     ```
+
+    If global installation is not appropriate, replace `deckops` with `npx -y @deckflow/deckops@latest` in the following commands.
   </Step>
-  <Step title="Create an input">
-    Save this as `sample.html`:
-
-    ```html
-    <!doctype html>
-    <html><body><h1>Hello DeckOps</h1></body></html>
-    ```
-  </Step>
-  <Step title="Create the script">
-    Save this as `run.mjs`:
-
-    ```js
-    import { createDeck } from '@deckops/sdk';
-
-    const deck = createDeck();
-    const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
-
-    // Guest tasks remain pending until explicitly started.
-    await deck.tasks.start(task.id);
-    const completed = await deck.tasks.wait(task.id, {
-      timeout: 120,
-      onProgress: (next) => console.error(next.status),
-    });
-    const result = await deck.tasks.down(completed.id);
-
-    console.log(JSON.stringify({
-      taskId: completed.id,
-      type: completed.type,
-      status: completed.status,
-      result,
-    }, null, 2));
-    ```
-  </Step>
-  <Step title="Run and verify">
+  <Step title="Download the sample document">
     ```bash
-    node run.mjs
+    curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o sample.pptx
     ```
 
-    A successful response has a non-empty task ID, `convertor.html2png`, `completed`, and a result tuple containing the PNG download URL, byte size, and hash:
+    The sample contains editable presentation text and is served with this documentation. You can replace it with your own PDF, PPTX, or DOCX after completing the workflow once.
 
-    ```json
-    {
-      "taskId": "<task-id>",
-      "type": "convertor.html2png",
-      "status": "completed",
-      "result": ["<download-url>", 8063, "<hash>"]
-    }
+    ```bash
+    test -s sample.pptx
+    ```
+
+    Verify the download. On PowerShell, use the second form:
+
+    ```powershell
+    if (!(Test-Path sample.pptx) -or (Get-Item sample.pptx).Length -eq 0) { exit 1 }
+    ```
+  </Step>
+  <Step title="Parse the source into an artifact">
+    ```bash
+    deckops parse sample.pptx --json
+    ```
+
+    A successful run reports `"op": "parse"`, `"engine": "local"`, `"irSchemaVersion": "deckir.v1"`, and an artifact path. The default path is `sample/`:
+
+    ```text
+    sample/
+    ├── ir.json
+    ├── manifest.json
+    ├── probe.json
+    └── assets/
+    ```
+
+    The sample can also produce an advisory preflight warning about embedded objects. Use `ok` and `quality` to determine parse success; keep `warnings` visible to the application separately.
+  </Step>
+  <Step title="Generate Markdown from the artifact">
+    ```bash
+    deckops convert sample/ --json
+    ```
+
+    The result reports `"reusedParse": true` and writes `sample/views/markdown/index.md`. The source PPTX is not parsed again.
+
+    ```bash
+    test -s sample/views/markdown/index.md
     ```
   </Step>
 </Steps>
 
-Guest execution is rate-limited. Configure an API key or user token for production; authenticated tasks start automatically. See [Authentication](/deckops/authentication).
+For a portable Markdown file outside the artifact, use the one-shot form:
 
-<Note>
-  This quickstart uses a low-level task helper so the complete guest lifecycle is visible. Before choosing a higher-level Parse interface, check its availability in [Parse Documents](/deckops/parse).
-</Note>
+```bash
+deckops convert sample.pptx -o sample.md
+```
 
-<CardGroup cols={2}>
-  <Card title="Task model" href="/deckops/task-model">Add progress, timeout, failure, and download handling.</Card>
-  <Card title="Operations" href="/deckops/operations">Find task helpers that are available in your installed SDK.</Card>
-</CardGroup>
+This parses the document when needed and localizes referenced assets next to the output. Continue with [Parse documents](/deckops/parse) for format-specific options or [CLI](/deckops/cli) for automation and error handling.

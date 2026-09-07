@@ -1,55 +1,61 @@
 ---
-title: 认证
+title: 云端认证
 sidebarTitle: 认证
-description: "为 DeckOps 云端任务选择游客、API Key 或用户 Token 认证。"
+description: "仅为明确使用 DeckFlow 云端的 DeckOps 路径配置认证。"
 ---
 
-DeckOps 支持三种身份。所有模式都在 DeckFlow 云端执行，因此都会上传任务输入。
+本地解析和转换不需要 DeckFlow 账号。只有 DeckOps 实际选择云端引擎时才会读取认证信息，例如处理 Keynote、解析运行时网页，或显式传入 `--engine cloud`。
 
-| 模式 | 请求头 | 启动行为 | 适用场景 |
-| --- | --- | --- | --- |
-| API Key | `Authorization: Bearer <key>` | 任务自动启动 | 生产服务和 CI |
-| 用户 Token | `X-Auth-Token: <token>` | 任务自动启动 | 交互式应用和已登录 CLI |
-| 游客 UUID | 客户端生成游客身份 | 底层任务需要 `tasks.start()` | 评估和受限试用 |
+## 获取 API Key
 
-## API Key
-
-创建 TypeScript 客户端时传入 Key。请保存在服务端密钥系统中，不要打包到浏览器代码里。
-
-```ts
-const deck = createDeck({ apiKey: process.env.DECKOPS_API_KEY });
-```
-
-## 用户 Token
-
-DeckOps CLI 可以打开浏览器登录流程，并把 Token 保存到 `~/.deckops/config.json`：
+访问 [DeckFlow 设置](https://app.deckflow.com/start#settings)，进入设置页面并创建或复制 API Key。请把它保存在密钥管理系统中，只提供给服务端进程。
 
 ```bash
-deckops login
+export DECKOPS_API_KEY="<api-key>"
+deckops parse slides.key --engine cloud
 ```
 
-SDK 客户端可以显式传入返回的 Token 和可选的空间 ID。不要提交该配置文件。
+`DECKOPS_API_KEY` 的优先级高于共享的 `DECKFLOW_API_KEY`。不要把任意一种 Key 写入前端 JavaScript。
 
-## 游客执行
+## CLI 浏览器登录
 
-游客底层任务创建后处于 `pending` 状态。需要显式启动，再等待和下载：
+```bash
+deckops auth login
+deckops auth status
+deckops config list
+```
+
+登录得到的用户 Token 保存在 DeckFlow 共享凭证目录中，DeckOps、DeckRender 和 DeckHTML 可以复用同一次登录。使用 `deckops auth logout` 退出。
+
+凭证位于 `~/.deckflow/credentials`，DeckOps 产品默认值位于 `~/.deckflow/deckops/config.json`。`deckops config list` 会显示每项最终值的来源，便于判断具体由哪个环境变量或配置文件生效。
+
+## Node.js
 
 ```ts
-const task = await deck.convertPptToPdf({ files: ['./slides.pptx'] });
-await deck.tasks.start(task.id);
-const completed = await deck.tasks.wait(task.id);
-const result = await deck.tasks.down(completed.id);
+import { createClient } from '@deckflow/deckops';
+
+const client = createClient({
+  apiKey: process.env.DECKOPS_API_KEY,
+  spaceId: process.env.DECKOPS_SPACE_ID,
+});
+
+const document = await client.parse('slides.key', { engine: 'cloud' });
 ```
 
-Node.js CLI 会自动启动游客任务。TypeScript 和 Go SDK 提供 `tasks.start`；当前 Python SDK 没有，因此 Python 接入请使用已认证执行。
+Client 也可显式传入用户 `token` 和 `apiBase`。CLI 适合使用环境变量；多租户服务端应用通常更适合为每个 Client 显式传值。
 
-<Warning>
-  高层 `parse()` 和 `parseDetailed()` 会创建任务并直接等待，不会启动游客任务。使用这些方法时请配置 API Key 或用户 Token。
-</Warning>
+## 浏览器应用
 
-## 生产检查清单
+Browser SDK 特意不提供 `apiKey` 参数。请传入适合在浏览器使用的用户级 Token，或通过认证后的后端代理转发请求，把服务端 API Key 留在后端。
 
-- 把 API Key 和 Token 存放在部署环境的密钥管理系统中。
-- 需要让任务共享工作空间时，配置稳定的空间 ID。
-- 把任务 ID 和下载结果视为应用数据处理。
-- 分别处理认证失败、任务失败和超时。
+```ts
+import { createClient } from '@deckflow/deckops/browser';
+
+const client = createClient({
+  apiBase: '/api/deckops',
+  token: userAccessToken,
+  onUnauthorized: refreshUserAccessToken,
+});
+```
+
+如果部署环境允许游客访问，可以用于有限体验；生产流程不应依赖游客额度或可用性。

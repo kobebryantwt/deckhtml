@@ -6,11 +6,15 @@ description: "对比每个 DeckFlow 产品的最小输入、命令和可验证�
 
 先选择应用需要得到的第一个结果。下面每个部分都包含安装、具体调用，以及能够证明示例成功的结果信号。
 
+<Note>
+  下文中的 DeckFlow JavaScript 包和 CLI 都通过 npm 安装。如果当前地区无法稳定访问默认 Registry，可在对应安装命令末尾增加 `--registry=https://registry.npmmirror.com`。建议只对单条命令生效，不要直接修改全局 Registry；镜像同步偶尔可能晚于 npm 官方版本。
+</Note>
+
 | 产品 | 第一个结果 | 执行位置 | 凭证 |
 | --- | --- | --- | --- |
 | DeckProbe | 文档事实的 Schema v2 报告 | 本地 | 无 |
 | DeckRender | PNG、PDF 或支持的视频渲染 | 本地或云端 | 本地无需凭证；云端游客或认证 |
-| DeckOps | Markdown、结构化解析数据或转换产物 | 云端 | 推荐 API Key/Token |
+| DeckOps | 可持久保存的 DeckIR 产物和 Markdown 视图 | 默认本地；明确选择时使用云端 | 本地无需凭证 |
 | DeckUse | 更新后的 PPTX | 本地 | 无 |
 | DeckHTML | 从 HTML 生成 PPTX 或 PNG | 本地或云端 | 本地无需凭证 |
 
@@ -40,7 +44,7 @@ npm 软件包中的 CLI 会调用对应平台的原生二进制。成功时退�
 }
 ```
 
-不同平台的安装器和完整响应见 [DeckProbe 快速开始](/zh/deckprobe/quick-start)。
+完整响应和更多输入方式见 [DeckProbe 快速开始](/zh/deckprobe/quick-start)。
 
 ## DeckRender：生成 PNG
 
@@ -54,61 +58,23 @@ test -s hello.png
 
 命令调用已安装的 Chrome/Chromium/Edge，把 HTML 保留在当前机器，写入 `hello.png`，并返回包含 `engine`、路线、页数、输出路径、字节数和耗时的 `RenderResult`。创建输入、检查本地依赖并体验游客云端路线，请查看 [DeckRender 快速开始](/zh/deckrender/quick-start)。
 
-## DeckOps：运行一个云端任务
+## DeckOps：解析一次，再生成 Markdown
 
-<span className="product-kicker">云端 · 异步任务 · 可下载结果</span>
-
-安装任务 SDK：
+<span className="product-kicker">默认本地 · 可持久 DeckIR · 可复用视图</span>
 
 ```bash
-npm install @deckops/sdk
+npm install -g @deckflow/deckops
+deckops --version
+
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o sample.pptx
+deckops parse sample.pptx --json
+deckops convert sample/ --json
+test -s sample/views/markdown/index.md
 ```
 
-把以下输入保存为 `sample.html`：
+第一条命令创建 `sample/`，其中包含 `ir.json`、`manifest.json`、可选的 `probe.json` 和解析资源。第二条命令直接读取该 IR，不会重新解析 PPTX；成功结果会显示 `"reusedParse": true`，并写入 Markdown 视图。
 
-```html
-<!doctype html>
-<html><body><h1>Hello DeckOps</h1></body></html>
-```
-
-把以下脚本保存为 `run.mjs`。它会创建游客任务、显式启动、等待完成，然后下载结果元数据：
-
-```js
-import { createDeck } from '@deckops/sdk';
-
-const deck = createDeck();
-const task = await deck.convertHtmlToPng({ files: ['./sample.html'] });
-
-await deck.tasks.start(task.id);
-const completed = await deck.tasks.wait(task.id, { timeout: 120 });
-const result = await deck.tasks.down(completed.id);
-
-console.log(JSON.stringify({
-  taskId: completed.id,
-  type: completed.type,
-  status: completed.status,
-  result,
-}, null, 2));
-```
-
-执行脚本：
-
-```bash
-node run.mjs
-```
-
-HTML 会上传到 DeckFlow 云端。成功结果会标识任务，并返回 PNG 下载地址、字节数和哈希：
-
-```json
-{
-  "taskId": "<task-id>",
-  "type": "convertor.html2png",
-  "status": "completed",
-  "result": ["<download-url>", 8063, "<hash>"]
-}
-```
-
-进度处理和当前软件包可用性说明见 [DeckOps 快速开始](/zh/deckops/quick-start)。
+DeckOps 默认把 PDF、PPTX、DOCX 和静态网页源码留在本地。完整验证流程和显式选择云端引擎的方法见 [DeckOps 快速开始](/zh/deckops/quick-start)。
 
 ## DeckUse：更新现有 PPTX
 
@@ -117,7 +83,7 @@ HTML 会上传到 DeckFlow 云端。成功结果会标识任务，并返回 PNG 
 ```bash
 npm install -g @deckflow/deckuse
 deckuse --version
-curl -fL https://raw.githubusercontent.com/scanny/python-pptx/278b47b1dedd5b46ee84c286e77cdfb0bf4594be/tests/test_files/test.pptx -o input.pptx
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o input.pptx
 deckuse init input.pptx ./workspace --json
 printf '%s\n' '{"type":"replaceText","find":"Presentation Title Text","replace":"DeckUse Updated Title","selector":"kind=textbox","limit":1}' \
   | deckuse apply ./workspace --json

@@ -1,0 +1,79 @@
+---
+title: Browser SDK
+sidebarTitle: Browser
+description: "把浏览器中选择的文档交给 DeckOps 云端，读取内存中的 IR，并生成 Markdown 视图。"
+---
+
+```bash
+npm install @deckflow/deckops
+```
+
+使用专门的浏览器入口：
+
+```ts
+import { createClient } from '@deckflow/deckops/browser';
+```
+
+Browser SDK 只接入云端。它可以在上传前使用本地 DeckProbe 预检所选文件，但文档解析和 Markdown 转换在 DeckFlow 云端执行。
+
+## 解析用户选择的文件
+
+```ts
+const client = createClient({
+  apiBase: '/api/deckops',
+  token: userAccessToken,
+  onUnauthorized: async () => refreshUserAccessToken(),
+});
+
+const fileInput = document.querySelector<HTMLInputElement>('#document');
+const file = fileInput?.files?.[0];
+if (!file) throw new Error('请先选择文档。');
+
+const controller = new AbortController();
+const parsed = await client.parse(file, {
+  preflight: 'validate',
+  signal: controller.signal,
+  timeout: 300,
+  onProgress(event) {
+    if (event.phase === 'upload') console.log(event.progress);
+    else if (event.phase === 'preflight') console.log(event.phase, event.status);
+    else console.log(event.phase, event.status, event.taskId);
+  },
+});
+
+const ir = await parsed.ir();
+const view = await parsed.convert();
+console.log(ir, view.markdown, view.images);
+```
+
+可接受的输入包括 `File`、`{ file: Blob | Uint8Array | ArrayBuffer, name }` 和 `{ url }`。浏览器代码不能传入本地路径、标准输入或没有文件名的 Blob。
+
+## 结果与复用
+
+`parse()` 返回 `BrowserParsedDocument`，其中包括 `taskId`、任务类型、`irKey`、Schema 版本、`ir()`、`convert()`、可选预检信息和警告。IR 只保存在内存中；Browser SDK 不创建本地产物目录，也不会自动下载所有资源。
+
+使用已有云端引用转换时，不会重新上传源文件：
+
+```ts
+const view = await client.convert(
+  { irKey: savedIrKey },
+  { splitPages: true }
+);
+```
+
+云端 IR 引用目前保留七天。签名图片 URL 同样是临时链接，需要长期使用的内容应保存到应用自己的存储中。
+
+## 取消与恢复
+
+`AbortSignal` 可以停止本地上传、请求和等待，但不能取消或退还已经创建的云端任务。应从 `onProgress` 保存任务 ID，在超时或断线后查询状态：
+
+```ts
+const task = await client.getTask(savedTaskId);
+if (task.status === 'completed') {
+  const view = await client.convert({ taskId: task.id });
+}
+```
+
+<Warning>
+  不要把服务端 API Key 放进浏览器代码。请使用用户级 Token 或认证后的后端代理，并为 API、事件流、上传、下载和图片资源正确配置 CORS。
+</Warning>

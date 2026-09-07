@@ -1,59 +1,88 @@
 ---
 title: DeckOps CLI
 sidebarTitle: CLI
-description: "Install DeckOps CLI, run cloud document tasks, and automate task result downloads."
+description: "Install the npm CLI and automate local-first parsing, Markdown conversion, engine selection, and machine-readable results."
 ---
 
-DeckOps provides an npm CLI and a native Go CLI. Both use the `deckops` command and expose the same main workflow.
-
-## Install the Node.js CLI
+## Install
 
 ```bash
-npm install -g deckops
+npm install -g @deckflow/deckops
 deckops --version
 deckops --help
 ```
 
-Native binaries for macOS, Linux, and Windows are also published from the DeckOps repository releases.
+DeckOps requires Node.js 22.18 or newer. For a one-off command, use `npx -y @deckflow/deckops@latest` instead of a global install.
 
-## Configure or sign in
-
-```bash
-deckops login
-deckops config show
-deckops config set-token <token>
-deckops config set-space <space-id>
-```
-
-## Common commands
-
-```bash
-deckops convert slides.pptx --to pdf -o slides.pdf
-deckops extract slides.pptx --type text-shapes -o result.json
-deckops ocr scan.png --language en -o result.json
-deckops join intro.pptx body.pptx appendix.pptx -o merged.pptx
-```
-
-Use `--no-wait` to return after task creation, then inspect the task separately:
-
-```bash
-deckops convert slides.pptx --to pdf --no-wait --json
-deckops task get <task-id> --json
-deckops task get <task-id> -o ./result
-```
-
-## Command groups
+## Commands
 
 | Command | Purpose |
 | --- | --- |
-| `compress` | Compress supported document or media files |
-| `extract` | Extract PPTX fonts or text-shape information |
-| `ocr` | Run image OCR |
-| `convert` | Select a conversion from input extension and `--to` |
-| `join` | Join PPTX files in order |
-| `create` | Run a content generation task |
-| `translate` | Translate a supported document |
-| `run` | Run an explicit backend task type with `--param key=value` |
-| `task` | List, inspect, download, or delete tasks |
+| `deckops <input>` | Shorthand for `deckops parse <input>` |
+| `deckops parse <input>` | Parse a document into an IR artifact |
+| `deckops convert <input>` | Convert an artifact to Markdown, or parse and convert a document in one command |
+| `deckops formats` | Print the routes implemented by the installed version |
+| `deckops auth login\|status\|logout` | Manage shared DeckFlow cloud credentials |
+| `deckops config list\|set\|migrate` | Inspect defaults, set product options, or migrate legacy configuration |
 
-Add `--json` for machine-readable output. Operation commands support a timeout and synchronous waiting by default.
+`extract`, `modify`, and `export` are reserved API directions, not usable CLI commands.
+
+## Input and output
+
+```bash
+# File to default artifact directory
+deckops parse report.pdf
+
+# File to a named artifact directory
+deckops parse slides.pptx -o build/slides-ir
+
+# Standard input requires an explicit source format
+deckops parse - --from pdf -o build/report-ir < report.pdf
+
+# URL source
+deckops parse https://example.com/article --mode source -o build/article-ir
+
+# Artifact to standard output
+deckops convert build/report-ir -o -
+```
+
+## Parser and conversion options
+
+<AccordionGroup>
+  <Accordion title="PDF">
+    `--profile fast|balanced|quality`, `--password`, `--no-images`, `--page-furniture off|drop|extract`, and `--overlaid-text auto|keep|drop`. Use `--anchors` during conversion to include node provenance comments in Markdown.
+  </Accordion>
+  <Accordion title="DOCX">
+    `--tracked-changes final|original|all` selects the tracked-change view.
+  </Accordion>
+  <Accordion title="PPTX and Keynote">
+    `--split-pages` writes one Markdown file per page. Keynote uses the cloud engine and also accepts `--stay-image-area-rate 0..1`.
+  </Accordion>
+  <Accordion title="URL">
+    `--mode source|runtime` chooses fetched source HTML or cloud runtime HTML.
+  </Accordion>
+</AccordionGroup>
+
+Use `deckops parse --help` and `deckops convert --help` for the exact options supported by the installed CLI.
+
+## Engines and upload permission
+
+```bash
+deckops parse report.pdf --engine local
+deckops parse report.pdf --engine cloud
+deckops parse report.pdf --engine auto
+deckops parse report.pdf --engine auto --allow-upload
+```
+
+`auto` does not grant upload permission. Without `--allow-upload`, it keeps the document local and only recommends cloud execution when quality is degraded.
+
+## Machine-readable automation
+
+```bash
+deckops parse report.pdf --json > parse-result.json
+deckops convert report/ --json > convert-result.json
+```
+
+Successful envelopes contain `ok`, `op`, `engine`, `format`, artifact or output paths, warnings, and duration. Error envelopes contain a stable `error.code`, message, and usually a recovery hint. See [CLI and Result Reference](/deckops/reference/results-and-errors).
+
+Use `--quiet` when only error output should be written. `--force` bypasses compatible local artifact reuse. Resource-budget flags are available for source size, expanded OOXML size, ZIP entries, individual/total assets, URL responses, and worker heap; raise them only for inputs your application has already accepted.

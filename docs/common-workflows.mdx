@@ -16,7 +16,7 @@ Start with the action the agent must perform and the result the application expe
     A multimodal or review agent turns a supported document into page images, thumbnails, PDF, or video. It receives written artifacts plus a structured result describing those files.
   </Card>
   <Card title="Prepare documents for search and reasoning" icon="file-lines" iconType="solid" href="/deckops/parse" cta="Use DeckOps" arrow>
-    A knowledge agent parses supported documents into Markdown or format-specific structured content for indexing, retrieval, summarization, and downstream reasoning.
+    A knowledge agent parses supported documents into durable DeckIR and derives Markdown for indexing, retrieval, summarization, and downstream reasoning.
   </Card>
   <Card title="Maintain an existing presentation" icon="pen-to-square" iconType="solid" href="/deckuse/quick-start" cta="Use DeckUse" arrow>
     A presentation-maintenance agent finds specific slides or elements, applies approved content and property changes locally, validates the package, and exports another editable PPTX.
@@ -32,7 +32,7 @@ Start with the action the agent must perform and the result the application expe
 | --- | --- | --- | --- |
 | Decide whether and where a file should continue | DeckProbe | Schema v2 document facts and evidence | Local |
 | See or deliver the visual document | DeckRender | Images, PDF, video, and `RenderResult` | Explicit local or cloud engine |
-| Read, index, extract, or transform content | DeckOps | Markdown, format-specific JSON, or converted files | Cloud |
+| Read, index, or reason over document content | DeckOps | Durable DeckIR artifact and Markdown views | Local by default; explicit cloud routes |
 | Apply known changes to an existing PPTX | DeckUse | Updated editable PPTX and operation results | Local |
 | Build a new deck from HTML or SVG | DeckHTML | Editable PPTX or page PNGs with conversion diagnostics | Local or cloud |
 
@@ -43,9 +43,9 @@ The products do not invoke one another automatically. The application or agent d
 | Workflow | Sequence | Why combine them |
 | --- | --- | --- |
 | Safe multimodal attachment review | DeckProbe → application policy → DeckRender | Verify the attachment locally, then render only accepted files for visual review or model input. |
-| Controlled document ingestion | DeckProbe → application policy → DeckOps | Check identity and security facts before uploading accepted files for parsing or conversion. |
+| Controlled document ingestion | DeckProbe → application policy → DeckOps | Check identity and security facts, then create a reusable IR only for accepted files. |
 | Update and visually verify a presentation | DeckUse → DeckRender | Modify the editable PPTX locally, then render the exported file for visual QA. |
-| Turn source material into a new presentation | DeckOps → application logic → DeckHTML | Parse source content, shape it into application data or HTML, then generate a new deck. |
+| Turn source material into a new presentation | DeckOps → application logic → DeckHTML | Parse source content into IR or Markdown, shape it into HTML, then generate a new deck. |
 
 <Note>
   Persist each product's result independently. A probe report, parse result, rendered artifact, PPTX edit, and HTML conversion report have different retry, caching, and validation rules.
@@ -58,7 +58,7 @@ The products do not invoke one another automatically. The application or agent d
     Choose facts, visual artifacts, structured content, an updated PPTX, or a newly generated deck.
   </Step>
   <Step title="Confirm the data boundary">
-    DeckProbe and DeckUse run locally. DeckOps runs in the cloud. DeckRender explicitly selects `local`, `cloud`, or local-first `auto`; DeckHTML depends on its selected mode.
+    DeckProbe and DeckUse run locally. DeckOps is local-first in the CLI and Node.js SDK, while its Browser SDK uses the cloud. DeckRender explicitly selects `local`, `cloud`, or local-first `auto`; DeckHTML depends on its selected mode.
   </Step>
   <Step title="Run one product end to end">
     Verify its input, result, errors, and authentication before adding another product to the workflow.

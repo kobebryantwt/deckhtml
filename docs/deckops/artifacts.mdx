@@ -1,0 +1,58 @@
+---
+title: Artifacts and Reuse
+sidebarTitle: Artifacts and Reuse
+description: "Understand the DeckOps artifact layout, cache identity, offline reuse, and cloud reference lifetime."
+---
+
+A DeckOps artifact is the durable handoff between parsing and every downstream operation.
+
+```text
+report/
+├── ir.json
+├── manifest.json
+├── probe.json
+├── assets/
+└── views/
+    └── markdown/
+```
+
+| Entry | Purpose |
+| --- | --- |
+| `ir.json` | Public `deckir.v1` document model |
+| `manifest.json` | Source hash, parser identity, options, quality, assets, views, and optional cloud reference |
+| `probe.json` | Full DeckProbe preflight report when preflight succeeds |
+| `assets/` | Content-addressed images and other extracted assets |
+| `views/` | Outputs derived from IR, currently Markdown |
+
+## Reuse rules
+
+DeckOps reuses an artifact when the source bytes, selected engine, compatible parser version, and parsing options match. Machine-readable output reports `"engine": "artifact-cache"` when a parse is served from this cache.
+
+```bash
+deckops parse report.pdf --json
+deckops parse report.pdf --json
+```
+
+Use `--force` when a caller deliberately needs a fresh parse:
+
+```bash
+deckops parse report.pdf --force
+```
+
+Resource-limit overrides and format-specific parser options participate in the cache identity, so an artifact produced under different constraints is not silently reused.
+
+## Reopen an artifact in Node.js
+
+```ts
+import { openArtifact } from '@deckflow/deckops';
+
+const document = await openArtifact('report/');
+const ir = await document.ir();
+await document.convert({ anchors: true });
+```
+
+Local manifest-v2 artifacts contain the public IR and remain convertible without credentials or network access. A cloud artifact may also contain an `irKey`; that remote reference currently expires after seven days, but its locally stored IR does not inherit that expiry.
+
+## Move or archive artifacts
+
+Keep the artifact directory intact. Relative asset paths, registered views, and `probe.json` are resolved from its root. If another service needs only Markdown, export a portable file with `deckops convert artifact/ -o output.md`; if it needs structured content, transfer the complete artifact.

@@ -1,43 +1,69 @@
 ---
-title: 文档操作
-sidebarTitle: 文档操作
-description: "根据转换、提取、PPTX、媒体和内容工作流选择已实现的 DeckOps 操作。"
+title: 将 IR 转换为 Markdown
+sidebarTitle: 转换为 Markdown
+description: "从已有 DeckOps 产物生成 Markdown，不重复解析源文档。"
 ---
 
-DeckOps 通过同一套上传和任务生命周期提供多类云端文档操作。
+`convert` 从 DeckIR 派生视图，当前支持的目标是 Markdown。输入为产物目录时，DeckOps 读取 `ir.json`，不会再次打开或解析原文档。
 
-## 格式转换
+## 转换已有产物
 
-当前已实现的转换包括：
+```bash
+deckops convert report/
+```
 
-- PPT 或 PPTX 转图片、PDF 或视频
-- PPT 转 PPTX
-- DOC 或 DOCX 转 PDF
-- PDF 转图片
-- Keynote 转图片、HTML 或 PDF
-- HTML 转 PNG 或 PPTX
-- Markdown 转 PNG
+默认写入 `report/views/markdown/index.md`，并在 `manifest.json` 中记录渲染器、参数、输出文件和创建时间。
 
-具体源格式与目标格式组合会选择不同的后端任务类型。请查询[任务类型参考](/zh/deckops/reference/task-types)，不要根据相近格式推断未实现的组合。
+指定其他输出位置：
 
-## PPTX 操作和提取
+```bash
+deckops convert report/ -o output/report.md
+```
 
-- 将演示文稿拆分为幻灯片文件，或按输入顺序合并 PPTX。
-- 检查使用字体和嵌入字体。
-- 提取页面、形状、文本、图片、Layout、Master，以及可选的 Speaker Notes。
-- 把指定字体嵌入 PPTX。
+写入标准输出：
 
-## OCR、压缩和图片
+```bash
+deckops convert report/ -o -
+```
 
-- 按指定语言识别图片文字。
-- 压缩文档或视频文件。
-- 将图片转换成 WebP。
-- 按最大宽度或高度缩放图片。
+## 一次性转换
 
-## 内容工作流
+也可以直接传入文档：
 
-当前任务目录还包括文档生成、翻译、改版和 HTML Player。这些操作使用相同任务 API，但返回各自的任务结果。
+```bash
+deckops convert report.pdf -o report.md
+```
 
-<Note>
-  部分操作只读取一个源文件，部分操作会消费有序文件列表。`pptx.join`、`convertor.html2pptx`、`html.buildPlayer` 和 `generation` 是典型的多输入工作流。
-</Note>
+这相当于先解析文档，再转换得到的 IR。如果应用还要检查 `ir.json`、生成多个视图或以后复用解析结果，应使用分成两步的流程。
+
+## 保留来源上下文
+
+PDF 可以为每个元素增加包含稳定节点 ID 的来源注释：
+
+```bash
+deckops convert report/ --anchors -o report.md
+```
+
+PPTX 和 Keynote 可以按页或幻灯片拆分 Markdown：
+
+```bash
+deckops convert slides/ --split-pages
+```
+
+云端转换返回短期图片链接时，DeckOps 默认拒绝无法完整本地化的结果。`--keep-remote-images` 表示应用明确接受这些临时链接：
+
+```bash
+deckops convert cloud-artifact/ --keep-remote-images
+```
+
+<Warning>
+  云端签名图片 URL 只适合临时预览。链接过期前，请把需要长期使用的资源保存到应用自己的存储中。
+</Warning>
+
+## 在自动化中确认复用
+
+```bash
+deckops convert report/ --json
+```
+
+确认响应包含 `"ok": true`、`"op": "convert"` 和 `"reusedParse": true`。`outputs` 数组会列出每个写入文件及其字节数。
