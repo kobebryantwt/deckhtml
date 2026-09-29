@@ -1,10 +1,10 @@
 ---
 title: Generate a PPTX from HTML
 sidebarTitle: HTML to PPTX
-description: "Create a one-slide HTML source, convert it locally with DeckHTML, and verify the generated PPTX."
+description: "Create a one-slide HTML source, convert it locally with HTML2Deck, and verify the generated PPTX."
 ---
 
-This example creates a presentation-sized HTML page and converts it to PPTX on the same machine with DeckHTML and Chromium.
+This example creates a presentation-sized HTML page and converts it to PPTX on the same machine with HTML2Deck and Chromium.
 
 <div className="workflow-meta"><span className="workflow-meta-label">Produces</span><span className="workflow-meta-value">A local <code>deck.pptx</code> file and a JSON conversion summary.</span></div>
 
@@ -17,12 +17,12 @@ This example creates a presentation-sized HTML page and converts it to PPTX on t
 ## Run the example
 
 <Steps>
-  <Step title="Install DeckHTML and Chromium">
+  <Step title="Install HTML2Deck and Chromium">
 
 ```bash
-npm install -g @deckflow/deckhtml
+npm install -g @deckflow/html2deck
 npx playwright install chromium
-deckhtml --version
+html2deck --version
 ```
 
   </Step>
@@ -62,7 +62,7 @@ Save as `deck.html`:
   <Step title="Generate the presentation">
 
 ```bash
-deckhtml deck.html -o deck.pptx --mode local --json --quiet
+html2deck deck.html -o deck.pptx --mode local --json --quiet
 ```
 
   </Step>
@@ -79,10 +79,10 @@ node -e "const fs=require('fs'); const s=fs.statSync('deck.pptx'); if(s.size===0
   Success means `deck.pptx` exists, has a non-zero size, and the JSON result reports PPTX output in local mode.
 </Check>
 
-<Card title="Understand element fidelity" icon="eye" iconType="solid" href="/deckhtml/guides/element-mapping">
+<Card title="Understand element fidelity" icon="eye" iconType="solid" href="/html2deck/guides/element-mapping">
   Review which HTML elements become editable PowerPoint objects and which require vector or raster fallback.
 </Card>
 
-<Card title="Extend this to multiple slides" icon="layer-group" iconType="solid" href="/deckhtml/guides/multi-page-and-batch">
+<Card title="Extend this to multiple slides" icon="layer-group" iconType="solid" href="/html2deck/guides/multi-page-and-batch">
   Repeat slide containers in one HTML document or merge ordered HTML/SVG files.
 </Card>

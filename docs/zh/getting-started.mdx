@@ -16,7 +16,7 @@ description: "对比每个 DeckFlow 产品的最小输入、命令和可验证�
 | DeckRender | PNG、PDF 或支持的视频渲染 | 本地或云端 | 本地无需凭证；云端游客或认证 |
 | DeckOps | 可持久保存的 DeckIR 产物和 Markdown 视图 | 默认本地；明确选择时使用云端 | 本地无需凭证 |
 | DeckUse | 更新后的 PPTX | 本地 | 无 |
-| DeckHTML | 从 HTML 生成 PPTX 或 PNG | 本地或云端 | 本地无需凭证 |
+| HTML2Deck | 从 HTML 生成 PPTX 或 PNG | 本地或云端 | 本地无需凭证 |
 
 ## DeckProbe：检查一个已知 PDF
 
@@ -93,17 +93,17 @@ deckuse commit ./workspace -o updated.pptx --json
 
 DeckUse 通过带版本的工作区在本地执行。CLI 可以检查和查询 PPTX 结构，修改文本、属性与几何信息，添加、复制或删除支持的幻灯片和元素，处理图片、表格与图表缓存，最后导出另一个 PPTX。前置条件、预期查询结果和最终验证请查看 [DeckUse 快速开始](/zh/deckuse/quick-start)。
 
-## DeckHTML：在本地生成 PPTX
+## HTML2Deck：在本地生成 PPTX
 
 <span className="product-kicker">本地 Chromium · HTML 输入 · PPTX 输出</span>
 
 ```bash
-npm install -g @deckflow/deckhtml
-deckhtml deck.html -o deck.pptx --mode local --json --quiet
+npm install -g @deckflow/html2deck
+html2deck deck.html -o deck.pptx --mode local --json --quiet
 test -s deck.pptx
 ```
 
-命令使用本地 Chromium，返回规范化路径、输出格式、执行模式和幻灯片数量。准备浏览器和幻灯片尺寸的 HTML 见 [DeckHTML 快速开始](/zh/deckhtml/quick-start)。
+命令使用本地 Chromium，返回规范化路径、输出格式、执行模式和幻灯片数量。准备浏览器和幻灯片尺寸的 HTML 见 [HTML2Deck 快速开始](/zh/html2deck/quick-start)。
 
 <Tip>
   如果还没确定产品，请在[选择产品](/zh/product-guide)中比较常见目标、执行边界和当前格式限制。

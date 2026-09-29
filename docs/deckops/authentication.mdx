@@ -8,7 +8,7 @@ Local parsing and conversion need no DeckFlow account. Authentication is resolve
 
 ## Get an API key
 
-Open [DeckFlow Settings](https://app.deckflow.com/start#settings), enter the settings page, and create or copy an API key. Store it in a secret manager and expose it only to server-side processes.
+Sign in to DeckFlow, then open **Integrations → [API Key Settings](https://app.deckflow.com/start#settings)**. Create or copy an API key, store it in a secret manager, and expose it only to server-side processes.
 
 ```bash
 export DECKOPS_API_KEY="<api-key>"
@@ -25,7 +25,7 @@ deckops auth status
 deckops config list
 ```
 
-Login stores a user token in the shared DeckFlow credential location. DeckOps, DeckRender, and DeckHTML can reuse the same login. Use `deckops auth logout` to remove it.
+Login stores a user token in the shared DeckFlow credential location. DeckOps, DeckRender, and HTML2Deck can reuse the same login. Use `deckops auth logout` to remove it.
 
 Credentials are stored under `~/.deckflow/credentials`; product defaults use `~/.deckflow/deckops/config.json`. `deckops config list` shows the resolved value and its source without requiring you to guess which environment variable or file won.
 

@@ -1,0 +1,19 @@
+---
+title: PNG 输出
+sidebarTitle: PNG 输出
+description: "将每个检测到的 HTML2Deck 幻灯片渲染成 PNG 图片。"
+---
+
+通过 `-o` 扩展名选择 PNG：
+
+```bash
+html2deck deck.html -o frames.png --mode local
+```
+
+本地单页输入写入指定路径。本地多页输入会在 `.png` 前加入从 1 开始的编号：不足十页时为 `preview1.png` 到 `preview9.png`，达到十页时使用 `preview01.png` 这类补零名称。JSON 结果中的 `output` 是第一个路径，`outputs` 列出全部路径。
+
+PNG 适合预览、缩略图、视觉审核和后续图片工作流。它会保留渲染效果，但不会保留可编辑幻灯片对象。
+
+PNG 转换不使用 PPTX 专属的动画、页面转场或字体嵌入行为，而是按所选视口渲染每个检测到的幻灯片当前可见状态。
+
+需要在内存中获取图片 Buffer 时，使用 Node `convertHtmlToPng()` API。

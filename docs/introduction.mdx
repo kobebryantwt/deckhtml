@@ -36,8 +36,8 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
   <Card title="Update an existing PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/deckuse/overview" cta="Explore DeckUse" arrow>
     <strong>DeckUse</strong> lets agents update text, pictures, slides, and element properties locally without launching PowerPoint, then export another editable PPTX.
   </Card>
-  <Card title="Author a deck in HTML" icon="code" iconType="solid" color="#ec4899" href="/deckhtml/overview" cta="Explore DeckHTML" arrow>
-    <strong>DeckHTML</strong> turns one multi-page HTML document or ordered HTML/SVG files into PPTX or PNG, and reports which PPTX elements stay editable or fall back to pixels.
+  <Card title="Author a deck in HTML" icon="code" iconType="solid" color="#ec4899" href="/html2deck/overview" cta="Explore HTML2Deck" arrow>
+    <strong>HTML2Deck</strong> turns one multi-page HTML document or ordered HTML/SVG files into PPTX or PNG, and reports which PPTX elements stay editable or fall back to pixels.
   </Card>
 </CardGroup>
 
@@ -81,16 +81,16 @@ description: "Build agent workflows that inspect, render, parse, transform, upda
       <span>Local files, stdin, or HTML URL</span>
     </div>
     <div className="product-map-capabilities">
-      <a className="product-map-card" href="/deckhtml/overview">
+      <a className="product-map-card" href="/html2deck/overview">
         <span className="product-map-label">Generate a deck</span>
-        <strong>DeckHTML</strong>
+        <strong>HTML2Deck</strong>
         <span>PPTX or PNG, with PPTX mapping diagnostics</span>
       </a>
     </div>
   </section>
 </div>
 
-DeckProbe and DeckUse execute locally. DeckRender provides explicit local, cloud, and local-first automatic engine selection; its Browser SDK is cloud-only. DeckOps parses PDF, PPTX, DOCX, and static web source locally by default, with explicit cloud routes and a cloud-only Browser SDK. DeckHTML supports local browser-based conversion and a cloud mode.
+DeckProbe and DeckUse execute locally. DeckRender provides explicit local, cloud, and local-first automatic engine selection; its Browser SDK is cloud-only. DeckOps parses PDF, PPTX, DOCX, and static web source locally by default, with explicit cloud routes and a cloud-only Browser SDK. HTML2Deck supports local browser-based conversion and a cloud mode.
 
 ## Compare the execution boundary
 
@@ -100,7 +100,7 @@ DeckProbe and DeckUse execute locally. DeckRender provides explicit local, cloud
 | Produce page images, PDF, thumbnails, or video | [DeckRender](/deckrender/overview) | CLI, Node.js SDK, and Browser SDK | None locally; guest or authenticated cloud access |
 | Parse content into reusable DeckIR and Markdown | [DeckOps](/deckops/overview) | CLI, Node.js SDK, and Browser SDK | Not required locally; cloud access for cloud routes |
 | Inspect and apply structured changes to an existing PPTX | [DeckUse](/deckuse/overview) | CLI and Node.js SDK | Not required; processing stays local |
-| Generate PPTX or PNG from HTML or SVG | [DeckHTML](/deckhtml/overview) | CLI and Node.js SDK | Not required locally; guest or authenticated cloud mode |
+| Generate PPTX or PNG from HTML or SVG | [HTML2Deck](/html2deck/overview) | CLI and Node.js SDK | Not required locally; guest or authenticated cloud mode |
 
 <Note>
   Supported formats and operations differ by product. A file being recognized by one product does not mean every other product can process it. Check the relevant supported-format or command reference before choosing a path.

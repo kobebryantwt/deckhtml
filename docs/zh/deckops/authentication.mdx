@@ -8,7 +8,7 @@ description: "仅为明确使用 DeckFlow 云端的 DeckOps 路径配置认证�
 
 ## 获取 API Key
 
-访问 [DeckFlow 设置](https://app.deckflow.com/start#settings)，进入设置页面并创建或复制 API Key。请把它保存在密钥管理系统中，只提供给服务端进程。
+登录 DeckFlow，然后访问 **Integrations → [API Key 设置页面](https://app.deckflow.com/start#settings)**。创建或复制 API Key 后，请把它保存在密钥管理系统中，只提供给服务端进程。
 
 ```bash
 export DECKOPS_API_KEY="<api-key>"
@@ -25,7 +25,7 @@ deckops auth status
 deckops config list
 ```
 
-登录得到的用户 Token 保存在 DeckFlow 共享凭证目录中，DeckOps、DeckRender 和 DeckHTML 可以复用同一次登录。使用 `deckops auth logout` 退出。
+登录得到的用户 Token 保存在 DeckFlow 共享凭证目录中，DeckOps、DeckRender 和 HTML2Deck 可以复用同一次登录。使用 `deckops auth logout` 退出。
 
 凭证位于 `~/.deckflow/credentials`，DeckOps 产品默认值位于 `~/.deckflow/deckops/config.json`。`deckops config list` 会显示每项最终值的来源，便于判断具体由哪个环境变量或配置文件生效。
 

@@ -36,8 +36,8 @@ description: "使用 DeckFlow 为 Agent 构建文档探测、渲染、解析、�
   <Card title="修改现有 PPTX" icon="pen-to-square" iconType="solid" color="#f59e0b" href="/zh/deckuse/overview" cta="了解 DeckUse" arrow>
     <strong>DeckUse</strong> 让 Agent 无需启动 PowerPoint，即可在本地修改文本、图片、幻灯片和元素属性，并导出另一份可编辑 PPTX。
   </Card>
-  <Card title="使用 HTML 创作 Deck" icon="code" iconType="solid" color="#ec4899" href="/zh/deckhtml/overview" cta="了解 DeckHTML" arrow>
-    <strong>DeckHTML</strong> 将一份多页 HTML 或多个有序 HTML/SVG 文件转换为 PPTX 或 PNG，并报告 PPTX 中哪些元素保持可编辑、哪些会降级为图片。
+  <Card title="使用 HTML 创作 Deck" icon="code" iconType="solid" color="#ec4899" href="/zh/html2deck/overview" cta="了解 HTML2Deck" arrow>
+    <strong>HTML2Deck</strong> 将一份多页 HTML 或多个有序 HTML/SVG 文件转换为 PPTX 或 PNG，并报告 PPTX 中哪些元素保持可编辑、哪些会降级为图片。
   </Card>
 </CardGroup>
 
@@ -81,16 +81,16 @@ description: "使用 DeckFlow 为 Agent 构建文档探测、渲染、解析、�
       <span>本地文件、标准输入或 HTML URL</span>
     </div>
     <div className="product-map-capabilities">
-      <a className="product-map-card" href="/zh/deckhtml/overview">
+      <a className="product-map-card" href="/zh/html2deck/overview">
         <span className="product-map-label">生成演示文稿</span>
-        <strong>DeckHTML</strong>
+        <strong>HTML2Deck</strong>
         <span>PPTX 或 PNG，以及 PPTX 映射诊断</span>
       </a>
     </div>
   </section>
 </div>
 
-DeckProbe 与 DeckUse 在本地执行。DeckRender 提供明确的本地、云端和本地优先自动选择；Browser SDK 仅接入云端。DeckOps 默认在本地解析 PDF、PPTX、DOCX 和静态网页源码，同时提供明确的云端路径和仅接入云端的 Browser SDK。DeckHTML 同时支持本地浏览器转换和云端模式。
+DeckProbe 与 DeckUse 在本地执行。DeckRender 提供明确的本地、云端和本地优先自动选择；Browser SDK 仅接入云端。DeckOps 默认在本地解析 PDF、PPTX、DOCX 和静态网页源码，同时提供明确的云端路径和仅接入云端的 Browser SDK。HTML2Deck 同时支持本地浏览器转换和云端模式。
 
 ## 比较执行边界
 
@@ -100,7 +100,7 @@ DeckProbe 与 DeckUse 在本地执行。DeckRender 提供明确的本地、云�
 | 生成页面图片、PDF、缩略图或视频 | [DeckRender](/zh/deckrender/overview) | CLI、Node.js SDK 和 Browser SDK | 本地无需认证；云端支持游客或认证 |
 | 把内容解析成可复用 DeckIR 和 Markdown | [DeckOps](/zh/deckops/overview) | CLI、Node.js SDK 和 Browser SDK | 本地无需认证；云端路径需要云端访问能力 |
 | 检查现有 PPTX 并执行结构化修改 | [DeckUse](/zh/deckuse/overview) | CLI 和 Node.js SDK | 不需要；文件留在本地 |
-| 从 HTML 或 SVG 生成 PPTX 或 PNG | [DeckHTML](/zh/deckhtml/overview) | CLI 和 Node.js SDK | 本地不需要；云端支持游客或认证 |
+| 从 HTML 或 SVG 生成 PPTX 或 PNG | [HTML2Deck](/zh/html2deck/overview) | CLI 和 Node.js SDK | 本地不需要；云端支持游客或认证 |
 
 <Note>
   每个产品支持的格式和操作范围不同。某个产品能识别文件，不代表其他产品也能处理。选择路径前，请查看对应产品的支持格式或命令参考页。

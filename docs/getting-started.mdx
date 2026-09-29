@@ -16,7 +16,7 @@ Choose the first result your application needs. Each section provides installati
 | DeckRender | PNG, PDF, or supported video render | Local or cloud | None locally; guest or authenticated cloud |
 | DeckOps | Durable DeckIR artifact and Markdown view | Local by default; cloud when selected | None locally |
 | DeckUse | Updated PPTX | Local | None |
-| DeckHTML | PPTX or PNG from HTML | Local or cloud | None locally |
+| HTML2Deck | PPTX or PNG from HTML | Local or cloud | None locally |
 
 ## DeckProbe: inspect a known PDF
 
@@ -93,17 +93,17 @@ deckuse commit ./workspace -o updated.pptx --json
 
 DeckUse works locally through a versioned workspace. Its CLI can inspect and query PPTX structure, update text, properties and geometry, add/duplicate/remove supported slides and elements, work with pictures, tables and chart caches, then export another PPTX. Follow the [DeckUse Quickstart](/deckuse/quick-start) for prerequisites, expected query output, and final verification.
 
-## DeckHTML: generate a PPTX locally
+## HTML2Deck: generate a PPTX locally
 
 <span className="product-kicker">Local Chromium · HTML source · PPTX output</span>
 
 ```bash
-npm install -g @deckflow/deckhtml
-deckhtml deck.html -o deck.pptx --mode local --json --quiet
+npm install -g @deckflow/html2deck
+html2deck deck.html -o deck.pptx --mode local --json --quiet
 test -s deck.pptx
 ```
 
-The command uses local Chromium and returns normalized paths, output format, execution mode, and slide count. Prepare the browser and a slide-sized HTML source in the [DeckHTML Quickstart](/deckhtml/quick-start).
+The command uses local Chromium and returns normalized paths, output format, execution mode, and slide count. Prepare the browser and a slide-sized HTML source in the [HTML2Deck Quickstart](/html2deck/quick-start).
 
 <Tip>
   Still deciding? [Choose a product](/product-guide) compares common goals, execution boundaries, and current format limitations.

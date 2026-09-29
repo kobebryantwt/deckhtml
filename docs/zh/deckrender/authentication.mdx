@@ -24,8 +24,8 @@ deckrender auth status
 配置 CLI 前，先获取 API Key：
 
 <Steps>
-  <Step title="打开 DeckFlow 设置">
-    登录 DeckFlow，然后访问 [API Key 设置页面](https://app.deckflow.com/start#settings)。
+  <Step title="打开 Integrations">
+    登录 DeckFlow，然后访问 **Integrations → [API Key 设置页面](https://app.deckflow.com/start#settings)**。
   </Step>
   <Step title="创建并保存 API Key">
     在设置页面中配置 API Key，复制后保存到开发或生产环境使用的安全凭证存储中。
@@ -46,7 +46,7 @@ export DECKFLOW_API_KEY='YOUR_API_KEY'
 deckrender hello.html -o hello.png --json --quiet
 ```
 
-`DECKRENDER_API_KEY` 的优先级高于 `DECKFLOW_API_KEY`；为兼容已有环境，也会读取 `DECKHTML_API_KEY`。
+`DECKRENDER_API_KEY` 的优先级高于 `DECKFLOW_API_KEY`。为兼容已有环境，DeckRender 仍会读取旧变量名 `DECKHTML_API_KEY`，但新配置不应继续依赖它。
 
 <Warning>
   API Key 属于服务端凭证。不要写入浏览器代码、提交到代码仓库或输出到日志。

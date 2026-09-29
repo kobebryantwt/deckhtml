@@ -1,10 +1,10 @@
 ---
 title: 从 HTML 生成 PPTX
 sidebarTitle: HTML 转 PPTX
-description: "创建单页 HTML，在本地使用 DeckHTML 转换，并验证生成的 PPTX。"
+description: "创建单页 HTML，在本地使用 HTML2Deck 转换，并验证生成的 PPTX。"
 ---
 
-本示例创建一页演示文稿尺寸的 HTML，并使用 DeckHTML 与 Chromium 在同一台机器上转换为 PPTX。
+本示例创建一页演示文稿尺寸的 HTML，并使用 HTML2Deck 与 Chromium 在同一台机器上转换为 PPTX。
 
 <div className="workflow-meta"><span className="workflow-meta-label">最终产物</span><span className="workflow-meta-value">本地 <code>deck.pptx</code> 文件，以及一份 JSON 转换摘要。</span></div>
 
@@ -17,12 +17,12 @@ description: "创建单页 HTML，在本地使用 DeckHTML 转换，并验证生
 ## 运行示例
 
 <Steps>
-  <Step title="安装 DeckHTML 与 Chromium">
+  <Step title="安装 HTML2Deck 与 Chromium">
 
 ```bash
-npm install -g @deckflow/deckhtml
+npm install -g @deckflow/html2deck
 npx playwright install chromium
-deckhtml --version
+html2deck --version
 ```
 
   </Step>
@@ -62,7 +62,7 @@ deckhtml --version
   <Step title="生成演示文稿">
 
 ```bash
-deckhtml deck.html -o deck.pptx --mode local --json --quiet
+html2deck deck.html -o deck.pptx --mode local --json --quiet
 ```
 
   </Step>
@@ -79,10 +79,10 @@ node -e "const fs=require('fs'); const s=fs.statSync('deck.pptx'); if(s.size===0
   `deck.pptx` 存在且大小不为零，同时 JSON 结果报告本地模式的 PPTX 输出，即表示成功。
 </Check>
 
-<Card title="理解元素保真度" icon="eye" iconType="solid" href="/zh/deckhtml/guides/element-mapping">
+<Card title="理解元素保真度" icon="eye" iconType="solid" href="/zh/html2deck/guides/element-mapping">
   查看哪些 HTML 元素可以成为可编辑 PowerPoint 对象，哪些需要回退为矢量或栅格图像。
 </Card>
 
-<Card title="扩展为多页演示文稿" icon="layer-group" iconType="solid" href="/zh/deckhtml/guides/multi-page-and-batch">
+<Card title="扩展为多页演示文稿" icon="layer-group" iconType="solid" href="/zh/html2deck/guides/multi-page-and-batch">
   在一份 HTML 中重复幻灯片容器，或合并多个有序 HTML/SVG 文件。
 </Card>

@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "DeckFlow",
-  "description": "Developer documentation for DeckProbe, DeckRender, DeckOps, DeckUse, and DeckHTML.",
+  "description": "Developer documentation for DeckProbe, DeckRender, DeckOps, DeckUse, and HTML2Deck.",
   "theme": "maple",
   "logo": {
     "light": "/logo-v3/light.png",
@@ -36,7 +36,7 @@
   },
   "redirects": [
     { "source": "/", "destination": "/introduction", "permanent": true },
-    { "source": "/quickstart", "destination": "/deckhtml/quick-start", "permanent": true },
+    { "source": "/quickstart", "destination": "/html2deck/quick-start", "permanent": true },
     { "source": "/concepts", "destination": "/product-guide", "permanent": true },
     { "source": "/architecture", "destination": "/product-guide", "permanent": true },
     { "source": "/getting-started/overview", "destination": "/introduction", "permanent": true },
@@ -54,34 +54,38 @@
     { "source": "/deckops/sdk/python", "destination": "/deckops/sdk/typescript", "permanent": true },
     { "source": "/deckops/sdk/go", "destination": "/deckops/sdk/typescript", "permanent": true },
     { "source": "/products/deckhtml/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
+    { "source": "/deckhtml/:path*", "destination": "/html2deck/:path*", "permanent": true },
+    { "source": "/products/deckhtml/:path*", "destination": "/html2deck/:path*", "permanent": true },
+    { "source": "/products/html2deck/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
     { "source": "/products/:path*", "destination": "/:path*", "permanent": true },
-    { "source": "/docs/quick-start", "destination": "/deckhtml/quick-start", "permanent": true },
+    { "source": "/docs/quick-start", "destination": "/html2deck/quick-start", "permanent": true },
     { "source": "/docs/overview", "destination": "/introduction", "permanent": true },
     { "source": "/docs/concepts", "destination": "/product-guide", "permanent": true },
     { "source": "/docs/architecture", "destination": "/product-guide", "permanent": true },
-    { "source": "/docs/local-mode", "destination": "/deckhtml/guides/local-mode", "permanent": true },
-    { "source": "/docs/cloud-mode", "destination": "/deckhtml/guides/cloud-mode", "permanent": true },
-    { "source": "/docs/configuration", "destination": "/deckhtml/cli/commands", "permanent": true },
-    { "source": "/docs/errors", "destination": "/deckhtml/guides/errors", "permanent": true },
-    { "source": "/docs/faq", "destination": "/deckhtml/overview", "permanent": true },
-    { "source": "/cli/:path*", "destination": "/deckhtml/cli/:path*", "permanent": true },
-    { "source": "/sdk/:path*", "destination": "/deckhtml/sdk/:path*", "permanent": true },
+    { "source": "/docs/local-mode", "destination": "/html2deck/guides/local-mode", "permanent": true },
+    { "source": "/docs/cloud-mode", "destination": "/html2deck/guides/cloud-mode", "permanent": true },
+    { "source": "/docs/configuration", "destination": "/html2deck/cli/commands", "permanent": true },
+    { "source": "/docs/errors", "destination": "/html2deck/guides/errors", "permanent": true },
+    { "source": "/docs/faq", "destination": "/html2deck/overview", "permanent": true },
+    { "source": "/cli/:path*", "destination": "/html2deck/cli/:path*", "permanent": true },
+    { "source": "/sdk/:path*", "destination": "/html2deck/sdk/:path*", "permanent": true },
     { "source": "/mcp/:path*", "destination": "/platform/mcp/:path*", "permanent": true },
-    { "source": "/skills/:path*", "destination": "/deckhtml/quick-start", "permanent": true },
-    { "source": "/skill/index", "destination": "/deckhtml/quick-start", "permanent": true },
-    { "source": "/skill/deckhtml", "destination": "/deckhtml/quick-start", "permanent": true },
-    { "source": "/deckhtml/skills/:path*", "destination": "/deckhtml/quick-start", "permanent": true },
-    { "source": "/deckhtml/sdk/python", "destination": "/deckhtml/sdk/overview", "permanent": true },
-    { "source": "/deckhtml/cli/features", "destination": "/deckhtml/cli/overview", "permanent": true },
-    { "source": "/deckhtml/cli/examples", "destination": "/deckhtml/cli/overview", "permanent": true },
-    { "source": "/deckhtml/guides/configuration", "destination": "/deckhtml/cli/commands", "permanent": true },
-    { "source": "/deckhtml/guides/faq", "destination": "/deckhtml/overview", "permanent": true },
-    { "source": "/reference/input-html", "destination": "/deckhtml/reference/input-html", "permanent": true },
-    { "source": "/reference/output-pptx", "destination": "/deckhtml/reference/output-pptx", "permanent": true },
-    { "source": "/reference/output-pdf", "destination": "/deckhtml/reference/output-pptx", "permanent": true },
-    { "source": "/deckhtml/reference/output-pdf", "destination": "/deckhtml/reference/output-pptx", "permanent": true },
-    { "source": "/reference/output-png", "destination": "/deckhtml/reference/output-png", "permanent": true },
-    { "source": "/reference/report-schema", "destination": "/deckhtml/reference/report-schema", "permanent": true },
+    { "source": "/skills/:path*", "destination": "/html2deck/quick-start", "permanent": true },
+    { "source": "/skill/index", "destination": "/html2deck/quick-start", "permanent": true },
+    { "source": "/skill/deckhtml", "destination": "/html2deck/quick-start", "permanent": true },
+    { "source": "/skill/html2deck", "destination": "/html2deck/quick-start", "permanent": true },
+    { "source": "/html2deck/skills/:path*", "destination": "/html2deck/quick-start", "permanent": true },
+    { "source": "/html2deck/sdk/python", "destination": "/html2deck/sdk/overview", "permanent": true },
+    { "source": "/html2deck/cli/features", "destination": "/html2deck/cli/overview", "permanent": true },
+    { "source": "/html2deck/cli/examples", "destination": "/html2deck/cli/overview", "permanent": true },
+    { "source": "/html2deck/guides/configuration", "destination": "/html2deck/cli/commands", "permanent": true },
+    { "source": "/html2deck/guides/faq", "destination": "/html2deck/overview", "permanent": true },
+    { "source": "/reference/input-html", "destination": "/html2deck/reference/input-html", "permanent": true },
+    { "source": "/reference/output-pptx", "destination": "/html2deck/reference/output-pptx", "permanent": true },
+    { "source": "/reference/output-pdf", "destination": "/html2deck/reference/output-pptx", "permanent": true },
+    { "source": "/html2deck/reference/output-pdf", "destination": "/html2deck/reference/output-pptx", "permanent": true },
+    { "source": "/reference/output-png", "destination": "/html2deck/reference/output-png", "permanent": true },
+    { "source": "/reference/report-schema", "destination": "/html2deck/reference/report-schema", "permanent": true },
     { "source": "/reference/:path*", "destination": "/platform/api/:path*", "permanent": true },
     { "source": "/platform/api/create-html2pptx-task", "destination": "/platform/api/submit-async-task", "permanent": true },
     { "source": "/platform/api/get-task-details", "destination": "/platform/api/query-task-status", "permanent": true },
@@ -100,25 +104,28 @@
     { "source": "/zh/deckops/sdk/python", "destination": "/zh/deckops/sdk/typescript", "permanent": true },
     { "source": "/zh/deckops/sdk/go", "destination": "/zh/deckops/sdk/typescript", "permanent": true },
     { "source": "/zh/products/deckhtml/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
+    { "source": "/zh/deckhtml/:path*", "destination": "/zh/html2deck/:path*", "permanent": true },
+    { "source": "/zh/products/deckhtml/:path*", "destination": "/zh/html2deck/:path*", "permanent": true },
+    { "source": "/zh/products/html2deck/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
     { "source": "/zh/products/:path*", "destination": "/zh/:path*", "permanent": true },
-    { "source": "/zh/docs/quick-start", "destination": "/zh/deckhtml/quick-start", "permanent": true },
+    { "source": "/zh/docs/quick-start", "destination": "/zh/html2deck/quick-start", "permanent": true },
     { "source": "/zh/docs/overview", "destination": "/zh/introduction", "permanent": true },
     { "source": "/zh/docs/concepts", "destination": "/zh/product-guide", "permanent": true },
     { "source": "/zh/docs/architecture", "destination": "/zh/product-guide", "permanent": true },
-    { "source": "/zh/docs/local-mode", "destination": "/zh/deckhtml/guides/local-mode", "permanent": true },
-    { "source": "/zh/docs/cloud-mode", "destination": "/zh/deckhtml/guides/cloud-mode", "permanent": true },
-    { "source": "/zh/docs/configuration", "destination": "/zh/deckhtml/cli/commands", "permanent": true },
-    { "source": "/zh/docs/faq", "destination": "/zh/deckhtml/overview", "permanent": true },
-    { "source": "/zh/cli/:path*", "destination": "/zh/deckhtml/cli/:path*", "permanent": true },
-    { "source": "/zh/sdk/:path*", "destination": "/zh/deckhtml/sdk/:path*", "permanent": true },
+    { "source": "/zh/docs/local-mode", "destination": "/zh/html2deck/guides/local-mode", "permanent": true },
+    { "source": "/zh/docs/cloud-mode", "destination": "/zh/html2deck/guides/cloud-mode", "permanent": true },
+    { "source": "/zh/docs/configuration", "destination": "/zh/html2deck/cli/commands", "permanent": true },
+    { "source": "/zh/docs/faq", "destination": "/zh/html2deck/overview", "permanent": true },
+    { "source": "/zh/cli/:path*", "destination": "/zh/html2deck/cli/:path*", "permanent": true },
+    { "source": "/zh/sdk/:path*", "destination": "/zh/html2deck/sdk/:path*", "permanent": true },
     { "source": "/zh/mcp/:path*", "destination": "/zh/platform/mcp/:path*", "permanent": true },
-    { "source": "/zh/skills/:path*", "destination": "/zh/deckhtml/quick-start", "permanent": true },
-    { "source": "/zh/deckhtml/skills/:path*", "destination": "/zh/deckhtml/quick-start", "permanent": true },
-    { "source": "/zh/deckhtml/cli/features", "destination": "/zh/deckhtml/cli/overview", "permanent": true },
-    { "source": "/zh/deckhtml/cli/examples", "destination": "/zh/deckhtml/cli/overview", "permanent": true },
-    { "source": "/zh/deckhtml/guides/configuration", "destination": "/zh/deckhtml/cli/commands", "permanent": true },
-    { "source": "/zh/deckhtml/guides/faq", "destination": "/zh/deckhtml/overview", "permanent": true },
-    { "source": "/zh/deckhtml/reference/output-pdf", "destination": "/zh/deckhtml/reference/output-pptx", "permanent": true },
+    { "source": "/zh/skills/:path*", "destination": "/zh/html2deck/quick-start", "permanent": true },
+    { "source": "/zh/html2deck/skills/:path*", "destination": "/zh/html2deck/quick-start", "permanent": true },
+    { "source": "/zh/html2deck/cli/features", "destination": "/zh/html2deck/cli/overview", "permanent": true },
+    { "source": "/zh/html2deck/cli/examples", "destination": "/zh/html2deck/cli/overview", "permanent": true },
+    { "source": "/zh/html2deck/guides/configuration", "destination": "/zh/html2deck/cli/commands", "permanent": true },
+    { "source": "/zh/html2deck/guides/faq", "destination": "/zh/html2deck/overview", "permanent": true },
+    { "source": "/zh/html2deck/reference/output-pdf", "destination": "/zh/html2deck/reference/output-pptx", "permanent": true },
     { "source": "/zh/reference/:path*", "destination": "/zh/platform/api/:path*", "permanent": true },
     { "source": "/zh/deckops/document-information", "destination": "/zh/deckops/structured-results", "permanent": true }
   ],
@@ -157,9 +164,10 @@
                 "pages": [
                   "examples/overview",
                   "examples/inspect-and-route",
-                  "examples/html-to-pptx",
                   "examples/render-html-preview",
-                  "examples/update-pptx-content"
+                  "examples/parse-to-markdown",
+                  "examples/update-pptx-content",
+                  "examples/html-to-pptx"
                 ]
               }
             ]
@@ -277,55 +285,55 @@
             ]
           },
           {
-            "tab": "DeckHTML",
+            "tab": "HTML2Deck",
             "groups": [
               {
                 "group": "Get Started",
                 "pages": [
-                  "deckhtml/overview",
-                  "deckhtml/quick-start",
-                  "deckhtml/authentication"
+                  "html2deck/overview",
+                  "html2deck/quick-start",
+                  "html2deck/authentication"
                 ]
               },
               {
                 "group": "Author HTML",
                 "pages": [
-                  "deckhtml/reference/input-html",
-                  "deckhtml/guides/multi-page-and-batch",
-                  "deckhtml/guides/element-mapping",
-                  "deckhtml/guides/animations-and-transitions",
-                  "deckhtml/guides/resources-and-iframes"
+                  "html2deck/reference/input-html",
+                  "html2deck/guides/multi-page-and-batch",
+                  "html2deck/guides/element-mapping",
+                  "html2deck/guides/animations-and-transitions",
+                  "html2deck/guides/resources-and-iframes"
                 ]
               },
               {
                 "group": "Execution Modes",
                 "pages": [
-                  "deckhtml/guides/local-mode",
-                  "deckhtml/guides/cloud-mode"
+                  "html2deck/guides/local-mode",
+                  "html2deck/guides/cloud-mode"
                 ]
               },
               {
                 "group": "CLI",
                 "pages": [
-                  "deckhtml/cli/overview",
-                  "deckhtml/cli/output-modes",
-                  "deckhtml/cli/commands"
+                  "html2deck/cli/overview",
+                  "html2deck/cli/output-modes",
+                  "html2deck/cli/commands"
                 ]
               },
               {
                 "group": "SDK",
                 "pages": [
-                  "deckhtml/sdk/overview",
-                  "deckhtml/sdk/node"
+                  "html2deck/sdk/overview",
+                  "html2deck/sdk/node"
                 ]
               },
               {
                 "group": "Reference",
                 "pages": [
-                  "deckhtml/reference/output-pptx",
-                  "deckhtml/reference/output-png",
-                  "deckhtml/reference/report-schema",
-                  "deckhtml/guides/errors"
+                  "html2deck/reference/output-pptx",
+                  "html2deck/reference/output-png",
+                  "html2deck/reference/report-schema",
+                  "html2deck/guides/errors"
                 ]
               }
             ]
@@ -400,9 +408,10 @@
                 "pages": [
                   "zh/examples/overview",
                   "zh/examples/inspect-and-route",
-                  "zh/examples/html-to-pptx",
                   "zh/examples/render-html-preview",
-                  "zh/examples/update-pptx-content"
+                  "zh/examples/parse-to-markdown",
+                  "zh/examples/update-pptx-content",
+                  "zh/examples/html-to-pptx"
                 ]
               }
             ]
@@ -520,55 +529,55 @@
             ]
           },
           {
-            "tab": "DeckHTML",
+            "tab": "HTML2Deck",
             "groups": [
               {
                 "group": "开始使用",
                 "pages": [
-                  "zh/deckhtml/overview",
-                  "zh/deckhtml/quick-start",
-                  "zh/deckhtml/authentication"
+                  "zh/html2deck/overview",
+                  "zh/html2deck/quick-start",
+                  "zh/html2deck/authentication"
                 ]
               },
               {
                 "group": "编写 HTML",
                 "pages": [
-                  "zh/deckhtml/reference/input-html",
-                  "zh/deckhtml/guides/multi-page-and-batch",
-                  "zh/deckhtml/guides/element-mapping",
-                  "zh/deckhtml/guides/animations-and-transitions",
-                  "zh/deckhtml/guides/resources-and-iframes"
+                  "zh/html2deck/reference/input-html",
+                  "zh/html2deck/guides/multi-page-and-batch",
+                  "zh/html2deck/guides/element-mapping",
+                  "zh/html2deck/guides/animations-and-transitions",
+                  "zh/html2deck/guides/resources-and-iframes"
                 ]
               },
               {
                 "group": "执行模式",
                 "pages": [
-                  "zh/deckhtml/guides/local-mode",
-                  "zh/deckhtml/guides/cloud-mode"
+                  "zh/html2deck/guides/local-mode",
+                  "zh/html2deck/guides/cloud-mode"
                 ]
               },
               {
                 "group": "CLI",
                 "pages": [
-                  "zh/deckhtml/cli/overview",
-                  "zh/deckhtml/cli/output-modes",
-                  "zh/deckhtml/cli/commands"
+                  "zh/html2deck/cli/overview",
+                  "zh/html2deck/cli/output-modes",
+                  "zh/html2deck/cli/commands"
                 ]
               },
               {
                 "group": "SDK",
                 "pages": [
-                  "zh/deckhtml/sdk/overview",
-                  "zh/deckhtml/sdk/node"
+                  "zh/html2deck/sdk/overview",
+                  "zh/html2deck/sdk/node"
                 ]
               },
               {
                 "group": "参考",
                 "pages": [
-                  "zh/deckhtml/reference/output-pptx",
-                  "zh/deckhtml/reference/output-png",
-                  "zh/deckhtml/reference/report-schema",
-                  "zh/deckhtml/guides/errors"
+                  "zh/html2deck/reference/output-pptx",
+                  "zh/html2deck/reference/output-png",
+                  "zh/html2deck/reference/report-schema",
+                  "zh/html2deck/guides/errors"
                 ]
               }
             ]

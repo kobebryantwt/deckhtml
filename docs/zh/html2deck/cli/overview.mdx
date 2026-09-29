@@ -1,0 +1,57 @@
+---
+title: CLI 概览
+sidebarTitle: 概览
+description: "在终端、脚本、CI 或智能体工作流中转换 HTML2Deck 输入。"
+---
+
+## 安装并验证
+
+```bash
+npm install -g @deckflow/html2deck
+html2deck --version
+html2deck --help
+```
+
+也可以不全局安装，直接运行指定版本或最新版：
+
+```bash
+npx -y @deckflow/html2deck@latest deck.html -o deck.pptx
+```
+
+## 输入形式
+
+```bash
+html2deck deck.html -o deck.pptx
+html2deck 01.html 02.html 03.html -o deck.pptx
+cat deck.html | html2deck - -o deck.pptx
+html2deck https://example.com/deck.html -o deck.pptx
+```
+
+标准输入必须指定 `--output`。同一次命令可以使用本地文件或一个或多个 URL，但不能混合两者。URL 输入会先下载为 HTML 文本，不会继承 Cookie 或浏览器状态；相对资源需要显式 `<base>` 或绝对 URL。
+
+## 输出格式
+
+HTML2Deck 根据 `-o` 推断格式：
+
+```bash
+html2deck deck.html -o deck.pptx
+html2deck deck.html -o frames.png
+```
+
+省略 `-o` 时默认生成 PPTX。
+
+检测到多页时，PNG 输出会使用带编号的路径，并在 JSON 的 `outputs` 数组中返回全部文件。详见[多页与批量输入](/zh/html2deck/guides/multi-page-and-batch)。
+
+## 自动化推荐参数
+
+```bash
+html2deck deck.html \
+  -o deck.pptx \
+  --mode local \
+  --json \
+  --report \
+  --force \
+  --quiet
+```
+
+stdout 只能包含最终 JSON 时，请同时使用 `--json --quiet`。关于 stdout、stderr、退出状态、文件覆盖和报告行为，请参阅[输出与自动化](/zh/html2deck/cli/output-modes)。

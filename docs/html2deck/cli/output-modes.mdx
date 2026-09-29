@@ -1,0 +1,48 @@
+---
+title: Output and Automation
+sidebarTitle: Output and Automation
+description: "Consume HTML2Deck output safely from scripts and CI pipelines."
+---
+
+## Human-readable output
+
+The default mode is intended for humans and may print progress, font notices, and artifact paths. Do not parse it as a stable stdout protocol. Multi-page PNG conversion prints each output path.
+
+Local conversion refuses to overwrite an existing artifact. Pass `--force` only when replacement is intended. The current cloud download path writes the downloaded result directly and can replace a same-named file, so isolate cloud output paths in automation.
+
+## JSON output
+
+Use `--json --quiet` together for machine-readable stdout. In the current CLI, `--json` without `--quiet` can still write human-readable conversion logs to stdout before the final envelope.
+
+```bash
+html2deck deck.html -o deck.pptx --mode local --json --quiet
+```
+
+```json
+{
+  "ok": true,
+  "input": ["/absolute/path/deck.html"],
+  "output": "/absolute/path/deck.pptx",
+  "format": "pptx",
+  "mode": "local",
+  "slideCount": 3
+}
+```
+
+The envelope can also contain `outputs`, `stats`, `simplified`, and `report` depending on format and flags.
+
+For multi-page PNG, `output` is the first numbered file and `outputs` contains every generated file in slide order. Treat `outputs` as authoritative.
+
+## Logging
+
+- `--quiet` suppresses nonessential progress and notices.
+- `--verbose` writes additional execution details to stderr.
+- `--quiet` and `--verbose` cannot be combined.
+
+## Reports
+
+`--report` writes `<output>.report.json`. Local PPTX conversion provides per-element mappings and diagnostics. Cloud conversion may provide an aggregate report instead. See [Reports and Diagnostics](/html2deck/reference/report-schema).
+
+## Exit behavior
+
+Successful conversion exits `0`. Usage, input, browser, conversion, upload, or output failures exit nonzero and are written as human-readable or structured errors according to output mode. Treat the exit status as authoritative; do not infer success only from a partially created file.

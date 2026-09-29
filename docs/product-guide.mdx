@@ -14,7 +14,7 @@ Start with the artifact your application must receive—facts, pixels, structure
 | DeckRender | Supported document, URL, stdin, or browser-selected file | Images, PDF, or video | Explicit local or cloud engine; Browser SDK is cloud-only | Structured content extraction or source editing |
 | DeckOps | PDF, PPTX, DOCX, Keynote, URL, or existing artifact | Durable `deckir.v1` artifact and Markdown views | Local-first CLI/Node.js; explicit cloud routes; cloud-only Browser SDK | Visual rendering or editable source mutation |
 | DeckUse | Existing PPTX | Versioned workspace and updated PPTX | Local Node.js command workflow | DOCX/XLSX/Keynote editing, rendering, or visual review |
-| DeckHTML | Local HTML/SVG, ordered files, stdin, or HTML URL | PPTX or PNG; PPTX mapping diagnostics | Local browser or cloud task through the CLI; local Node.js API | General-purpose conversion of existing Office files |
+| HTML2Deck | Local HTML/SVG, ordered files, stdin, or HTML URL | PPTX or PNG; PPTX mapping diagnostics | Local browser or cloud task through the CLI; local Node.js API | General-purpose conversion of existing Office files |
 
 ## Common decisions
 
@@ -25,8 +25,8 @@ Start with the artifact your application must receive—facts, pixels, structure
   <Accordion title="DeckRender or DeckOps?">
     Use <strong>DeckRender</strong> when your application needs visual output such as images, PDF, or video. Use <strong>DeckOps</strong> when it needs structured document state, source traceability, or Markdown that can be regenerated without reparsing.
   </Accordion>
-  <Accordion title="DeckUse or DeckHTML?">
-    Use <strong>DeckUse</strong> when an existing PPTX is the source of truth and you need to change its current content. Use <strong>DeckHTML</strong> when HTML or SVG is the authoring source and a new PPTX or PNG is the result.
+  <Accordion title="DeckUse or HTML2Deck?">
+    Use <strong>DeckUse</strong> when an existing PPTX is the source of truth and you need to change its current content. Use <strong>HTML2Deck</strong> when HTML or SVG is the authoring source and a new PPTX or PNG is the result.
   </Accordion>
   <Accordion title="Can products be combined?">
     Yes. A typical ingestion flow can use DeckProbe to validate a file, DeckOps to parse it, and DeckRender to produce previews. These are separate calls with separate result contracts; DeckFlow does not require every workflow to use all products.

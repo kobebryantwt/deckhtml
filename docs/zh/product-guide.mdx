@@ -14,7 +14,7 @@ description: "按照输入、操作、执行位置和最终产物比较 DeckFlow
 | DeckRender | 支持的文档、URL、标准输入或浏览器选择的文件 | 图片、PDF 或视频 | 显式本地或云端引擎；Browser SDK 仅云端 | 结构化内容提取或源文件编辑 |
 | DeckOps | PDF、PPTX、DOCX、Keynote、URL 或已有产物 | 可持久保存的 `deckir.v1` 产物和 Markdown 视图 | CLI/Node.js 默认本地；明确的云端路径；Browser SDK 仅云端 | 视觉渲染或修改可编辑源文件 |
 | DeckUse | 现有 PPTX | 带版本工作区和修改后的 PPTX | 本地 Node.js 命令工作流 | DOCX/XLSX/Keynote 编辑、渲染或视觉检查 |
-| DeckHTML | 本地 HTML/SVG、有序文件、标准输入或 HTML URL | PPTX 或 PNG；PPTX 映射诊断 | CLI 使用本地浏览器或云端任务；Node.js API 仅本地 | 对现有 Office 文件的通用转换 |
+| HTML2Deck | 本地 HTML/SVG、有序文件、标准输入或 HTML URL | PPTX 或 PNG；PPTX 映射诊断 | CLI 使用本地浏览器或云端任务；Node.js API 仅本地 | 对现有 Office 文件的通用转换 |
 
 ## 常见选择
 
@@ -25,8 +25,8 @@ description: "按照输入、操作、执行位置和最终产物比较 DeckFlow
   <Accordion title="DeckRender 还是 DeckOps？">
     应用需要图片、PDF 或视频等视觉产物时，使用 <strong>DeckRender</strong>。需要结构化文档状态、来源追溯，或不重复解析即可重新生成的 Markdown 时，使用 <strong>DeckOps</strong>。
   </Accordion>
-  <Accordion title="DeckUse 还是 DeckHTML？">
-    现有 PPTX 是事实源，并需要修改其中已有内容时，使用 <strong>DeckUse</strong>。HTML 或 SVG 是创作源，并要生成新的 PPTX 或 PNG 时，使用 <strong>DeckHTML</strong>。
+  <Accordion title="DeckUse 还是 HTML2Deck？">
+    现有 PPTX 是事实源，并需要修改其中已有内容时，使用 <strong>DeckUse</strong>。HTML 或 SVG 是创作源，并要生成新的 PPTX 或 PNG 时，使用 <strong>HTML2Deck</strong>。
   </Accordion>
   <Accordion title="产品可以组合使用吗？">
     可以。典型接入流程可以先用 DeckProbe 校验文件，再用 DeckOps 解析内容，最后用 DeckRender 生成预览。三者是独立调用并返回不同契约，DeckFlow 不要求所有流程都使用全部产品。

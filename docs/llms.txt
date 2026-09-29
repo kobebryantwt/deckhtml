@@ -15,6 +15,7 @@ Install DeckFlow CLIs and JavaScript SDKs from npm. For example: `npm install -g
 - [Choose a Product](https://docs.deckflow.com/product-guide.md): Compare inputs, outputs, execution location, and overlap.
 - [Common Workflows](https://docs.deckflow.com/common-workflows.md): Map application goals to one or more DeckFlow products.
 - [Examples](https://docs.deckflow.com/examples/overview.md): Browse complete recipes with known inputs and expected results.
+- [DeckOps PPTX to Markdown Example](https://docs.deckflow.com/examples/parse-to-markdown.md): Parse a PPTX into a reusable DeckIR artifact and generate Markdown without reparsing.
 - [Update PPTX Content](https://docs.deckflow.com/examples/update-pptx-content.md): Query, modify, validate, export, and verify a known PPTX with DeckUse.
 
 ## DeckProbe
@@ -67,18 +68,18 @@ Install DeckFlow CLIs and JavaScript SDKs from npm. For example: `npm install -g
 - [PPTX Capabilities](https://docs.deckflow.com/deckuse/reference/pptx-capabilities.md): Review indexed objects, writable operations, preservation behavior, and current boundaries.
 - [Results and Errors](https://docs.deckflow.com/deckuse/reference/results-and-errors.md): Handle result envelopes, diagnostics, conflicts, and CLI exit status.
 
-## DeckHTML
+## HTML2Deck
 
-- [DeckHTML Overview](https://docs.deckflow.com/deckhtml/overview.md): Generate PPTX or PNG from browser-rendered HTML and SVG, locally or through the CLI cloud path.
-- [DeckHTML Quickstart](https://docs.deckflow.com/deckhtml/quick-start.md): Prepare Chromium and generate a first local PPTX.
-- [HTML Input Contract](https://docs.deckflow.com/deckhtml/reference/input-html.md): Author slide structure and sizes, and choose CLI-fetch versus direct-browser URL behavior.
-- [Multi-page and Batch Input](https://docs.deckflow.com/deckhtml/guides/multi-page-and-batch.md): Combine repeated slide containers, ordered files, or URL inputs.
-- [Local Mode](https://docs.deckflow.com/deckhtml/guides/local-mode.md): Keep source files on the local machine.
-- [Cloud Mode](https://docs.deckflow.com/deckhtml/guides/cloud-mode.md): Use cloud execution and cloud-only capabilities.
-- [Element Mapping](https://docs.deckflow.com/deckhtml/guides/element-mapping.md): Understand editable, vector, raster, ignored, and unsupported mappings.
-- [CLI Commands](https://docs.deckflow.com/deckhtml/cli/commands.md): Review command syntax and options.
-- [Node.js SDK](https://docs.deckflow.com/deckhtml/sdk/overview.md): Convert HTML programmatically and inspect diagnostics.
-- [Reports and Diagnostics](https://docs.deckflow.com/deckhtml/reference/report-schema.md): Consume per-element mapping reports, aggregate reports, and stable diagnostic rule IDs.
+- [HTML2Deck Overview](https://docs.deckflow.com/html2deck/overview.md): Generate PPTX or PNG from browser-rendered HTML and SVG, locally or through the CLI cloud path.
+- [HTML2Deck Quickstart](https://docs.deckflow.com/html2deck/quick-start.md): Prepare Chromium and generate a first local PPTX.
+- [HTML Input Contract](https://docs.deckflow.com/html2deck/reference/input-html.md): Author slide structure and sizes, and choose CLI-fetch versus direct-browser URL behavior.
+- [Multi-page and Batch Input](https://docs.deckflow.com/html2deck/guides/multi-page-and-batch.md): Combine repeated slide containers, ordered files, or URL inputs.
+- [Local Mode](https://docs.deckflow.com/html2deck/guides/local-mode.md): Keep source files on the local machine.
+- [Cloud Mode](https://docs.deckflow.com/html2deck/guides/cloud-mode.md): Use cloud execution and cloud-only capabilities.
+- [Element Mapping](https://docs.deckflow.com/html2deck/guides/element-mapping.md): Understand editable, vector, raster, ignored, and unsupported mappings.
+- [CLI Commands](https://docs.deckflow.com/html2deck/cli/commands.md): Review command syntax and options.
+- [Node.js SDK](https://docs.deckflow.com/html2deck/sdk/overview.md): Convert HTML programmatically and inspect diagnostics.
+- [Reports and Diagnostics](https://docs.deckflow.com/html2deck/reference/report-schema.md): Consume per-element mapping reports, aggregate reports, and stable diagnostic rule IDs.
 
 ## Platform
 
@@ -92,6 +93,7 @@ Install DeckFlow CLIs and JavaScript SDKs from npm. For example: `npm install -g
 - [选择产品](https://docs.deckflow.com/zh/product-guide.md): 对比输入、输出、执行位置和能力边界。
 - [常见工作流](https://docs.deckflow.com/zh/common-workflows.md): 将应用目标对应到一个或多个 DeckFlow 产品。
 - [示例](https://docs.deckflow.com/zh/examples/overview.md): 查看带有已知输入和预期结果的完整配方。
+- [DeckOps PPTX 转 Markdown 示例](https://docs.deckflow.com/zh/examples/parse-to-markdown.md): 把 PPTX 解析为可复用 DeckIR 产物，并在不重复解析的情况下生成 Markdown。
 - [DeckProbe](https://docs.deckflow.com/zh/deckprobe/overview.md): 在本地嗅探文档事实。
 - [DeckProbe Agent 集成](https://docs.deckflow.com/zh/deckprobe/agent-integrations/overview.md): 在 Agent Skill 与本地 MCP Server 之间选择。
 - [DeckProbe Agent Skill](https://docs.deckflow.com/zh/deckprobe/agent-integrations/agent-skill.md): 为可以使用 Shell 的 Coding Agent 安装 DeckProbe 说明。
@@ -115,8 +117,8 @@ Install DeckFlow CLIs and JavaScript SDKs from npm. For example: `npm install -g
 - [DeckUse PPTX 能力](https://docs.deckflow.com/zh/deckuse/reference/pptx-capabilities.md): 查看可索引对象、可写操作、保留行为和当前边界。
 - [DeckUse 结果与错误](https://docs.deckflow.com/zh/deckuse/reference/results-and-errors.md): 处理结果封装、诊断、冲突和 CLI 退出状态。
 - [DeckUse 修改示例](https://docs.deckflow.com/zh/examples/update-pptx-content.md): 查询、修改、校验、导出并验证一份已知 PPTX。
-- [DeckHTML](https://docs.deckflow.com/zh/deckhtml/overview.md): 从浏览器渲染后的 HTML 或 SVG 生成 PPTX 或 PNG。
-- [DeckHTML 多页与批量输入](https://docs.deckflow.com/zh/deckhtml/guides/multi-page-and-batch.md): 组合重复幻灯片容器、有序文件或 URL 输入。
+- [HTML2Deck](https://docs.deckflow.com/zh/html2deck/overview.md): 从浏览器渲染后的 HTML 或 SVG 生成 PPTX 或 PNG。
+- [HTML2Deck 多页与批量输入](https://docs.deckflow.com/zh/html2deck/guides/multi-page-and-batch.md): 组合重复幻灯片容器、有序文件或 URL 输入。
 
 ## Optional
 

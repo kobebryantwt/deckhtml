@@ -1,0 +1,68 @@
+---
+title: Parse a PPTX and Generate Markdown
+sidebarTitle: PPTX to Markdown
+description: "Use DeckOps locally to parse a PPTX into a reusable DeckIR artifact and generate a verified Markdown view."
+---
+
+This example parses a known PPTX locally, keeps the structured artifact, and generates Markdown from that artifact without parsing the source a second time.
+
+<div className="workflow-meta"><span className="workflow-meta-label">Produces</span><span className="workflow-meta-value"><code>sample/</code> with DeckIR and assets, plus <code>sample/views/markdown/index.md</code>.</span></div>
+
+## Requirements
+
+- Node.js 22.18 or later
+- Network access only for installation and downloading the sample
+- No DeckFlow account or API key
+
+## Run the example
+
+<Steps>
+  <Step title="Install and verify DeckOps">
+
+```bash
+npm install -g @deckflow/deckops
+deckops --version
+```
+
+  </Step>
+  <Step title="Download a known PPTX">
+
+```bash
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o sample.pptx
+test -s sample.pptx
+```
+
+  </Step>
+  <Step title="Parse the document">
+
+```bash
+deckops parse sample.pptx --json
+```
+
+    A successful result reports `"ok": true`, `"engine": "local"`, `"irSchemaVersion": "deckir.v1"`, and the artifact path. The default artifact directory contains `ir.json`, `manifest.json`, `probe.json`, and extracted assets.
+  </Step>
+  <Step title="Generate Markdown from the artifact">
+
+```bash
+deckops convert sample/ --json
+```
+
+    The result reports `"reusedParse": true` and writes `sample/views/markdown/index.md`.
+  </Step>
+  <Step title="Verify the result">
+
+```bash
+test -s sample/ir.json
+test -s sample/views/markdown/index.md
+```
+
+  </Step>
+</Steps>
+
+<Check>
+  Success means the DeckIR and Markdown files both exist and are non-empty. Keep any returned `warnings` visible to the application; they can describe fidelity limits even when `ok` is `true`.
+</Check>
+
+<Card title="Work with DeckOps artifacts" icon="box-archive" iconType="solid" href="/deckops/artifacts">
+  Reopen an artifact, inspect its manifest, and choose whether to share the complete structured result or a portable Markdown export.
+</Card>

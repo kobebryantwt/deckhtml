@@ -1,0 +1,68 @@
+---
+title: 解析 PPTX 并生成 Markdown
+sidebarTitle: PPTX 转 Markdown
+description: "在本地使用 DeckOps 把 PPTX 解析为可复用的 DeckIR 产物，并生成可验证的 Markdown 视图。"
+---
+
+本示例在本地解析一份已知 PPTX，保留结构化产物，并直接从该产物生成 Markdown，不会再次解析源文件。
+
+<div className="workflow-meta"><span className="workflow-meta-label">生成内容</span><span className="workflow-meta-value">包含 DeckIR 与资源的 <code>sample/</code>，以及 <code>sample/views/markdown/index.md</code>。</span></div>
+
+## 环境要求
+
+- Node.js 22.18 或更高版本
+- 仅安装和下载示例文件时需要网络
+- 不需要 DeckFlow 账号或 API Key
+
+## 运行示例
+
+<Steps>
+  <Step title="安装并验证 DeckOps">
+
+```bash
+npm install -g @deckflow/deckops
+deckops --version
+```
+
+  </Step>
+  <Step title="下载已知 PPTX">
+
+```bash
+curl -fL https://docs.deckflow.com/images/deckuse-sample.pptx -o sample.pptx
+test -s sample.pptx
+```
+
+  </Step>
+  <Step title="解析文档">
+
+```bash
+deckops parse sample.pptx --json
+```
+
+    成功结果会包含 `"ok": true`、`"engine": "local"`、`"irSchemaVersion": "deckir.v1"` 和产物路径。默认产物目录包含 `ir.json`、`manifest.json`、`probe.json` 和提取出的资源。
+  </Step>
+  <Step title="从产物生成 Markdown">
+
+```bash
+deckops convert sample/ --json
+```
+
+    结果会包含 `"reusedParse": true`，并写入 `sample/views/markdown/index.md`。
+  </Step>
+  <Step title="验证结果">
+
+```bash
+test -s sample/ir.json
+test -s sample/views/markdown/index.md
+```
+
+  </Step>
+</Steps>
+
+<Check>
+  DeckIR 与 Markdown 文件都存在且不为空，即表示示例跑通。即使 `ok` 为 `true`，也应让应用保留并展示返回的 `warnings`，其中可能包含保真度限制。
+</Check>
+
+<Card title="使用 DeckOps 产物" icon="box-archive" iconType="solid" href="/zh/deckops/artifacts">
+  重新打开产物、读取 Manifest，并选择传递完整结构化结果或导出可移植的 Markdown。
+</Card>

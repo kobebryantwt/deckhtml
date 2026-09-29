@@ -1,0 +1,57 @@
+---
+title: CLI Overview
+sidebarTitle: Overview
+description: "Convert HTML2Deck inputs from a terminal, script, CI job, or agent workflow."
+---
+
+## Install and verify
+
+```bash
+npm install -g @deckflow/html2deck
+html2deck --version
+html2deck --help
+```
+
+Or run a pinned or latest package without installing globally:
+
+```bash
+npx -y @deckflow/html2deck@latest deck.html -o deck.pptx
+```
+
+## Input forms
+
+```bash
+html2deck deck.html -o deck.pptx
+html2deck 01.html 02.html 03.html -o deck.pptx
+cat deck.html | html2deck - -o deck.pptx
+html2deck https://example.com/deck.html -o deck.pptx
+```
+
+Stdin requires `--output`. A single command can use local files or one or more URLs, but cannot mix both. URL input is downloaded as HTML text; it does not inherit cookies or browser state, and relative assets require an explicit `<base>` or absolute URLs.
+
+## Output format
+
+HTML2Deck infers format from `-o`:
+
+```bash
+html2deck deck.html -o deck.pptx
+html2deck deck.html -o frames.png
+```
+
+PPTX is the default when `-o` is omitted.
+
+For more than one detected slide, PNG output uses numbered paths and returns all of them in the JSON `outputs` array. See [Multi-page and Batch Input](/html2deck/guides/multi-page-and-batch).
+
+## Reliable automation defaults
+
+```bash
+html2deck deck.html \
+  -o deck.pptx \
+  --mode local \
+  --json \
+  --report \
+  --force \
+  --quiet
+```
+
+Use `--json --quiet` together when stdout must contain only the final JSON envelope. Use [Output and Automation](/html2deck/cli/output-modes) for stdout, stderr, exit status, overwrite, and report behavior.
